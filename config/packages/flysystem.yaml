@@ -1,0 +1,20 @@
+# Read the documentation at https://github.com/thephpleague/flysystem-bundle/blob/master/docs/1-getting-started.md
+flysystem:
+    storages:
+        default.storage:
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/var/storage/default'
+        aws.storage:
+            adapter: 'sftp'
+            options:
+                host: '%env(resolve:SFTP_HOST_AWS)%'
+                port: 22
+                username: '%env(resolve:SFTP_USERNAME_AWS)%'
+                password: ''
+                privateKey: '%env(resolve:SFTP_KEY_AWS)%'
+                root: '/sftpamazonkpgroup'
+                timeout: 60
+                directoryPerm: 0744
+                permPublic: 0700
+                permPrivate: 0744        

@@ -1,4 +1,13 @@
 {
+    "async-aws/core": {
+        "version": "1.10.0"
+    },
+    "async-aws/s3": {
+        "version": "1.9.0"
+    },
+    "aws/aws-sdk-php": {
+        "version": "3.184.6"
+    },
     "composer/package-versions-deprecated": {
         "version": "1.11.99.2"
     },
@@ -88,6 +97,15 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
+    "guzzlehttp/guzzle": {
+        "version": "7.3.0"
+    },
+    "guzzlehttp/promises": {
+        "version": "1.4.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.8.2"
+    },
     "laminas/laminas-code": {
         "version": "3.4.1"
     },
@@ -97,8 +115,45 @@
     "laminas/laminas-zendframework-bridge": {
         "version": "1.2.0"
     },
+    "league/flysystem": {
+        "version": "2.1.0"
+    },
+    "league/flysystem-async-aws-s3": {
+        "version": "2.0.6"
+    },
+    "league/flysystem-aws-s3-v3": {
+        "version": "2.1.0"
+    },
+    "league/flysystem-bundle": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.0",
+            "ref": "8ad3ded1f39fedce098e43259741f42092a1010e"
+        },
+        "files": [
+            "config/packages/flysystem.yaml",
+            "var/storage/.gitignore"
+        ]
+    },
+    "league/flysystem-ftp": {
+        "version": "2.0.8"
+    },
+    "league/flysystem-sftp": {
+        "version": "2.0.8"
+    },
+    "league/mime-type-detection": {
+        "version": "1.7.0"
+    },
+    "lorenzo/pinky": {
+        "version": "1.0.5"
+    },
     "monolog/monolog": {
         "version": "2.2.0"
+    },
+    "mtdowling/jmespath.php": {
+        "version": "2.6.0"
     },
     "myclabs/deep-copy": {
         "version": "1.10.2"
@@ -120,6 +175,9 @@
     },
     "phpdocumentor/type-resolver": {
         "version": "1.4.0"
+    },
+    "phpseclib/phpseclib": {
+        "version": "2.0.32"
     },
     "phpspec/prophecy": {
         "version": "1.13.0"
@@ -162,11 +220,20 @@
     "psr/event-dispatcher": {
         "version": "1.0.0"
     },
+    "psr/http-client": {
+        "version": "1.0.1"
+    },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/link": {
         "version": "1.0.0"
     },
     "psr/log": {
         "version": "1.1.4"
+    },
+    "ralouphie/getallheaders": {
+        "version": "3.0.3"
     },
     "sebastian/cli-parser": {
         "version": "1.0.1"
@@ -339,6 +406,15 @@
             "src/Controller/.gitignore",
             "src/Kernel.php"
         ]
+    },
+    "symfony/google-mailer": {
+        "version": "4.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.4",
+            "ref": "f8fd4ddb9b477510f8f4bce2b9c054ab428c0120"
+        }
     },
     "symfony/http-client": {
         "version": "v5.3.2"
@@ -607,8 +683,17 @@
     "theseer/tokenizer": {
         "version": "1.2.0"
     },
+    "tijsverkoyen/css-to-inline-styles": {
+        "version": "2.2.3"
+    },
+    "twig/cssinliner-extra": {
+        "version": "v3.3.0"
+    },
     "twig/extra-bundle": {
         "version": "v3.3.1"
+    },
+    "twig/inky-extra": {
+        "version": "v3.3.0"
     },
     "twig/twig": {
         "version": "v3.3.2"
