@@ -51,7 +51,7 @@ class ImportInvoice
     
     /**
      * 
-     *
+     * 
      * @return void
      */
     public function importFiles()
@@ -81,9 +81,6 @@ class ImportInvoice
             if($invoice->isFile()){
                 if($this->processInvoice($invoice->path())){
                     $this->nbFactures++;
-                    if($this->nbFactures == 1){
-                        return;
-                    }
                 } 
             }
         }
