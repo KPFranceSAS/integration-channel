@@ -82,6 +82,9 @@ class ImportInvoice
                 if($this->processInvoice($invoice->path())){
                     $this->nbFactures++;
                 } 
+                if($this->nbFactures == 1){
+                    return;
+                }
             }
         }
     }
