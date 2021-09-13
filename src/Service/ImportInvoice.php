@@ -2,12 +2,12 @@
 
 namespace App\Service;
 
-use App\Entity\IntegrationFile;
+use App\Service\MailService;
 use Psr\Log\LoggerInterface;
+use App\Entity\IntegrationFile;
 use Symfony\Component\Mime\Email;
-use League\Flysystem\FilesystemOperator;
-use Symfony\Component\Mailer\MailerInterface;
 use App\Service\ChannelWebservice;
+use League\Flysystem\FilesystemOperator;
 use Doctrine\Persistence\ManagerRegistry;
 
 
@@ -36,10 +36,10 @@ class ImportInvoice
      * @param FilesystemOperator $awsStorage
      * @param ManagerRegistry $manager
      * @param LoggerInterface $logger
-     * @param MailerInterface $mailer
+     * @param MailService $mailer
      * @param ChannelWebservice $channel
      */
-    public function __construct(FilesystemOperator $awsStorage, ManagerRegistry $manager, LoggerInterface $logger, MailerInterface $mailer, ChannelWebservice $channel)
+    public function __construct(FilesystemOperator $awsStorage, ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, ChannelWebservice $channel)
     {
         $this->awsStorage=$awsStorage;
         $this->logger=$logger;
@@ -62,7 +62,7 @@ class ImportInvoice
             $this->sendEmailRapport();
 
         } catch (\Exception $e){
-            $this->sendEmail('[VAT INVOICES] Error', $e->getMessage());
+            $this->mailer->sendEmail('[VAT INVOICES] Error', $e->getMessage());
 
         }
         
@@ -227,32 +227,8 @@ class ImportInvoice
             $text.='<li>'.$doublonInvoice.'</li>';
         }
         $text.='</ul></p>';
-        $this->sendEmail('[VAT INVOICES] Rapport', $text);
+        $this->mailer->sendEmail('[VAT INVOICES] Rapport', $text);
     }
-
-
-
-    /**
-     * Send an email
-     *
-     * @param string $titre tht title of the email
-     * @param string $contenu the content of the email
-     * @return void
-     */
-    protected function sendEmail($titre, $contenu)
-    {   
-        $this->logger->info("Sending email $titre  > $contenu");
-        
-        return;
-        $email = (new Email())
-        ->from('redmine.seriel@gmail.com')
-        ->to('devops@kpsport.com')
-        ->subject($titre)
-        ->html($contenu);
-        $this->mailer->send($email);
-    }
-
-
 
     
 
