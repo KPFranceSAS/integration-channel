@@ -89,7 +89,7 @@ class ChannelWebservice {
      */
     private function checkIfTokenTooOld(){
         $dateNow= new \DateTime();
-        $diffMin = abs($dateNow->getTimestamp() - $$this->dateInitialisationToken->getTimestamp()) / 60;
+        $diffMin = abs($dateNow->getTimestamp() - $this->dateInitialisationToken->getTimestamp()) / 60;
         return $diffMin > self::TIME_TO_REFRESH_TOKEN;
     }
 
