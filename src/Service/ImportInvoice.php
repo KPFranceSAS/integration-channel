@@ -61,8 +61,7 @@ class ImportInvoice
             $this->sendEmailRapport();
 
         } catch (\Exception $e){
-            $this->mailer->sendEmail('[VAT INVOICES] Error', $e->getMessage());
-
+            $this->mailer->sendEmail('[VAT INVOICES] Error', $e->getMessage(), 'stephane.lanjard@kpsport.com');
         }
         
     }
