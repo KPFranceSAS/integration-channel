@@ -36,6 +36,19 @@ class ChannelWebservice {
      */
     protected $accessToken;
 
+
+    /**
+     * Delay to refresh token for channeladvisor
+     */
+    const TIME_TO_REFRESH_TOKEN = 30;
+
+
+    /**
+     *
+     * @var \DateTime 
+     */
+    protected $dateInitialisationToken;
+
    
     public function __construct($refreshToken, $applicationId, $sharedSecret){
         $this->refreshToken=$refreshToken;
@@ -54,13 +67,37 @@ class ChannelWebservice {
         ]);
         $body = json_decode($response->getBody());
         $this->accessToken=$body->access_token;
+        $this->dateInitialisationToken = new \DateTime();
+    }
+
+    /**
+     * Check if token nedd to be regenerate
+     *
+     * @return void
+     */
+    public function refreshAccessToken(){
+        if($this->checkIfTokenTooOld()){
+            $this->getAccessToken();
+        }
         
     }
+
+    /**
+     * Check if Token creation is older than TIME_TO_REFRESH_TOKEN
+     *
+     * @return void
+     */
+    private function checkIfTokenTooOld(){
+        $dateNow= new \DateTime();
+        $diffMin = abs($dateNow->getTimestamp() - $$this->dateInitialisationToken->getTimestamp()) / 60;
+        return $diffMin > self::TIME_TO_REFRESH_TOKEN;
+    }
+
     
     
     /**
      * 
-     * @param type $params
+     * @param array $params
      * @return stdClass
      */
     public function getOrders($params=array()){
@@ -71,7 +108,7 @@ class ChannelWebservice {
     
     /**
      * 
-     * @param type $params
+     * @param array $params
      * @return stdClass
      */
     public function getOrder($orderId, $params=array()){
@@ -127,12 +164,12 @@ class ChannelWebservice {
     /**
      * Undocumented function
      *
-     * @param [type] $profileId
-     * @param [type] $orderId
+     * @param int $profileId
+     * @param int $orderId
      * @param string $totalAmount
      * @param string $totalVATAAmount
-     * @param [type] $invoiceNumber
-     * @param [type] $dataFile
+     * @param string $invoiceNumber
+     * @param string $dataFile
      * @return void
      */
     public function sendInvoice($profileId, $orderId, $totalAmount, $totalVATAAmount, $invoiceNumber, $dataFile){
@@ -150,13 +187,13 @@ class ChannelWebservice {
      /**
       * Undocumented function
       *
-      * @param [type] $profileId
-      * @param [type] $orderId
-      * @param [type] $adjustmentID
+      * @param int $profileId
+      * @param int $orderId
+      * @param int$adjustmentID
       * @param string $totalAmount
       * @param string $totalVATAAmount
-      * @param [type] $invoiceNumber
-      * @param [type] $dataFile
+      * @param string $invoiceNumber
+      * @param string $dataFile
       * @return void
       */
      public function sendCredit($profileId, $orderId, $adjustmentID, $totalAmount, $totalVATAAmount, $invoiceNumber, $dataFile){
@@ -181,6 +218,7 @@ class ChannelWebservice {
       * @return void
       */
      private function sendDocuments($queryParams, $dataFile){
+        $this->refreshAccessToken();
         $query= array_merge(['access_token'=>$this->accessToken],$queryParams);
         $parameters=[
             'query'=>$query,
@@ -216,6 +254,7 @@ class ChannelWebservice {
      * @return void
      */
     public function sendRequest($endPoint, $queryParams=array(), $method='GET', $form=null){
+        $this->refreshAccessToken();
         $query= array_merge(['access_token'=>$this->accessToken],$queryParams);
         $parameters=array('query'=>$query);
         if($method != 'GET' && $form){
