@@ -1,13 +1,31 @@
 <?php
 namespace App\Service;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Mailer\MailerInterface;
 
 
 class MailService {
 
     
+    private $logger;
+
+    private $mailer;
+
+    /**
+     * Constructor
+     *
+     * @param LoggerInterface $logger
+     */
+    public function __construct(MailerInterface $mailer, LoggerInterface $logger)
+    {
+        $this->mailer=$mailer;
+        $this->logger=$logger;
+    }
+
+
    /**
      * Send an email
      *
