@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Service\MailService;
 use Psr\Log\LoggerInterface;
 use App\Entity\IntegrationFile;
-use Symfony\Component\Mime\Email;
 use App\Service\ChannelWebservice;
 use League\Flysystem\FilesystemOperator;
 use Doctrine\Persistence\ManagerRegistry;
