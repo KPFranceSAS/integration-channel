@@ -108,13 +108,15 @@ class ImportInvoice
 
         if($this->checkIfAlreadyIntegrateInvoice($invoiceCorrespondance['external_order_id'])){
             $this->addError('[ALREADY INTEGRATED] '.$numberOrder.' already integrated on ChannelAdvisor');
+            $this->awsStorage->move($path, "errors/already_integrated/".$numberOrder.".pdf" );
             return false;
         }
 
 
         $orderChannelId=$this->channel->getOrderByNumber($invoiceCorrespondance['external_order_id'], $invoiceCorrespondance['ca_marketplace_id']);
         if(!$orderChannelId){
-            $this->addError('[NOT FOUND] '.$numberOrder.' non found on ChannelAdvisor');
+            $this->addError('[NOT FOUND] '.$numberOrder.' not found on ChannelAdvisor, probably archived');
+            $this->awsStorage->move($path, "errors/not_found/".$numberOrder.".pdf" );
             return false;
         }
 
@@ -129,7 +131,7 @@ class ImportInvoice
             $this->manager->flush();
             return true;
         } else {
-            $this->addError('[NOT SENT] '.$numberOrder.' was not send on ChannelAdvisor');
+            $this->addError('[NOT UPLOAD] '.$numberOrder.' was not uploaded on ChannelAdvisor');
         }
         return false;
     }
