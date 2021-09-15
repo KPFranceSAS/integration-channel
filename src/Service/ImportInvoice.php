@@ -77,9 +77,14 @@ class ImportInvoice
         $invoices = $this->awsStorage->listContents('invoices')->toArray();
         foreach($invoices as $invoice){
             if($invoice->isFile()){
-                if($this->processInvoice($invoice->path())){
-                    $this->nbFactures++;
-                } 
+                try{
+                    if($this->processInvoice($invoice->path())){
+                        $this->nbFactures++;
+                    } 
+                } catch (\Exception $e){
+                    $numberOrder=str_replace(['invoices/', '.pdf'], '', $invoice->path());
+                    $this->addError('[Exception] '.$numberOrder.' '.$e->getMessage());
+                }
             }
         }
     }
