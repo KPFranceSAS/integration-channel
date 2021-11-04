@@ -1,15 +1,17 @@
 <?php
+
 namespace App\Service;
 
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Mime\Email;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 
 
-class MailService {
+class MailService
+{
 
-    
+
     private $logger;
 
     private $mailer;
@@ -21,12 +23,12 @@ class MailService {
      */
     public function __construct(MailerInterface $mailer, LoggerInterface $logger)
     {
-        $this->mailer=$mailer;
-        $this->logger=$logger;
+        $this->mailer = $mailer;
+        $this->logger = $logger;
     }
 
 
-   /**
+    /**
      * Send an email
      *
      * @param string $titre tht title of the email
@@ -34,19 +36,15 @@ class MailService {
      * @param string|Adress $emails the recipients
      * @return void
      */
-    public function sendEmail($titre, $contenu, $emails='devops@kpsport.com')
-    {   
+    public function sendEmail($titre, $contenu, $emails = 'devops@kpsport.com')
+    {
         $this->logger->info("Sending email $titre  > $contenu");
-        
+
         $email = (new Email())
-        ->from(new Address('stephane.lanjard@kpsport.com', 'Stéphane Lanjard'))
-        ->to($emails)
-        ->subject($titre)
-        ->html($contenu);
+            ->from(new Address('devops@kpsport.com', 'DEV OPS'))
+            ->to($emails)
+            ->subject($titre)
+            ->html($contenu);
         $this->mailer->send($email);
     }
-    
-
-
-    
 }
