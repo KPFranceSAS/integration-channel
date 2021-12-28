@@ -11,9 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 class IntegrationFile
 {
 
-
-    const TYPE_INVOICE=1;
-    const TYPE_CREDIT=2;
+    const TYPE_INVOICE = 1;
+    const TYPE_CREDIT = 2;
 
     /**
      * @ORM\Id
@@ -78,9 +77,9 @@ class IntegrationFile
     private $channelAdjustementId;
 
 
-    public function __construct($data=[])
+    public function __construct($data = [])
     {
-        if(count($data)>0){
+        if (count($data) > 0) {
             $this->documentNumber = $data['document_no'];
             $this->externalOrderId = $data['external_order_id'];
             $this->profileChannel = $data['ca_marketplace_id'];
@@ -93,16 +92,22 @@ class IntegrationFile
         $this->dateUpdated = new \DateTime();
     }
 
+    /**
+     * Return the path to store tje uploaded invoices
+     *
+     * @return string
+     */
+    public function getNewFileDestination(): string
+    {
 
-    public function getNewFileDestination(){
-        
-       $path = "integrated/".$this->getProfileChannel()."/";
-       $path.=$this->documentType == self::TYPE_INVOICE ? 'invoices' : 'credit_notes';
-       $path.="/".$this->externalOrderId.'_'.str_replace("/", "-", $this->documentNumber).'_'.date('Ymd-His').'.pdf';
-       return $path;
+        $path = "integrated/" . $this->getProfileChannel() . "/";
+        $path .= $this->documentType == self::TYPE_INVOICE ? 'invoices' : 'credit_notes';
+        $path .= "/" . $this->externalOrderId . '_' . str_replace("/", "-", $this->documentNumber) . '_' . date('Ymd-His') . '.pdf';
+        return $path;
     }
 
-    private function convertFloat($stringFloat){
+    private function convertFloat($stringFloat)
+    {
         return floatval(str_replace(",", '.', $stringFloat));
     }
 

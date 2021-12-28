@@ -1,0 +1,21 @@
+{% if  field.value == constant('App\\Entity\\WebOrder::STATE_ERROR') %}
+	{% set classColor = 'danger' %}
+	{% set statusText = 'Error integration' %}
+{% elseif  field.value == constant('App\\Entity\\WebOrder::STATE_SYNC_TO_ERP') %}
+	{% set classColor = 'primary' %}
+	{% set statusText = 'Order integrated' %}
+{% elseif  field.value == constant('App\\Entity\\WebOrder::STATE_INVOICED') %}
+	{% set classColor = 'success' %}
+	{% set statusText = 'Invoice integrated' %}
+{% elseif  field.value == constant('App\\Entity\\WebOrder::STATE_ERROR_INVOICE') %}
+	{% set classColor = 'warning' %}
+	{% set statusText = 'Error send invoice' %}
+{% else %}
+	{% set classColor = 'secondary' %}
+	{% set statusText = 'Undefined' %}
+{% endif %}
+
+
+<div class="badge badge-{{classColor}}">
+	{{statusText}}
+</div>

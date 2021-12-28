@@ -115,6 +115,18 @@
     "guzzlehttp/psr7": {
         "version": "1.8.2"
     },
+    "illuminate/collections": {
+        "version": "v8.73.2"
+    },
+    "illuminate/contracts": {
+        "version": "v8.73.2"
+    },
+    "illuminate/macroable": {
+        "version": "v8.73.2"
+    },
+    "illuminate/support": {
+        "version": "v8.73.2"
+    },
     "laminas/laminas-code": {
         "version": "3.4.1"
     },
@@ -166,6 +178,9 @@
     },
     "myclabs/deep-copy": {
         "version": "1.10.2"
+    },
+    "nesbot/carbon": {
+        "version": "2.54.0"
     },
     "nikic/php-parser": {
         "version": "v4.10.5"
@@ -240,6 +255,12 @@
     },
     "psr/log": {
         "version": "1.1.4"
+    },
+    "psr/simple-cache": {
+        "version": "1.0.1"
+    },
+    "rakit/validation": {
+        "version": "v1.4.0"
     },
     "ralouphie/getallheaders": {
         "version": "3.0.3"
@@ -721,6 +742,9 @@
     },
     "twig/twig": {
         "version": "v3.3.2"
+    },
+    "voku/portable-ascii": {
+        "version": "1.5.6"
     },
     "webmozart/assert": {
         "version": "1.10.0"

@@ -2,12 +2,12 @@
 
 namespace App\Service;
 
-use App\Service\MailService;
-use Psr\Log\LoggerInterface;
 use App\Entity\IntegrationFile;
-use App\Service\ChannelWebservice;
-use League\Flysystem\FilesystemOperator;
+use App\Service\ChannelAdvisor\ChannelWebservice;
+use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
+use League\Flysystem\FilesystemOperator;
+use Psr\Log\LoggerInterface;
 
 
 /**
@@ -40,14 +40,14 @@ class ImportInvoice
      */
     public function __construct(FilesystemOperator $awsStorage, ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, ChannelWebservice $channel)
     {
-        $this->awsStorage=$awsStorage;
-        $this->logger=$logger;
-        $this->mailer=$mailer;
-        $this->channel=$channel;
-        $this->manager=$manager->getManager();
+        $this->awsStorage = $awsStorage;
+        $this->logger = $logger;
+        $this->mailer = $mailer;
+        $this->channel = $channel;
+        $this->manager = $manager->getManager();
     }
 
-    
+
     /**
      * 
      * 
@@ -55,15 +55,13 @@ class ImportInvoice
      */
     public function importFiles()
     {
-        try{
+        try {
             $this->initializeDatas();
             $this->processInvoices();
             $this->sendEmailRapport();
-
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             $this->mailer->sendEmail('[VAT INVOICES] Error', $e->getMessage(), 'stephane.lanjard@kpsport.com');
         }
-        
     }
 
 
@@ -72,18 +70,19 @@ class ImportInvoice
      *
      * @return void
      */
-    protected function processInvoices(){
-        
+    protected function processInvoices()
+    {
+
         $invoices = $this->awsStorage->listContents('invoices')->toArray();
-        foreach($invoices as $invoice){
-            if($invoice->isFile()){
-                try{
-                    if($this->processInvoice($invoice->path())){
+        foreach ($invoices as $invoice) {
+            if ($invoice->isFile()) {
+                try {
+                    if ($this->processInvoice($invoice->path())) {
                         $this->nbFactures++;
-                    } 
-                } catch (\Exception $e){
-                    $numberOrder=str_replace(['invoices/', '.pdf'], '', $invoice->path());
-                    $this->addError('[Exception] '.$numberOrder.' '.$e->getMessage());
+                    }
+                } catch (\Exception $e) {
+                    $numberOrder = str_replace(['invoices/', '.pdf'], '', $invoice->path());
+                    $this->addError('[Exception] ' . $numberOrder . ' ' . $e->getMessage());
                 }
             }
         }
@@ -95,44 +94,45 @@ class ImportInvoice
      * @param string $path Ce path of the file
      * @return void
      */
-    protected function processInvoice($path){
-        $numberOrder=str_replace(['invoices/', '.pdf'], '', $path);
-        $this->logger->info('Process invoice order '.$numberOrder);
-        if(!array_key_exists($numberOrder, $this->dataInvoices)){
-            if(!in_array($numberOrder, $this->doublonsInvoices) ){
-                $this->addError('[NOT IN FILE] '.$numberOrder.'  not found in the details.csv files');
+    protected function processInvoice($path)
+    {
+        $numberOrder = str_replace(['invoices/', '.pdf'], '', $path);
+        $this->logger->info('Process invoice order ' . $numberOrder);
+        if (!array_key_exists($numberOrder, $this->dataInvoices)) {
+            if (!in_array($numberOrder, $this->doublonsInvoices)) {
+                $this->addError('[NOT IN FILE] ' . $numberOrder . '  not found in the details.csv files');
             }
             return false;
         }
 
         $invoiceCorrespondance = $this->dataInvoices[$numberOrder];
 
-        if($this->checkIfAlreadyIntegrateInvoice($invoiceCorrespondance['external_order_id'])){
-            $this->addError('[ALREADY INTEGRATED] '.$numberOrder.' already integrated on ChannelAdvisor');
-            $this->awsStorage->move($path, "errors/already_integrated/".$numberOrder.".pdf" );
+        if ($this->checkIfAlreadyIntegrateInvoice($invoiceCorrespondance['external_order_id'])) {
+            $this->addError('[ALREADY INTEGRATED] ' . $numberOrder . ' already integrated on ChannelAdvisor');
+            $this->awsStorage->move($path, "errors/already_integrated/" . $numberOrder . ".pdf");
             return false;
         }
 
 
-        $orderChannelId=$this->channel->getOrderByNumber($invoiceCorrespondance['external_order_id'], $invoiceCorrespondance['ca_marketplace_id']);
-        if(!$orderChannelId){
-            $this->addError('[NOT FOUND] '.$numberOrder.' not found on ChannelAdvisor, probably archived');
-            $this->awsStorage->move($path, "errors/not_found/".$numberOrder.".pdf" );
+        $orderChannelId = $this->channel->getOrderByNumber($invoiceCorrespondance['external_order_id'], $invoiceCorrespondance['ca_marketplace_id']);
+        if (!$orderChannelId) {
+            $this->addError('[NOT FOUND] ' . $numberOrder . ' not found on ChannelAdvisor, probably archived');
+            $this->awsStorage->move($path, "errors/not_found/" . $numberOrder . ".pdf");
             return false;
         }
 
         $integrationFile = new IntegrationFile($invoiceCorrespondance);
-        $integrationFile->setChannelOrderId($orderChannelId);       
+        $integrationFile->setChannelOrderId($orderChannelId);
         $dataFile = $this->awsStorage->read($path);
-       
+
         $sendFile = $this->channel->sendInvoice($integrationFile->getProfileChannel(), $orderChannelId, $integrationFile->getTotalVatIncluded(), $integrationFile->getTotalVat(), $integrationFile->getDocumentNumber(), $dataFile);
-        if($sendFile){
+        if ($sendFile) {
             $this->manager->persist($integrationFile);
-            $this->awsStorage->move($path, $integrationFile->getNewFileDestination() );
+            $this->awsStorage->move($path, $integrationFile->getNewFileDestination());
             $this->manager->flush();
             return true;
         } else {
-            $this->addError('[NOT UPLOAD] '.$numberOrder.' was not uploaded on ChannelAdvisor');
+            $this->addError('[NOT UPLOAD] ' . $numberOrder . ' was not uploaded on ChannelAdvisor');
         }
         return false;
     }
@@ -145,8 +145,9 @@ class ImportInvoice
      * @param string $stringError
      * @return void
      */
-    protected function addError($stringError){
-        $this->errors[]=$stringError;
+    protected function addError($stringError)
+    {
+        $this->errors[] = $stringError;
         $this->logger->error($stringError);
     }
 
@@ -159,18 +160,18 @@ class ImportInvoice
      */
     protected  function initializeDatas()
     {
-        
-            $this->debut=date('d-m-Y H:i');
-            $this->initializeDatasFromCsv();   
-            $this->nbFactures=0;
-            $this->nbAvoirs=0;
-            $this->errors = [];
+
+        $this->debut = date('d-m-Y H:i');
+        $this->initializeDatasFromCsv();
+        $this->nbFactures = 0;
+        $this->nbAvoirs = 0;
+        $this->errors = [];
     }
 
 
 
 
-     /**
+    /**
      *
      *  Get all the dats from the CSV and create an associative array
      *
@@ -184,23 +185,23 @@ class ImportInvoice
         while (($values = fgetcsv($contentFile, null, ';')) !== false) {
             if (count($values) == count($header)) {
                 $dataInvoice = array_combine($header, $values);
-                if($dataInvoice['document_type']== 'invoice'){
-                    if(!array_key_exists ($dataInvoice['external_order_id'], $this->dataInvoices)){
-                        $this->dataInvoices[$dataInvoice['external_order_id']]=$dataInvoice;
+                if ($dataInvoice['document_type'] == 'invoice') {
+                    if (!array_key_exists($dataInvoice['external_order_id'], $this->dataInvoices)) {
+                        $this->dataInvoices[$dataInvoice['external_order_id']] = $dataInvoice;
                     } else {
-                        
-                        $this->doublonsInvoices[]=$dataInvoice['external_order_id'];
+
+                        $this->doublonsInvoices[] = $dataInvoice['external_order_id'];
                     }
                 }
             }
         }
 
 
-        foreach($this->doublonsInvoices as $doublonInvoice){
+        foreach ($this->doublonsInvoices as $doublonInvoice) {
             unset($this->dataInvoices[$doublonInvoice]);
         }
-        $this->logger->info('Nb of invoices :'.count($this->dataInvoices));
-        $this->logger->info('Nb of duplicated invoices :'.count($this->doublonsInvoices));
+        $this->logger->info('Nb of invoices :' . count($this->dataInvoices));
+        $this->logger->info('Nb of duplicated invoices :' . count($this->doublonsInvoices));
         return $this->dataInvoices;
     }
 
@@ -215,24 +216,24 @@ class ImportInvoice
      * @return void
      */
     protected function sendEmailRapport()
-    {   
-        $text='<p>Done between '.$this->debut.' and '.date('d-m-Y H:i:s').'</p>';
-        $text.='<p>Integrated invoices : '.$this->nbFactures.'</p>';
-        $text.='<p>Integrated credit notes '.$this->nbAvoirs.'</p>';
-        $text.='<p>Errors <ul>';
-        foreach($this->errors as $error){
-            $text.='<li>'.$error.'</li>';
+    {
+        $text = '<p>Done between ' . $this->debut . ' and ' . date('d-m-Y H:i:s') . '</p>';
+        $text .= '<p>Integrated invoices : ' . $this->nbFactures . '</p>';
+        $text .= '<p>Integrated credit notes ' . $this->nbAvoirs . '</p>';
+        $text .= '<p>Errors <ul>';
+        foreach ($this->errors as $error) {
+            $text .= '<li>' . $error . '</li>';
         }
-        $text.='</ul></p>';
-        $text.='<p>Errors of  duplicate order number in the details.csv files<ul>';
-        foreach($this->doublonsInvoices as $doublonInvoice){
-            $text.='<li>'.$doublonInvoice.'</li>';
+        $text .= '</ul></p>';
+        $text .= '<p>Errors of  duplicate order number in the details.csv files<ul>';
+        foreach ($this->doublonsInvoices as $doublonInvoice) {
+            $text .= '<li>' . $doublonInvoice . '</li>';
         }
-        $text.='</ul></p>';
+        $text .= '</ul></p>';
         $this->mailer->sendEmail('[VAT INVOICES] Rapport', $text);
     }
 
-    
+
 
     /**
      * Check in the database if already sent
@@ -240,18 +241,14 @@ class ImportInvoice
      * @param string $orderExternalId
      * @return boolean
      */
-    private function checkIfAlreadyIntegrateInvoice($orderExternalId){
+    private function checkIfAlreadyIntegrateInvoice($orderExternalId)
+    {
         $files = $this->manager->getRepository(IntegrationFile::class)->findBy(
             [
-                'externalOrderId' => $orderExternalId, 
+                'externalOrderId' => $orderExternalId,
                 'documentType' => IntegrationFile::TYPE_INVOICE
             ]
-            );
-        return count($files) > 0;    
+        );
+        return count($files) > 0;
     }
-
-
-
-
-   
 }
