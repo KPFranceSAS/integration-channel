@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\IntegrationFile;
+use App\Entity\WebOrder;
 use App\Service\ChannelAdvisor\ChannelWebservice;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -249,6 +250,17 @@ class ImportInvoice
                 'documentType' => IntegrationFile::TYPE_INVOICE
             ]
         );
-        return count($files) > 0;
+        if (count($files) > 0) {
+            return true;
+        }
+        $webOrders = $this->manager->getRepository(WebOrder::class)->findBy(
+            [
+                'externalNumber' => $orderExternalId,
+            ]
+        );
+        if (count($webOrders) > 0) {
+            return true;
+        }
+        return false;
     }
 }
