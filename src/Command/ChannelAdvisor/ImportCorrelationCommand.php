@@ -34,11 +34,11 @@ class ImportCorrelationCommand extends Command
         $products = $this->initializeDatasFromCsv();
 
         foreach ($products as $product) {
-            $correlation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(["skuUsed" => $product]);
+            $correlation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(["skuUsed" => $product['skuUsed']]);
             if (!$correlation) {
                 $productCorrelation = new ProductCorrelation();
-                $productCorrelation->setSkuUsed($product);
-                $productCorrelation->setSkuErp("PX-" . $product);
+                $productCorrelation->setSkuUsed($product['skuUsed']);
+                $productCorrelation->setSkuErp($product['skuErp']);
                 $this->manager->persist($productCorrelation);
                 $this->manager->flush();
             }
@@ -54,7 +54,7 @@ class ImportCorrelationCommand extends Command
         while (($values = fgetcsv($contentFile, null, ';')) !== false) {
             if (count($values) == count($header)) {
                 $dataProducts = array_combine($header, $values);
-                $products[] = $dataProducts['Inventory Number'];
+                $products[] = $dataProducts;
             }
         }
         return $products;

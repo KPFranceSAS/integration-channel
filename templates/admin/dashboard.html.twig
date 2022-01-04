@@ -1,8 +1,37 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
 {% block main %}
+
+
+{% set urlOrder = ea_url()
+    .setController('App\\Controller\\Admin\\WebOrderCrudController')
+    .setAction('index') %}
+
+{% set urlProduct = ea_url()
+    .setController('App\\Controller\\Admin\\ProductCorrelationCrudController')
+    .setAction('index') %}
+
+{% set urlUser = ea_url()
+    .setController('App\\Controller\\Admin\\UserCrudController')
+    .setAction('index') %}    
+
 <div class="">
-    <div class="">
+    <div class="row">
+        <div class="col-4 text-center d-grid gap-2">
+            <a href="{{urlOrder}}" class="btn btn-outline-primary btn-lg">
+            <i class="fa fa-shopping-cart"></i><br/>Orders
+            </a>
+        </div>
+        <div class="col-4 text-center d-grid gap-2">
+            <a href="{{urlProduct}}" class="btn btn-outline-primary btn-lg">
+            <i class="fa fa-exchange"></i><br/>Products Correlations
+            </a>
+        </div>
+        <div class="col-4 text-center d-grid gap-2">
+            <a href="{{urlUser}}" class="btn btn-outline-primary btn-lg">
+            <i class="fa fa-user"></i><br/>Users
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}

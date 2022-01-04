@@ -20,7 +20,15 @@ class SecurityController extends AbstractController
         return $this->render('@EasyAdmin/page/login.html.twig', [
             'error' => $error,
             'last_username' => $lastUsername,
-
         ]);
+    }
+
+
+    /**
+     * @Route("/logout", name="logout", methods={"GET"})
+     */
+    public function logout(): void
+    {
+        throw new \Exception('Don\'t forget to activate logout in security.yaml');
     }
 }

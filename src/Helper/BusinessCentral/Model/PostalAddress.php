@@ -8,9 +8,9 @@ class PostalAddress
 
     public $street;
 
-    public $city;
-
     public $postalCode;
+
+    public $city;
 
     public $countryLetterCode;
 

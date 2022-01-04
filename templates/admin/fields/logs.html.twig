@@ -1,0 +1,8 @@
+
+<ul>
+   {% for item in field.value %}
+        <li>
+			<span class="badge badge-{% if  item.level == 'error' %}danger{% else %}secondary{% endif %}">{{item.date}}</span> {{item.content}}
+		</li>
+   {% endfor %}
+</ul>

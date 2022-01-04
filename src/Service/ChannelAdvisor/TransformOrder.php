@@ -45,9 +45,9 @@ class TransformOrder
 
         $orderBC->billToName = $orderApi->BillingFirstName . ' ' . $orderApi->BillingLastName;
 
-        $orderBC->sellingPostalAddress->street = $orderApi->BillingAddressLine1;
+        $orderBC->sellingPostalAddress->street = substr($orderApi->BillingAddressLine1, 0, 100);
         if (strlen($orderApi->BillingAddressLine2) > 0) {
-            $orderBC->sellingPostalAddress->street .= "\r\n" . $orderApi->BillingAddressLine2;
+            $orderBC->sellingPostalAddress->street .= "\r\n" . substr($orderApi->BillingAddressLine2, 0, 100);
         }
         $orderBC->sellingPostalAddress->city = $orderApi->BillingCity;
         $orderBC->sellingPostalAddress->postalCode = $orderApi->BillingPostalCode;
@@ -58,9 +58,9 @@ class TransformOrder
 
 
         $orderBC->shipToName = $orderApi->ShippingFirstName . ' ' . $orderApi->ShippingLastName;
-        $orderBC->shippingPostalAddress->street = $orderApi->ShippingAddressLine1;
+        $orderBC->shippingPostalAddress->street = substr($orderApi->ShippingAddressLine1, 0, 100);
         if (strlen($orderApi->ShippingAddressLine2) > 0) {
-            $orderBC->shippingPostalAddress->street .= "\r\n" . $orderApi->ShippingAddressLine2;
+            $orderBC->shippingPostalAddress->street .= "\r\n" . substr($orderApi->ShippingAddressLine2, 0, 100);
         }
         $orderBC->shippingPostalAddress->city = $orderApi->ShippingCity;
         $orderBC->shippingPostalAddress->postalCode = $orderApi->ShippingPostalCode;
@@ -114,7 +114,7 @@ class TransformOrder
                 }
             }
 
-            $saleLine->unitPrice = $line->UnitPrice * $line->Quantity;
+            $saleLine->unitPrice = $line->UnitPrice;
             $saleLine->quantity = $line->Quantity;
             $saleLine->discountAmount = abs($promotionAmount);
             $saleOrderLines[] = $saleLine;
@@ -122,14 +122,13 @@ class TransformOrder
 
         // ajout livraison 
         if ($shippingPrice > 0) {
+            $account = $this->businessCentralConnector->getAccountByNumber("758000");
             $saleLineDelivery = new SaleOrderLine();
             $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;
             $saleLineDelivery->quantity = 1;
+            $saleLineDelivery->accountId = $account['id'];
             $saleLineDelivery->unitPrice = $shippingPrice;
             $saleLineDelivery->description = 'SHIPPING FEES';
-            $saleLineDelivery->lineDetails = [
-                "number" => "758000"
-            ];
             $saleOrderLines[] = $saleLineDelivery;
         }
         return $saleOrderLines;

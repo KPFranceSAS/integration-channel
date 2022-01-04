@@ -53,7 +53,7 @@ class BusinessCentralConnector
 
 
 
-    public function getCompanyId()
+    public function getCompanyId(): string
     {
         if (!$this->companyId) {
             $this->selectCompany();
@@ -63,13 +63,13 @@ class BusinessCentralConnector
 
 
 
-    public function selectCompany(string $name = self::KP_FRANCE)
+    public function selectCompany(string $name = self::KP_FRANCE): string
     {
         $companies = $this->getCompanies();
         foreach ($companies as $company) {
             if (strtoupper($company['name']) == $name) {
                 $this->companyId = $company['id'];
-                return;
+                return $company['id'];
             }
         }
         throw new \Exception($name . ' not found');
@@ -111,7 +111,7 @@ class BusinessCentralConnector
 
 
 
-    public function downloadStream(string $endPoint)
+    public function downloadStream(string $endPoint): string
     {
         $response = $this->client->request('GET', $endPoint, [
             'debug' => $this->debugger
@@ -120,12 +120,7 @@ class BusinessCentralConnector
     }
 
 
-    /**
-     * Undocumented function
-     *
-     * @param [type] $sku
-     * @return void
-     */
+
     public function getElementByNumber(string $type, string $number, string $filter = 'number', array $paramSupps = [])
     {
         $query = [
@@ -143,12 +138,6 @@ class BusinessCentralConnector
     }
 
 
-    /**
-     * Undocumented function
-     *
-     * @param [type] $sku
-     * @return void
-     */
     public function getElementById(string $type, string $id, array $paramSupps = [])
     {
         try {
@@ -175,6 +164,11 @@ class BusinessCentralConnector
     public function getFullSaleOrder(string $id)
     {
         return  $this->getElementById(self::EP_SALES_ORDERS, $id, ['$expand' => 'salesOrderLines,customer']);
+    }
+
+    public function getFullSaleOrderByNumber(string $number)
+    {
+        return $this->getFullSaleOrder($this->getSaleOrderByNumber($number)['id']);
     }
 
     public function getSaleOrder(string $id)
@@ -238,6 +232,13 @@ class BusinessCentralConnector
         return $this->getElementById(self::EP_SALES_INVOICES, $id);
     }
 
+
+    public function getFullSaleInvoiceByNumber(string $number)
+    {
+        return $this->getElementByNumber(self::EP_SALES_INVOICES, $number, 'number', ['$expand' => 'salesInvoiceLines,customer']);
+    }
+
+
     public function getSaleInvoiceByNumber(string $number)
     {
         return $this->getElementByNumber(self::EP_SALES_INVOICES, $number);
@@ -253,7 +254,7 @@ class BusinessCentralConnector
         return $this->getElementByNumber(self::EP_SALES_INVOICES, $number, 'orderNumber', ['$expand' => 'salesInvoiceLines,customer']);
     }
 
-    public function getContentInvoicePdf(string $id)
+    public function getContentInvoicePdf(string $id): string
     {
         $value = $this->doGetRequest(self::EP_SALES_INVOICES . "($id)/pdfDocument")["value"];
         $firstValue = reset($value);

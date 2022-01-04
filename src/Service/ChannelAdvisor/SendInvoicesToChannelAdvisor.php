@@ -20,6 +20,8 @@ use Psr\Log\LoggerInterface;
 class SendInvoicesToChannelAdvisor
 {
 
+    const DELAI_MAX = 24;
+
     /**
      *
      * @var  LoggerInterface
@@ -86,6 +88,16 @@ class SendInvoicesToChannelAdvisor
     }
 
 
+    public function logLine($message)
+    {
+        $separator = str_repeat("-", strlen($message));
+        $this->logger->info('');
+        $this->logger->info($separator);
+        $this->logger->info($message);
+        $this->logger->info($separator);
+    }
+
+
 
     /**
      * 
@@ -102,7 +114,7 @@ class SendInvoicesToChannelAdvisor
         );
         $this->logger->info(count($ordersToSend) . ' orders to re-send');
         foreach ($ordersToSend as $orderToSend) {
-            $this->logger->info('>>> Sending file to channel of order ' . $orderToSend->getExternalNumber());
+            $this->logLine('>>> Sending file to channel of order ' . $orderToSend->getExternalNumber());
             $this->sendInvoice($orderToSend);
         }
     }
@@ -142,6 +154,11 @@ class SendInvoicesToChannelAdvisor
                 $this->addLogToOrder($order, 'Invoice send to channel Advisor');
             } else {
                 $this->addLogToOrder($order, 'Invoice not yet created');
+                $delay = $order->getNbHoursSinceCreation();
+                if ($delay > self::DELAI_MAX) {
+                    $this->addLogToOrder($order, 'Delay is overpassed');
+                    $this->addError("Delay max is overpassed ($delay hours of integration)  for the order " . $order->getExternalNumber());
+                }
             }
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
@@ -160,6 +177,6 @@ class SendInvoicesToChannelAdvisor
     protected function addLogToOrder(WebOrder $webOrder, $message)
     {
         $webOrder->addLog($message);
-        $this->logger->info("|__" . $message);
+        $this->logger->info($message);
     }
 }

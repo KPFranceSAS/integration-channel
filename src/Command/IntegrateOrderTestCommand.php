@@ -38,6 +38,13 @@ class IntegrateOrderTestCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
+        $invoice = $this->bcConnector->getFullSaleOrderByNumber('WPV21-25319');
+        dump($invoice);
+        return 1;
+
+        return Command::SUCCESS;
+
+
         $order = $this->channelWebservice->getAllDocumentsOrder(6894452);
         dump($order);
 

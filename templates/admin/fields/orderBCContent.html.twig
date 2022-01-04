@@ -1,0 +1,97 @@
+{% if field.value|length > 0%}
+	<div class="row " style="margin:0!important">
+
+		<div class="col-12">
+			<div class="">
+				<table class="table datagrid ">
+					<thead>
+						<tr>
+							<th>
+								Sku
+							</th>
+							<th>
+								Title
+							</th>
+
+							<th>
+								Unit Price
+							</th>
+							<th>
+								Qty
+							</th>
+							<th>
+								Net Amount
+							</th>
+							<th>
+								Net Tax Amount
+							</th>
+							<th>
+								Amount with tax
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for line in field.value.salesInvoiceLines %}
+							<tr>
+								
+								<td>
+									{% if line.lineDetails.number is defined %} {{line.lineDetails.number}} {% endif %}
+								</td>
+								<td>
+									{% if line.lineDetails.displayName is defined %} {{line.lineDetails.displayName}} {% endif %}
+								</td>
+								<td>
+									{{line.unitPrice}} {{field.value.currencyCode}}
+								</td>
+								<td>
+									{{line.quantity}} 
+								</td>
+								<td>
+									{{line.netAmount}} {{field.value.currencyCode}}
+								</td>
+								<td>
+									{{line.netTaxAmount}} {{field.value.currencyCode}}
+								</td>
+								<td>
+									{{line.netAmountIncludingTax}} {{field.value.currencyCode}}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+					<tfooter>
+						<tr>
+							<td colspan="6" class="text-right">
+								<strong>Total excl taxes</strong>
+							</td>
+							<td colspan="">
+								{{field.value.totalAmountExcludingTax}}
+								{{field.value.currencyCode}}
+							</td>
+						</tr>
+						<tr>
+							<td colspan="6" class="text-right">
+								<strong>Total tax amount</strong>
+							</td>
+							<td colspan="">
+								{{field.value.totalTaxAmount}}
+								{{field.value.currencyCode}}
+							</td>
+						</tr>
+						<tr>
+							<td colspan="6" class="text-right">
+								<strong>Total price</strong>
+							</td>
+							<td colspan="">
+								{{field.value.totalAmountIncludingTax}}
+								{{field.value.currencyCode}}
+							</td>
+						</tr>
+					</tfooter>
+				</table>
+
+			</div>
+		</div>
+	</div>
+{% else %}
+	<span class="bage badge-secondary">No integrated</span>
+{% endif %}

@@ -7,10 +7,6 @@ All requests will be done through http.
 A local database is steup to store all transactions and enabled workers to get an overview of all transactions and integrations.
 Moreover some setting will be accessible to ensure some 
 
-[deprecated] 
-~~In order to satisfy the conditions of Amazon about VAT, all sellers need to upload invoices and credit notes in order to be downloadables through Amazon interfaces.
-ChannelAdvisor helps doing the job by adding a functionnality of uploading documents and added to an order through their API~~
-
 ## Technologies
 php>=7.4, mysql8, symfony5, php cli
 

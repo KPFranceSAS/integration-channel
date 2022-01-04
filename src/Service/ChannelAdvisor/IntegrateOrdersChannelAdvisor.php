@@ -93,7 +93,8 @@ class IntegrateOrdersChannelAdvisor
             }
 
             if (count($this->errors) > 0) {
-                throw new \Exception(implode('<br/>', $this->errors));
+                $messageError = implode('<br/>', array_unique($this->errors));
+                throw new \Exception($messageError);
             }
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
@@ -118,7 +119,7 @@ class IntegrateOrdersChannelAdvisor
         );
         $this->logger->info(count($ordersToReintegrate) . ' orders to re-integrate');
         foreach ($ordersToReintegrate as $orderToReintegrate) {
-            $this->logger->info('>>> Reintegration of order ' . $orderToReintegrate->getExternalNumber());
+            $this->logLine('>>> Reintegration of order ' . $orderToReintegrate->getExternalNumber());
             $this->reIntegrateOrder($orderToReintegrate);
         }
     }
@@ -143,26 +144,39 @@ class IntegrateOrdersChannelAdvisor
     {
         $counter = 0;
         $ordersApi = $this->channel->getNewOrdersByBatch(true);
-        $this->logger->info('Integration first batch');
+        $this->logLine('Integration first batch');
         foreach ($ordersApi->value as $orderApi) {
             if ($this->integrateOrder($orderApi)) {
                 $counter++;
+                $this->logger->info("Orders integrated : $counter ");
             }
         }
 
         while (true) {
             if (property_exists($ordersApi, '@odata.nextLink')) {
-                $this->logger->info('Integration next batch');
+
+                $this->logLine('Integration next batch');
                 $ordersApi = $this->channel->getNextResults($ordersApi->{'@odata.nextLink'});
                 foreach ($ordersApi->value as $orderApi) {
                     if ($this->integrateOrder($orderApi)) {
                         $counter++;
+                        $this->logger->info("Orders integrated : $counter ");
                     }
                 }
             } else {
                 return;
             }
         }
+    }
+
+
+    public function logLine($message)
+    {
+        $separator = str_repeat("-", strlen($message));
+        $this->logger->info('');
+        $this->logger->info($separator);
+        $this->logger->info($message);
+        $this->logger->info($separator);
     }
 
 
@@ -175,22 +189,22 @@ class IntegrateOrdersChannelAdvisor
      */
     protected function integrateOrder(stdClass $order)
     {
-        $this->logger->info('>>> Integration order marketplace ' . $order->SiteName . " " . $order->SiteOrderID);
+        $this->logLine('>>> Integration order marketplace ' . $order->SiteName . " " . $order->SiteOrderID);
         if ($this->checkToIntegrateToInvoice($order)) {
-            $this->logger->info('|__To integrate ');
+            $this->logger->info('To integrate ');
 
             try {
                 $webOrder = WebOrder::createOneFromChannelAdvisor($order);
                 $this->manager->persist($webOrder);
-                $this->addLogToOrder($webOrder, 'Order transfromation to fit to ERP model');
+                $this->addLogToOrder($webOrder, 'Marked on channel advisor as exported');
+                $this->channel->markOrderAsExported($order->ID);
+                $this->addLogToOrder($webOrder, 'Order transformation to fit to ERP model');
                 $orderBC = $this->transformOrder->transformToAnFBAOrder($order);
                 $this->addLogToOrder($webOrder, 'Order creation in the ERP');
                 $erpOrder = $this->businessCentralConnector->createSaleOrder($orderBC->transformToArray());
                 $this->addLogToOrder($webOrder, 'Order created in the ERP with number ' . $erpOrder['number']);
                 $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
                 $webOrder->setOrderErp($erpOrder['number']);
-                $this->addLogToOrder($webOrder, 'Marked on channel advisor as exported');
-                $this->channel->markOrderAsExported($order->ID);
                 $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
             } catch (Exception $e) {
                 $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
@@ -199,10 +213,10 @@ class IntegrateOrdersChannelAdvisor
                 $this->addError($message);
             }
             $this->manager->flush();
-            $this->logger->info('|__Integration finished');
+            $this->logger->info('Integration finished');
             return true;
         } else {
-            $this->logger->info('|__No Integration');
+            $this->logger->info('No Integration');
             return false;
         }
     }
@@ -214,12 +228,12 @@ class IntegrateOrdersChannelAdvisor
      * Checks if already integrated in BusinessCentral (invoice or order)
      * 
      */
-    protected function reIntegrateOrder(WebOrder $order)
+    public function reIntegrateOrder(WebOrder $order)
     {
         try {
             $order->cleanErrors();
             $this->addLogToOrder($order, 'Attempt to new integration');
-            $this->addLogToOrder($order, 'Order transfromation to fit to ERP model');
+            $this->addLogToOrder($order, 'Order transformation to fit to ERP model');
 
             $orderApi = $order->getOrderContent();
 
@@ -229,8 +243,6 @@ class IntegrateOrdersChannelAdvisor
             $this->addLogToOrder($order, 'Order created in the ERP with number ' . $erpOrder['number']);
             $order->setStatus(WebOrder::STATE_SYNC_TO_ERP);
             $order->setOrderErp($erpOrder['number']);
-            $this->addLogToOrder($order, 'Marked on channel advisor as exported');
-            $this->channel->markOrderAsExported($orderApi->ID);
             $this->addLogToOrder($order, 'Integration done ' . $erpOrder['number']);
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
@@ -239,7 +251,7 @@ class IntegrateOrdersChannelAdvisor
             $this->addError($message);
         }
         $this->manager->flush();
-        $this->logger->info('|__Integration finished');
+        $this->logger->info('Integration finished');
         return true;
     }
 
@@ -251,7 +263,7 @@ class IntegrateOrdersChannelAdvisor
     protected function addLogToOrder(WebOrder $webOrder, $message)
     {
         $webOrder->addLog($message);
-        $this->logger->info("|__" . $message);
+        $this->logger->info($message);
     }
 
 
@@ -269,16 +281,20 @@ class IntegrateOrdersChannelAdvisor
     protected function checkToIntegrateToInvoice($order): bool
     {
         if ($this->isAlreadyRecordedDatabase($order)) {
-            $this->logger->info('|__X__Is Already Recorded Database');
+            $this->channel->markOrderAsExported($order->ID);
+            $this->logger->info('Marked on channel advisor as exported');
+            $this->logger->info('Is Already Recorded Database');
             return false;
         }
         if ($this->alreadyIntegratedErp($order)) {
-            $this->logger->info('|__X__Is Already Recorded on ERP');
+            $this->channel->markOrderAsExported($order->ID);
+            $this->logger->info('Marked on channel advisor as exported');
+            $this->logger->info('Is Already Recorded on ERP');
             return false;
         }
         if (!$this->checkStatusToInvoice($order)) {
 
-            $this->logger->info('|__X__Status is not good');
+            $this->logger->info('Status is not good for integration');
             return false;
         }
         return true;
@@ -318,7 +334,7 @@ class IntegrateOrdersChannelAdvisor
      */
     protected function checkIfOrder($orderApi): bool
     {
-        $this->logger->info('|__Check order in BC ' . $orderApi->SiteOrderID);
+        $this->logger->info('Check order in BC ' . $orderApi->SiteOrderID);
         $saleOrder = $this->businessCentralConnector->getSaleOrderByExternalNumber($orderApi->SiteOrderID);
         return $saleOrder != null;
     }
@@ -332,7 +348,7 @@ class IntegrateOrdersChannelAdvisor
      */
     protected function checkIfInvoice($orderApi): bool
     {
-        $this->logger->info('|__Check invoice in BC' . $orderApi->SiteOrderID);
+        $this->logger->info('Check invoice in BC ' . $orderApi->SiteOrderID);
         $saleOrder = $this->businessCentralConnector->getSaleInvoiceByExternalNumber($orderApi->SiteOrderID);
         return $saleOrder != null;
     }
@@ -346,7 +362,7 @@ class IntegrateOrdersChannelAdvisor
      */
     protected function checkIfPostedInvoice($orderApi): bool
     {
-        $this->logger->info('|__Check post invoice in export file ' . $orderApi->SiteOrderID);
+        $this->logger->info('Check post invoice in export file ' . $orderApi->SiteOrderID);
         $files = $this->manager->getRepository(IntegrationFile::class)->findBy(
             [
                 'externalOrderId' => $orderApi->SiteOrderID,
@@ -369,10 +385,10 @@ class IntegrateOrdersChannelAdvisor
     protected function checkStatusToInvoice($orderApi): bool
     {
         if (($orderApi->DistributionCenterTypeRollup == 'ExternallyManaged' && $orderApi->ShippingStatus == 'Shipped')) {
-            $this->logger->info('|__Status OK');
+            $this->logger->info('Status OK');
             return true;
         } else {
-            $this->logger->info("|__X__Status Bad " . $orderApi->DistributionCenterTypeRollup . " " . $orderApi->ShippingStatus);
+            $this->logger->info("X__Status Bad " . $orderApi->DistributionCenterTypeRollup . " " . $orderApi->ShippingStatus);
             return false;
         }
     }

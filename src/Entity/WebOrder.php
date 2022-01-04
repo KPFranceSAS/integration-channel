@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\WebOrderRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use stdClass;
 
@@ -118,6 +119,35 @@ class WebOrder
         $this->updatedAt = new \DateTimeImmutable();
     }
 
+    public function getNbHoursSinceCreation()
+    {
+        $now = new DateTime();
+        $interval = $now->diff($this->createdAt, true);
+        return $interval->format('%a') * 24 + $interval->format('%h');
+    }
+
+
+    public function haveInvoice()
+    {
+        return $this->invoiceErp != null;
+    }
+
+    public function needRetry()
+    {
+        return $this->status == self::STATE_ERROR;
+    }
+
+
+    public function getOrderErrors()
+    {
+        foreach ($this->errors as $error) {
+            return $error['content'];
+        }
+        return '';
+    }
+
+
+
 
     public function documentInErp()
     {
@@ -165,7 +195,7 @@ class WebOrder
      */
     public function addError($content)
     {
-        $this->errors = [
+        $this->errors[] = [
             'date' => date('d-m-Y H:i:s'),
             'content' => $content,
         ];
@@ -182,7 +212,7 @@ class WebOrder
      */
     public function addLog($content, $level = 'info')
     {
-        $this->logs = [
+        $this->logs[] = [
             'date' => date('d-m-Y H:i:s'),
             'content' => $content,
             'level' => $level
@@ -201,6 +231,10 @@ class WebOrder
     {
         return json_decode(json_encode($this->getContent()));
     }
+
+
+    public $orderBCContent = [];
+
 
     /**
      * @ORM\PreUpdate

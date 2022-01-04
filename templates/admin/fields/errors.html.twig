@@ -1,0 +1,7 @@
+<ul>
+   {% for item in field.value %}
+        <li>
+			<span class="badge badge-danger">{{item.date}}</span> {{item.content}}
+		</li>
+   {% endfor %}
+</ul>
