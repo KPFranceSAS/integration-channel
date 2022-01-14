@@ -19,14 +19,6 @@ flysystem:
                 permPublic: 0700
                 permPrivate: 0744
         kpssport.storage:        
-            adapter: 'ftp'
+            adapter: 'local'
             options:
-                host: '%env(resolve:EXPORT_JSON_HOST)%'
-                username: '%env(resolve:EXPORT_JSON_USERNAME)%'
-                password: '%env(resolve:EXPORT_JSON_PASSWORD)%'
-                port: 21
-                root: '%env(resolve:EXPORT_JSON_DIRECTORY)%'
-                passive: true
-                timeout: 30
-                ignore_passive_address: ~
-                utf8: false                
+                directory: '%kernel.project_dir%/public/report' 

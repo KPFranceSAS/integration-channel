@@ -61,17 +61,17 @@ class PublishPowerBi
         $i = 1;
         $q = $this->manager->createQuery('select a from App\Entity\AmazonOrder a');
         foreach ($q->toIterable() as $amz) {
-
-
-            $order = $this->serializer->serialize($amz, 'json', [
-                DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
-                'groups' => 'export_order'
-            ]);
-            $orders[] = json_decode($order);
-            ++$i;
-            if (($i % $batchSize) === 0) {
-                $this->logger->info("Exported  $i orders ");
-                $this->manager->clear(); // Detaches all objects from Doctrine!
+            if ($amz->getIsReturn() == false) {
+                $order = $this->serializer->serialize($amz, 'json', [
+                    DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
+                    'groups' => 'export_order'
+                ]);
+                $orders[] = json_decode($order);
+                ++$i;
+                if (($i % $batchSize) === 0) {
+                    $this->logger->info("Exported  $i orders ");
+                    $this->manager->clear(); // Detaches all objects from Doctrine!
+                }
             }
         }
 
