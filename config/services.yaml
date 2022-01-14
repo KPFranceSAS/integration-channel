@@ -18,6 +18,17 @@ services:
             $loginBC : '%env(resolve:BC_LOGIN)%'
             $passwordBC : '%env(resolve:BC_PASSWORD)%'
             $appEnv : '%env(resolve:APP_ENV)%'
+            $amzLwaId : '%env(resolve:AMZ_LWA_ID)%'
+            $amzLwaSecret  : '%env(resolve:AMZ_LWA_SECRET)%'
+            $amzAwsId  : '%env(resolve:AMZ_AWS_ID)%'
+            $amzAwsSecret  : '%env(resolve:AMZ_AWS_SECRET)%'
+            $amzArn  : '%env(resolve:AMZ_ARN)%'
+            $amzRefreshToken  : '%env(resolve:AMZ_REFRESH_TOKEN)%'
+            $akeneoUrl  : '%env(resolve:AKENEO_URL)%'
+            $akeneoClientId  : '%env(resolve:AKENEO_CLIENT_ID)%'
+            $akeneoClientSecret  : '%env(resolve:AKENEO_CLIENT_SECRET)%'
+            $akeneoUsername  : '%env(resolve:AKENEO_USERNAME)%'
+            $akeneoPassword  : '%env(resolve:AKENEO_PASSWORD)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

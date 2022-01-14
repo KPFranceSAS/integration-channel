@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Service\ChannelAdvisor;
 
 use App\Entity\IntegrationFile;
 use App\Entity\WebOrder;

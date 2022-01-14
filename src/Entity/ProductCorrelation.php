@@ -106,7 +106,6 @@ class ProductCorrelation
         return $this;
     }
 
-
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Utils;
 
 
 
@@ -37,31 +37,11 @@ class IntegrateOrderTestCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $invoice = $this->bcConnector->getFullSaleOrderByNumber('WPV21-25319');
-        dump($invoice);
-        return 1;
-
-        return Command::SUCCESS;
-
-
-        $order = $this->channelWebservice->getAllDocumentsOrder(6894452);
-        dump($order);
-
-        return 1;
-
-        $orderFinal = $this->bcConnector->getFullSaleOrder('62b60658-f4df-4d11-907d-7219682e2254');
-
-        //$orderFinal = $this->bcConnector->getFullSaleOrder('62b60658-f4df-4d11-907d-7219682e2254');
-        $invoice = $this->bcConnector->getSaleInvoiceByOrderNumber('WPV21-24168');
-        dump($invoice);
-        return 1;
-
-        //$pdf = $this->bcConnector->getContentInvoicePdf($invoice['id']);
-
         $product = $this->bcConnector->getItemByNumber("PX-P3D2051");
+        dump($product);
         $account = $this->bcConnector->getAccountByNumber("758000");
-
+        dump($account);
+        dump($this->bcConnector->getCustomerByNumber("000230"));
         $lines = [
             [
                 "lineType" => "Item",
@@ -77,9 +57,6 @@ class IntegrateOrderTestCommand extends Command
                 "unitPrice" => 5.99,
                 "quantity" => 1,
                 "description" => "Shipping fees",
-                'lineDetails' => [
-                    "number" => "758000"
-                ]
             ],
         ];
 
@@ -87,10 +64,10 @@ class IntegrateOrderTestCommand extends Command
         $order =  [
             'orderDate' => date("Y-m-d"),
             'customerNumber' => "000230",
-            "currencyCode" => "GBP",
+
             "billToName" => "Vipul Parmar",
             "sellingPostalAddress" => [
-                "street" => "9 GATEHILL rnGARDENS",
+                "street" => "9 GATEHILL \r\nGARDENS",
                 "postalCode" => "66840",
                 "city" => "Bourg Madame",
                 "countryLetterCode" => "FR",

@@ -146,6 +146,7 @@ class SendInvoicesToChannelAdvisor
 
                 $this->addLogToOrder($order, 'Start sending invoice to Channel Advisor');
                 $orderApi = $order->getOrderContent();
+
                 $sendFile = $this->channel->sendInvoice($orderApi->ProfileID, $orderApi->ID, $invoice['totalAmountIncludingTax'], $invoice['totalTaxAmount'], $order->getInvoiceErp(), $contentPdf);
                 if (!$sendFile) {
                     throw new \Exception('Upload  was not done uploaded on ChannelAdvisor for ' . $order->getInvoiceErp());

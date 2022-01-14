@@ -3,6 +3,7 @@
 namespace App\Command\ChannelAdvisor;
 
 use App\Entity\ProductCorrelation;
+use App\Helper\Utils\CsvExtracter;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,13 +14,16 @@ class ImportCorrelationCommand extends Command
     protected static $defaultName = 'app:import-correlation';
     protected static $defaultDescription = 'Import all Correlations';
 
-    public function __construct(ManagerRegistry $manager)
+    public function __construct(ManagerRegistry $manager, CsvExtracter $csvExtracter)
     {
         $this->manager = $manager->getManager();
+        $this->csvExtracter = $csvExtracter;
         parent::__construct();
     }
 
     private $manager;
+
+    private $csvExtracter;
 
 
     protected function configure(): void
@@ -30,9 +34,9 @@ class ImportCorrelationCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $products = $this->initializeDatasFromCsv();
-
+        $pathFile = __DIR__ . '/../../../docs/equivalence.csv';
+        $products = $this->csvExtracter->extractAssociativeDatasFromCsv($pathFile);
+        $output->writeln('Start imports ' . count($products));
         foreach ($products as $product) {
             $correlation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(["skuUsed" => $product['skuUsed']]);
             if (!$correlation) {
@@ -43,20 +47,7 @@ class ImportCorrelationCommand extends Command
                 $this->manager->flush();
             }
         }
+        $output->writeln('Finish imports ' . count($products));
         return Command::SUCCESS;
-    }
-
-    public function initializeDatasFromCsv(): array
-    {
-        $contentFile = fopen(__DIR__ . '/../../../docs/equivalence.csv', "r");
-        $products = [];
-        $header = fgetcsv($contentFile, null, ';');
-        while (($values = fgetcsv($contentFile, null, ';')) !== false) {
-            if (count($values) == count($header)) {
-                $dataProducts = array_combine($header, $values);
-                $products[] = $dataProducts;
-            }
-        }
-        return $products;
     }
 }

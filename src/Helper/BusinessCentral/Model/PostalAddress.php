@@ -2,10 +2,8 @@
 
 namespace App\Helper\BusinessCentral\Model;
 
-
 class PostalAddress
 {
-
     public $street;
 
     public $postalCode;

@@ -2,7 +2,6 @@
 
 namespace App\Service\BusinessCentral;
 
-use App\Helper\BusinessCentral\Model\SaleOrder;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 
@@ -88,12 +87,17 @@ class BusinessCentralConnector
 
     public function doPostRequest(string $endPoint, array $json, array $query = [])
     {
+        if ($this->debugger) {
+            $this->logger->info(json_encode($json));
+        }
+
         $response = $this->client->request('POST', self::EP_COMPANIES . '(' . $this->getCompanyId() . ')/' . $endPoint, [
             'query' =>  $query,
             'json' => $json,
             'headers' => ['Content-Type' => 'application/json'],
             'debug' => $this->debugger
         ]);
+
         return json_decode($response->getBody()->getContents(), true);
     }
 
@@ -195,6 +199,13 @@ class BusinessCentralConnector
     public function getSaleLineOrder(string $orderId, string $id)
     {
         return $this->getElementById(self::EP_SALES_ORDERS . "($orderId)/" . self::EP_SALES_ORDERS_LINE, $id);
+    }
+
+
+
+    public function getAllCustomers()
+    {
+        return $this->doGetRequest(self::EP_CUSTOMERS);
     }
 
 

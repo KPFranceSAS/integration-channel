@@ -2,11 +2,8 @@
 
 namespace App\Helper\BusinessCentral\Model;
 
-
-
 class SaleOrderLine
 {
-
     const TYPE_COMMENT = "Comment";
     const TYPE_GLACCOUNT = "Account";
     const TYPE_ITEM = "Item";

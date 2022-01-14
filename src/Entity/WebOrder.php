@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\WebOrderRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use stdClass;
 
 /**
- * @ORM\Entity(repositoryClass=WebOrderRepository::class)
+ * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
 class WebOrder
@@ -243,7 +242,6 @@ class WebOrder
     {
         $this->updatedAt = new \DateTimeImmutable();
     }
-
 
     public function getId(): ?int
     {

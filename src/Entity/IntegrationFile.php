@@ -2,11 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\IntegrationFileRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=IntegrationFileRepository::class)
+ * @ORM\Entity()
  */
 class IntegrationFile
 {
@@ -110,8 +109,6 @@ class IntegrationFile
     {
         return floatval(str_replace(",", '.', $stringFloat));
     }
-
-
 
     public function getId(): ?int
     {

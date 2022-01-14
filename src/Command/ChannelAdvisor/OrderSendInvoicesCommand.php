@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class OrderSendInvoicesCommand extends Command
 {
-    protected static $defaultName = 'app:send-invoices-to-channeladvisor';
+    protected static $defaultName = 'app:channel-send-invoices';
     protected static $defaultDescription = 'Send all orders transformed in invoices in the ERP';
 
     public function __construct(SendInvoicesToChannelAdvisor $integrate)

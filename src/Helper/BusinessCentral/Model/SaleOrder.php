@@ -4,7 +4,6 @@ namespace App\Helper\BusinessCentral\Model;
 
 use App\Helper\BusinessCentral\Model\PostalAddress;
 
-
 class SaleOrder
 {
     const STATUS_OPEN = "Open";
@@ -28,29 +27,29 @@ class SaleOrder
 
     public $number;
 
-    public  $currencyCode;
+    public $currencyCode;
 
-    public  $pricesIncludeTax = true;
+    public $pricesIncludeTax = true;
 
-    public  $paymentTermsId;
+    public $paymentTermsId;
 
-    public  $shipmentMethodId;
+    public $shipmentMethodId;
 
-    public  $partialShipping;
+    public $partialShipping;
 
-    public  $requestedDeliveryDate;
+    public $requestedDeliveryDate;
 
-    public  $discountAmount;
+    public $discountAmount;
 
-    public  $discountAppliedBeforeTax;
+    public $discountAppliedBeforeTax;
 
-    public  $totalAmountExcludingTax;
+    public $totalAmountExcludingTax;
 
-    public  $totalTaxAmount;
+    public $totalTaxAmount;
 
-    public  $totalAmountIncludingTax;
+    public $totalAmountIncludingTax;
 
-    public  $status;
+    public $status;
 
     public $phoneNumber;
 
