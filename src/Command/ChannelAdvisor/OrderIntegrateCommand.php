@@ -4,6 +4,7 @@ namespace App\Command\ChannelAdvisor;
 
 use App\Service\ChannelAdvisor\IntegrateOrdersChannelAdvisor;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -29,14 +30,14 @@ class OrderIntegrateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription);
+            ->setDescription(self::$defaultDescription)
+            ->addArgument('nbOrders', InputArgument::OPTIONAL, 'The number  of orders we want to be integrated');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $this->integrate->processOrders();
-
+        $nbOrders = $input->getArgument('nbOrders');
+        $this->integrate->processOrders($nbOrders);
         return Command::SUCCESS;
     }
 }

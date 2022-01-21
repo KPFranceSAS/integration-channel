@@ -60,7 +60,7 @@ class IntegrateOrdersChannelAdvisor
      * 
      * @return void
      */
-    public function processOrders($reIntegrate = false)
+    public function processOrders($reIntegrate = false, $nbMax = null)
     {
         try {
             $this->errors = [];
@@ -70,8 +70,8 @@ class IntegrateOrdersChannelAdvisor
                 $this->reIntegrateAllOrders();
                 $this->logger->info('Ended reintegrations');
             } else {
-                $this->logger->info('Start integrations');
-                $this->integrateAllOrders();
+                $this->logger->info('Start integrations with max = ' . $nbMax);
+                $this->integrateAllOrders($nbMax);
                 $this->logger->info('Ended integration');
             }
 
@@ -118,20 +118,21 @@ class IntegrateOrdersChannelAdvisor
     }
 
 
-    /**
-     * process all invocies directory
-     *
-     * @return void
-     */
-    protected function integrateAllOrders()
+
+    protected function integrateAllOrders($nbMax = null)
     {
         $counter = 0;
+        $counterGeneral = 0;
         $ordersApi = $this->channel->getNewOrdersByBatch(true);
         $this->logLine('Integration first batch');
         foreach ($ordersApi->value as $orderApi) {
             if ($this->integrateOrder($orderApi)) {
                 $counter++;
                 $this->logger->info("Orders integrated : $counter ");
+            }
+            $counterGeneral++;
+            if ($nbMax && $nbMax < $counterGeneral) {
+                return;
             }
         }
 
@@ -144,6 +145,10 @@ class IntegrateOrdersChannelAdvisor
                     if ($this->integrateOrder($orderApi)) {
                         $counter++;
                         $this->logger->info("Orders integrated : $counter ");
+                    }
+                    $counterGeneral++;
+                    if ($nbMax && $nbMax < $counterGeneral) {
+                        return;
                     }
                 }
             } else {
