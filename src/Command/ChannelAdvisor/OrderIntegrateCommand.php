@@ -37,7 +37,7 @@ class OrderIntegrateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $nbOrders = $input->getArgument('nbOrders');
-        $this->integrate->processOrders($nbOrders);
+        $this->integrate->processOrders(false, $nbOrders);
         return Command::SUCCESS;
     }
 }
