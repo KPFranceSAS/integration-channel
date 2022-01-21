@@ -3,18 +3,18 @@
 namespace App\EventSubscriber;
 
 use App\Entity\WebOrder;
-use App\Service\BusinessCentral\BusinessCentralConnector;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 
 class EASubscriber implements EventSubscriberInterface
 {
-    private $businessCentralConnector;
+    private $businessCentralAggregator;
 
-    public function __construct(BusinessCentralConnector $businessCentralConnector)
+    public function __construct(BusinessCentralAggregator $businessCentralAggregator)
     {
-        $this->businessCentralConnector = $businessCentralConnector;
+        $this->businessCentralAggregator = $businessCentralAggregator;
     }
 
     public static function getSubscribedEvents()
@@ -32,12 +32,16 @@ class EASubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($entity->getStatus() == WebOrder::STATE_SYNC_TO_ERP) {
-            $content = $this->businessCentralConnector->getFullSaleOrderByNumber($entity->getOrderErp());
-            $content["salesInvoiceLines"] = $content["salesOrderLines"];
-            $entity->orderBCContent = $content;
-        } elseif ($entity->getStatus() == WebOrder::STATE_INVOICED) {
-            $entity->orderBCContent = $this->businessCentralConnector->getFullSaleInvoiceByNumber($entity->getInvoiceErp());
+        if (in_array($entity->getStatus(),  [WebOrder::STATE_SYNC_TO_ERP, WebOrder::STATE_SYNC_TO_ERP])) {
+            $bcConnector =  $this->businessCentralAggregator->getBusinessCentralConnector($entity->getCompany());
+            if ($entity->getStatus() == WebOrder::STATE_SYNC_TO_ERP) {
+
+                $content = $bcConnector->getFullSaleOrderByNumber($entity->getOrderErp());
+                $content["salesInvoiceLines"] = $content["salesOrderLines"];
+                $entity->orderBCContent = $content;
+            } elseif ($entity->getStatus() == WebOrder::STATE_INVOICED) {
+                $entity->orderBCContent = $bcConnector->getFullSaleInvoiceByNumber($entity->getInvoiceErp());
+            }
         }
     }
 } {

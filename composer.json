@@ -19,6 +19,7 @@
         "illuminate/contracts": "^8.73",
         "illuminate/macroable": "^8.73",
         "illuminate/support": "^8.73",
+        "kps/aliexpress": "dev-master",
         "kriswallsmith/buzz": "^1.2",
         "league/flysystem-async-aws-s3": "^2.0",
         "league/flysystem-aws-s3-v3": "^2.0",

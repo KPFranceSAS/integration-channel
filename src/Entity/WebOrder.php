@@ -12,11 +12,14 @@ use stdClass;
  */
 class WebOrder
 {
-    const  CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
+    const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
+
+    const CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
 
     const DOCUMENT_ORDER = 'ORDER';
 
     const DOCUMENT_INVOICE = 'INVOICE';
+
 
     const DEPOT_FBA_AMAZON = 'AMAZON';
 
@@ -25,6 +28,13 @@ class WebOrder
     const DEPOT_ACTIVE_ANTS = 'ACTIVE';
 
     const DEPOT_MIXED = 'MIXED';
+
+
+    const FULFILLED_BY_EXTERNAL = 'EXTERNALLY MANAGED';
+
+    const FULFILLED_BY_SELLER = 'OWN MANAGED';
+
+    const FULFILLED_MIXED = 'MIXED MANAGED';
 
     const STATE_ERROR_INVOICE = -2;
 
@@ -175,15 +185,41 @@ class WebOrder
 
         if ($orderApi->DistributionCenterTypeRollup == 'ExternallyManaged') {
             $webOrder->setWarehouse(WebOrder::DEPOT_FBA_AMAZON);
+            $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_EXTERNAL);
         } elseif ($orderApi->DistributionCenterTypeRollup == 'SellerManaged') {
-            $webOrder->setWarehouse(WebOrder::DEPOT_ACTIVE_ANTS);
+            $webOrder->setWarehouse(WebOrder::DEPOT_CENTRAL);
+            $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
         } else {
             $webOrder->setWarehouse(WebOrder::DEPOT_MIXED);
+            $webOrder->setFulfilledBy(WebOrder::FULFILLED_MIXED);
         }
         $webOrder->addLog('Retrieved from ChannelAdvisorApi');
         $webOrder->setContent($orderApi);
         return $webOrder;
     }
+
+
+    /**
+     * Undocumented function
+     *
+     * @param stdClass $orderApi
+     * @return WebOrder
+     */
+    public static function createOneFromAliExpress(stdClass $orderApi)
+    {
+        $webOrder = new WebOrder();
+        $webOrder->setExternalNumber($orderApi->id);
+        $webOrder->setStatus(WebOrder::STATE_CREATED);
+        $webOrder->setChannel(WebOrder::CHANNEL_ALIEXPRESS);
+        $webOrder->setSubchannel('AliExpress');
+        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
+        $webOrder->setWarehouse(WebOrder::DEPOT_CENTRAL);
+        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+        $webOrder->addLog('Retrieved from Aliexpress');
+        $webOrder->setContent($orderApi);
+        return $webOrder;
+    }
+
 
 
     /**
@@ -233,6 +269,16 @@ class WebOrder
 
 
     public $orderBCContent = [];
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $company;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $fulfilledBy;
 
 
     /**
@@ -400,6 +446,30 @@ class WebOrder
     public function setErpDocument(string $erpDocument): self
     {
         $this->erpDocument = $erpDocument;
+
+        return $this;
+    }
+
+    public function getCompany(): ?string
+    {
+        return $this->company;
+    }
+
+    public function setCompany(string $company): self
+    {
+        $this->company = $company;
+
+        return $this;
+    }
+
+    public function getFulfilledBy(): ?string
+    {
+        return $this->fulfilledBy;
+    }
+
+    public function setFulfilledBy(?string $fulfilledBy): self
+    {
+        $this->fulfilledBy = $fulfilledBy;
 
         return $this;
     }

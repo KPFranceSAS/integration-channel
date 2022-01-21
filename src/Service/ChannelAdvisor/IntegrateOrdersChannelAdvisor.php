@@ -4,12 +4,12 @@ namespace App\Service\ChannelAdvisor;
 
 use App\Entity\IntegrationFile;
 use App\Entity\WebOrder;
-use App\Service\BusinessCentral\BusinessCentralConnector;
+use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\ChannelAdvisor\ChannelWebservice;
 use App\Service\ChannelAdvisor\TransformOrder;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Psr\Log\LoggerInterface;
 use stdClass;
@@ -22,34 +22,16 @@ use stdClass;
 class IntegrateOrdersChannelAdvisor
 {
 
-    /**
-     *
-     * @var  LoggerInterface
-     */
     private $logger;
 
-    /**
-     *
-     * @var ChannelWebservice
-     */
     private $channel;
 
-    /**
-     *
-     * @var  ObjectManager
-     */
     private $manager;
 
-    /**
-     *
-     * @var BusinessCentralConnector
-     */
+    private $businessCentralAggregator;
+
     private $businessCentralConnector;
 
-    /**
-     *
-     * @var  TransformOrder 
-     */
     private $transformOrder;
 
 
@@ -59,7 +41,7 @@ class IntegrateOrdersChannelAdvisor
         LoggerInterface $logger,
         MailService $mailer,
         ChannelWebservice $channel,
-        BusinessCentralConnector $businessCentralConnector,
+        BusinessCentralAggregator $businessCentralAggregator,
         TransformOrder $transformOrder
     ) {
         $this->logger = $logger;
@@ -67,7 +49,8 @@ class IntegrateOrdersChannelAdvisor
         $this->channel = $channel;
         $this->manager = $manager->getManager();
         $this->channel = $channel;
-        $this->businessCentralConnector = $businessCentralConnector;
+        $this->businessCentralAggregator = $businessCentralAggregator;
+        $this->businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
         $this->transformOrder = $transformOrder;
     }
 
@@ -98,7 +81,7 @@ class IntegrateOrdersChannelAdvisor
             }
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmail('[Order Integration] Error', $e->getMessage(), 'stephane.lanjard@kpsport.com');
+            $this->mailer->sendEmail('[Order Integration ChannelAdvisor] Error', $e->getMessage(), 'stephane.lanjard@kpsport.com');
         }
     }
 
@@ -198,11 +181,16 @@ class IntegrateOrdersChannelAdvisor
                 $this->manager->persist($webOrder);
                 $this->addLogToOrder($webOrder, 'Marked on channel advisor as exported');
                 $this->channel->markOrderAsExported($order->ID);
+
                 $this->addLogToOrder($webOrder, 'Order transformation to fit to ERP model');
-                $orderBC = $this->transformOrder->transformToAnFBAOrder($order);
-                $this->addLogToOrder($webOrder, 'Order creation in the ERP');
+
+                $webOrder->setCompany($this->businessCentralConnector->getCompanyName());
+                $orderBC = $this->transformOrder->transformToAnBcOrder($order);
+
+                $this->addLogToOrder($webOrder, 'Order creation in the ERP ' . $this->businessCentralConnector->getCompanyName());
                 $erpOrder = $this->businessCentralConnector->createSaleOrder($orderBC->transformToArray());
-                $this->addLogToOrder($webOrder, 'Order created in the ERP with number ' . $erpOrder['number']);
+
+                $this->addLogToOrder($webOrder, 'Order created in the ERP ' . $this->businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
                 $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
                 $webOrder->setOrderErp($erpOrder['number']);
                 $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
@@ -234,13 +222,13 @@ class IntegrateOrdersChannelAdvisor
             $order->cleanErrors();
             $this->addLogToOrder($order, 'Attempt to new integration');
             $this->addLogToOrder($order, 'Order transformation to fit to ERP model');
-
             $orderApi = $order->getOrderContent();
 
-            $orderBC = $this->transformOrder->transformToAnFBAOrder($orderApi);
+            $orderBC = $this->transformOrder->transformToAnBcOrder($orderApi);
             $this->addLogToOrder($order, 'Order creation in the ERP');
             $erpOrder = $this->businessCentralConnector->createSaleOrder($orderBC->transformToArray());
-            $this->addLogToOrder($order, 'Order created in the ERP with number ' . $erpOrder['number']);
+            $this->addLogToOrder($order, 'Order created in the ERP ' . $this->businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
+
             $order->setStatus(WebOrder::STATE_SYNC_TO_ERP);
             $order->setOrderErp($erpOrder['number']);
             $this->addLogToOrder($order, 'Integration done ' . $erpOrder['number']);
@@ -254,10 +242,6 @@ class IntegrateOrdersChannelAdvisor
         $this->logger->info('Integration finished');
         return true;
     }
-
-
-
-
 
 
     protected function addLogToOrder(WebOrder $webOrder, $message)
@@ -309,7 +293,10 @@ class IntegrateOrdersChannelAdvisor
     protected function isAlreadyRecordedDatabase($orderApi): bool
     {
         $orderRecorded = $this->manager->getRepository(WebOrder::class)->findBy(
-            ['externalNumber' => $orderApi->SiteOrderID]
+            [
+                'externalNumber' => $orderApi->SiteOrderID,
+                "channel" => WebOrder::CHANNEL_CHANNELADVISOR
+            ]
         );
         return count($orderRecorded) > 0;
     }

@@ -4,7 +4,8 @@ namespace App\Service\ChannelAdvisor;
 
 
 use App\Entity\WebOrder;
-use App\Service\BusinessCentral\BusinessCentralConnector;
+use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Service\BusinessCentral\KpFranceConnector;
 use App\Service\ChannelAdvisor\ChannelWebservice;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,28 +23,15 @@ class SendInvoicesToChannelAdvisor
 
     const DELAI_MAX = 24;
 
-    /**
-     *
-     * @var  LoggerInterface
-     */
     private $logger;
 
-    /**
-     *
-     * @var ChannelWebservice
-     */
+
     private $channel;
 
-    /**
-     *
-     * @var  ObjectManager
-     */
+
     private $manager;
 
-    /**
-     *
-     * @var BusinessCentralConnector
-     */
+
     private $businessCentralConnector;
 
 
@@ -52,14 +40,14 @@ class SendInvoicesToChannelAdvisor
         LoggerInterface $logger,
         MailService $mailer,
         ChannelWebservice $channel,
-        BusinessCentralConnector $businessCentralConnector
+        KpFranceConnector $kpFranceConnector
     ) {
         $this->logger = $logger;
         $this->mailer = $mailer;
         $this->channel = $channel;
         $this->manager = $manager->getManager();
         $this->channel = $channel;
-        $this->businessCentralConnector = $businessCentralConnector;
+        $this->kpFranceConnector = $kpFranceConnector;
     }
 
 
@@ -108,8 +96,9 @@ class SendInvoicesToChannelAdvisor
     {
         $ordersToSend = $this->manager->getRepository(WebOrder::class)->findBy(
             [
-                'status' => WebOrder::STATE_SYNC_TO_ERP,
-                "channel" => WebOrder::CHANNEL_CHANNELADVISOR
+                "status" => WebOrder::STATE_SYNC_TO_ERP,
+                "channel" => WebOrder::CHANNEL_CHANNELADVISOR,
+                "company" => BusinessCentralConnector::KP_FRANCE,
             ]
         );
         $this->logger->info(count($ordersToSend) . ' orders to re-send');

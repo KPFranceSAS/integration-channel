@@ -29,6 +29,9 @@ services:
             $akeneoClientSecret  : '%env(resolve:AKENEO_CLIENT_SECRET)%'
             $akeneoUsername  : '%env(resolve:AKENEO_USERNAME)%'
             $akeneoPassword  : '%env(resolve:AKENEO_PASSWORD)%'
+            $aliExpressClientId :  '%env(resolve:ALI_EXPRESS_ID)%'
+            $aliExpressClientSecret : '%env(resolve:ALI_EXPRESS_SECRET)%'
+            $aliExpressClientAccessToken : '%env(resolve:ALI_EXPRESS_TOKEN)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

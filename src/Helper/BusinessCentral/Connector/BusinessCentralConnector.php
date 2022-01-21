@@ -1,13 +1,22 @@
 <?php
 
-namespace App\Service\BusinessCentral;
+namespace App\Helper\BusinessCentral\Connector;
 
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 
-class BusinessCentralConnector
+abstract class BusinessCentralConnector
 {
     const KP_FRANCE = "KP FRANCE";
+
+    const GADGET_IBERIA = "GADGET IBERIA SL";
+
+    const KIT_PERSONALIZACION_SPORT = "KIT PERSONALIZACION SPORT SL";
+
+    const INIA = "INIA SLU";
+
+
+
 
     const EP_ITEMS = "items";
 
@@ -25,11 +34,11 @@ class BusinessCentralConnector
 
     const EP_SALES_ORDERS_LINE = "salesOrderLines";
 
-    private $logger;
+    protected $logger;
 
-    private $debugger;
+    protected $debugger;
 
-    private $companyId;
+    protected $companyId;
 
     /**
      * Constructor
@@ -50,19 +59,28 @@ class BusinessCentralConnector
     }
 
 
+    public function getCompanyName()
+    {
+        return $this->getCompanyIntegration();
+    }
 
 
     public function getCompanyId(): string
     {
         if (!$this->companyId) {
-            $this->selectCompany();
+            $this->selectCompany($this->getCompanyIntegration());
         }
         return $this->companyId;
     }
 
 
+    abstract protected function getCompanyIntegration();
 
-    public function selectCompany(string $name = self::KP_FRANCE): string
+    abstract protected function getAccountNumberForExpedition();
+
+
+
+    public function selectCompany(string $name): string
     {
         $companies = $this->getCompanies();
         foreach ($companies as $company) {
@@ -75,6 +93,10 @@ class BusinessCentralConnector
     }
 
 
+    public function getAccountForExpedition()
+    {
+        return $this->getAccountByNumber($this->getAccountNumberForExpedition());
+    }
 
 
     public function getCompanies()

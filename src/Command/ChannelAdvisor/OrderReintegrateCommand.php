@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class OrderReintegrateCommand extends Command
 {
-    protected static $defaultName = 'app:reintegrate-orders-from-channel';
+    protected static $defaultName = 'app:channel-reintegrate-orders-from-channel';
     protected static $defaultDescription = 'Reintegrate all orders on error';
 
     public function __construct(IntegrateOrdersChannelAdvisor $integrate)

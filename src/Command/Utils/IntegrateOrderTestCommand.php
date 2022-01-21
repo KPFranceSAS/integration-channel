@@ -4,7 +4,8 @@ namespace App\Command\Utils;
 
 
 
-use App\Service\BusinessCentral\BusinessCentralConnector;
+use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Service\BusinessCentral\KpFranceConnector;
 use App\Service\ChannelAdvisor\ChannelWebservice;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,7 +16,7 @@ class IntegrateOrderTestCommand extends Command
     protected static $defaultName = 'app:integrate-order-test';
     protected static $defaultDescription = 'integrate order test';
 
-    public function __construct(BusinessCentralConnector $saleOrderConnector, ChannelWebservice $channelWebservice)
+    public function __construct(KpFranceConnector $saleOrderConnector, ChannelWebservice $channelWebservice)
     {
         $this->bcConnector = $saleOrderConnector;
         $this->channelWebservice = $channelWebservice;
@@ -37,6 +38,20 @@ class IntegrateOrderTestCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+
+        $product = $this->bcConnector->getItemByNumber("PX-P3D2051");
+        dump($product);
+        $account = $this->bcConnector->getAccountByNumber("758000");
+        dump($account);
+
+        $product = $this->bcConnector->selectCompany(BusinessCentralConnector::GADGET_IBERIA);
+        $product = $this->bcConnector->getItemByNumber("PX-P3D2051");
+        $account = $this->bcConnector->getAccountByNumber("758000");
+        dump($account);
+        dump($product);
+
+        return 1;
+
         $product = $this->bcConnector->getItemByNumber("PX-P3D2051");
         dump($product);
         $account = $this->bcConnector->getAccountByNumber("758000");

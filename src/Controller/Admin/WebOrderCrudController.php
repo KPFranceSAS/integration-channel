@@ -3,8 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\WebOrder;
-use App\Service\BusinessCentral\BusinessCentralConnector;
+use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\ChannelAdvisor\IntegrateOrdersChannelAdvisor;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -12,12 +16,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use Symfony\Component\HttpFoundation\Response;
 
 class WebOrderCrudController extends AbstractCrudController
@@ -77,25 +84,36 @@ class WebOrderCrudController extends AbstractCrudController
             'Error send invoice' => WebOrder::STATE_ERROR_INVOICE,
         ];
 
+
+        $choiceCompany = [
+            BusinessCentralConnector::GADGET_IBERIA => BusinessCentralConnector::GADGET_IBERIA,
+            BusinessCentralConnector::KIT_PERSONALIZACION_SPORT => BusinessCentralConnector::KIT_PERSONALIZACION_SPORT,
+            BusinessCentralConnector::KP_FRANCE => BusinessCentralConnector::KP_FRANCE,
+        ];
+
         $choiceChannels = [
+            'AliExpress' => 'AliExpress',
             'Amazon UK' => 'Amazon UK',
             'Amazon IT'  => "Amazon Seller Central - IT",
             'Amazon DE' => "Amazon Seller Central - DE",
             'Amazon ES' => "Amazon Seller Central - ES",
             'Amazon FR' => 'Amazon Seller Central - FR',
+            'OwletCare' => 'Owlet Care',
         ];
         return $filters
             ->add(ChoiceFilter::new('status')->canSelectMultiple(true)->setChoices($choiceStatuts))
             ->add(DateTimeFilter::new('createdAt', "Created at"))
-            ->add(ChoiceFilter::new('subchannel', "Marketplace")->canSelectMultiple(true)->setChoices($choiceChannels));
+            ->add(ChoiceFilter::new('subchannel', "Marketplace")->canSelectMultiple(true)->setChoices($choiceChannels))
+            ->add(ChoiceFilter::new('company', "Company")->canSelectMultiple(true)->setChoices($choiceCompany));
     }
 
 
 
 
-    public function downloadInvoice(AdminContext $context, BusinessCentralConnector $businessCentral)
+    public function downloadInvoice(AdminContext $context, BusinessCentralAggregator $businessCentralAggregator)
     {
         $webOrder = $context->getEntity()->getInstance();
+        $businessCentral = $businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
         $invoice = $businessCentral->getSaleInvoiceByNumber($webOrder->getInvoiceErp());
         $contentInvoice  = $businessCentral->getContentInvoicePdf($invoice['id']);
         $response = new Response();
@@ -160,6 +178,7 @@ class WebOrderCrudController extends AbstractCrudController
             return [
                 TextField::new('externalNumber',  "External N°"),
                 TextField::new('subchannel',  "Marketplace"),
+                TextField::new('company', "Company"),
                 TextField::new('erpDocument', "Document type"),
                 TextField::new('documentInErp', "Document N°"),
                 IntegerField::new('status')->setTemplatePath('admin/fields/status.html.twig'),
@@ -171,5 +190,13 @@ class WebOrderCrudController extends AbstractCrudController
                 ArrayField::new('orderBCContent', 'BC Content')->setTemplatePath('admin/fields/orderBCContent.html.twig'),
             ];
         }
+    }
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
+        $qb->andWhere('entity.channel = :channel');
+        $qb->setParameter('channel', WebOrder::CHANNEL_ALIEXPRESS);
+        return $qb;
     }
 }

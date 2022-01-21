@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d32d7a8a62bf408e3c2864feb35ba031",
+    "content-hash": "89a8fcb8c64fede16e52421add9f7f89",
     "packages": [
         {
             "name": "akeneo/api-php-client",
@@ -2465,6 +2465,42 @@
                 "source": "https://github.com/laravel/framework"
             },
             "time": "2021-11-23T14:10:18+00:00"
+        },
+        {
+            "name": "kps/aliexpress",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/KPFranceSAS/aliexpress-php-sdk.git",
+                "reference": "2d90f50064ac3ed310ac6f2e018d55520b9805a9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/KPFranceSAS/aliexpress-php-sdk/zipball/2d90f50064ac3ed310ac6f2e018d55520b9805a9",
+                "reference": "2d90f50064ac3ed310ac6f2e018d55520b9805a9",
+                "shasum": ""
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kps\\Aliexpress\\": "src/"
+                },
+                "files": [
+                    "src/TopSdk.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Kps",
+                    "email": "devops@kpsport.com"
+                }
+            ],
+            "support": {
+                "source": "https://github.com/KPFranceSAS/aliexpress-php-sdk/tree/master"
+            },
+            "time": "2022-01-18T13:48:50+00:00"
         },
         {
             "name": "kriswallsmith/buzz",
@@ -13000,7 +13036,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "kps/aliexpress": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

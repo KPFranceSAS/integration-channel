@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class OrderIntegrateCommand extends Command
 {
-    protected static $defaultName = 'app:integrate-orders-from-channel';
+    protected static $defaultName = 'app:channel-integrate-orders-from-channel';
     protected static $defaultDescription = 'INtegrates all ChannelAdvisor orders waiting to be invoiced';
 
     public function __construct(IntegrateOrdersChannelAdvisor $integrate)

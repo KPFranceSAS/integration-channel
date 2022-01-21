@@ -3,9 +3,10 @@
 namespace App\Service\ChannelAdvisor;
 
 use App\Entity\ProductCorrelation;
+use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
-use App\Service\BusinessCentral\BusinessCentralConnector;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -25,11 +26,11 @@ class TransformOrder
 
     private $manager;
 
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, BusinessCentralConnector $businessCentralConnector)
+    public function __construct(BusinessCentralAggregator $businessCentralAggregator, ManagerRegistry $manager, LoggerInterface $logger)
     {
         $this->logger = $logger;
+        $this->businessCentralConnector = $businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
         $this->manager = $manager->getManager();
-        $this->businessCentralConnector = $businessCentralConnector;
     }
 
     /**
@@ -38,7 +39,7 @@ class TransformOrder
      * @param stdClass $order
      * @return SaleOrder
      */
-    public function transformToAnFBAOrder(stdClass $orderApi): SaleOrder
+    public function transformToAnBcOrder(stdClass $orderApi): SaleOrder
     {
         $orderBC = new SaleOrder();
         $orderBC->customerNumber = $this->matchChannelAdvisorOrderToCustomer($orderApi->ProfileID, $orderApi->SiteID);
@@ -122,7 +123,7 @@ class TransformOrder
 
         // ajout livraison 
         if ($shippingPrice > 0) {
-            $account = $this->businessCentralConnector->getAccountByNumber("758000");
+            $account = $this->businessCentralConnector->getAccountForExpedition();
             $saleLineDelivery = new SaleOrderLine();
             $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;
             $saleLineDelivery->quantity = 1;

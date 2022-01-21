@@ -45,10 +45,7 @@ class DashboardController extends AbstractDashboardController
         return parent::configureUserMenu($user)
             ->setName($user->getUserIdentifier())
             ->displayUserName(false)
-            ->displayUserAvatar(false)
-            ->addMenuItems([
-                MenuItem::linkToLogout('Logout', 'fa fa-sign-out'),
-            ]);
+            ->displayUserAvatar(false);
     }
 
 
