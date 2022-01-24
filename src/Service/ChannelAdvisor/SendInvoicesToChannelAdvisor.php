@@ -140,12 +140,13 @@ class SendInvoicesToChannelAdvisor
                 if (!$sendFile) {
                     throw new \Exception('Upload  was not done uploaded on ChannelAdvisor for ' . $order->getInvoiceErp());
                 }
-                $this->addLogToOrder($order, 'Invoice send to channel Advisor');
+                $this->addLogToOrder($order, 'Invoice sent to channel Advisor');
             } else {
-                $this->addLogToOrder($order, 'Invoice not yet created');
+                $this->addLogToOrder($order, 'Invoice has been not yet created in Business Central');
                 $delay = $order->getNbHoursSinceCreation();
-                if ($delay > self::DELAI_MAX) {
-                    $this->addLogToOrder($order, 'Delay is overpassed');
+                $messageDelay = 'Delay is overpassed';
+                if ($delay > self::DELAI_MAX && $order->haveNoLogWithMessage($messageDelay)) {
+                    $this->addLogToOrder($order, $messageDelay);
                     $this->addError("Delay max is overpassed ($delay hours of integration)  for the order " . $order->getExternalNumber());
                 }
             }

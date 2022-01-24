@@ -220,6 +220,15 @@ class WebOrder
         return $webOrder;
     }
 
+    public function haveNoLogWithMessage($logMessage)
+    {
+        foreach ($this->logs as $log) {
+            if ($log['content'] == $logMessage) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 
     /**
