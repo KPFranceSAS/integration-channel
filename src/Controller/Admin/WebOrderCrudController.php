@@ -85,13 +85,27 @@ class WebOrderCrudController extends AbstractCrudController
         ];
 
 
-        $choiceCompany = [
+        return $filters
+            ->add(ChoiceFilter::new('status')->canSelectMultiple(true)->setChoices($choiceStatuts))
+            ->add(DateTimeFilter::new('createdAt', "Created at"))
+            ->add(ChoiceFilter::new('subchannel', "Marketplace")->canSelectMultiple(true)->setChoices($this->getMarketplaces()))
+            ->add(ChoiceFilter::new('company', "Company")->canSelectMultiple(true)->setChoices($this->getCompanies()));
+    }
+
+
+    public function getCompanies()
+    {
+        return  [
             BusinessCentralConnector::GADGET_IBERIA => BusinessCentralConnector::GADGET_IBERIA,
             BusinessCentralConnector::KIT_PERSONALIZACION_SPORT => BusinessCentralConnector::KIT_PERSONALIZACION_SPORT,
             BusinessCentralConnector::KP_FRANCE => BusinessCentralConnector::KP_FRANCE,
         ];
+    }
 
-        $choiceChannels = [
+
+    public function getMarketplaces()
+    {
+        return [
             'AliExpress' => 'AliExpress',
             'Amazon UK' => 'Amazon UK',
             'Amazon IT'  => "Amazon Seller Central - IT",
@@ -100,11 +114,6 @@ class WebOrderCrudController extends AbstractCrudController
             'Amazon FR' => 'Amazon Seller Central - FR',
             'OwletCare' => 'Owlet Care',
         ];
-        return $filters
-            ->add(ChoiceFilter::new('status')->canSelectMultiple(true)->setChoices($choiceStatuts))
-            ->add(DateTimeFilter::new('createdAt', "Created at"))
-            ->add(ChoiceFilter::new('subchannel', "Marketplace")->canSelectMultiple(true)->setChoices($choiceChannels))
-            ->add(ChoiceFilter::new('company', "Company")->canSelectMultiple(true)->setChoices($choiceCompany));
     }
 
 
@@ -190,13 +199,5 @@ class WebOrderCrudController extends AbstractCrudController
                 ArrayField::new('orderBCContent', 'BC Content')->setTemplatePath('admin/fields/orderBCContent.html.twig'),
             ];
         }
-    }
-
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
-    {
-        $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
-        $qb->andWhere('entity.channel = :channel');
-        $qb->setParameter('channel', WebOrder::CHANNEL_ALIEXPRESS);
-        return $qb;
     }
 }

@@ -8,13 +8,12 @@ use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 
 
-class ChannelAdvisorOrderCrudController extends WebOrderCrudController
+class AliexpressOrderCrudController extends WebOrderCrudController
 {
 
 
@@ -22,7 +21,7 @@ class ChannelAdvisorOrderCrudController extends WebOrderCrudController
     {
         $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
         $qb->andWhere('entity.channel = :channel');
-        $qb->setParameter('channel', WebOrder::CHANNEL_CHANNELADVISOR);
+        $qb->setParameter('channel', WebOrder::CHANNEL_ALIEXPRESS);
         return $qb;
     }
 
@@ -30,20 +29,15 @@ class ChannelAdvisorOrderCrudController extends WebOrderCrudController
     public function getCompanies()
     {
         return  [
-            BusinessCentralConnector::KP_FRANCE => BusinessCentralConnector::KP_FRANCE,
+            BusinessCentralConnector::GADGET_IBERIA => BusinessCentralConnector::GADGET_IBERIA,
         ];
     }
-
 
 
     public function getMarketplaces()
     {
         return [
-            'Amazon UK' => 'Amazon UK',
-            'Amazon IT'  => "Amazon Seller Central - IT",
-            'Amazon DE' => "Amazon Seller Central - DE",
-            'Amazon ES' => "Amazon Seller Central - ES",
-            'Amazon FR' => 'Amazon Seller Central - FR',
+            'AliExpress' => 'AliExpress',
         ];
     }
 }

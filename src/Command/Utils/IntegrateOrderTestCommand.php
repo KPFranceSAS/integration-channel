@@ -43,20 +43,9 @@ class IntegrateOrderTestCommand extends Command
         dump($product);
         $account = $this->bcConnector->getAccountByNumber("758000");
         dump($account);
-
-        $product = $this->bcConnector->selectCompany(BusinessCentralConnector::GADGET_IBERIA);
-        $product = $this->bcConnector->getItemByNumber("PX-P3D2051");
-        $account = $this->bcConnector->getAccountByNumber("758000");
-        dump($account);
-        dump($product);
-
-        return 1;
-
-        $product = $this->bcConnector->getItemByNumber("PX-P3D2051");
-        dump($product);
-        $account = $this->bcConnector->getAccountByNumber("758000");
-        dump($account);
         dump($this->bcConnector->getCustomerByNumber("000230"));
+
+
         $lines = [
             [
                 "lineType" => "Item",
@@ -100,14 +89,14 @@ class IntegrateOrderTestCommand extends Command
             'pricesIncludeTax' => true,
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
-            "externalDocumentNumber" => "205-4086795-2477136",
+            "externalDocumentNumber" => "XXXX-XXXX-XXXX",
         ];
 
 
 
         $order = $this->bcConnector->createSaleOrder($order);
-
-        dump($order);
+        $orderFull = $this->bcConnector->getFullSaleOrder($order['id']);
+        dump($orderFull);
 
 
         return Command::SUCCESS;
