@@ -32,7 +32,7 @@ class SendInvoicesToChannelAdvisor
     private $manager;
 
 
-    private $businessCentralConnector;
+    private $kpFranceConnector;
 
 
     public function __construct(
@@ -121,7 +121,7 @@ class SendInvoicesToChannelAdvisor
     {
         try {
 
-            $invoice =  $this->businessCentralConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
+            $invoice =  $this->kpFranceConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
             if ($invoice) {
                 $this->addLogToOrder($order, 'Invoice created in the ERP with number ' . $invoice['number']);
                 $order->setStatus(WebOrder::STATE_INVOICED);
@@ -129,7 +129,7 @@ class SendInvoicesToChannelAdvisor
                 $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
 
                 $this->addLogToOrder($order, 'Retrieve invoice content');
-                $contentPdf  = $this->businessCentralConnector->getContentInvoicePdf($invoice['id']);
+                $contentPdf  = $this->kpFranceConnector->getContentInvoicePdf($invoice['id']);
                 $this->addLogToOrder($order, 'Retrieved invoice content');
 
 
