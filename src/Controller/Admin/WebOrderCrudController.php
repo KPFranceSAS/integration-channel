@@ -85,11 +85,19 @@ class WebOrderCrudController extends AbstractCrudController
         ];
 
 
+        $choicesFulfiled = [
+            'External' => WebOrder::FULFILLED_BY_EXTERNAL,
+            'Seller'  => WebOrder::FULFILLED_BY_SELLER,
+            'Mixed' => WebOrder::FULFILLED_MIXED,
+        ];
+
+
         return $filters
             ->add(ChoiceFilter::new('status')->canSelectMultiple(true)->setChoices($choiceStatuts))
             ->add(DateTimeFilter::new('createdAt', "Created at"))
             ->add(ChoiceFilter::new('subchannel', "Marketplace")->canSelectMultiple(true)->setChoices($this->getMarketplaces()))
-            ->add(ChoiceFilter::new('company', "Company")->canSelectMultiple(true)->setChoices($this->getCompanies()));
+            ->add(ChoiceFilter::new('company', "Company")->canSelectMultiple(true)->setChoices($this->getCompanies()))
+            ->add(ChoiceFilter::new('fulfilledBy')->canSelectMultiple(true)->setChoices($choicesFulfiled));
     }
 
 
@@ -177,8 +185,10 @@ class WebOrderCrudController extends AbstractCrudController
             return [
                 TextField::new('externalNumber',  "External N°"),
                 TextField::new('subchannel',  "Marketplace"),
+                TextField::new('company', "Company"),
                 TextField::new('erpDocument', "Document type"),
                 TextField::new('documentInErp', "Document N°"),
+                TextField::new('fulfilledBy', "Fulfillement"),
                 IntegerField::new('status')->setTemplatePath('admin/fields/status.html.twig'),
                 DateTimeField::new('createdAt'),
                 DateTimeField::new('updatedAt'),
@@ -190,6 +200,7 @@ class WebOrderCrudController extends AbstractCrudController
                 TextField::new('company', "Company"),
                 TextField::new('erpDocument', "Document type"),
                 TextField::new('documentInErp', "Document N°"),
+                TextField::new('fulfilledBy', "Fulfillement"),
                 IntegerField::new('status')->setTemplatePath('admin/fields/status.html.twig'),
                 DateTimeField::new('createdAt'),
                 DateTimeField::new('updatedAt'),

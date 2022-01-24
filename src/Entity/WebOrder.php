@@ -119,6 +119,17 @@ class WebOrder
      */
     private $erpDocument;
 
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $company;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $fulfilledBy;
+
     /**
      * @ORM\PrePersist
      */
@@ -279,15 +290,6 @@ class WebOrder
 
     public $orderBCContent = [];
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $company;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $fulfilledBy;
 
 
     /**
