@@ -56,14 +56,19 @@ class SendInvoicesToChannelAdvisor
      * 
      * @return void
      */
-    public function processOrders()
+    public function processOrders($reprocess = false)
     {
         try {
             $this->errors = [];
-            $this->logger->info('Start sending invoices');
-            $this->sendInvoices();
-            $this->logger->info('Ended sending invoices');
-
+            if ($reprocess) {
+                $this->logger->info('Start sending invoices in error');
+                $this->resendInvoices();
+                $this->logger->info('Ended sending invoices in error');
+            } else {
+                $this->logger->info('Start sending invoices');
+                $this->sendInvoices();
+                $this->logger->info('Ended sending invoices');
+            }
 
 
             if (count($this->errors) > 0) {
@@ -107,6 +112,32 @@ class SendInvoicesToChannelAdvisor
             $this->sendInvoice($orderToSend);
         }
     }
+
+
+
+
+
+    /**
+     * 
+     * 
+     * @return void
+     */
+    protected function resendInvoices()
+    {
+        $ordersToSend = $this->manager->getRepository(WebOrder::class)->findBy(
+            [
+                "status" => WebOrder::STATE_ERROR_INVOICE,
+                "channel" => WebOrder::CHANNEL_CHANNELADVISOR,
+                "company" => BusinessCentralConnector::KP_FRANCE,
+            ]
+        );
+        $this->logger->info(count($ordersToSend) . ' orders to re-send');
+        foreach ($ordersToSend as $orderToSend) {
+            $this->logLine('>>> Sending file to channel of order ' . $orderToSend->getExternalNumber());
+            $this->sendInvoice($orderToSend);
+        }
+    }
+
 
 
 
