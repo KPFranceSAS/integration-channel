@@ -54,23 +54,25 @@ class SendInvoicesToChannelAdvisor extends InvoiceParent
             if ($invoice) {
                 $order->cleanErrors();
                 $this->addLogToOrder($order, 'Invoice created in the ERP with number ' . $invoice['number']);
-                $order->setStatus(WebOrder::STATE_INVOICED);
-                $order->setInvoiceErp($invoice['number']);
-                $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
 
-                $this->addLogToOrder($order, 'Retrieve invoice content');
+
+
+                $this->addLogToOrder($order, 'Retrieve invoice content ' . $invoice['number']);
                 $contentPdf  = $this->businessCentralConnector->getContentInvoicePdf($invoice['id']);
-                $this->addLogToOrder($order, 'Retrieved invoice content');
+                $this->addLogToOrder($order, 'Retrieved invoice content ' . $invoice['number']);
 
 
                 $this->addLogToOrder($order, 'Start sending invoice to Channel Advisor');
                 $orderApi = $order->getOrderContent();
 
-                $sendFile = $this->channel->sendInvoice($orderApi->ProfileID, $orderApi->ID, $invoice['totalAmountIncludingTax'], $invoice['totalTaxAmount'], $order->getInvoiceErp(), $contentPdf);
+                $sendFile = $this->channel->sendInvoice($orderApi->ProfileID, $orderApi->ID, $invoice['totalAmountIncludingTax'], $invoice['totalTaxAmount'], $invoice['number'], $contentPdf);
                 if (!$sendFile) {
-                    throw new \Exception('Upload  was not done uploaded on ChannelAdvisor for ' . $order->getInvoiceErp());
+                    throw new \Exception('Upload  was not done uploaded on ChannelAdvisor for ' . $invoice['number']);
                 }
                 $this->addLogToOrder($order, 'Invoice sent to channel Advisor');
+                $order->setInvoiceErp($invoice['number']);
+                $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
+                $order->setStatus(WebOrder::STATE_INVOICED);
             } else {
                 $this->addLogToOrder($order, 'Invoice has been not yet created in Business Central');
                 $delay = $order->getNbHoursSinceCreation();
