@@ -19,16 +19,17 @@ class ProductCorrelationCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Product Correlation')
-            ->setEntityLabelInPlural('Product Correlations');
+            ->setEntityLabelInSingular('Sku Mapping')
+            ->setEntityLabelInPlural('Sku Mappings')
+            ->showEntityActionsInlined();
     }
 
 
     public function configureFields(string $pageName): iterable
     {
         return [
-            TextField::new('skuUsed'),
-            TextField::new('skuErp'),
+            TextField::new('skuUsed', 'SKU Marketplace'),
+            TextField::new('skuErp', 'SKU Business Central'),
         ];
     }
 }

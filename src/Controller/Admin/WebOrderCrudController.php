@@ -6,7 +6,6 @@ use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\ChannelAdvisor\IntegrateOrdersChannelAdvisor;
-use Box\Spout\Common\Entity\Style\CellAlignment;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
@@ -67,13 +66,13 @@ class WebOrderCrudController extends AbstractCrudController
             })
             ->linkToCrudAction('downloadInvoice');
 
-        $retryIntegrationIndex = Action::new('retryIntegration', 'Retry', 'fa fa-check')
+        $retryIntegrationIndex = Action::new('retryIntegration', '', 'fas fa-redo')
             ->displayIf(static function ($entity) {
                 return $entity->needRetry();
             })
             ->linkToCrudAction('retryIntegration');
 
-        $retryIntegration = Action::new('retryIntegration', 'Retry', 'fa fa-check')
+        $retryIntegration = Action::new('retryIntegration', 'Retry', 'fas fa-redo')
             ->displayIf(static function ($entity) {
                 return $entity->needRetry();
             })
@@ -84,7 +83,7 @@ class WebOrderCrudController extends AbstractCrudController
         $viewOrder = Action::new(Action::DETAIL, '', 'fa fa-eye')
             ->linkToCrudAction(Action::DETAIL);
 
-        $retryAllIntegrations = Action::new('retryAllIntegrations', 'Retry integrations', 'fa fa-check')
+        $retryAllIntegrations = Action::new('retryAllIntegrations', 'Retry integrations', 'fas fa-redo')
             ->addCssClass('btn btn-primary')
             ->linkToCrudAction('retryAllIntegrations');
 

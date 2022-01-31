@@ -27,7 +27,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('Channel tools');
+            ->setTitle('KPS tools');
     }
 
     public function configureMenuItems(): iterable
@@ -39,7 +39,7 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToCrud('Errors', 'fas fa-exclamation-triangle', WebOrder::class)->setController(ErrorOrderCrudController::class),
                 MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)->setController(WebOrderCrudController::class),
             ]),
-            MenuItem::linkToCrud('Product Correlations', 'fa fa-exchange', ProductCorrelation::class),
+            MenuItem::linkToCrud('SKU Mapping', 'fa fa-exchange', ProductCorrelation::class),
             MenuItem::linkToCrud('Users', 'fa fa-user', User::class),
         ];
     }
@@ -57,6 +57,6 @@ class DashboardController extends AbstractDashboardController
     public function configureCrud(): Crud
     {
         return Crud::new()
-            ->setPaginatorPageSize(30);
+            ->setPaginatorPageSize(50);
     }
 }
