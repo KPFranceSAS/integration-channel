@@ -115,10 +115,10 @@ abstract class IntegratorParent implements IntegratorInterface
                 $webOrder->setOrderErp($erpOrder['number']);
                 $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
             } catch (Exception $e) {
-                $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
+                $message = 'Integration Problem ' . $idOrder . ' > ' . mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
                 $webOrder->addError($message);
                 $webOrder->setStatus(WebOrder::STATE_ERROR);
-                $this->addError($message);
+                $this->addError('Integration Problem ' . $idOrder . ' > ' . $message);
             }
             $this->manager->flush();
             $this->logger->info('Integration finished');
