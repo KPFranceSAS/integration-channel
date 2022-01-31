@@ -44,10 +44,9 @@ class IntegrateOrderTestCommand extends Command
     {
 
         //$this->createOrderTest();
-        $invoice =  $this->bcConnector->getSaleInvoiceByOrderNumber('WPV22-01418');
-        dump($invoice);
 
-        $product = $this->bcConnector->getSaleInvoiceByNumber("FV22/0100763");
+
+        $product = $this->bcConnector->getFullSaleInvoiceByNumber("FV22/0102646");
         dump($product);
 
 

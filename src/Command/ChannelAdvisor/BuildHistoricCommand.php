@@ -12,6 +12,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use stdClass;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -38,7 +39,8 @@ class BuildHistoricCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription);
+            ->setDescription(self::$defaultDescription)
+            ->addArgument('orderNumbers', InputArgument::OPTIONAL, 'Orders number', 100);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -59,7 +61,7 @@ class BuildHistoricCommand extends Command
                 $this->manager->clear();
             }
 
-            if ($counter > 100) {
+            if ($counter > $input->getArgument('orderNumbers')) {
                 $this->manager->flush();
                 return Command::SUCCESS;
             }
@@ -115,7 +117,7 @@ class BuildHistoricCommand extends Command
                 $output->writeln('Retrieved data from business central');
                 $webOrder->addLog('Retrieved data from business central');
                 $webOrder->setOrderErp($invoice['orderNumber']);
-                if ($retrieved == false) {
+                if ($retrieved == false || (strlen($orderApi->ShippingLastName) == 0 && $retrieved == true)) {
                     $orderApi->ShippingLastName = $invoice['shipToName'];
                     $orderApi->ShippingAddressLine1 = $invoice['shippingPostalAddress']["street"];;
                     $orderApi->ShippingCity = $invoice['shippingPostalAddress']["city"];

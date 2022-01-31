@@ -269,15 +269,14 @@ class WebOrderCrudController extends AbstractCrudController
             TextField::new('fulfilledBy', "Fulfillement"),
             TextField::new('getStatusLitteral', "Status")->setTemplatePath('admin/fields/status.html.twig'),
             DateTimeField::new('purchaseDate', "Purchase date"),
+            DateTimeField::new('createdAt', "Created at"),
         ];
 
         if ($pageName == CRUD::PAGE_DETAIL) {
             $fields = array_merge(
                 $fields,
                 [
-                    DateTimeField::new('createdAt', "Created at"),
                     DateTimeField::new('updatedAt', "Updated at"),
-
                     ArrayField::new('logs')->setTemplatePath('admin/fields/logs.html.twig')->onlyOnDetail(),
                     ArrayField::new('errors')->setTemplatePath('admin/fields/errors.html.twig')->onlyOnDetail(),
                     ArrayField::new('getOrderContent', 'Content')->setTemplatePath('admin/fields/orderContent.html.twig')->onlyOnDetail(),
