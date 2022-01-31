@@ -2,11 +2,11 @@
 
 namespace App\Command\Utils;
 
-
-
+use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Service\BusinessCentral\KpFranceConnector;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\ChannelAdvisor\ChannelWebservice;
+use App\Service\Integrator\IntegratorAggregator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,18 +16,22 @@ class IntegrateOrderTestCommand extends Command
     protected static $defaultName = 'app:integrate-order-test';
     protected static $defaultDescription = 'integrate order test';
 
-    public function __construct(KpFranceConnector $saleOrderConnector, ChannelWebservice $channelWebservice)
-    {
-        $this->bcConnector = $saleOrderConnector;
+    public function __construct(
+        BusinessCentralAggregator $bcAggregator,
+        IntegratorAggregator $integratorAggregator,
+        ChannelWebservice $channelWebservice
+    ) {
+        $this->bcConnector = $bcAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
+        $this->integrator = $integratorAggregator->getIntegrator(WebOrder::CHANNEL_CHANNELADVISOR);
         $this->channelWebservice = $channelWebservice;
         parent::__construct();
     }
 
-    /**
-     *
-     * @var BusinessCentralConnector
-     */
     private $bcConnector;
+
+    private $integrator;
+
+    private $channelWebservice;
 
 
     protected function configure(): void
@@ -39,6 +43,30 @@ class IntegrateOrderTestCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
+        //$this->createOrderTest();
+        $invoice =  $this->bcConnector->getSaleInvoiceByOrderNumber('WPV22-01418');
+        dump($invoice);
+
+        $product = $this->bcConnector->getSaleInvoiceByNumber("FV22/0100763");
+        dump($product);
+
+
+        return Command::SUCCESS;
+    }
+
+
+
+    private function getOldInvoice()
+    {
+        $product = $this->bcConnector->getSaleInvoiceByNumber("FV20/0200127");
+        dump($product);
+    }
+
+
+
+
+    private function createOrderTest()
+    {
         $product = $this->bcConnector->getItemByNumber("PX-P3D2051");
         dump($product);
         $account = $this->bcConnector->getAccountByNumber("758000");
@@ -97,8 +125,5 @@ class IntegrateOrderTestCommand extends Command
         $order = $this->bcConnector->createSaleOrder($order);
         $orderFull = $this->bcConnector->getFullSaleOrder($order['id']);
         dump($orderFull);
-
-
-        return Command::SUCCESS;
     }
 }

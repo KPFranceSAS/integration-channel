@@ -36,6 +36,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::subMenu('Orders', 'fa fa-shopping-cart')->setSubItems([
                 MenuItem::linkToCrud('Amazon', 'fab fa-amazon', WebOrder::class)->setController(ChannelAdvisorOrderCrudController::class),
                 MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)->setController(AliexpressOrderCrudController::class),
+                MenuItem::linkToCrud('Errors', 'fas fa-exclamation-triangle', WebOrder::class)->setController(ErrorOrderCrudController::class),
                 MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)->setController(WebOrderCrudController::class),
             ]),
             MenuItem::linkToCrud('Product Correlations', 'fa fa-exchange', ProductCorrelation::class),

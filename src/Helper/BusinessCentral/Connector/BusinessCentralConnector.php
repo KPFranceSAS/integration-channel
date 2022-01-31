@@ -2,6 +2,7 @@
 
 namespace App\Helper\BusinessCentral\Connector;
 
+use Exception;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 
@@ -194,7 +195,7 @@ abstract class BusinessCentralConnector
 
     public function getFullSaleOrderByNumber(string $number)
     {
-        return $this->getFullSaleOrder($this->getSaleOrderByNumber($number)['id']);
+        return $this->getElementByNumber(self::EP_SALES_ORDERS, $number, 'number', ['$expand' => 'salesOrderLines,customer']);
     }
 
     public function getSaleOrder(string $id)

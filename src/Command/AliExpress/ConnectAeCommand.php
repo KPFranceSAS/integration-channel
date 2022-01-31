@@ -31,11 +31,21 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $carriers = $this->aliExpress->getCarriers();
 
-        $this->aliExpressIntegrateOrder->processOrders();
+        foreach ($carriers as $carrier) {
+            dump($carrier->service_name);
+        }
 
-        return 1;
 
+        return Command::SUCCESS;
+    }
+
+
+
+
+    private function transformeOrder()
+    {
 
         $order = $this->aliExpress->getOrder("3012972800391762");
         dump($order);
@@ -44,6 +54,5 @@ class ConnectAeCommand extends Command
         $orderIntegrate = $this->gadgetIberiaConnector->getFullSaleOrder($orderIntegrate['id']);
         dump($orderIntegrate);
         dump($orderIntegrate['totalAmountIncludingTax']);
-        return Command::SUCCESS;
     }
 }

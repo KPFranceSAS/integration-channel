@@ -5,9 +5,12 @@ namespace App\Service\ChannelAdvisor;
 use App\Entity\IntegrationFile;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Helper\BusinessCentral\Model\SaleOrder;
+use App\Helper\BusinessCentral\Model\SaleOrderLine;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\ChannelAdvisor\ChannelWebservice;
 use App\Service\ChannelAdvisor\TransformOrder;
+use App\Service\Integrator\IntegratorParent;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -19,20 +22,10 @@ use stdClass;
  * Services that will get through the API the order from ChannelAdvisor
  * 
  */
-class IntegrateOrdersChannelAdvisor
+class IntegrateOrdersChannelAdvisor extends IntegratorParent
 {
 
-    private $logger;
-
     private $channel;
-
-    private $manager;
-
-    private $businessCentralAggregator;
-
-    private $businessCentralConnector;
-
-    private $transformOrder;
 
 
 
@@ -41,98 +34,31 @@ class IntegrateOrdersChannelAdvisor
         LoggerInterface $logger,
         MailService $mailer,
         ChannelWebservice $channel,
-        BusinessCentralAggregator $businessCentralAggregator,
-        TransformOrder $transformOrder
+        BusinessCentralAggregator $businessCentralAggregator
     ) {
-        $this->logger = $logger;
-        $this->mailer = $mailer;
+        $businessCentralConnector = $businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
+        parent::__construct($manager, $logger, $mailer, $businessCentralConnector);
         $this->channel = $channel;
-        $this->manager = $manager->getManager();
-        $this->channel = $channel;
-        $this->businessCentralAggregator = $businessCentralAggregator;
-        $this->businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
-        $this->transformOrder = $transformOrder;
     }
 
 
-    /**
-     * 
-     * 
-     * @return void
-     */
-    public function processOrders($reIntegrate = false, $nbMax = null)
+    public function getChannel()
     {
-        try {
-            $this->errors = [];
-
-            if ($reIntegrate) {
-                $this->logger->info('Start reintegrations');
-                $this->reIntegrateAllOrders();
-                $this->logger->info('Ended reintegrations');
-            } else {
-                $this->logger->info('Start integrations with max = ' . $nbMax);
-                $this->integrateAllOrders($nbMax);
-                $this->logger->info('Ended integration');
-            }
-
-            if (count($this->errors) > 0) {
-                $messageError = implode('<br/>', array_unique($this->errors));
-                throw new \Exception($messageError);
-            }
-        } catch (\Exception $e) {
-            $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmail('[Order Integration ChannelAdvisor] Error', $e->getMessage(), 'stephane.lanjard@kpsport.com');
-        }
-    }
-
-
-
-    /**
-     * 
-     * 
-     * @return void
-     */
-    public function reIntegrateAllOrders()
-    {
-        $ordersToReintegrate = $this->manager->getRepository(WebOrder::class)->findBy(
-            [
-                'status' => WebOrder::STATE_ERROR,
-                "channel" => WebOrder::CHANNEL_CHANNELADVISOR
-            ]
-        );
-        $this->logger->info(count($ordersToReintegrate) . ' orders to re-integrate');
-        foreach ($ordersToReintegrate as $orderToReintegrate) {
-            $this->logLine('>>> Reintegration of order ' . $orderToReintegrate->getExternalNumber());
-            $this->reIntegrateOrder($orderToReintegrate);
-        }
+        return WebOrder::CHANNEL_CHANNELADVISOR;
     }
 
 
 
 
-
-    protected function addError($errorMessage)
-    {
-        $this->logger->error($errorMessage);
-        $this->errors[] = $errorMessage;
-    }
-
-
-
-    protected function integrateAllOrders($nbMax = null)
+    public function integrateAllOrders()
     {
         $counter = 0;
-        $counterGeneral = 0;
         $ordersApi = $this->channel->getNewOrdersByBatch(true);
         $this->logLine('Integration first batch');
         foreach ($ordersApi->value as $orderApi) {
             if ($this->integrateOrder($orderApi)) {
                 $counter++;
                 $this->logger->info("Orders integrated : $counter ");
-            }
-            $counterGeneral++;
-            if ($nbMax && $nbMax < $counterGeneral) {
-                return;
             }
         }
 
@@ -146,10 +72,6 @@ class IntegrateOrdersChannelAdvisor
                         $counter++;
                         $this->logger->info("Orders integrated : $counter ");
                     }
-                    $counterGeneral++;
-                    if ($nbMax && $nbMax < $counterGeneral) {
-                        return;
-                    }
                 }
             } else {
                 return;
@@ -158,118 +80,27 @@ class IntegrateOrdersChannelAdvisor
     }
 
 
-    public function logLine($message)
+
+
+    protected function checkAfterPersist(WebOrder $order, stdClass $orderApi)
     {
-        $separator = str_repeat("-", strlen($message));
-        $this->logger->info('');
-        $this->logger->info($separator);
-        $this->logger->info($message);
-        $this->logger->info($separator);
+        $this->addLogToOrder($order, 'Marked on channel advisor as exported');
+        $this->channel->markOrderAsExported($orderApi->ID);
     }
 
 
-    /**
-     * Integrates order 
-     * Checks if already integrated in BusinessCentral (invoice or order)
-     * 
-     * @param stdClass $order
-     * @return void
-     */
-    protected function integrateOrder(stdClass $order)
+    protected function getOrderId(stdClass $orderApi)
     {
-        $this->logLine('>>> Integration order marketplace ' . $order->SiteName . " " . $order->SiteOrderID);
-        if ($this->checkToIntegrateToInvoice($order)) {
-            $this->logger->info('To integrate ');
-
-            try {
-                $webOrder = WebOrder::createOneFromChannelAdvisor($order);
-                $this->manager->persist($webOrder);
-                $this->addLogToOrder($webOrder, 'Marked on channel advisor as exported');
-                $this->channel->markOrderAsExported($order->ID);
-
-                $this->addLogToOrder($webOrder, 'Order transformation to fit to ERP model');
-
-                $webOrder->setCompany($this->businessCentralConnector->getCompanyName());
-                $orderBC = $this->transformOrder->transformToAnBcOrder($order);
-
-                $this->addLogToOrder($webOrder, 'Order creation in the ERP ' . $this->businessCentralConnector->getCompanyName());
-                $erpOrder = $this->businessCentralConnector->createSaleOrder($orderBC->transformToArray());
-
-                $this->addLogToOrder($webOrder, 'Order created in the ERP ' . $this->businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
-                $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
-                $webOrder->setOrderErp($erpOrder['number']);
-                $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
-            } catch (Exception $e) {
-                $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
-                $webOrder->addError($message);
-                $webOrder->setStatus(WebOrder::STATE_ERROR);
-                $this->addError($message);
-            }
-            $this->manager->flush();
-            $this->logger->info('Integration finished');
-            return true;
-        } else {
-            $this->logger->info('No Integration');
-            return false;
-        }
-    }
-
-
-
-    /**
-     * Integrates order 
-     * Checks if already integrated in BusinessCentral (invoice or order)
-     * 
-     */
-    public function reIntegrateOrder(WebOrder $order)
-    {
-        try {
-            $order->cleanErrors();
-            $this->addLogToOrder($order, 'Attempt to new integration');
-            $this->addLogToOrder($order, 'Order transformation to fit to ERP model');
-            $orderApi = $order->getOrderContent();
-
-            $orderBC = $this->transformOrder->transformToAnBcOrder($orderApi);
-            $this->addLogToOrder($order, 'Order creation in the ERP');
-            $erpOrder = $this->businessCentralConnector->createSaleOrder($orderBC->transformToArray());
-            $this->addLogToOrder($order, 'Order created in the ERP ' . $this->businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
-
-            $order->setStatus(WebOrder::STATE_SYNC_TO_ERP);
-            $order->setOrderErp($erpOrder['number']);
-            $this->addLogToOrder($order, 'Integration done ' . $erpOrder['number']);
-        } catch (Exception $e) {
-            $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
-            $order->addError($message);
-            $order->setStatus(WebOrder::STATE_ERROR);
-            $this->addError($message);
-        }
-        $this->manager->flush();
-        $this->logger->info('Integration finished');
-        return true;
-    }
-
-
-    protected function addLogToOrder(WebOrder $webOrder, $message)
-    {
-        $webOrder->addLog($message);
-        $this->logger->info($message);
+        return $orderApi->SiteOrderID;
     }
 
 
 
 
 
-    /**
-     * INtegrates order 
-     * Checks if already integrated in BusinessCentral (invoice or order) 
-     * Check if status fits to this process
-     * 
-     * @param stdClass $order
-     * @return void
-     */
     protected function checkToIntegrateToInvoice($order): bool
     {
-        if ($this->isAlreadyRecordedDatabase($order)) {
+        if ($this->isAlreadyRecordedDatabase($order->SiteOrderID)) {
             $this->channel->markOrderAsExported($order->ID);
             $this->logger->info('Marked on channel advisor as exported');
             $this->logger->info('Is Already Recorded Database');
@@ -282,29 +113,13 @@ class IntegrateOrdersChannelAdvisor
             return false;
         }
         if (!$this->checkStatusToInvoice($order)) {
-
             $this->logger->info('Status is not good for integration');
             return false;
         }
         return true;
     }
 
-    /**
-     * Check is Already Recorded Database
-     * 
-     * @param stdClass $orderApi
-     * @return boolean
-     */
-    protected function isAlreadyRecordedDatabase($orderApi): bool
-    {
-        $orderRecorded = $this->manager->getRepository(WebOrder::class)->findBy(
-            [
-                'externalNumber' => $orderApi->SiteOrderID,
-                "channel" => WebOrder::CHANNEL_CHANNELADVISOR
-            ]
-        );
-        return count($orderRecorded) > 0;
-    }
+
 
 
     /**
@@ -315,35 +130,11 @@ class IntegrateOrdersChannelAdvisor
      */
     protected function alreadyIntegratedErp($orderApi): bool
     {
-        return $this->checkIfInvoice($orderApi) || $this->checkIfOrder($orderApi)  || $this->checkIfPostedInvoice($orderApi);
-    }
-
-
-    /**
-     * 
-     * @param stdClass $orderApi
-     * @return boolean
-     */
-    protected function checkIfOrder($orderApi): bool
-    {
-        $this->logger->info('Check order in BC ' . $orderApi->SiteOrderID);
-        $saleOrder = $this->businessCentralConnector->getSaleOrderByExternalNumber($orderApi->SiteOrderID);
-        return $saleOrder != null;
+        return $this->checkIfInvoice($orderApi->SiteOrderID) || $this->checkIfOrder($orderApi->SiteOrderID)  || $this->checkIfPostedInvoice($orderApi);
     }
 
 
 
-    /**
-     * 
-     * @param stdClass $orderApi
-     * @return boolean
-     */
-    protected function checkIfInvoice($orderApi): bool
-    {
-        $this->logger->info('Check invoice in BC ' . $orderApi->SiteOrderID);
-        $saleOrder = $this->businessCentralConnector->getSaleInvoiceByExternalNumber($orderApi->SiteOrderID);
-        return $saleOrder != null;
-    }
 
 
     /**
@@ -382,6 +173,139 @@ class IntegrateOrdersChannelAdvisor
         } else {
             $this->logger->info("X__Status Bad " . $orderApi->DistributionCenterTypeRollup . " " . $orderApi->ShippingStatus);
             return false;
+        }
+    }
+
+
+
+
+    /**
+     * Transform an order as serialized to array
+     *
+     * @param stdClass $order
+     * @return SaleOrder
+     */
+    public function transformToAnBcOrder(stdClass $orderApi): SaleOrder
+    {
+        $orderBC = new SaleOrder();
+        $orderBC->customerNumber = $this->matchChannelAdvisorOrderToCustomer($orderApi->ProfileID, $orderApi->SiteID);
+
+        $orderBC->billToName = $orderApi->BillingFirstName . ' ' . $orderApi->BillingLastName;
+
+        $orderBC->sellingPostalAddress->street = substr($orderApi->BillingAddressLine1, 0, 100);
+        if (strlen($orderApi->BillingAddressLine2) > 0) {
+            $orderBC->sellingPostalAddress->street .= "\r\n" . substr($orderApi->BillingAddressLine2, 0, 100);
+        }
+        $orderBC->sellingPostalAddress->city = $orderApi->BillingCity;
+        $orderBC->sellingPostalAddress->postalCode = $orderApi->BillingPostalCode;
+        $orderBC->sellingPostalAddress->countryLetterCode = $orderApi->BillingCountry;
+        if (strlen($orderApi->BillingStateOrProvinceName) > 0 && $orderApi->BillingStateOrProvinceName != "--") {
+            $orderBC->sellingPostalAddress->state = $orderApi->BillingStateOrProvinceName;
+        }
+
+
+        $orderBC->shipToName = $orderApi->ShippingFirstName . ' ' . $orderApi->ShippingLastName;
+        $orderBC->shippingPostalAddress->street = substr($orderApi->ShippingAddressLine1, 0, 100);
+        if (strlen($orderApi->ShippingAddressLine2) > 0) {
+            $orderBC->shippingPostalAddress->street .= "\r\n" . substr($orderApi->ShippingAddressLine2, 0, 100);
+        }
+        $orderBC->shippingPostalAddress->city = $orderApi->ShippingCity;
+        $orderBC->shippingPostalAddress->postalCode = $orderApi->ShippingPostalCode;
+        $orderBC->shippingPostalAddress->countryLetterCode = $orderApi->ShippingCountry;
+        if (strlen($orderApi->ShippingStateOrProvinceName) > 0 && $orderApi->ShippingStateOrProvinceName != "--") {
+            $orderBC->shippingPostalAddress->state = $orderApi->ShippingStateOrProvinceName;
+        }
+
+        $orderBC->email = $orderApi->BuyerEmailAddress;
+        $orderBC->phoneNumber = $orderApi->BillingDaytimePhone;
+        $orderBC->externalDocumentNumber = $orderApi->SiteOrderID;
+
+        if ($orderApi->Currency != 'EUR') {
+            $orderBC->currencyCode =  $orderApi->Currency;
+        }
+
+        $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
+        $orderBC->salesLines = $this->getSalesOrderLines($orderApi->Items, $orderApi->AdditionalCostOrDiscount);
+
+        return $orderBC;
+    }
+
+
+    /**
+     * Transform lines from Api to BC model
+     *
+     * @param array $saleLineApis
+     * @param float $additionalCostOrDiscount
+     * @return SaleOrderLine[]
+     */
+    private function getSalesOrderLines(array $saleLineApis, $additionalCostOrDiscount): array
+    {
+        $saleOrderLines = [];
+        $shippingPrice = 0;
+        foreach ($saleLineApis as $line) {
+
+            $saleLine = new SaleOrderLine();
+            $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
+            $saleLine->itemId = $this->getProductCorrelationSku($line->Sku);
+            // calculate price and shipping fees
+            $shippingPrice += $line->ShippingPrice;
+            $promotionAmount = 0;
+            if (count($line->Promotions) > 0) {
+                foreach ($line->Promotions as $promotion) {
+                    if ($promotion->Amount != 0) {
+                        $promotionAmount += $promotion->Amount;
+                    }
+                    if ($promotion->ShippingAmount != 0) {
+                        $shippingPrice += $promotion->ShippingAmount;
+                    }
+                }
+            }
+
+            $saleLine->unitPrice = $line->UnitPrice;
+            $saleLine->quantity = $line->Quantity;
+            $saleLine->discountAmount = abs($promotionAmount);
+            $saleOrderLines[] = $saleLine;
+        }
+
+        // ajout livraison 
+        if ($shippingPrice > 0) {
+            $account = $this->businessCentralConnector->getAccountForExpedition();
+            $saleLineDelivery = new SaleOrderLine();
+            $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;
+            $saleLineDelivery->quantity = 1;
+            $saleLineDelivery->accountId = $account['id'];
+            $saleLineDelivery->unitPrice = $shippingPrice;
+            $saleLineDelivery->description = 'SHIPPING FEES';
+            $saleOrderLines[] = $saleLineDelivery;
+        }
+        return $saleOrderLines;
+    }
+
+
+
+
+
+
+    /**
+     * Get Customer client according to profile 
+     *
+     * @param string $profileId
+     * @param string $siteId
+     * @return string
+     */
+    private function matchChannelAdvisorOrderToCustomer(string $profileId, string $siteId): string
+    {
+        $mapCustomer = [
+            "12010024" =>   "000223", // Customer Amazon UK
+            "12010025" =>   "000163", // Customer Amazon IT
+            "12010023" =>   "000193", // Customer Amazon DE
+            "12009934" =>   "000222", // Customer Amazon FR
+            "12010026" =>   "000230", // Customer Amazon ES
+        ];
+        if (array_key_exists($profileId, $mapCustomer)) {
+            return $mapCustomer[$profileId];
+        } else {
+            throw new Exception("Profile Id $profileId, SiteId $siteId is not mapped to a customer");
         }
     }
 }

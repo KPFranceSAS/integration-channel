@@ -2,6 +2,8 @@
 
 namespace App\Service\AliExpress;
 
+use AliexpressLogisticsRedefiningListlogisticsserviceRequest;
+use AliexpressSolutionOrderFulfillRequest;
 use AliexpressSolutionOrderGetRequest;
 use AliexpressSolutionOrderInfoGetRequest;
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
@@ -102,6 +104,36 @@ class AliExpressApi
 
         return $resp->result->data;
     }
+
+
+
+    /**
+     * https://developers.aliexpress.com/en/doc.htm?docId=30142&docType=2
+     */
+    public function getCarriers()
+    {
+        $req = new AliexpressLogisticsRedefiningListlogisticsserviceRequest();
+        $resp = $this->client->execute($req, $this->aliExpressClientAccessToken);
+        return $resp->result_list->aeop_logistics_service_result;
+    }
+
+
+
+    /**
+     * https://developers.aliexpress.com/en/doc.htm?docId=42269&docType=2
+     */
+    public function markOrderAsFulfill($orderId, $serviceName, $trackingNumber, $sendType = 'all')
+    {
+
+        $req = new AliexpressSolutionOrderFulfillRequest();
+        $req->setServiceName($serviceName);
+        $req->setOutRef($orderId);
+        $req->setSendType($sendType);
+        $req->setLogisticsNo($trackingNumber);
+        $resp = $this->client->execute($req, $this->aliExpressClientAccessToken);
+        return $resp;
+    }
+
 
 
 

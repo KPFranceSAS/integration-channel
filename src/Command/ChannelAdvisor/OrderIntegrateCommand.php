@@ -30,14 +30,12 @@ class OrderIntegrateCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
-            ->addArgument('nbOrders', InputArgument::OPTIONAL, 'The number  of orders we want to be integrated');
+            ->setDescription(self::$defaultDescription);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $nbOrders = $input->getArgument('nbOrders');
-        $this->integrate->processOrders(false, $nbOrders);
+        $this->integrate->processOrders(false);
         return Command::SUCCESS;
     }
 }

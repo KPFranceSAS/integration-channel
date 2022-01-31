@@ -4,7 +4,7 @@ namespace App\Service\ChannelAdvisor;
 
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
-
+use stdClass;
 
 class ChannelWebservice
 {
@@ -113,7 +113,7 @@ class ChannelWebservice
      * @param array $params
      * @return stdClass
      */
-    public function getOrders($params = array())
+    public function getOrders($params = [])
     {
         return $this->sendRequest('Orders', $params);
     }
@@ -123,9 +123,9 @@ class ChannelWebservice
     /**
      * 
      * @param array $params
-     * @return stdClass
+     * @return \stdClass
      */
-    public function getOrder($orderId, $params = array())
+    public function getOrder($orderId, $params = []): stdClass
     {
         return $this->sendRequest('Orders(' . $orderId . ')', $params);
     }
@@ -153,7 +153,7 @@ class ChannelWebservice
      */
     public function markOrderAsExported($orderId)
     {
-        return $this->sendRequest('Orders(' . $orderId . ')/Export', array(), 'POST');
+        return $this->sendRequest('Orders(' . $orderId . ')/Export', [], 'POST');
     }
 
     /**
@@ -163,7 +163,7 @@ class ChannelWebservice
      */
     public function markOrderAsNonExported($orderId)
     {
-        return $this->sendRequest('Orders(' . $orderId . ')/Export', array(), 'DELETE');
+        return $this->sendRequest('Orders(' . $orderId . ')/Export', [], 'DELETE');
     }
 
 
@@ -175,7 +175,7 @@ class ChannelWebservice
      */
     public function notifyShipping($orderId, $toSend)
     {
-        return $this->sendRequest('Orders(' . $orderId . ')/Ship', array(), 'POST', $toSend);
+        return $this->sendRequest('Orders(' . $orderId . ')/Ship', [], 'POST', $toSend);
     }
 
 
@@ -263,20 +263,12 @@ class ChannelWebservice
      */
     public function sendRefund($orderLineId, $toSend)
     {
-        return $this->sendRequest('OrderItems(' . $orderLineId . ')/Adjust', array(), 'POST', $toSend);
+        return $this->sendRequest('OrderItems(' . $orderLineId . ')/Adjust', [], 'POST', $toSend);
     }
 
 
-    /**
-     * Undocumented function
-     *
-     * @param [type] $endPoint
-     * @param array $queryParams
-     * @param string $method
-     * @param [type] $form
-     * @return void
-     */
-    public function sendRequest($endPoint, $queryParams = array(), $method = 'GET', $form = null)
+
+    public function sendRequest($endPoint, $queryParams = [], $method = 'GET', $form = null)
     {
         $this->refreshAccessToken();
         $query = array_merge(['access_token' => $this->accessToken], $queryParams);
@@ -296,9 +288,9 @@ class ChannelWebservice
      */
     public function getOrderByNumber($number, $profileId)
     {
-        $params = array(
+        $params = [
             '$filter' => "SiteOrderID eq '$number' and ProfileID eq $profileId"
-        );
+        ];
 
         $orderResults = $this->getOrders($params);
         if (count($orderResults->value) > 0) {
@@ -359,17 +351,12 @@ class ChannelWebservice
         return $orderRetrieve;
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param boolean $notExported
-     * @return stdClass
-     */
+
     public function getNewOrdersByBatch($notExported = true)
     {
         $params = [
             '$expand' => 'Items($expand=Adjustments,Promotions, BundleComponents),Fulfillments($expand=Items),Adjustments',
-            '$filter' => "PaymentStatus eq 'Cleared' and CheckoutStatus eq 'Completed' and CreatedDateUtc gt 2022-01-10"
+            '$filter' => "PaymentStatus eq 'Cleared' and CheckoutStatus eq 'Completed' and CreatedDateUtc gt 2022-01-15"
         ];
         if ($notExported) {
             $params['exported'] = 'false';

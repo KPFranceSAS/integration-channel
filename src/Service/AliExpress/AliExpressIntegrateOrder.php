@@ -9,6 +9,7 @@ use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
 use App\Service\AliExpress\AliExpressApi;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
+use App\Service\Integrator\IntegratorParent;
 use App\Service\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,27 +17,13 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use stdClass;
 
-
-
-class AliExpressIntegrateOrder
+class AliExpressIntegrateOrder extends IntegratorParent
 
 {
 
-    private $logger;
+    protected $businessCentralConnector;
 
-    private $aliExpress;
-
-    private $mailer;
-
-
-    private $manager;
-
-    private $businessCentralAggregator;
-
-    private $businessCentralConnector;
-
-    private $transformOrder;
-
+    protected $aliExpress;
 
 
     public function __construct(
@@ -46,77 +33,16 @@ class AliExpressIntegrateOrder
         AliExpressApi $aliExpress,
         BusinessCentralAggregator $businessCentralAggregator
     ) {
-        $this->logger = $logger;
-        $this->mailer = $mailer;
+        $businessCentralConnector = $businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::GADGET_IBERIA);
+        parent::__construct($manager, $logger, $mailer, $businessCentralConnector);
         $this->aliExpress = $aliExpress;
-        $this->manager = $manager->getManager();
-        $this->businessCentralAggregator = $businessCentralAggregator;
-        $this->businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::GADGET_IBERIA);
     }
 
 
-    /**
-     * 
-     * 
-     * @return void
-     */
-    public function processOrders($reIntegrate = false)
+    public function getChannel()
     {
-        try {
-            $this->errors = [];
-
-            if ($reIntegrate) {
-                $this->logger->info('Start reintegrations');
-                $this->reIntegrateAllOrders();
-                $this->logger->info('Ended reintegrations');
-            } else {
-                $this->logger->info('Start integrations');
-                $this->integrateAllOrders();
-                $this->logger->info('Ended integration');
-            }
-
-            if (count($this->errors) > 0) {
-                $messageError = implode('<br/>', array_unique($this->errors));
-                throw new \Exception($messageError);
-            }
-        } catch (\Exception $e) {
-            $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmail('[Order Integration AliExpress] Error', $e->getMessage());
-        }
+        return WebOrder::CHANNEL_ALIEXPRESS;
     }
-
-
-
-    /**
-     * 
-     * 
-     * @return void
-     */
-    public function reIntegrateAllOrders()
-    {
-        $ordersToReintegrate = $this->manager->getRepository(WebOrder::class)->findBy(
-            [
-                'status' => WebOrder::STATE_ERROR,
-                "channel" => WebOrder::CHANNEL_ALIEXPRESS
-            ]
-        );
-        $this->logger->info(count($ordersToReintegrate) . ' orders to re-integrate');
-        foreach ($ordersToReintegrate as $orderToReintegrate) {
-            $this->logLine('>>> Reintegration of order ' . $orderToReintegrate->getExternalNumber());
-            $this->reIntegrateOrder($orderToReintegrate);
-        }
-    }
-
-
-
-
-
-    protected function addError($errorMessage)
-    {
-        $this->logger->error($errorMessage);
-        $this->errors[] = $errorMessage;
-    }
-
 
     /**
      * process all invocies directory
@@ -139,135 +65,9 @@ class AliExpressIntegrateOrder
 
 
 
-
-
-    /**
-     * Integrates order 
-     * Checks if already integrated in BusinessCentral (invoice or order)
-     * 
-     * @param stdClass $order
-     * @return void
-     */
-    protected function integrateOrder(stdClass $order)
+    protected function getOrderId(stdClass $orderApi)
     {
-        $this->logLine(">>> Integration order marketplace Aliexpress " . $order->id);
-        if ($this->checkToIntegrateToInvoice($order->id)) {
-            $this->logger->info('To integrate ');
-
-            try {
-                $webOrder = WebOrder::createOneFromAliExpress($order);
-                $this->manager->persist($webOrder);
-
-                $this->addLogToOrder($webOrder, 'Order transformation to fit to ERP model');
-
-                $webOrder->setCompany($this->businessCentralConnector->getCompanyName());
-                $orderBC = $this->transformToAnBcOrder($order);
-
-                $this->addLogToOrder($webOrder, 'Order creation in the ERP ' . $this->businessCentralConnector->getCompanyName());
-
-                $erpOrder = $this->businessCentralConnector->createSaleOrder($orderBC->transformToArray());
-
-                $this->addLogToOrder($webOrder, 'Order created in the ERP ' . $this->businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
-                $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
-                $webOrder->setOrderErp($erpOrder['number']);
-                $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
-            } catch (Exception $e) {
-                $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
-                $webOrder->addError($message);
-                $webOrder->setStatus(WebOrder::STATE_ERROR);
-                $this->addError($message);
-            }
-            $this->manager->flush();
-            $this->logger->info('Integration finished');
-            return true;
-        } else {
-            $this->logger->info('No Integration');
-            return false;
-        }
-    }
-
-
-
-    /**
-     * Integrates order 
-     * Checks if already integrated in BusinessCentral (invoice or order)
-     * 
-     */
-    public function reIntegrateOrder(WebOrder $order)
-    {
-        try {
-            $order->cleanErrors();
-            $this->addLogToOrder($order, 'Attempt to new integration');
-            $this->addLogToOrder($order, 'Order transformation to fit to ERP model');
-            $orderApi = $order->getOrderContent();
-
-            $orderBC = $this->transformOrder->transformToAnBcOrder($orderApi);
-            $this->addLogToOrder($order, 'Order creation in the ERP');
-            $erpOrder = $this->businessCentralConnector->createSaleOrder($orderBC->transformToArray());
-            $this->addLogToOrder($order, 'Order created in the ERP ' . $this->businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
-
-            $order->setStatus(WebOrder::STATE_SYNC_TO_ERP);
-            $order->setOrderErp($erpOrder['number']);
-            $this->addLogToOrder($order, 'Integration done ' . $erpOrder['number']);
-        } catch (Exception $e) {
-            $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
-            $order->addError($message);
-            $order->setStatus(WebOrder::STATE_ERROR);
-            $this->addError($message);
-        }
-        $this->manager->flush();
-        $this->logger->info('Integration finished');
-        return true;
-    }
-
-
-    protected function checkToIntegrateToInvoice($idOrder): bool
-    {
-        if ($this->isAlreadyRecordedDatabase($idOrder)) {
-            $this->logger->info('Is Already Recorded Database');
-            return false;
-        }
-        if ($this->alreadyIntegratedErp($idOrder)) {
-            $this->logger->info('Is Already Recorded on ERP');
-            return false;
-        }
-        return true;
-    }
-
-
-    protected function isAlreadyRecordedDatabase($idOrderApi): bool
-    {
-        $orderRecorded = $this->manager->getRepository(WebOrder::class)->findBy(
-            [
-                'externalNumber' => $idOrderApi,
-                'channel' => WebOrder::CHANNEL_ALIEXPRESS
-            ]
-        );
-        return count($orderRecorded) > 0;
-    }
-
-
-    protected function alreadyIntegratedErp($idOrderApi): bool
-    {
-        return $this->checkIfInvoice($idOrderApi) || $this->checkIfOrder($idOrderApi);
-    }
-
-
-
-    protected function checkIfOrder($idOrderApi): bool
-    {
-        $this->logger->info('Check order in BC ' . $idOrderApi);
-        $saleOrder = $this->businessCentralConnector->getSaleOrderByExternalNumber($idOrderApi);
-        return $saleOrder != null;
-    }
-
-
-
-    protected function checkIfInvoice($idOrderApi): bool
-    {
-        $this->logger->info('Check invoice in BC ' . $idOrderApi);
-        $saleOrder = $this->businessCentralConnector->getSaleInvoiceByExternalNumber($idOrderApi);
-        return $saleOrder != null;
+        return $orderApi->id;
     }
 
 
@@ -371,14 +171,6 @@ class AliExpressIntegrateOrder
     }
 
 
-
-    /**
-     * Transform lines from Api to BC model
-     *
-     * @param array $saleLineApis
-     * @param float $additionalCostOrDiscount
-     * @return SaleOrderLine[]
-     */
     private function getSalesOrderLines(array $saleLineApis): array
     {
         $saleOrderLines = [];
@@ -397,46 +189,5 @@ class AliExpressIntegrateOrder
 
 
         return $saleOrderLines;
-    }
-
-
-
-
-    protected function addLogToOrder(WebOrder $webOrder, $message)
-    {
-        $webOrder->addLog($message);
-        $this->logger->info($message);
-    }
-
-
-
-    protected function logLine($message)
-    {
-        $separator = str_repeat("-", strlen($message));
-        $this->logger->info('');
-        $this->logger->info($separator);
-        $this->logger->info($message);
-        $this->logger->info($separator);
-    }
-
-
-    /**
-     * Undocumented function
-     *
-     * @param string $sku
-     * @return string
-     */
-    protected function getProductCorrelationSku(string $sku): string
-    {
-        $skuSanitized = strtoupper($sku);
-        $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
-        $skuFinal = $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
-
-        $product = $this->businessCentralConnector->getItemByNumber($skuFinal);
-        if (!$product) {
-            throw new Exception("Product with Sku $skuFinal cannot be found in business central. Check Product correlation ");
-        } else {
-            return  $product['id'];
-        }
     }
 }

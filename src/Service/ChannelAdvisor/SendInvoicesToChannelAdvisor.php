@@ -4,12 +4,11 @@ namespace App\Service\ChannelAdvisor;
 
 
 use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\KpFranceConnector;
 use App\Service\ChannelAdvisor\ChannelWebservice;
+use App\Service\Invoice\InvoiceParent;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Psr\Log\LoggerInterface;
 
@@ -18,21 +17,14 @@ use Psr\Log\LoggerInterface;
  * Services that will get through the API the order from ChannelAdvisor
  * 
  */
-class SendInvoicesToChannelAdvisor
+class SendInvoicesToChannelAdvisor extends InvoiceParent
 {
 
     const DELAI_MAX = 24;
 
-    private $logger;
-
 
     private $channel;
 
-
-    private $manager;
-
-
-    private $kpFranceConnector;
 
 
     public function __construct(
@@ -42,125 +34,32 @@ class SendInvoicesToChannelAdvisor
         ChannelWebservice $channel,
         KpFranceConnector $kpFranceConnector
     ) {
-        $this->logger = $logger;
-        $this->mailer = $mailer;
+        parent::__construct($manager, $logger, $mailer, $kpFranceConnector);
         $this->channel = $channel;
-        $this->manager = $manager->getManager();
-        $this->channel = $channel;
-        $this->kpFranceConnector = $kpFranceConnector;
     }
 
-
-    /**
-     * 
-     * 
-     * @return void
-     */
-    public function processOrders($reprocess = false)
+    public function getChannel()
     {
-        try {
-            $this->errors = [];
-            if ($reprocess) {
-                $this->logger->info('Start sending invoices in error');
-                $this->resendInvoices();
-                $this->logger->info('Ended sending invoices in error');
-            } else {
-                $this->logger->info('Start sending invoices');
-                $this->sendInvoices();
-                $this->logger->info('Ended sending invoices');
-            }
-
-
-            if (count($this->errors) > 0) {
-                throw new \Exception(implode('<br/>', $this->errors));
-            }
-        } catch (\Exception $e) {
-            $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmail('[Invoice Send] Error', $e->getMessage(), 'stephane.lanjard@kpsport.com');
-        }
+        return WebOrder::CHANNEL_CHANNELADVISOR;
     }
 
 
-    public function logLine($message)
-    {
-        $separator = str_repeat("-", strlen($message));
-        $this->logger->info('');
-        $this->logger->info($separator);
-        $this->logger->info($message);
-        $this->logger->info($separator);
-    }
-
-
-
-    /**
-     * 
-     * 
-     * @return void
-     */
-    protected function sendInvoices()
-    {
-        $ordersToSend = $this->manager->getRepository(WebOrder::class)->findBy(
-            [
-                "status" => WebOrder::STATE_SYNC_TO_ERP,
-                "channel" => WebOrder::CHANNEL_CHANNELADVISOR,
-                "company" => BusinessCentralConnector::KP_FRANCE,
-            ]
-        );
-        $this->logger->info(count($ordersToSend) . ' orders to re-send');
-        foreach ($ordersToSend as $orderToSend) {
-            $this->logLine('>>> Sending file to channel of order ' . $orderToSend->getExternalNumber());
-            $this->sendInvoice($orderToSend);
-        }
-    }
-
-
-
-
-
-    /**
-     * 
-     * 
-     * @return void
-     */
-    protected function resendInvoices()
-    {
-        $ordersToSend = $this->manager->getRepository(WebOrder::class)->findBy(
-            [
-                "status" => WebOrder::STATE_ERROR_INVOICE,
-                "channel" => WebOrder::CHANNEL_CHANNELADVISOR,
-                "company" => BusinessCentralConnector::KP_FRANCE,
-            ]
-        );
-        $this->logger->info(count($ordersToSend) . ' orders to re-send');
-        foreach ($ordersToSend as $orderToSend) {
-            $this->logLine('>>> Sending file to channel of order ' . $orderToSend->getExternalNumber());
-            $this->sendInvoice($orderToSend);
-        }
-    }
-
-
-
-
-    protected function addError($errorMessage)
-    {
-        $this->logger->error($errorMessage);
-        $this->errors[] = $errorMessage;
-    }
 
 
     protected function sendInvoice(WebOrder $order)
     {
         try {
 
-            $invoice =  $this->kpFranceConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
+            $invoice =  $this->businessCentralConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
             if ($invoice) {
+                $order->cleanErrors();
                 $this->addLogToOrder($order, 'Invoice created in the ERP with number ' . $invoice['number']);
                 $order->setStatus(WebOrder::STATE_INVOICED);
                 $order->setInvoiceErp($invoice['number']);
                 $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
 
                 $this->addLogToOrder($order, 'Retrieve invoice content');
-                $contentPdf  = $this->kpFranceConnector->getContentInvoicePdf($invoice['id']);
+                $contentPdf  = $this->businessCentralConnector->getContentInvoicePdf($invoice['id']);
                 $this->addLogToOrder($order, 'Retrieved invoice content');
 
 
@@ -184,20 +83,8 @@ class SendInvoicesToChannelAdvisor
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
             $order->addError($message);
-            $order->setStatus(WebOrder::STATE_ERROR_INVOICE);
             $this->addError($message);
         }
         $this->manager->flush();
-    }
-
-
-
-
-
-
-    protected function addLogToOrder(WebOrder $webOrder, $message)
-    {
-        $webOrder->addLog($message);
-        $this->logger->info($message);
     }
 }

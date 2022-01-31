@@ -14,6 +14,9 @@
     "aws/aws-sdk-php": {
         "version": "3.184.6"
     },
+    "box/spout": {
+        "version": "v3.3.0"
+    },
     "composer/package-versions-deprecated": {
         "version": "1.11.99.2"
     },

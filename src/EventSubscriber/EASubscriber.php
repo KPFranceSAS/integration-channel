@@ -32,7 +32,7 @@ class EASubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (in_array($entity->getStatus(),  [WebOrder::STATE_SYNC_TO_ERP, WebOrder::STATE_SYNC_TO_ERP])) {
+        if (in_array($entity->getStatus(),  [WebOrder::STATE_SYNC_TO_ERP, WebOrder::STATE_INVOICED])) {
             $bcConnector =  $this->businessCentralAggregator->getBusinessCentralConnector($entity->getCompany());
             if ($entity->getStatus() == WebOrder::STATE_SYNC_TO_ERP) {
 

@@ -210,6 +210,31 @@ class AmazonOrder
      */
     private $vatExclusiveGiftwrapPrice;
 
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups({"export_order"})
+     */
+    private $itemPriceCurrency;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups({"export_order"})
+     */
+    private $itemTaxCurrency;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups({"export_order"})
+     */
+    private $shippingPriceCurrency;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups({"export_order"})
+     */
+    private $shippingTaxCurrency;
+
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
@@ -297,9 +322,9 @@ class AmazonOrder
                     "vat-exclusive-shipping-price",
                     "vat-exclusive-giftwrap-price",
                 ])) {
-                    $valueFormate = floatval($value);
+                    $valueFormate = round(floatval($value), 2);
                     $this->{$attribute . 'Currency'} = $valueFormate > 0 ? $valueFormate : null;
-                    $this->{$attribute} =  $valueFormate > 0 ? $calculator->getConvertedAmountDate($valueFormate, $this->currency, $this->purchaseDate) : null;
+                    $this->{$attribute} =  $valueFormate > 0 ? round($calculator->getConvertedAmountDate($valueFormate, $this->currency, $this->purchaseDate), 2) : null;
                 } else {
                     $this->{$attribute} =  strlen($value) > 0 ? $value : null;
                 }
@@ -888,6 +913,54 @@ class AmazonOrder
     public function setProduct(?Product $product): self
     {
         $this->product = $product;
+
+        return $this;
+    }
+
+    public function getItemPriceCurrency(): ?float
+    {
+        return $this->itemPriceCurrency;
+    }
+
+    public function setItemPriceCurrency(?float $itemPriceCurrency): self
+    {
+        $this->itemPriceCurrency = $itemPriceCurrency;
+
+        return $this;
+    }
+
+    public function getItemTaxCurrency(): ?float
+    {
+        return $this->itemTaxCurrency;
+    }
+
+    public function setItemTaxCurrency(?float $itemTaxCurrency): self
+    {
+        $this->itemTaxCurrency = $itemTaxCurrency;
+
+        return $this;
+    }
+
+    public function getShippingPriceCurrency(): ?float
+    {
+        return $this->shippingPriceCurrency;
+    }
+
+    public function setShippingPriceCurrency(?float $shippingPriceCurrency): self
+    {
+        $this->shippingPriceCurrency = $shippingPriceCurrency;
+
+        return $this;
+    }
+
+    public function getShippingTaxCurrency(): ?float
+    {
+        return $this->shippingTaxCurrency;
+    }
+
+    public function setShippingTaxCurrency(?float $shippingTaxCurrency): self
+    {
+        $this->shippingTaxCurrency = $shippingTaxCurrency;
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Exception;
 use stdClass;
 
 /**
@@ -15,6 +16,9 @@ class WebOrder
     const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
 
     const CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
+
+    const CHANNEL_OWLETCARE = 'OWLETCARE';
+
 
     const DOCUMENT_ORDER = 'ORDER';
 
@@ -45,6 +49,19 @@ class WebOrder
     const STATE_SYNC_TO_ERP = 1;
 
     const STATE_INVOICED = 5;
+
+
+    const STATE_ERROR_INVOICE_TEXT = 'Error send invoice';
+
+    const STATE_ERROR_TEXT = 'Error integration';
+
+    const STATE_CREATED_TEXT = 'Order integrated';
+
+    const STATE_SYNC_TO_ERP_TEXT = 'Order integrated';
+
+    const STATE_INVOICED_TEXT = 'Invoice integrated';
+
+    const STATE_UNDEFINED_TEXT = 'Undefined';
 
 
     /**
@@ -154,7 +171,23 @@ class WebOrder
 
     public function needRetry()
     {
-        return $this->status == self::STATE_ERROR;
+        return in_array($this->status,  [self::STATE_ERROR, self::STATE_ERROR_INVOICE]);
+    }
+
+
+    public function getStatusLitteral()
+    {
+        if ($this->status ==  self::STATE_ERROR) {
+            return self::STATE_ERROR_TEXT;
+        } else if ($this->status ==  self::STATE_SYNC_TO_ERP) {
+            return self::STATE_SYNC_TO_ERP_TEXT;
+        } else if ($this->status ==  self::STATE_INVOICED) {
+            return self::STATE_INVOICED_TEXT;
+        } else if ($this->status ==  self::STATE_ERROR_INVOICE) {
+            return self::STATE_ERROR_INVOICE_TEXT;
+        } else {
+            return self::STATE_UNDEFINED_TEXT;;
+        }
     }
 
 
@@ -193,6 +226,7 @@ class WebOrder
         $webOrder->setChannel(WebOrder::CHANNEL_CHANNELADVISOR);
         $webOrder->setSubchannel($orderApi->SiteName);
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
+        $webOrder->setPurchaseDateFromString($orderApi->PaymentDateUtc);
 
         if ($orderApi->DistributionCenterTypeRollup == 'ExternallyManaged') {
             $webOrder->setWarehouse(WebOrder::DEPOT_FBA_AMAZON);
@@ -210,6 +244,52 @@ class WebOrder
     }
 
 
+    public function setPurchaseDateFromString($purchaseValue)
+    {
+        $date = explode('T', $purchaseValue);
+        $this->purchaseDate =  DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
+    }
+
+
+
+    public static function createOneFrom(stdClass $orderApi, $channel)
+    {
+        if ($channel == WebOrder::CHANNEL_ALIEXPRESS) {
+            return WebOrder::createOneFromAliExpress($orderApi);
+        } else if ($channel == WebOrder::CHANNEL_CHANNELADVISOR) {
+            return WebOrder::createOneFromChannelAdvisor($orderApi);
+        } else if ($channel == WebOrder::CHANNEL_OWLETCARE) {
+            return WebOrder::createOneFromOwletcare($orderApi);
+        }
+        throw new Exception('No constructor of weborder for ' . $channel);
+    }
+
+
+
+    /**
+     * Undocumented function
+     *
+     * @param stdClass $orderApi
+     * @return WebOrder
+     */
+    public static function createOneFromOwletcare(stdClass $orderApi)
+    {
+        $webOrder = new WebOrder();
+        $webOrder->setExternalNumber($orderApi->id);
+        $webOrder->setPurchaseDate(DateTime::createFromFormat('Y-m-d H:i:s', $orderApi->gmt_pay_succes));
+        $webOrder->setStatus(WebOrder::STATE_CREATED);
+        $webOrder->setChannel(WebOrder::CHANNEL_OWLETCARE);
+        $webOrder->setSubchannel('Owletcare');
+        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
+        $webOrder->setWarehouse(WebOrder::DEPOT_CENTRAL);
+        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+        $webOrder->addLog('Retrieved from owletcare.es');
+        $webOrder->setContent($orderApi);
+        return $webOrder;
+    }
+
+
+
     /**
      * Undocumented function
      *
@@ -220,6 +300,7 @@ class WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->id);
+        $webOrder->setPurchaseDate(DateTime::createFromFormat('Y-m-d H:i:s', $orderApi->gmt_pay_succes));
         $webOrder->setStatus(WebOrder::STATE_CREATED);
         $webOrder->setChannel(WebOrder::CHANNEL_ALIEXPRESS);
         $webOrder->setSubchannel('AliExpress');
@@ -289,6 +370,11 @@ class WebOrder
 
 
     public $orderBCContent = [];
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $purchaseDate;
 
 
 
@@ -481,6 +567,18 @@ class WebOrder
     public function setFulfilledBy(?string $fulfilledBy): self
     {
         $this->fulfilledBy = $fulfilledBy;
+
+        return $this;
+    }
+
+    public function getPurchaseDate(): ?\DateTimeInterface
+    {
+        return $this->purchaseDate;
+    }
+
+    public function setPurchaseDate(?\DateTimeInterface $purchaseDate): self
+    {
+        $this->purchaseDate = $purchaseDate;
 
         return $this;
     }

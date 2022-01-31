@@ -18,6 +18,11 @@ class ChannelAdvisorOrderCrudController extends WebOrderCrudController
 {
 
 
+    public function getName()
+    {
+        return "Amazon Order";
+    }
+
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);

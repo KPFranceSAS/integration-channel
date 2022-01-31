@@ -36,7 +36,6 @@ class OrderReintegrateCommand extends Command
     {
 
         $this->integrate->processOrders(true);
-
         return Command::SUCCESS;
     }
 }
