@@ -115,7 +115,7 @@ abstract class IntegratorParent implements IntegratorInterface
                 $webOrder->setOrderErp($erpOrder['number']);
                 $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
             } catch (Exception $e) {
-                $message = 'Integration Problem ' . $idOrder . ' > ' . mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
+                $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
                 $webOrder->addError($message);
                 $webOrder->setStatus(WebOrder::STATE_ERROR);
                 $this->addError('Integration Problem ' . $idOrder . ' > ' . $message);
@@ -163,10 +163,12 @@ abstract class IntegratorParent implements IntegratorInterface
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
             $order->addError($message);
             $order->setStatus(WebOrder::STATE_ERROR);
+            $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
+            $this->addError('Reintegration Problem ' . $order->getExternalNumber() . ' > ' . $message);
             $this->addError($message);
         }
         $this->manager->flush();
-        $this->logger->info('Integration finished');
+        $this->logger->info('Reintegration finished');
         return true;
     }
 
