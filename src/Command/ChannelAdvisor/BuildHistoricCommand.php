@@ -67,6 +67,8 @@ class BuildHistoricCommand extends Command
             }
         }
 
+        $this->manager->flush();
+
 
         return Command::SUCCESS;
     }
