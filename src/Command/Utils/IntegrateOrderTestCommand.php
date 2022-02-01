@@ -46,7 +46,7 @@ class IntegrateOrderTestCommand extends Command
         //$this->createOrderTest();
 
 
-        $product = $this->bcConnector->getFullSaleInvoiceByNumber("FV22/0102646");
+        $product = $this->bcConnector->getFullSaleInvoiceByNumber("FV22/0100767");
         dump($product);
 
 
@@ -98,7 +98,7 @@ class IntegrateOrderTestCommand extends Command
 
             "billToName" => "Vipul Parmar",
             "sellingPostalAddress" => [
-                "street" => "9 GATEHILL \r\nGARDENS",
+                "street" => "Calle Berlin 664, Puerta K. Altea Hills Grupo 3, Residencia \r\nPuerta K, Altea Hills Grupo 3, Residencia los Olivos",
                 "postalCode" => "66840",
                 "city" => "Bourg Madame",
                 "countryLetterCode" => "FR",
@@ -106,7 +106,7 @@ class IntegrateOrderTestCommand extends Command
 
             "shipToName" => "Vipul Parmar",
             "shippingPostalAddress" => [
-                "street" => "9 GATEHILL \r\nGARDENS",
+                "street" => "Calle Berlin 664, Puerta K. Altea Hills Grupo 3, Residencia \r\nPuerta K, Altea Hills Grupo 3, Residencia los Olivos",
                 "city" => "LUTON",
                 "state" => "West Yorkshire",
                 "postalCode" => "LU3 4EZ",
@@ -116,7 +116,7 @@ class IntegrateOrderTestCommand extends Command
             'pricesIncludeTax' => true,
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
-            "externalDocumentNumber" => "XXXX-XXXX-XXXX",
+            "externalDocumentNumber" => "length-XXXX-XXXX-XXXX",
         ];
 
 

@@ -76,7 +76,6 @@ class WebOrderCrudController extends AbstractCrudController
             ->displayIf(static function ($entity) {
                 return $entity->needRetry();
             })
-            ->displayAsButton()
             ->addCssClass('btn')
             ->linkToCrudAction('retryIntegration');
 
