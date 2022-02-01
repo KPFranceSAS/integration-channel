@@ -31,14 +31,28 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $carriers = $this->aliExpress->getCarriers();
 
+        return Command::SUCCESS;
+    }
+
+
+
+
+    private function markCompanyTransport()
+    {
+        $order = $this->aliExpress->getOrder("8145815016887916");
+        dump($order);
+
+        /*$carriers = $this->aliExpress->getCarriers();
         foreach ($carriers as $carrier) {
             dump($carrier->service_name);
         }
+        */
 
 
-        return Command::SUCCESS;
+
+        $result = $this->aliExpress->markOrderAsFulfill("3015403747487139", "SPAIN_LOCAL_DHL", "0837572830");
+        dump($result);
     }
 
 
