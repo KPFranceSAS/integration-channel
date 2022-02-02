@@ -180,7 +180,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
     {
         $discount = 0;
         foreach ($saleLineApis as $line) {
-            if (!is_array($line->child_order_discount_detail_list)) {
+            if ($line->child_order_discount_detail_list && property_exists($line->child_order_discount_detail_list, 'global_aeop_tp_sale_discount_info')) {
                 foreach ($line->child_order_discount_detail_list->global_aeop_tp_sale_discount_info as $lineDiscount) {
                     if ($lineDiscount->promotion_owner  == $typeDiscount) {
                         $discount += floatval($lineDiscount->discount_detail->amount);

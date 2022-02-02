@@ -42,7 +42,7 @@ class AmzApiImport
         try {
             $report = $this->amzApi->createReportOrdersByLastUpdate($dateTimeStart);
             $this->logger->info('Report processing ReportId = ' . $report->getReportId());
-            for ($i = 0; $i < 20; $i++) {
+            for ($i = 0; $i < 30; $i++) {
                 $this->logger->info('Wait 10s reporting is done');
                 sleep(10);
                 $reportState = $this->amzApi->getReport($report->getReportId());
@@ -57,7 +57,7 @@ class AmzApiImport
             }
             throw new Exception('Report takes too long to be processed');
         } catch (Exception $e) {
-            $this->mailer->sendEmail("[AMAZ ORDERS]", $e->getMessage());
+            $this->mailer->sendEmail("[REPORT AMAZON ORDERS]", $e->getMessage());
         }
     }
 
