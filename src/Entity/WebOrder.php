@@ -201,6 +201,13 @@ class WebOrder
 
 
 
+    public function __toString()
+    {
+        return 'Order ' . $this->subchannel . ' n°' . $this->externalNumber . ' (#' . $this->id . ')';
+    }
+
+
+
 
     public function documentInErp()
     {
@@ -208,6 +215,18 @@ class WebOrder
             return $this->erpDocument == self::DOCUMENT_INVOICE ?  $this->invoiceErp : $this->orderErp;
         }
         return '-';
+    }
+
+
+    public function getUrl()
+    {
+        switch ($this->channel) {
+            case  WebOrder::CHANNEL_ALIEXPRESS:
+                return 'https://gsp.aliexpress.com/apps/order/detail?orderId=' . $this->externalNumber;
+            case  WebOrder::CHANNEL_CHANNELADVISOR:
+                return 'https://sellercentral.amazon.fr/orders-v3/order/' . $this->externalNumber;
+        }
+        throw new Exception('No url link of weborder for ' . $this->channel);
     }
 
 
@@ -300,11 +319,12 @@ class WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->id);
-        $webOrder->setPurchaseDate(DateTime::createFromFormat('Y-m-d H:i:s', $orderApi->gmt_pay_succes));
         $webOrder->setStatus(WebOrder::STATE_CREATED);
         $webOrder->setChannel(WebOrder::CHANNEL_ALIEXPRESS);
         $webOrder->setSubchannel('AliExpress');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
+        $datePurchase = DateTime::createFromFormat('Y-m-d H:i:s', $orderApi->gmt_pay_success);
+        $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_CENTRAL);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
         $webOrder->addLog('Retrieved from Aliexpress');

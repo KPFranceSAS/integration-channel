@@ -2,7 +2,6 @@
 
 namespace App\Service\AliExpress;
 
-use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\SaleOrder;
@@ -13,7 +12,6 @@ use App\Service\Integrator\IntegratorParent;
 use App\Service\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
-use Exception;
 use Psr\Log\LoggerInterface;
 use stdClass;
 
@@ -82,8 +80,6 @@ class AliExpressIntegrateOrder extends IntegratorParent
     {
         $orderBC = new SaleOrder();
         $orderBC->customerNumber = '002355';
-
-
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->gmt_pay_success, 0, 10));
         $datePayment->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
@@ -137,33 +133,58 @@ class AliExpressIntegrateOrder extends IntegratorParent
             $orderBC->salesLines[] = $saleLineDelivery;
         }
 
-        //$promotionsFees = floatval($orderApi->order_discount_info->amount);
-        $promotionsFees = $this->getTotalDiscount($orderApi->child_order_list->global_aeop_tp_child_order_dto);
+
+        $promotionsSeller = $this->getTotalDiscountBySeller($orderApi->child_order_list->global_aeop_tp_child_order_dto);
 
         // add discount 
-        if ($promotionsFees > 0) {
-            $account = $this->businessCentralConnector->getAccountForExpedition();
+        if ($promotionsSeller > 0) {
+            $account = $this->businessCentralConnector->getAccount('7000005');
             $saleLineDelivery = new SaleOrderLine();
             $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;
             $saleLineDelivery->quantity = 1;
             $saleLineDelivery->accountId = $account['id'];
-            $saleLineDelivery->unitPrice = -$promotionsFees;
+            $saleLineDelivery->unitPrice = -$promotionsSeller;
             $saleLineDelivery->description = 'DISCOUNT';
             $orderBC->salesLines[] = $saleLineDelivery;
         }
+
+
+        $promotionsAliExpress = $this->getTotalDiscountByAliExpress($orderApi->child_order_list->global_aeop_tp_child_order_dto);
+
+        // add discount Aliexpress
+        if ($promotionsAliExpress > 0) {
+            $saleLineDelivery = new SaleOrderLine();
+            $saleLineDelivery->lineType = SaleOrderLine::TYPE_COMMENT;
+            $saleLineDelivery->description = 'DISCOUNT ALI EXPRESS // ' . round($promotionsAliExpress, 2) . ' EUR';
+            $orderBC->salesLines[] = $saleLineDelivery;
+        }
+
 
 
         return $orderBC;
     }
 
 
-    private function getTotalDiscount($saleLineApis)
+    private function getTotalDiscountByAliExpress($saleLineApis)
+    {
+        return $this->getTotalDiscountBy($saleLineApis, 'PLATFORM');
+    }
+
+
+    private function getTotalDiscountBySeller($saleLineApis)
+    {
+        return $this->getTotalDiscountBy($saleLineApis, 'SELLER');
+    }
+
+    private function getTotalDiscountBy($saleLineApis, $typeDiscount)
     {
         $discount = 0;
         foreach ($saleLineApis as $line) {
-            foreach ($line->child_order_discount_detail_list->global_aeop_tp_sale_discount_info as $lineDiscount) {
-                if ($lineDiscount->promotion_owner  == 'SELLER') {
-                    $discount += floatval($lineDiscount->discount_detail->amount);
+            if (!is_array($line->child_order_discount_detail_list)) {
+                foreach ($line->child_order_discount_detail_list->global_aeop_tp_sale_discount_info as $lineDiscount) {
+                    if ($lineDiscount->promotion_owner  == $typeDiscount) {
+                        $discount += floatval($lineDiscount->discount_detail->amount);
+                    }
                 }
             }
         }

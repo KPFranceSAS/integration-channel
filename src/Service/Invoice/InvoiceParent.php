@@ -58,7 +58,7 @@ abstract class InvoiceParent
 
 
             if (count($this->errors) > 0) {
-                throw new \Exception(implode('<br/>', $this->errors));
+                throw new \Exception(implode('<br/><br/>', $this->errors));
             }
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());

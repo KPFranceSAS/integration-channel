@@ -1,0 +1,143 @@
+{% if field.value|length > 0 %}
+
+	<div class="row " style="margin:0!important">
+		<div class="mb-3 col-4">
+			<h6>Billing</h6>
+			<div class="">
+				{{field.value.receipt_address.contact_person}}<br/>
+				{{field.value.receipt_address.detail_address}}<br/>
+				{% if field.value.receipt_address.detail_address2 is defined %}
+					{{field.value.receipt_address.detail_address2}}<br/>
+				{% endif %}
+				{{field.value.receipt_address.zip}}
+				{{field.value.receipt_address.city}},
+				{% if field.value.receipt_address.province|length > 0 %}
+					{{field.value.receipt_address.province}},
+				{% endif %}
+				{{field.value.receipt_address.country}}
+
+			</div>
+		</div>
+
+		<div class="mb-3 col-4">
+			<h6>Shipping</h6>
+			<div class="">
+				{{field.value.receipt_address.contact_person}}<br/>
+				{{field.value.receipt_address.detail_address}}<br/>
+				{% if field.value.receipt_address.detail_address2 is defined %}
+					{{field.value.receipt_address.detail_address2}}<br/>
+				{% endif %}
+				{{field.value.receipt_address.zip}}
+				{{field.value.receipt_address.city}},
+				{% if field.value.receipt_address.province|length > 0 %}
+					{{field.value.receipt_address.province}},
+				{% endif %}
+				{{field.value.receipt_address.country}}
+
+			</div>
+		</div>
+
+		<div class="col-12">
+			<h6>List of items</h6>
+			<div class="">
+				<table class="table datagrid ">
+					<thead>
+						<tr>
+							<th>
+								Sku
+							</th>
+							<th>
+								Title
+							</th>
+
+							<th>
+								Unit Price
+							</th>
+							<th>
+								Qty
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for line in field.value.child_order_list.global_aeop_tp_child_order_dto %}
+							<tr>
+								<td>
+									{{line.sku_code}}
+								</td>
+								<td>
+									{{line.product_name|slice(0,20)}}
+								</td>
+								<td>
+									{{line.product_price.amount}}
+									{{field.value.settlement_currency}}
+								</td>
+								<td>
+									{{line.product_count}}
+								</td>
+							</tr>
+						{% endfor %}
+						{% for line in field.value.child_order_list.global_aeop_tp_child_order_dto %}
+							{% if line.child_order_discount_detail_list.global_aeop_tp_sale_discount_info is defined %}
+								{% for lineDiscount in line.child_order_discount_detail_list.global_aeop_tp_sale_discount_info  %}
+									 {% if lineDiscount.promotion_owner == 'SELLER' %}
+									<tr>
+										<td>
+											DISCOUNT
+										</td>
+										<td>
+											{{lineDiscount.promotion_owner}}
+										</td>
+										<td>
+											-{{lineDiscount.discount_detail.amount}} {{field.value.settlement_currency}}
+										</td>
+										<td>1</td>
+									</tr>
+									{% else %}	
+									<tr>
+										<td>
+											COUPON
+										</td>
+										<td>
+											Aliexpress (-{{lineDiscount.discount_detail.amount}}
+											{{field.value.settlement_currency}})
+										</td>
+										<td>
+											0 {{field.value.settlement_currency}}
+										</td>
+										<td>0</td>
+									</tr>						
+									{% endif %}
+								{% endfor %}
+							{% endif %}
+						{% endfor %}
+					</tbody>
+					<tfooter>
+						<tr>
+							<td colspan="3" class="text-right">
+								<strong>Total shipping</strong>
+							</td>
+							<td colspan="">
+								{{field.value.logistics_amount.amount}}
+								{{field.value.settlement_currency}}
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3" class="text-right">
+								<strong>Total price</strong>
+							</td>
+							<td colspan="">
+								{{field.value.order_amount.amount}}
+								{{field.value.settlement_currency}}
+							</td>
+						</tr>
+					</tfooter>
+				</table>
+
+			</div>
+		</div>
+	</div>
+{% else %}
+	<span class="badge badge-secondary">
+		Data not accessible from Aliexpress</span>
+
+{% endif %}

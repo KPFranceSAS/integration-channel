@@ -5,7 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\ChannelAdvisor\IntegrateOrdersChannelAdvisor;
+use App\Service\Integrator\IntegratorAggregator;
 use Box\Spout\Common\Entity\Style\Color;
 use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
@@ -60,6 +60,20 @@ class WebOrderCrudController extends AbstractCrudController
             ->addCssClass('btn')
             ->linkToCrudAction('downloadInvoice');
 
+        $retryIntegration = Action::new('retryIntegration', 'Retry', 'fas fa-redo')
+            ->displayIf(static function ($entity) {
+                return $entity->needRetry();
+            })
+            ->addCssClass('btn')
+            ->linkToCrudAction('retryIntegration');
+
+        $seeOriginalOrder = Action::new('checkOrderOnline', 'See online', 'fa fa-eye')
+            ->addCssClass('btn')
+            ->setHtmlAttributes(['target' => '_blank'])
+            ->linkToUrl(static function ($entity) {
+                return $entity->getUrl();
+            });
+
         $viewInvoiceIndex = Action::new('downloadInvoice', '', 'fa fa-file-invoice')
             ->displayIf(static function ($entity) {
                 return $entity->haveInvoice();
@@ -72,36 +86,32 @@ class WebOrderCrudController extends AbstractCrudController
             })
             ->linkToCrudAction('retryIntegration');
 
-        $retryIntegration = Action::new('retryIntegration', 'Retry', 'fas fa-redo')
-            ->displayIf(static function ($entity) {
-                return $entity->needRetry();
-            })
-            ->addCssClass('btn')
-            ->linkToCrudAction('retryIntegration');
 
-        $viewOrder = Action::new(Action::DETAIL, '', 'fa fa-eye')
+
+        $viewOrderIndex = Action::new(Action::DETAIL, '', 'fa fa-eye')
             ->linkToCrudAction(Action::DETAIL);
 
-        $retryAllIntegrations = Action::new('retryAllIntegrations', 'Retry integrations', 'fas fa-redo')
+        $retryAllIntegrationBatchs = Action::new('retryAllIntegrations', 'Retry integrations', 'fas fa-redo')
             ->addCssClass('btn btn-primary')
             ->linkToCrudAction('retryAllIntegrations');
 
-        $export = Action::new('export', 'Export to xlsx')
+        $exportIndex = Action::new('export', 'Export to xlsx')
             ->setIcon('fa fa-download')
             ->linkToCrudAction('export')
-            ->setCssClass('btn btn-primary btn-sm')
+            ->setCssClass('btn btn-primary')
             ->createAsGlobalAction();
 
 
 
         return $actions
             ->add(Crud::PAGE_DETAIL, $viewInvoice)
-            ->add(Crud::PAGE_INDEX, $viewInvoiceIndex)
-            ->add(Crud::PAGE_INDEX, $export)
+            ->add(Crud::PAGE_DETAIL, $seeOriginalOrder)
             ->add(Crud::PAGE_DETAIL, $retryIntegration)
+            ->add(Crud::PAGE_INDEX, $viewInvoiceIndex)
+            ->add(Crud::PAGE_INDEX, $exportIndex)
             ->add(Crud::PAGE_INDEX, $retryIntegrationIndex)
-            ->add(Crud::PAGE_INDEX, $viewOrder)
-            ->addBatchAction($retryAllIntegrations)
+            ->add(Crud::PAGE_INDEX, $viewOrderIndex)
+            ->addBatchAction($retryAllIntegrationBatchs)
             ->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE, Action::EDIT);
     }
 
@@ -220,13 +230,14 @@ class WebOrderCrudController extends AbstractCrudController
 
 
 
-    public function retryAllIntegrations(BatchActionDto $batchActionDto, IntegrateOrdersChannelAdvisor $integrateOrdersChannelAdvisor)
+    public function retryAllIntegrations(BatchActionDto $batchActionDto,  IntegratorAggregator $integratorAggregator)
     {
         $entityManager = $this->getDoctrine()->getManagerForClass($batchActionDto->getEntityFqcn());
         foreach ($batchActionDto->getEntityIds() as $id) {
             $webOrder = $entityManager->find($batchActionDto->getEntityFqcn(), $id);
             if ($webOrder->getStatus() == WebOrder::STATE_ERROR) {
-                $integrateOrdersChannelAdvisor->reIntegrateOrder($webOrder);
+                $integrator = $integratorAggregator->getIntegrator($webOrder->getChannel());
+                $integrator->reIntegrateOrder($webOrder);
                 if ($webOrder->getStatus() == WebOrder::STATE_SYNC_TO_ERP) {
                     $this->addFlash('success', "Web Order " . $webOrder->getExternalNumber() . " has been synced with ERP");
                 } else {
@@ -241,10 +252,11 @@ class WebOrderCrudController extends AbstractCrudController
 
 
 
-    public function retryIntegration(AdminContext $context, IntegrateOrdersChannelAdvisor $integrateOrdersChannelAdvisor)
+    public function retryIntegration(AdminContext $context, IntegratorAggregator $integratorAggregator)
     {
         $webOrder = $context->getEntity()->getInstance();
-        $integrateOrdersChannelAdvisor->reIntegrateOrder($webOrder);
+        $integrator = $integratorAggregator->getIntegrator($webOrder->getChannel());
+        $integrator->reIntegrateOrder($webOrder);
         if ($webOrder->getStatus() == WebOrder::STATE_SYNC_TO_ERP) {
             $this->addFlash('success', "Web Order " . $webOrder->getExternalNumber() . " has been synced with ERP");
         } else {
@@ -275,10 +287,10 @@ class WebOrderCrudController extends AbstractCrudController
                 $fields,
                 [
                     DateTimeField::new('updatedAt', "Updated at"),
-                    ArrayField::new('logs')->setTemplatePath('admin/fields/logs.html.twig')->onlyOnDetail(),
                     ArrayField::new('errors')->setTemplatePath('admin/fields/errors.html.twig')->onlyOnDetail(),
                     ArrayField::new('getOrderContent', 'Content')->setTemplatePath('admin/fields/orderContent.html.twig')->onlyOnDetail(),
                     ArrayField::new('orderBCContent', 'ERP Content')->setTemplatePath('admin/fields/orderBCContent.html.twig')->onlyOnDetail(),
+                    ArrayField::new('logs')->setTemplatePath('admin/fields/logs.html.twig')->onlyOnDetail(),
                 ]
             );
         }

@@ -15,5 +15,7 @@ interface IntegratorInterface
 
     public function reIntegrateOrder(WebOrder $order);
 
-    public  function transformToAnBcOrder(stdClass $orderApi): SaleOrder;
+    public function transformToAnBcOrder(stdClass $orderApi): SaleOrder;
+
+    public function processOrders($reIntegrate = false);
 }

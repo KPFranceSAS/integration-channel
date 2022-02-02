@@ -61,7 +61,7 @@ abstract class IntegratorParent implements IntegratorInterface
             }
 
             if (count($this->errors) > 0) {
-                $messageError = implode('<br/>', array_unique($this->errors));
+                $messageError = implode('<br/><br/>', array_unique($this->errors));
                 throw new \Exception($messageError);
             }
         } catch (\Exception $e) {

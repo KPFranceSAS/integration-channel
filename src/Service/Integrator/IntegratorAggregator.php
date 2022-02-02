@@ -33,4 +33,14 @@ class IntegratorAggregator
 
         throw new Exception("Channel $channel is not related to any integrator");
     }
+
+
+
+    public function getAllChannels(): array
+    {
+        return [
+            WebOrder::CHANNEL_CHANNELADVISOR,
+            WebOrder::CHANNEL_ALIEXPRESS
+        ];
+    }
 }

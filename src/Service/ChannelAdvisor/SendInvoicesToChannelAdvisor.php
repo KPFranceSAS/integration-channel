@@ -54,9 +54,6 @@ class SendInvoicesToChannelAdvisor extends InvoiceParent
             if ($invoice) {
                 $order->cleanErrors();
                 $this->addLogToOrder($order, 'Invoice created in the ERP with number ' . $invoice['number']);
-
-
-
                 $this->addLogToOrder($order, 'Retrieve invoice content ' . $invoice['number']);
                 $contentPdf  = $this->businessCentralConnector->getContentInvoicePdf($invoice['id']);
                 $this->addLogToOrder($order, 'Retrieved invoice content ' . $invoice['number']);
@@ -85,7 +82,7 @@ class SendInvoicesToChannelAdvisor extends InvoiceParent
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
             $order->addError($message);
-            $this->addError($message);
+            $this->addError($order->getExternalNumber() . ' >> ' . $message);
         }
         $this->manager->flush();
     }
