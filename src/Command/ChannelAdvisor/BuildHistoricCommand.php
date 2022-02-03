@@ -3,16 +3,13 @@
 namespace App\Command\ChannelAdvisor;
 
 use App\Entity\AmazonOrder;
-use App\Entity\IntegrationFile;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\KpFranceConnector;
-use App\Service\ChannelAdvisor\ChannelWebservice;
 use Doctrine\Persistence\ManagerRegistry;
-use Exception;
 use stdClass;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -21,11 +18,10 @@ class BuildHistoricCommand extends Command
     protected static $defaultName = 'app:channel-build-historic';
     protected static $defaultDescription = 'Build historical orders';
 
-    public function __construct(KpFranceConnector $saleOrderConnector, ChannelWebservice $channelWebservice, ManagerRegistry $manager)
+    public function __construct(KpFranceConnector $saleOrderConnector, ManagerRegistry $manager)
     {
         $this->manager = $manager->getManager();
         $this->bcConnector = $saleOrderConnector;
-        $this->channelWebservice = $channelWebservice;
         parent::__construct();
     }
 
@@ -33,129 +29,115 @@ class BuildHistoricCommand extends Command
 
     private $manager;
 
-    private $channelWebservice;
+
+    private $toTransform = [];
 
 
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
-            ->addArgument('orderNumbers', InputArgument::OPTIONAL, 'Orders number', 100);
+            ->setDescription(self::$defaultDescription);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $counter = 0;
-        $q = $this->manager->createQuery('select f from App\Entity\IntegrationFile f');
+        $q = $this->manager->createQuery('select a from App\Entity\AmazonOrder a where a.orderStatus = :shipped and a.purchaseDate < :dateCreate and a.itemStatus = :shipped
+            and a.amazonOrderId NOT IN (select p.externalNumber from App\Entity\WebOrder p)')
+            ->setParameter('dateCreate', '2022-01-01 00:00:00')
+            ->setParameter('shipped', 'Shipped');
+        foreach ($q->toIterable() as $amzOrder) {
+            if ($this->checkIfImport($amzOrder)) {
+                $subChannel = $this->matchSubChannel($amzOrder->getSalesChannel());
+                if ($subChannel) {
+                    $this->toTransform[$amzOrder->getAmazonOrderId()] = $subChannel;
+                }
+            }
+        }
+        $this->manager->clear();
+        $output->writeln('Start integration ' . count($this->toTransform));
 
-        foreach ($q->toIterable() as $integrationFile) {
-            $output->writeln('____________________');
-            $output->writeln('Order ' . $integrationFile->getExternalOrderId() . ' #' . $counter);
-            if ($this->treatFromChannel($integrationFile, $output)) {
-                $counter++;
+        $progressPar = new ProgressBar($output, count($this->toTransform));
+        $progressPar->start();
+        $nvCounter = 0;
+        foreach ($this->toTransform as $toTransformNumber => $toTransformChannel) {
+            if ($this->treatFromChannel($toTransformNumber, $toTransformChannel, $output)) {
+                $nvCounter++;
             }
 
 
-            if ($counter % 20 == 0) {
+            if ($nvCounter % 20 == 0) {
                 $this->manager->flush();
                 $this->manager->clear();
             }
-
-            if ($counter > $input->getArgument('orderNumbers')) {
-                $this->manager->flush();
-                return Command::SUCCESS;
-            }
+            $progressPar->advance();
         }
-
+        $progressPar->finish();
         $this->manager->flush();
-
-
         return Command::SUCCESS;
     }
 
 
 
 
-    public function treatFromChannel(IntegrationFile $integrationFile, OutputInterface $output)
+    public function treatFromChannel($amzOrderId, $amzOrderSubChannel, OutputInterface $output)
     {
-        if ($this->checkIfWebOrderExists($integrationFile->getExternalOrderId())) {
-            $output->writeln('Already integrated');
-            return false;
-        }
+
         $webOrder = new WebOrder();
-        $webOrder->setExternalNumber($integrationFile->getExternalOrderId());
+        $webOrder->setExternalNumber($amzOrderId);
         $webOrder->setStatus(WebOrder::STATE_INVOICED);
         $webOrder->setChannel(WebOrder::CHANNEL_CHANNELADVISOR);
-        $webOrder->setSubchannel($this->matchChannelAdvisorOrderToCustomer($integrationFile->getProfileChannel()));
-        $webOrder->setInvoiceErp($integrationFile->getDocumentNumber());
+        $webOrder->setSubchannel($amzOrderSubChannel);
+
         $webOrder->setErpDocument(WebOrder::DOCUMENT_INVOICE);
         $webOrder->setWarehouse(WebOrder::DEPOT_FBA_AMAZON);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_EXTERNAL);
         $webOrder->setCompany(BusinessCentralConnector::KP_FRANCE);
-        $webOrder->addLog('Build from integration file');
-        $orderApi = $this->recreateChannelObject($integrationFile, $webOrder);
-
-        $retrieved = false;
-
-
+        $webOrder->addLog('Build from Amz file');
+        $orderApi = $this->recreateChannelObject($amzOrderId, $webOrder);
         try {
-            $orderChannel = $this->channelWebservice->getFullOrder($integrationFile->getChannelOrderId());
-            if ($orderChannel) {
-                $orderApi = $orderChannel;
-                $retrieved = true;
-            }
-            $output->writeln('Retrieved data from channel');
-            $webOrder->addLog('Retrieved data from channel');
-        } catch (\Exception $e) {
-            $output->writeln('Data not accesible data channel');
-            $webOrder->addLog('Data not accesible data from channel');
-        }
-
-        $webOrder->setContent($orderApi);
-
-        try {
-            $invoice = $this->bcConnector->getSaleInvoiceByNumber($integrationFile->getDocumentNumber());
+            $invoice = $this->bcConnector->getSaleInvoiceByExternalNumber($amzOrderId);
             if ($invoice) {
                 $output->writeln('Retrieved data from business central');
                 $webOrder->addLog('Retrieved data from business central');
                 $webOrder->setOrderErp($invoice['orderNumber']);
-                if ($retrieved == false || (strlen($orderApi->ShippingLastName) == 0 && $retrieved == true)) {
-                    $orderApi->ShippingLastName = $invoice['shipToName'];
-                    $orderApi->ShippingAddressLine1 = $invoice['shippingPostalAddress']["street"];;
-                    $orderApi->ShippingCity = $invoice['shippingPostalAddress']["city"];
-                    $orderApi->ShippingStateOrProvince =  $invoice['shippingPostalAddress']["state"];
-                    $orderApi->ShippingStateOrProvinceName = $invoice['shippingPostalAddress']["state"];
-                    $orderApi->ShippingPostalCode = $invoice['shippingPostalAddress']["postalCode"];
-                    $orderApi->ShippingCountry = $invoice['shippingPostalAddress']["countryLetterCode"];
-                    $orderApi->BillingLastName = $invoice['billToName'];
-                    $orderApi->BillingAddressLine1 = $invoice['billingPostalAddress']["street"];
-                    $orderApi->BillingCity = $invoice['billingPostalAddress']["city"];
-                    $orderApi->BillingStateOrProvince =   $invoice['billingPostalAddress']["state"];
-                    $orderApi->BillingStateOrProvinceName =   $invoice['billingPostalAddress']["state"];
-                    $orderApi->BillingPostalCode =  $invoice['billingPostalAddress']["postalCode"];
-                    $orderApi->BillingCountry =  $invoice['billingPostalAddress']["countryLetterCode"];
-                }
+                $orderApi->ShippingLastName = $invoice['shipToName'];
+                $orderApi->ShippingAddressLine1 = $invoice['shippingPostalAddress']["street"];;
+                $orderApi->ShippingCity = $invoice['shippingPostalAddress']["city"];
+                $orderApi->ShippingStateOrProvince =  $invoice['shippingPostalAddress']["state"];
+                $orderApi->ShippingStateOrProvinceName = $invoice['shippingPostalAddress']["state"];
+                $orderApi->ShippingPostalCode = $invoice['shippingPostalAddress']["postalCode"];
+                $orderApi->ShippingCountry = $invoice['shippingPostalAddress']["countryLetterCode"];
+                $orderApi->BillingLastName = $invoice['billToName'];
+                $orderApi->BillingAddressLine1 = $invoice['billingPostalAddress']["street"];
+                $orderApi->BillingCity = $invoice['billingPostalAddress']["city"];
+                $orderApi->BillingStateOrProvince =   $invoice['billingPostalAddress']["state"];
+                $orderApi->BillingStateOrProvinceName =   $invoice['billingPostalAddress']["state"];
+                $orderApi->BillingPostalCode =  $invoice['billingPostalAddress']["postalCode"];
+                $orderApi->BillingCountry =  $invoice['billingPostalAddress']["countryLetterCode"];
+                $webOrder->setInvoiceErp($invoice['number']);
+                $webOrder->setContent($orderApi);
+            } else {
+                $output->writeln('<error>Data not accesible data business central ' . $amzOrderId . '</error>');
+                return false;
             }
         } catch (\Exception $e) {
-            $output->writeln('Data not accesible data business central');
-            $webOrder->addLog('Data not accesible data business central');
+            $output->writeln('<error>Data not accesible data business central ' . $amzOrderId . '</error>');
+            return false;
         }
         $this->manager->persist($webOrder);
         return true;
     }
 
 
-    private function checkIfWebOrderExists($orderNumber)
+    private function checkIfImport(AmazonOrder $amazonOrder)
     {
-        $orderRecorded = $this->manager->getRepository(WebOrder::class)->findBy(
-            [
-                'externalNumber' => $orderNumber,
-                'channel' => WebOrder::CHANNEL_CHANNELADVISOR
-            ]
-        );
-        return count($orderRecorded) > 0;
-    }
+        if (array_key_exists($amazonOrder->getAmazonOrderId(), $this->toTransform)) {
+            return false;
+        }
 
+        return true;
+    }
 
 
 
@@ -166,51 +148,41 @@ class BuildHistoricCommand extends Command
      * @param string $siteId
      * @return string
      */
-    private function matchChannelAdvisorOrderToCustomer(string $profileId): string
+    private function matchSubChannel(string $subAmazon)
     {
         $mapCustomer = [
-            "12010024" =>   "Amazon UK", // Customer Amazon UK
-            "12010025" =>   "Amazon Seller Central - IT", // Customer Amazon IT
-            "12010023" =>   "Amazon Seller Central - DE", // Customer Amazon DE
-            "12009934" =>   "Amazon Seller Central - FR", // Customer Amazon FR
-            "12010026" =>   "Amazon Seller Central - ES", // Customer Amazon ES
+            "Amazon.co.uk" => "Amazon UK", // Customer Amazon UK
+            "Amazon.it" =>   "Amazon Seller Central - IT", // Customer Amazon IT
+            "Amazon.de" =>   "Amazon Seller Central - DE", // Customer Amazon DE
+            "Amazon.fr" =>   "Amazon Seller Central - FR", // Customer Amazon FR
+            "Amazon.es" =>   "Amazon Seller Central - ES", // Customer Amazon ES
         ];
-        if (array_key_exists($profileId, $mapCustomer)) {
-            return $mapCustomer[$profileId];
+        if (array_key_exists($subAmazon, $mapCustomer)) {
+            return $mapCustomer[$subAmazon];
         } else {
-            throw new Exception("Profile Id $profileId");
+            return null;
         }
     }
 
 
-    private function recreateChannelObject(IntegrationFile $integrationFile, WebOrder $webOrder)
-    {
 
+
+    private function recreateChannelObject($amzOrderId, WebOrder $webOrder)
+    {
         $orderApi = new stdClass();
         $orderApi->Items = [];
         $orderRecordeds = $this->manager->getRepository(AmazonOrder::class)->findBy(
             [
-                'amazonOrderId' => $integrationFile->getExternalOrderId(),
+                'amazonOrderId' => $amzOrderId,
             ]
         );
 
-
-        if (count($orderRecordeds) == 0) {
-            return $orderApi;
-        }
-
-
         $infoBase = $orderRecordeds[0];
-
         $webOrder->setPurchaseDate($infoBase->getPurchaseDate());
-
         $orderApi->TotalPrice = 0;
         $orderApi->TotalShippingPrice = 0;
-
-        $orderApi->ID = $integrationFile->getChannelOrderId();
-        $orderApi->ProfileID = $integrationFile->getProfileChannel();
-        $orderApi->SiteName = $this->matchChannelAdvisorOrderToCustomer($integrationFile->getProfileChannel());
-        $orderApi->SiteOrderID = $integrationFile->getExternalOrderId();
+        $orderApi->SiteName = $infoBase->getSalesChannel();
+        $orderApi->SiteOrderID = $infoBase->getAmazonOrderId();
         $orderApi->SecondarySiteOrderID = null;
         $orderApi->Currency = $infoBase->getCurrency();
         $orderApi->CreatedDateUtc = $this->retourFormatDate($infoBase->getPurchaseDate());
@@ -270,8 +242,6 @@ class BuildHistoricCommand extends Command
 
         foreach ($orderRecordeds as $orderRecord) {
             $line = new stdClass();
-            $line->ProfileID = $integrationFile->getProfileChannel();
-            $line->OrderID = $integrationFile->getChannelOrderId();;
             $line->Sku = $orderRecord->getSku();
             $line->Title = $orderRecord->getProduct()->getDescription();
             $line->Quantity = $orderRecord->getQuantity();
