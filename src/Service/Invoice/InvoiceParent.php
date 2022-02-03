@@ -42,7 +42,7 @@ abstract class InvoiceParent
      * 
      * @return void
      */
-    public function processOrders($reprocess = false)
+    public function processInvoices($reprocess = false)
     {
         try {
             $this->errors = [];
