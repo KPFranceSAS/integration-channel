@@ -19,7 +19,6 @@ class WebOrder
 
     const CHANNEL_OWLETCARE = 'OWLETCARE';
 
-
     const DOCUMENT_ORDER = 'ORDER';
 
     const DOCUMENT_INVOICE = 'INVOICE';
@@ -58,6 +57,8 @@ class WebOrder
     const STATE_CREATED_TEXT = 'Order integrated';
 
     const STATE_SYNC_TO_ERP_TEXT = 'Order integrated';
+
+    const STATE_SYNC_TO_WAITING_DELIVERY_TEXT = 'Waiting for delivery';
 
     const STATE_INVOICED_TEXT = 'Invoice integrated';
 
@@ -180,13 +181,13 @@ class WebOrder
         if ($this->status ==  self::STATE_ERROR) {
             return self::STATE_ERROR_TEXT;
         } else if ($this->status ==  self::STATE_SYNC_TO_ERP) {
-            return self::STATE_SYNC_TO_ERP_TEXT;
+            return $this->fulfilledBy == self::FULFILLED_BY_SELLER ? self::STATE_SYNC_TO_WAITING_DELIVERY_TEXT : self::STATE_SYNC_TO_ERP_TEXT;
         } else if ($this->status ==  self::STATE_INVOICED) {
             return self::STATE_INVOICED_TEXT;
         } else if ($this->status ==  self::STATE_ERROR_INVOICE) {
             return self::STATE_ERROR_INVOICE_TEXT;
         } else {
-            return self::STATE_UNDEFINED_TEXT;;
+            return self::STATE_UNDEFINED_TEXT;
         }
     }
 

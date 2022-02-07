@@ -11,6 +11,9 @@
     "async-aws/s3": {
         "version": "1.9.0"
     },
+    "aws/aws-crt-php": {
+        "version": "v1.0.2"
+    },
     "aws/aws-sdk-php": {
         "version": "3.184.6"
     },
