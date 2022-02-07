@@ -5,6 +5,7 @@ namespace App\Service\Invoice;
 
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -20,15 +21,15 @@ abstract class InvoiceParent
 
     protected $mailer;
 
-    protected $businessCentralConnector;
+    protected $businessCentralAggregator;
 
 
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralConnector $businessCentralConnector)
+    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator)
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
-        $this->businessCentralConnector = $businessCentralConnector;
+        $this->businessCentralAggregator = $businessCentralAggregator;
     }
 
 
@@ -36,6 +37,11 @@ abstract class InvoiceParent
 
     abstract protected function sendInvoice(WebOrder $order);
 
+
+    public function getBusinessCentralConnector($companyName)
+    {
+        return $this->businessCentralAggregator->getBusinessCentralConnector($companyName);
+    }
 
     /**
      * 
@@ -89,7 +95,6 @@ abstract class InvoiceParent
             [
                 "status" => WebOrder::STATE_SYNC_TO_ERP,
                 "channel" => $this->getChannel(),
-                "company" => $this->businessCentralConnector->getCompanyName(),
             ]
         );
         $this->logger->info(count($ordersToSend) . ' invoices to send');
@@ -114,7 +119,6 @@ abstract class InvoiceParent
             [
                 "status" => WebOrder::STATE_ERROR_INVOICE,
                 "channel" => $this->getChannel(),
-                "company" => $this->businessCentralConnector->getCompanyName(),
             ]
         );
         $this->logger->info(count($ordersToSend) . ' orders to re-send');

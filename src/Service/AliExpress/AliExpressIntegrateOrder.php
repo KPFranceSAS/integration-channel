@@ -31,8 +31,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
         AliExpressApi $aliExpress,
         BusinessCentralAggregator $businessCentralAggregator
     ) {
-        $businessCentralConnector = $businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::GADGET_IBERIA);
-        parent::__construct($manager, $logger, $mailer, $businessCentralConnector);
+        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
         $this->aliExpress = $aliExpress;
     }
 
@@ -67,6 +66,16 @@ class AliExpressIntegrateOrder extends IntegratorParent
     {
         return $orderApi->id;
     }
+
+
+
+
+
+    public function getCompanyIntegration(stdClass $orderApi)
+    {
+        return BusinessCentralConnector::GADGET_IBERIA;
+    }
+
 
 
 
@@ -118,7 +127,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
 
 
         $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
-        $orderBC->salesLines = $this->getSalesOrderLines($orderApi->child_order_list->global_aeop_tp_child_order_dto);
+        $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
 
         $livraisonFees = floatval($orderApi->logistics_amount->amount);
         // ajout livraison 
@@ -192,15 +201,15 @@ class AliExpressIntegrateOrder extends IntegratorParent
     }
 
 
-    private function getSalesOrderLines(array $saleLineApis): array
+    private function getSalesOrderLines($orderApi): array
     {
         $saleOrderLines = [];
-
-        foreach ($saleLineApis as $line) {
+        $company = $this->getCompanyIntegration($orderApi);
+        foreach ($orderApi->child_order_list->global_aeop_tp_child_order_dto as $line) {
 
             $saleLine = new SaleOrderLine();
             $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
-            $saleLine->itemId = $this->getProductCorrelationSku($line->sku_code);
+            $saleLine->itemId = $this->getProductCorrelationSku($line->sku_code, $company);
 
             $saleLine->unitPrice = floatval($line->product_price->amount);
             $saleLine->quantity = $line->product_count;

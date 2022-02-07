@@ -75,8 +75,9 @@ class AliExpressApi
             $param->page_size = self::PAGINATION;
             $param->current_page = $current_page;
             $req->setParam0(json_encode($param));
-            $this->logger->info('Get batch n°' . $current_page . ' >>' . json_encode($param));
+            $this->logger->info('Get batch n°' . $current_page . ' / ' . $max_page . ' >>' . json_encode($param));
             $reponse = $this->client->execute($req, $this->aliExpressClientAccessToken);
+            
             if ($reponse->result->total_count > 0) {
                 $orders = array_merge($orders, $reponse->result->target_list->order_dto);
             }

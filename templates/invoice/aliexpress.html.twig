@@ -1,0 +1,35 @@
+{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
+{# This template checks for 'ea' variable existence because it can
+   be used in a EasyAdmin Dashboard controller, where 'ea' is defined
+   or from any other Symfony controller, where 'ea' is not defined #}
+{% extends '@EasyAdmin/page/login_minimal.html.twig' %}
+
+{% block body_class 'page-login' %}
+{% block page_title %}
+	Descargar factura de venta
+{% endblock %}
+
+{% block wrapper_wrapper %}
+
+    {% include '@EasyAdmin/flash_messages.html.twig' %}
+
+    <div class="login-wrapper">
+        <header class="main-header">
+            <div id="header-logo">
+                
+            </div>
+        </header>
+
+        <section class="content">
+				{% block header_logo %}
+					<img src="/assets/images/logo_gadget.png" class="img-fluid">
+                {% endblock header_logo %}
+		{{ form_start(form) }}
+					
+            
+           {{ form_end(form) }}
+
+          
+        </section>
+    </div>
+{% endblock %}

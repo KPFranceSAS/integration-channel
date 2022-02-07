@@ -4,6 +4,7 @@ namespace App\Service\ChannelAdvisor;
 
 
 use App\Entity\WebOrder;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\BusinessCentral\KpFranceConnector;
 use App\Service\ChannelAdvisor\ChannelWebservice;
 use App\Service\Invoice\InvoiceParent;
@@ -32,9 +33,9 @@ class SendInvoicesToChannelAdvisor extends InvoiceParent
         LoggerInterface $logger,
         MailService $mailer,
         ChannelWebservice $channel,
-        KpFranceConnector $kpFranceConnector
+        BusinessCentralAggregator $businessCentralAggregator
     ) {
-        parent::__construct($manager, $logger, $mailer, $kpFranceConnector);
+        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
         $this->channel = $channel;
     }
 
@@ -49,13 +50,13 @@ class SendInvoicesToChannelAdvisor extends InvoiceParent
     protected function sendInvoice(WebOrder $order)
     {
         try {
-
-            $invoice =  $this->businessCentralConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
+            $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
+            $invoice =  $businessCentralConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
             if ($invoice) {
                 $order->cleanErrors();
                 $this->addLogToOrder($order, 'Invoice created in the ERP with number ' . $invoice['number']);
                 $this->addLogToOrder($order, 'Retrieve invoice content ' . $invoice['number']);
-                $contentPdf  = $this->businessCentralConnector->getContentInvoicePdf($invoice['id']);
+                $contentPdf  = $businessCentralConnector->getContentInvoicePdf($invoice['id']);
                 $this->addLogToOrder($order, 'Retrieved invoice content ' . $invoice['number']);
 
 

@@ -6,6 +6,7 @@ use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\SaleOrder;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\Integrator\IntegratorInterface;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,17 +25,23 @@ abstract class IntegratorParent implements IntegratorInterface
 
     protected $mailer;
 
-    protected $businessCentralConnector;
+    protected $businessCentralAggregator;
 
 
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralConnector $businessCentralConnector)
+    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator)
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
-        $this->businessCentralConnector = $businessCentralConnector;
+        $this->businessCentralAggregator = $businessCentralAggregator;
     }
 
+
+
+    public function getBusinessCentralConnector($companyName)
+    {
+        return $this->businessCentralAggregator->getBusinessCentralConnector($companyName);
+    }
 
 
     abstract public  function transformToAnBcOrder(stdClass $orderApi): SaleOrder;
@@ -42,6 +49,8 @@ abstract class IntegratorParent implements IntegratorInterface
     abstract public function integrateAllOrders();
 
     abstract public function getChannel();
+
+    abstract public function getCompanyIntegration(stdClass $orderApi);
 
     abstract protected function getOrderId(stdClass $orderApi);
 
@@ -93,24 +102,26 @@ abstract class IntegratorParent implements IntegratorInterface
     public function integrateOrder(stdClass $order)
     {
         $idOrder = $this->getOrderId($order);
-        $this->logLine(">>> Integration order marketplace " . $this->getChannel() . " " . $idOrder);
+        $company =  $this->getCompanyIntegration($order);
+        $this->logLine(">>> Integration order marketplace " . $this->getChannel() . " $idOrder  in $company");
         if ($this->checkToIntegrateToInvoice($order)) {
             $this->logger->info('To integrate ');
 
             try {
                 $webOrder = WebOrder::createOneFrom($order, $this->getChannel());
+                $webOrder->setCompany($company);
                 $this->manager->persist($webOrder);
                 $this->checkAfterPersist($webOrder, $order);
                 $this->addLogToOrder($webOrder, 'Order transformation to fit to ERP model');
 
-                $webOrder->setCompany($this->businessCentralConnector->getCompanyName());
                 $orderBC = $this->transformToAnBcOrder($order);
 
-                $this->addLogToOrder($webOrder, 'Order creation in the ERP ' . $this->businessCentralConnector->getCompanyName());
+                $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
+                $this->addLogToOrder($webOrder, 'Order creation in the ERP ' . $businessCentralConnector->getCompanyName());
 
-                $erpOrder = $this->businessCentralConnector->createSaleOrder($orderBC->transformToArray());
+                $erpOrder = $businessCentralConnector->createSaleOrder($orderBC->transformToArray());
 
-                $this->addLogToOrder($webOrder, 'Order created in the ERP ' . $this->businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
+                $this->addLogToOrder($webOrder, 'Order created in the ERP ' . $businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
                 $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
                 $webOrder->setOrderErp($erpOrder['number']);
                 $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
@@ -148,13 +159,14 @@ abstract class IntegratorParent implements IntegratorInterface
         try {
             $order->cleanErrors();
             $this->addLogToOrder($order, 'Attempt to new integration');
+
             $this->addLogToOrder($order, 'Order transformation to fit to ERP model');
             $orderApi = $order->getOrderContent();
+            $orderBC = $this->transformToAnBcOrder($orderApi, $order->getCompany());
 
-            $orderBC = $this->transformToAnBcOrder($orderApi);
             $this->addLogToOrder($order, 'Order creation in the ERP');
-            $erpOrder = $this->businessCentralConnector->createSaleOrder($orderBC->transformToArray());
-            $this->addLogToOrder($order, 'Order created in the ERP ' . $this->businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
+            $erpOrder = $this->getBusinessCentralConnector($order->getCompany())->createSaleOrder($orderBC->transformToArray());
+            $this->addLogToOrder($order, 'Order created in the ERP ' . $order->getCompany() . ' with number ' . $erpOrder['number']);
 
             $order->setStatus(WebOrder::STATE_SYNC_TO_ERP);
             $order->setOrderErp($erpOrder['number']);
@@ -163,7 +175,6 @@ abstract class IntegratorParent implements IntegratorInterface
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
             $order->addError($message);
             $order->setStatus(WebOrder::STATE_ERROR);
-            $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
             $this->addError('Reintegration Problem ' . $order->getExternalNumber() . ' > ' . $message);
             $this->addError($message);
         }
@@ -178,11 +189,12 @@ abstract class IntegratorParent implements IntegratorInterface
     protected function checkToIntegrateToInvoice($order): bool
     {
         $idOrder = $this->getOrderId($order);
+        $company = $this->getCompanyIntegration($order);
         if ($this->isAlreadyRecordedDatabase($idOrder)) {
             $this->logger->info('Is Already Recorded Database');
             return false;
         }
-        if ($this->alreadyIntegratedErp($idOrder)) {
+        if ($this->alreadyIntegratedErp($idOrder, $company)) {
             $this->logger->info('Is Already Recorded on ERP');
             return false;
         }
@@ -190,7 +202,7 @@ abstract class IntegratorParent implements IntegratorInterface
     }
 
 
-    protected function isAlreadyRecordedDatabase($idOrderApi): bool
+    protected function isAlreadyRecordedDatabase(string $idOrderApi): bool
     {
         $orderRecorded = $this->manager->getRepository(WebOrder::class)->findBy(
             [
@@ -202,33 +214,33 @@ abstract class IntegratorParent implements IntegratorInterface
     }
 
 
-    protected function alreadyIntegratedErp($idOrderApi): bool
+    protected function alreadyIntegratedErp(string $idOrderApi, string $company): bool
     {
-        return $this->checkIfInvoice($idOrderApi) || $this->checkIfOrder($idOrderApi);
+        return $this->checkIfInvoice($idOrderApi, $company) || $this->checkIfOrder($idOrderApi, $company);
     }
 
 
 
-    protected function checkIfOrder($idOrderApi): bool
+    protected function checkIfOrder(string $idOrderApi, string $company): bool
     {
         $this->logger->info('Check order in BC ' . $idOrderApi);
-        $saleOrder = $this->businessCentralConnector->getSaleOrderByExternalNumber($idOrderApi);
+        $saleOrder = $this->getBusinessCentralConnector($company)->getSaleOrderByExternalNumber($idOrderApi);
         return $saleOrder != null;
     }
 
 
 
-    protected function checkIfInvoice($idOrderApi): bool
+    protected function checkIfInvoice(string $idOrderApi, string $company): bool
     {
         $this->logger->info('Check invoice in BC ' . $idOrderApi);
-        $saleOrder = $this->businessCentralConnector->getSaleInvoiceByExternalNumber($idOrderApi);
+        $saleOrder = $this->getBusinessCentralConnector($company)->getSaleInvoiceByExternalNumber($idOrderApi);
         return $saleOrder != null;
     }
 
 
 
 
-    protected function addLogToOrder(WebOrder $webOrder, $message)
+    protected function addLogToOrder(WebOrder $webOrder, string  $message)
     {
         $webOrder->addLog($message);
         $this->logger->info($message);
@@ -254,15 +266,15 @@ abstract class IntegratorParent implements IntegratorInterface
     }
 
 
-    protected function getProductCorrelationSku(string $sku): string
+    protected function getProductCorrelationSku(string $sku, string $company): string
     {
         $skuSanitized = strtoupper($sku);
         $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
         $skuFinal = $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
 
-        $product = $this->businessCentralConnector->getItemByNumber($skuFinal);
+        $product = $this->getBusinessCentralConnector($company)->getItemByNumber($skuFinal);
         if (!$product) {
-            throw new Exception("Product with Sku $skuFinal cannot be found in business central. Check Product correlation ");
+            throw new Exception("Product with Sku $skuFinal cannot be found in business central $company. Check Product correlation ");
         } else {
             return  $product['id'];
         }

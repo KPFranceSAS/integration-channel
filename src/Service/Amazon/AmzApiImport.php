@@ -3,7 +3,6 @@
 namespace App\Service\Amazon;
 
 use App\Entity\AmazonOrder;
-use App\Entity\Brand;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Helper\Utils\ExchangeRateCalculator;
@@ -35,7 +34,7 @@ class AmzApiImport
         $this->exchangeRate = $exchangeRate;
     }
 
-
+    const WAITING_TIME = 20;
 
     public function createReportOrdersAndImport(?DateTime $dateTimeStart = null)
     {
@@ -43,8 +42,8 @@ class AmzApiImport
             $report = $this->amzApi->createReportOrdersByLastUpdate($dateTimeStart);
             $this->logger->info('Report processing ReportId = ' . $report->getReportId());
             for ($i = 0; $i < 30; $i++) {
-                $this->logger->info('Wait 10s reporting is done');
-                sleep(10);
+                $this->logger->info('Wait ' . self::WAITING_TIME . ' reporting is done');
+                sleep(self::WAITING_TIME);
                 $reportState = $this->amzApi->getReport($report->getReportId());
                 if ($reportState->getPayload()->getProcessingStatus() == AmzApi::STATUS_REPORT_DONE) {
                     $this->logger->info('Report processing done');

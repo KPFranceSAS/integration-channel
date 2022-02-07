@@ -2,14 +2,12 @@
 
 namespace App\Service\ChannelAdvisor;
 
-use App\Entity\IntegrationFile;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\ChannelAdvisor\ChannelWebservice;
-use App\Service\ChannelAdvisor\TransformOrder;
 use App\Service\Integrator\IntegratorParent;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -36,8 +34,7 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
         ChannelWebservice $channel,
         BusinessCentralAggregator $businessCentralAggregator
     ) {
-        $businessCentralConnector = $businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
-        parent::__construct($manager, $logger, $mailer, $businessCentralConnector);
+        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
         $this->channel = $channel;
     }
 
@@ -80,8 +77,6 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
     }
 
 
-
-
     protected function checkAfterPersist(WebOrder $order, stdClass $orderApi)
     {
         $this->addLogToOrder($order, 'Marked on channel advisor as exported');
@@ -95,18 +90,16 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
     }
 
 
-
-
-
     protected function checkToIntegrateToInvoice($order): bool
     {
+        $company = $this->getCompanyIntegration($order);
         if ($this->isAlreadyRecordedDatabase($order->SiteOrderID)) {
             $this->channel->markOrderAsExported($order->ID);
             $this->logger->info('Marked on channel advisor as exported');
             $this->logger->info('Is Already Recorded Database');
             return false;
         }
-        if ($this->alreadyIntegratedErp($order)) {
+        if ($this->alreadyIntegratedErp($order->SiteOrderID, $company)) {
             $this->channel->markOrderAsExported($order->ID);
             $this->logger->info('Marked on channel advisor as exported');
             $this->logger->info('Is Already Recorded on ERP');
@@ -118,43 +111,6 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
         }
         return true;
     }
-
-
-
-
-    /**
-     * Check status of order 
-     * 
-     * @param stdClass $orderApi
-     * @return boolean
-     */
-    protected function alreadyIntegratedErp($orderApi): bool
-    {
-        return $this->checkIfInvoice($orderApi->SiteOrderID) || $this->checkIfOrder($orderApi->SiteOrderID)  || $this->checkIfPostedInvoice($orderApi);
-    }
-
-
-
-
-
-    /**
-     * 
-     * 
-     * @param stdClass $orderApi
-     * @return boolean
-     */
-    protected function checkIfPostedInvoice($orderApi): bool
-    {
-        $this->logger->info('Check post invoice in export file ' . $orderApi->SiteOrderID);
-        $files = $this->manager->getRepository(IntegrationFile::class)->findBy(
-            [
-                'externalOrderId' => $orderApi->SiteOrderID,
-                'documentType' => IntegrationFile::TYPE_INVOICE
-            ]
-        );
-        return count($files) > 0;
-    }
-
 
 
 
@@ -188,7 +144,7 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
     public function transformToAnBcOrder(stdClass $orderApi): SaleOrder
     {
         $orderBC = new SaleOrder();
-        $orderBC->customerNumber = $this->matchChannelAdvisorOrderToCustomer($orderApi->ProfileID, $orderApi->SiteID);
+        $orderBC->customerNumber = $this->matchChannelAdvisorOrderToCustomer($orderApi);
 
         $orderBC->billToName = $orderApi->BillingFirstName . ' ' . $orderApi->BillingLastName;
 
@@ -225,28 +181,22 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
         }
 
         $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
-        $orderBC->salesLines = $this->getSalesOrderLines($orderApi->Items, $orderApi->AdditionalCostOrDiscount);
-
+        $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
         return $orderBC;
     }
 
 
-    /**
-     * Transform lines from Api to BC model
-     *
-     * @param array $saleLineApis
-     * @param float $additionalCostOrDiscount
-     * @return SaleOrderLine[]
-     */
-    private function getSalesOrderLines(array $saleLineApis, $additionalCostOrDiscount): array
+    private function getSalesOrderLines($orderApi): array
     {
         $saleOrderLines = [];
         $shippingPrice = 0;
-        foreach ($saleLineApis as $line) {
+        $company =  $this->getCompanyIntegration($orderApi);
+
+        foreach ($orderApi->Items as $line) {
 
             $saleLine = new SaleOrderLine();
             $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
-            $saleLine->itemId = $this->getProductCorrelationSku($line->Sku);
+            $saleLine->itemId = $this->getProductCorrelationSku($line->Sku, $company);
             // calculate price and shipping fees
             $shippingPrice += $line->ShippingPrice;
             $promotionAmount = 0;
@@ -269,7 +219,8 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
 
         // ajout livraison 
         if ($shippingPrice > 0) {
-            $account = $this->businessCentralConnector->getAccountForExpedition();
+
+            $account = $this->getBusinessCentralConnector($company)->getAccountForExpedition();
             $saleLineDelivery = new SaleOrderLine();
             $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;
             $saleLineDelivery->quantity = 1;
@@ -286,15 +237,28 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
 
 
 
-    /**
-     * Get Customer client according to profile 
-     *
-     * @param string $profileId
-     * @param string $siteId
-     * @return string
-     */
-    private function matchChannelAdvisorOrderToCustomer(string $profileId, string $siteId): string
+    public function getCompanyIntegration(stdClass $orderApi)
     {
+        $profileId = $orderApi->ProfileID;
+        $mapCustomer = [
+            "12010024" =>   BusinessCentralConnector::KP_FRANCE,
+            "12010025" =>   BusinessCentralConnector::KP_FRANCE,
+            "12010023" =>   BusinessCentralConnector::KP_FRANCE,
+            "12009934" =>   BusinessCentralConnector::KP_FRANCE,
+            "12010026" =>   BusinessCentralConnector::KP_FRANCE,
+        ];
+        if (array_key_exists($profileId, $mapCustomer)) {
+            return $mapCustomer[$profileId];
+        } else {
+            throw new Exception("Profile Id $profileId to a company");
+        }
+    }
+
+
+
+    private function matchChannelAdvisorOrderToCustomer(stdClass $orderApi): string
+    {
+        $profileId = $orderApi->ProfileID;
         $mapCustomer = [
             "12010024" =>   "000223", // Customer Amazon UK
             "12010025" =>   "000163", // Customer Amazon IT
@@ -305,7 +269,7 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
         if (array_key_exists($profileId, $mapCustomer)) {
             return $mapCustomer[$profileId];
         } else {
-            throw new Exception("Profile Id $profileId, SiteId $siteId is not mapped to a customer");
+            throw new Exception("Profile Id $profileId is not mapped to a customer");
         }
     }
 }

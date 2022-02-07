@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Command\ChannelAdvisor;
+namespace App\Command\Utils;
 
 use App\Entity\ProductCorrelation;
 use App\Helper\Utils\CsvExtracter;

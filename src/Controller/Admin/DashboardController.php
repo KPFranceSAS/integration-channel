@@ -21,6 +21,8 @@ class DashboardController extends AbstractDashboardController
      */
     public function index(): Response
     {
+        $manager = $this->getDoctrine()->getManager();
+
         return $this->render('admin/dashboard.html.twig');
     }
 

@@ -31,7 +31,17 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->transformeOrder();
+
+
+        $order = $this->aliExpress->getOrder("8145815016887916");
+        dump($order);
+
+        /* $invoice = $this->gadgetIberiaConnector->getSaleInvoiceByExternalNumber('8139435177282045');
+        dump($invoice);
+
+        $invoice = $this->gadgetIberiaConnector->getSaleInvoiceByNumber('GFV21/0900502');
+        dump($invoice);
+        */
 
 
         return Command::SUCCESS;

@@ -153,6 +153,7 @@ class ChannelWebservice
      */
     public function markOrderAsExported($orderId)
     {
+        return true;
         return $this->sendRequest('Orders(' . $orderId . ')/Export', [], 'POST');
     }
 
@@ -356,10 +357,10 @@ class ChannelWebservice
     {
         $params = [
             '$expand' => 'Items($expand=Adjustments,Promotions, BundleComponents),Fulfillments($expand=Items),Adjustments',
-            '$filter' => "PaymentStatus eq 'Cleared' and CheckoutStatus eq 'Completed' and CreatedDateUtc gt 2022-01-15"
+            '$filter' => "PaymentStatus eq 'Cleared' and CheckoutStatus eq 'Completed' and CreatedDateUtc gt 2022-02-01"
         ];
         if ($notExported) {
-            $params['exported'] = 'false';
+            //$params['exported'] = 'false';
         }
         return $this->getOrders($params);
     }
