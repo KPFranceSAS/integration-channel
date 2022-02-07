@@ -153,7 +153,6 @@ class ChannelWebservice
      */
     public function markOrderAsExported($orderId)
     {
-        return true;
         return $this->sendRequest('Orders(' . $orderId . ')/Export', [], 'POST');
     }
 
