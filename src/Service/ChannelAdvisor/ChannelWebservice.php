@@ -359,7 +359,7 @@ class ChannelWebservice
             '$filter' => "PaymentStatus eq 'Cleared' and CheckoutStatus eq 'Completed' and CreatedDateUtc gt 2022-02-01"
         ];
         if ($notExported) {
-            //$params['exported'] = 'false';
+            $params['exported'] = 'false';
         }
         return $this->getOrders($params);
     }
