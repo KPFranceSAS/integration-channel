@@ -2,7 +2,6 @@
 
 namespace App\Service\Amazon;
 
-use App\Entity\AmazonOrder;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Helper\Utils\ExchangeRateCalculator;
@@ -14,16 +13,16 @@ use Exception;
 use Psr\Log\LoggerInterface;
 
 
-class AmzApiImport
+abstract class AmzApiImport
 {
 
-    private $mailer;
+    protected $mailer;
 
-    private $manager;
+    protected $manager;
 
-    private $logger;
+    protected $logger;
 
-    private $amzApi;
+    protected $amzApi;
 
     public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ExchangeRateCalculator $exchangeRate)
     {
@@ -36,19 +35,20 @@ class AmzApiImport
 
     const WAITING_TIME = 20;
 
-    public function createReportOrdersAndImport(?DateTime $dateTimeStart = null)
+    public function createReportAndImport(?DateTime $dateTimeStart = null)
     {
         try {
-            $report = $this->amzApi->createReportOrdersByLastUpdate($dateTimeStart);
+            $report = $this->createReport($dateTimeStart);
             $this->logger->info('Report processing ReportId = ' . $report->getReportId());
             for ($i = 0; $i < 30; $i++) {
-                $this->logger->info('Wait ' . self::WAITING_TIME . ' reporting is done');
+                $j = ($i + 1) * self::WAITING_TIME;
+                $this->logger->info("Wait  since $j seconds  reporting is done");
                 sleep(self::WAITING_TIME);
                 $reportState = $this->amzApi->getReport($report->getReportId());
                 if ($reportState->getPayload()->getProcessingStatus() == AmzApi::STATUS_REPORT_DONE) {
                     $this->logger->info('Report processing done');
-                    $ordersReport = $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
-                    $this->importOrders($ordersReport);
+                    $datasReport = $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
+                    $this->importDatas($datasReport);
                     return;
                 } else {
                     $this->logger->info('Report processing not yet');
@@ -62,22 +62,30 @@ class AmzApiImport
 
 
 
+    abstract protected function upsertData(array $data);
+
+    abstract protected function createReport(?DateTime $dateTimeStart = null);
+
+    abstract protected function getLastReportContent();
+
+
+
     public function treatLastReport()
     {
-        $ordersReport = $this->amzApi->getContentLastReportOrdersByLastUpdate();
-        $this->importOrders($ordersReport);
+        $datasReport = $this->getLastReportContent();
+        $this->importDatas($datasReport);
         return;
     }
 
 
-    public function importOrders(array $orders)
+    public function importDatas(array $datas)
     {
         $counter = 0;
-        foreach ($orders as $order) {
-            $orderAmz = $this->upsertOrder($order);
+        foreach ($datas as $data) {
+            $dataAmz = $this->upsertData($data);
             $counter++;
-            $this->logger->info('Treatment ' . $counter . ' / ' . count($orders));
-            if ($counter % 50 == 0) {
+            $this->logger->info('Treatment ' . $counter . ' / ' . count($datas));
+            if ($counter % 20 == 0) {
                 $this->manager->flush();
                 $this->manager->clear();
             }
@@ -85,28 +93,10 @@ class AmzApiImport
         $this->manager->flush();
     }
 
-    private function upsertOrder(array $importOrder)
-    {
-        $orderAmz = $this->manager->getRepository(AmazonOrder::class)->findOneBy([
-            "amazonOrderId" => $importOrder['amazon-order-id'],
-            'asin' => $importOrder['asin']
-        ]);
-        if (!$orderAmz) {
-            $orderAmz = new AmazonOrder();
-            $this->manager->persist($orderAmz);
-            $new = true;
-        } else {
-            $new = false;
-        }
-        $orderAmz->importData($this->exchangeRate, $importOrder);
-        if ($new) {
-            $this->addProductAndBrand($orderAmz, $importOrder);
-        }
-        return $orderAmz;
-    }
 
 
-    private function addProductAndBrand(AmazonOrder $amz, $orderArray)
+
+    protected function addProductAndBrand($amz, $orderArray)
     {
         $sku = $this->getProductCorrelationSku($amz->getSku());
         $asin = $amz->getAsin();
@@ -139,6 +129,13 @@ class AmzApiImport
     }
 
 
+    protected function createFromAmzDate($value)
+    {
+        $date = explode('T', $value);
+        return DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
+    }
+
+
 
 
     /**
@@ -147,7 +144,7 @@ class AmzApiImport
      * @param string $sku
      * @return string
      */
-    private function getProductCorrelationSku(string $sku): string
+    protected function getProductCorrelationSku(string $sku): string
     {
         $skuSanitized = strtoupper($sku);
         $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);

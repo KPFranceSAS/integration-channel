@@ -3,7 +3,7 @@
 namespace App\Command\Amazon;
 
 use App\Helper\Utils\CsvExtracter;
-use App\Service\Amazon\AmzApiImport;
+use App\Service\Amazon\AmzApiImportOrder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,14 +14,14 @@ class ImportOrdersFromFilesCommand extends Command
     protected static $defaultName = 'app:amz-import-orders-from-file';
     protected static $defaultDescription = 'Import orders from file provided';
 
-    public function __construct(AmzApiImport $amzApiImport, CsvExtracter $csvExtracter)
+    public function __construct(AmzApiImportOrder $amzApiImportOrder, CsvExtracter $csvExtracter)
     {
         $this->csvExtracter = $csvExtracter;
-        $this->amzApiImport = $amzApiImport;
+        $this->amzApiImportOrder = $amzApiImportOrder;
         parent::__construct();
     }
 
-    private $amzApiImport;
+    private $amzApiImportOrder;
 
     private $csvExtracter;
 
@@ -29,7 +29,7 @@ class ImportOrdersFromFilesCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $orders = $this->csvExtracter->extractAssociativeDatasFromCsv($input->getArgument('file'));
-        $this->amzApiImport->importOrders($orders);
+        $this->amzApiImportOrder->importDatas($orders);
         return Command::SUCCESS;
     }
 

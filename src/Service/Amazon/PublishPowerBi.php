@@ -2,6 +2,8 @@
 
 namespace App\Service\Amazon;
 
+use App\Entity\AmazonReimbursement;
+use App\Entity\AmazonReturn;
 use App\Entity\Product;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
@@ -34,20 +36,41 @@ class PublishPowerBi
     {
         $this->exportProducts();
         $this->exportOrders();
+        $this->exportReimbursements();
+        $this->exportReturns();
     }
+
+
+    public function exportData($className, $groupSerialisation, $fileName)
+    {
+        $this->logger->info("Export " . $className);
+        $elements  = $this->manager->getRepository($className)->findAll();
+        $this->kpssportStorage->write($fileName,  $this->serializer->serialize($elements, 'json', [
+            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
+            'groups' => $groupSerialisation
+        ]), []);
+        $this->logger->info("Export " . $className . " done ");
+    }
+
+
 
 
     public function exportProducts()
     {
-        $this->logger->info("Export products ");
-        $products  = $this->manager->getRepository(Product::class)->findAll();
+        $this->exportData(Product::class, 'export_product', 'products.json');
+    }
 
 
-        $this->kpssportStorage->write('products.json',  $this->serializer->serialize($products, 'json', [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
-            'groups' => 'export_product'
-        ]), []);
-        $this->logger->info("Export products done ");
+
+    public function exportReturns()
+    {
+        $this->exportData(AmazonReturn::class, 'export_order', 'returns.json');
+    }
+
+
+    public function exportReimbursements()
+    {
+        $this->exportData(AmazonReimbursement::class, 'export_order', 'reimbursements.json');
     }
 
 

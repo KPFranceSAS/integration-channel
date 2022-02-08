@@ -4,6 +4,7 @@ namespace App\Command\Amazon;
 
 use App\Helper\Utils\ExchangeRateCalculator;
 use App\Service\Amazon\AmzApi;
+use App\Service\Amazon\AmzApiImportReimbursement;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,14 +14,17 @@ class ConnectAmzCommand extends Command
     protected static $defaultName = 'app:amz-test';
     protected static $defaultDescription = 'Add a short description for your command';
 
-    public function __construct(AmzApi $api, ExchangeRateCalculator $caluclator)
+    public function __construct(AmzApi $api, ExchangeRateCalculator $caluclator, AmzApiImportReimbursement $amzApiImportReimbursement)
     {
         $this->api = $api;
+        $this->amzApiImportReimbursement = $amzApiImportReimbursement;
         $this->caluclator = $caluclator;
         parent::__construct();
     }
 
     private $api;
+
+    private $amzApiImportReimbursement;
 
     private $caluclator;
 
@@ -30,7 +34,7 @@ class ConnectAmzCommand extends Command
         //$this->calculate();
 
         //$this->createReport();
-        //$this->readReport();
+        $this->readReport();
 
         //B01N95Z86Y
 
@@ -85,16 +89,23 @@ class ConnectAmzCommand extends Command
 
     private function readReport()
     {
+        $datasReport = $this->api->getContentReport("amzn1.spdoc.1.3.69031a61-9c04-40ab-b314-a50d9fdc25c3.T2CFHLJ4Q6RCRF.2617");
+        $this->amzApiImportReimbursement->importDatas($datasReport);
+
+
+
+
+        /*
         $report = $this->api->getContentLastReport(AmzApi::TYPE_REPORT_INVENTORY_DATA);
         dump($report);
-
+        */
 
 
 
         //$report = $this->api->getContentLastReportArchivedOrdersByLastUpdate();
 
         /*
-        $orders = $this->api->getContentReport("amzn1.spdoc.1.3.3cb6f415-5013-431b-b8d3-416881a12ddb.T10Z1UVHS2BQSQ.2407");
+        $orders = $this->api->getContentReport("amzn1.spdoc.1.3.69031a61-9c04-40ab-b314-a50d9fdc25c3.T2CFHLJ4Q6RCRF.2617");
         foreach ($orders as $order) {
             dump($order);
             /*   "amazon-order-id" => "403-1353844-3288348"

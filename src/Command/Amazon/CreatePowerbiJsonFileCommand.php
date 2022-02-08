@@ -8,10 +8,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
-class CreateOrdersJsonFileCommand extends Command
+class CreatePowerbiJsonFileCommand extends Command
 {
     protected static $defaultName = 'app:amz-create-json-files';
-    protected static $defaultDescription = 'Export json files';
+    protected static $defaultDescription = 'Export json files for Power BI';
 
     public function __construct(PublishPowerBi $publishPowerBi)
     {

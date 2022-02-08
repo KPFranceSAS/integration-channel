@@ -32,6 +32,7 @@
         "phpdocumentor/reflection-docblock": "^5.2",
         "rakit/validation": "^1.4",
         "sensio/framework-extra-bundle": "^6.2",
+        "shopify/shopify-api": "^1.0",
         "symfony/asset": "5.4.*",
         "symfony/console": "5.4.*",
         "symfony/dotenv": "5.4.*",

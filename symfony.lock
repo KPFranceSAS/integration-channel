@@ -20,6 +20,9 @@
     "box/spout": {
         "version": "v3.3.0"
     },
+    "brick/math": {
+        "version": "0.9.3"
+    },
     "composer/package-versions-deprecated": {
         "version": "1.11.99.2"
     },
@@ -114,6 +117,9 @@
     },
     "egulias/email-validator": {
         "version": "3.1.1"
+    },
+    "firebase/php-jwt": {
+        "version": "v5.5.1"
     },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
@@ -322,6 +328,12 @@
     "ralouphie/getallheaders": {
         "version": "3.0.3"
     },
+    "ramsey/collection": {
+        "version": "1.2.2"
+    },
+    "ramsey/uuid": {
+        "version": "4.2.3"
+    },
     "sebastian/cli-parser": {
         "version": "1.0.1"
     },
@@ -381,6 +393,9 @@
         "files": [
             "config/packages/sensio_framework_extra.yaml"
         ]
+    },
+    "shopify/shopify-api": {
+        "version": "v1.0.1"
     },
     "symfony/asset": {
         "version": "v5.3.2"

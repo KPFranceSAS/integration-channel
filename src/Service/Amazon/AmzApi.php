@@ -22,11 +22,12 @@ class AmzApi
     const TYPE_REPORT_LAST_UPDATE_ARCHIVED_ORDERS = 'GET_FLAT_FILE_ARCHIVED_ORDERS_DATA_BY_ORDER_DATE';
     const TYPE_REPORT_LISTINGS_ALL_DATA = 'GET_MERCHANT_LISTINGS_ALL_DATA';
     const TYPE_REPORT_OPEN_LISTINGS_DATA = 'GET_FLAT_FILE_OPEN_LISTINGS_DATA';
-    const TYPE_REPORT_RETURNS_DATA = 'GET_FLAT_FILE_RETURNS_DATA_BY_RETURN_DATE';
+    const TYPE_REPORT_RETURNS_DATA = 'GET_FBA_FULFILLMENT_CUSTOMER_RETURNS_DATA';
     const TYPE_REPORT_INVENTORY_DATA_BY_COUNTRY = 'GET_AFN_INVENTORY_DATA_BY_COUNTRY';
     const TYPE_REPORT_INVENTORY_DATA = 'GET_AFN_INVENTORY_DATA';
     const TYPE_REPORT_MANAGE_INVENTORY = 'GET_FBA_MYI_UNSUPPRESSED_INVENTORY_DATA';
     const TYPE_REPORT_RESTOCK_INVENTORY = 'GET_RESTOCK_INVENTORY_RECOMMENDATIONS_REPORT';
+    const TYPE_REPORT_REIMBURSEMENT = 'GET_FBA_REIMBURSEMENTS_DATA';
 
 
 
@@ -59,7 +60,6 @@ class AmzApi
 
     public function __construct(LoggerInterface $logger, string $amzLwaId, string $amzLwaSecret, string $amzAwsId, string $amzAwsSecret, string $amzArn, string $amzRefreshToken)
     {
-
         $this->amzLwaId = $amzLwaId;
         $this->amzLwaSecret = $amzLwaSecret;
         $this->amzAwsId = $amzAwsId;
@@ -70,7 +70,6 @@ class AmzApi
 
         $factory = new Psr17Factory();
         $client = new Curl($factory);
-
 
         $sts = new STSClient(
             $client,
@@ -94,9 +93,14 @@ class AmzApi
      * Report creation and read
      */
 
-    public function getContent(DateTime $dateTimeStart = null)
+    public function getContentLastReportReimbursementByLastUpdate(DateTime $dateTimeStart = null)
     {
-        return $this->getContentLastReport(self::TYPE_REPORT_LAST_UPDATE_ORDERS, $dateTimeStart);
+        return $this->getContentLastReport(self::TYPE_REPORT_REIMBURSEMENT, $dateTimeStart);
+    }
+
+    public function getContentLastReportReturnByLastUpdate(DateTime $dateTimeStart = null)
+    {
+        return $this->getContentLastReport(self::TYPE_REPORT_RETURNS_DATA, $dateTimeStart);
     }
 
 
@@ -116,6 +120,25 @@ class AmzApi
         );
     }
 
+
+    public function createReportReturnsByLastUpdate(?DateTime $dateTimeStart = null)
+    {
+        if (!$dateTimeStart) {
+            $dateTimeStart = new DateTime('now');
+            $dateTimeStart->sub(new DateInterval('P3D'));
+        }
+        return $this->createReport($dateTimeStart, self::TYPE_REPORT_RETURNS_DATA);
+    }
+
+
+    public function createReportReimbursementsByLastUpdate(?DateTime $dateTimeStart = null)
+    {
+        if (!$dateTimeStart) {
+            $dateTimeStart = new DateTime('now');
+            $dateTimeStart->sub(new DateInterval('P3D'));
+        }
+        return $this->createReport($dateTimeStart, self::TYPE_REPORT_REIMBURSEMENT);
+    }
 
 
 
@@ -167,6 +190,7 @@ class AmzApi
         $status = count($status) > 0 ? $status : $this->getAllStatusReport();
         $nextToken = null;
         while (true) {
+
             $reponse = $this->sdk->reports()->getReports(
                 $this->getAccessToken(),
                 Regions::EUROPE,
@@ -178,10 +202,12 @@ class AmzApi
                 null,
                 $nextToken
             );
+
             $payLoad = $reponse->getPayload();
             $reports = array_merge($reports, $payLoad);
             if ($reponse->getNextToken()) {
                 $nextToken = $reponse->getNextToken();
+                return $reports;
             } else {
                 return $reports;
             }
