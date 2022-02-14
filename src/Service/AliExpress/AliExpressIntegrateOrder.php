@@ -12,6 +12,7 @@ use App\Service\Integrator\IntegratorParent;
 use App\Service\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Psr\Log\LoggerInterface;
 
 class AliExpressIntegrateOrder extends IntegratorParent
@@ -51,10 +52,14 @@ class AliExpressIntegrateOrder extends IntegratorParent
         $ordersApi = $this->aliExpress->getOrdersToSend();
 
         foreach ($ordersApi as $orderApi) {
-            $orderFull = $this->aliExpress->getOrder($orderApi->order_id);
-            if ($this->integrateOrder($orderFull)) {
-                $counter++;
-                $this->logger->info("Orders integrated : $counter ");
+            try {
+                $orderFull = $this->aliExpress->getOrder($orderApi->order_id);
+                if ($this->integrateOrder($orderFull)) {
+                    $counter++;
+                    $this->logger->info("Orders integrated : $counter ");
+                }
+            } catch (Exception $exception) {
+                $this->addError('Problem retrieved Aliexpress #' . $orderApi->order_id . ' > ' . $exception->getMessage());
             }
         }
     }

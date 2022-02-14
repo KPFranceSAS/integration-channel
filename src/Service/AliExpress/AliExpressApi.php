@@ -3,12 +3,18 @@
 namespace App\Service\AliExpress;
 
 use AliexpressLogisticsRedefiningListlogisticsserviceRequest;
+use AliexpressSolutionBatchProductInventoryUpdateRequest;
 use AliexpressSolutionOrderFulfillRequest;
 use AliexpressSolutionOrderGetRequest;
 use AliexpressSolutionOrderInfoGetRequest;
+use AliexpressSolutionProductInfoGetRequest;
+use AliexpressSolutionProductListGetRequest;
+use ItemListQuery;
 use OrderDetailQuery;
 use OrderQuery;
 use Psr\Log\LoggerInterface;
+use SynchronizeProductRequestDto;
+use SynchronizeSkuRequestDto;
 use TopClient;
 
 class AliExpressApi
@@ -82,6 +88,78 @@ class AliExpressApi
 
 
 
+    public function getAllActiveProducts()
+    {
+        $productQuery = new ItemListQuery;
+        $productQuery->product_status_type = "onSelling";
+        return $this->getAllProducts($productQuery);
+    }
+
+
+
+
+
+    /**
+     * https://developers.aliexpress.com/en/doc.htm?docId=42384&docType=2
+     *
+     */
+    public function getAllProducts(ItemListQuery $param)
+    {
+        $current_page = 1;
+        $max_page = 1;
+        $products = [];
+        while ($current_page  <= $max_page) {
+            $req = new AliexpressSolutionProductListGetRequest();
+            $param->page_size = self::PAGINATION;
+            $param->current_page = $current_page;
+            $req->setAeopAEProductListQuery(json_encode($param));
+            $this->logger->info('Get batch n°' . $current_page . ' / ' . $max_page . ' >>' . json_encode($param));
+            $reponse = $this->client->execute($req, $this->aliExpressClientAccessToken);
+
+            if ($reponse->result->product_count > 0) {
+                $products = array_merge($products, $reponse->result->aeop_a_e_product_display_d_t_o_list->item_display_dto);
+            }
+
+            $current_page++;
+            $max_page  = $reponse->result->total_page;
+        }
+
+        return $products;
+    }
+
+
+    public function updateStockLevel($productId, $productSku, $inventory)
+    {
+        $req = new AliexpressSolutionBatchProductInventoryUpdateRequest();
+        $mutipleProductUpdateList = new SynchronizeProductRequestDto();
+        $mutipleProductUpdateList->product_id = $productId;
+        $multipleSkuUpdateList = new SynchronizeSkuRequestDto();
+        $multipleSkuUpdateList->sku_code = $productSku;
+        $multipleSkuUpdateList->inventory = $inventory;
+        $mutipleProductUpdateList->multiple_sku_update_list = $multipleSkuUpdateList;
+        $req->setMutipleProductUpdateList(json_encode($mutipleProductUpdateList));
+        $this->logger->info('Update Stock Level ' . $productId . ' / SKU ' . $productSku . ' >> ' . $inventory . 'units');
+        return $this->client->execute($req, $this->aliExpressClientAccessToken);
+    }
+
+
+
+
+    /**
+     * https://developers.aliexpress.com/en/doc.htm?docId=42384&docType=2
+     *
+     */
+    public function getProductInfo($productId)
+    {
+        $req = new AliexpressSolutionProductInfoGetRequest();
+        $req->setProductId($productId);
+        $this->logger->info('Get Product info ' . $productId);
+        $reponse = $this->client->execute($req, $this->aliExpressClientAccessToken);
+        return $reponse->result;
+    }
+
+
+
     /**
      * https://developers.aliexpress.com/en/doc.htm?docId=42707&docType=2
      */
@@ -91,8 +169,8 @@ class AliExpressApi
         $param1 = new OrderDetailQuery();
         $param1->order_id = $orderNumber;
         $req->setParam1(json_encode($param1));
+        $this->logger->info('Get Order  ' . $orderNumber);
         $resp = $this->client->execute($req, $this->aliExpressClientAccessToken);
-
         return $resp->result->data;
     }
 
@@ -115,7 +193,6 @@ class AliExpressApi
      */
     public function markOrderAsFulfill($orderId, $serviceName, $trackingNumber, $sendType = 'all')
     {
-
         $req = new AliexpressSolutionOrderFulfillRequest();
         $req->setServiceName($serviceName);
         $req->setOutRef($orderId);
@@ -124,12 +201,6 @@ class AliExpressApi
         $resp = $this->client->execute($req, $this->aliExpressClientAccessToken);
         return $resp;
     }
-
-
-
-
-
-
 
 
     /**

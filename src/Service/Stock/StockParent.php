@@ -46,6 +46,7 @@ abstract class StockParent
         $skuFinal = $this->getProductCorrelationSku($sku);
         $product = $this->getBusinessCentralConnector(BusinessCentralConnector::KIT_PERSONALIZACION_SPORT)->getItemByNumber($skuFinal);
         if (!$product) {
+            $this->logger->error($skuFinal . ' is unknown in Business central');
             return 0;
         } else {
             return  $product['inventory'];

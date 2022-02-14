@@ -3,6 +3,7 @@
 namespace App\Service\Stock;
 
 use App\Entity\WebOrder;
+use App\Service\AliExpress\AliExpressStock;
 use App\Service\OwletCare\OwletCareStock;
 use Exception;
 
@@ -11,10 +12,13 @@ class StockAggregator
 
     private $owletCareStock;
 
+    private $aliExpressStock;
 
-    public function __construct(OwletCareStock $owletCareStock)
+
+    public function __construct(OwletCareStock $owletCareStock, AliExpressStock $aliExpressStock)
     {
         $this->owletCareStock = $owletCareStock;
+        $this->aliExpressStock = $aliExpressStock;
     }
 
 
@@ -22,7 +26,7 @@ class StockAggregator
     {
 
         if ($channel == WebOrder::CHANNEL_ALIEXPRESS) {
-            return '';
+            return $this->aliExpressStock;
         } else if ($channel == WebOrder::CHANNEL_OWLETCARE) {
             return $this->owletCareStock;
         }

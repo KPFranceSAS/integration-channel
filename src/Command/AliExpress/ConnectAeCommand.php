@@ -32,21 +32,19 @@ class ConnectAeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-
-        $order = $this->aliExpress->getOrder("8145815016887916");
-        dump($order);
-
-        /* $invoice = $this->gadgetIberiaConnector->getSaleInvoiceByExternalNumber('8139435177282045');
-        dump($invoice);
-
-        $invoice = $this->gadgetIberiaConnector->getSaleInvoiceByNumber('GFV21/0900502');
-        dump($invoice);
-        */
+        $this->updateStockLevel();
 
 
         return Command::SUCCESS;
     }
 
+
+
+    private function updateStockLevel()
+    {
+        $result = $this->aliExpress->updateStockLevel("1005001800940160", "X-PFJ4086EU", 1029);
+        dump($result);
+    }
 
 
 

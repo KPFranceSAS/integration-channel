@@ -8,6 +8,7 @@ use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use Psr\Log\LoggerInterface;
 
 
@@ -35,7 +36,7 @@ abstract class InvoiceParent
 
     abstract public function getChannel();
 
-    abstract protected function sendInvoice(WebOrder $order);
+
 
 
     public function getBusinessCentralConnector($companyName)
@@ -80,6 +81,42 @@ abstract class InvoiceParent
         $this->logger->info($separator);
         $this->logger->info($message);
         $this->logger->info($separator);
+    }
+
+
+
+    protected function sendInvoice(WebOrder $order)
+    {
+        try {
+            $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
+            $invoice =  $businessCentralConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
+            if ($invoice) {
+                $order->cleanErrors();
+                $this->postInvoice($order, $invoice);
+                $this->addLogToOrder($order, 'Invoice created in the ERP with number ' . $invoice['number']);
+                $order->setInvoiceErp($invoice['number']);
+                $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
+                $order->setStatus(WebOrder::STATE_INVOICED);
+            } else {
+                if ($order->hasDelayTreatment()) {
+                    $messageDelay = $order->getDelayProblemMessage();
+                    if ($order->haveNoLogWithMessage($messageDelay)) {
+                        $this->addLogToOrder($order, $messageDelay);
+                        $this->addError($messageDelay);
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
+            $order->addError($message);
+            $this->addError($order->getExternalNumber() . ' >> ' . $message);
+        }
+        $this->manager->flush();
+    }
+
+
+    protected function postInvoice(WebOrder $order, $invoice)
+    {
     }
 
 
