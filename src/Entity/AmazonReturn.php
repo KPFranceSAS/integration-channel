@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Product;
+use App\Helper\Utils\DatetimeUtils;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -116,7 +118,7 @@ class AmazonReturn
             $attribute = $this->checkIfImportAttribute($key);
             if ($attribute) {
                 if (in_array($key, ["return-date"])) {
-                    $this->{$attribute} = $this->createFromAmzDate($value);
+                    $this->{$attribute} = DatetimeUtils::transformFromIso8601($value);
                 } else {
                     $this->{$attribute} = strlen($value) > 0 ? $value : null;
                 }
@@ -138,12 +140,6 @@ class AmazonReturn
     }
 
 
-
-    private function createFromAmzDate($value)
-    {
-        $date = explode('T', $value);
-        return DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
-    }
 
 
     /**

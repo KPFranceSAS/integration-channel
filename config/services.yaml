@@ -32,6 +32,12 @@ services:
             $aliExpressClientId :  '%env(resolve:ALI_EXPRESS_ID)%'
             $aliExpressClientSecret : '%env(resolve:ALI_EXPRESS_SECRET)%'
             $aliExpressClientAccessToken : '%env(resolve:ALI_EXPRESS_TOKEN)%'
+            $owletCareToken : '%env(resolve:OWLET_CARE_TOKEN)%'
+            $owletCareClientId : '%env(resolve:OWLET_CARE_CLIENTID)%'
+            $owletCareClientSecret : '%env(resolve:OWLET_CARE_CLIENTSECRET)%'
+            $owletCareShopDomain : '%env(resolve:OWLET_CARE_SHOPDOMAINE)%'
+            $owletCareVersion : '%env(resolve:OWLET_CARE_VERSION)%'
+            $owletCareScopes : '%env(resolve:OWLET_CARE_SCOPES)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

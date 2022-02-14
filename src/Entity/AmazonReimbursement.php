@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\Utils\DatetimeUtils;
 use App\Helper\Utils\ExchangeRateCalculator;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
@@ -151,7 +152,7 @@ class AmazonReimbursement
             $attribute = $this->checkIfImportAttribute($key);
             if ($attribute) {
                 if (in_array($key, ["approval-date"])) {
-                    $this->{$attribute} = $this->createFromAmzDate($value);
+                    $this->{$attribute} = DatetimeUtils::transformFromIso8601($value);
                 } elseif (in_array($key, [
                     "amount-per-unit",
                     "amount-total",
@@ -189,12 +190,6 @@ class AmazonReimbursement
         return $this->originalReimbursement ? $this->originalReimbursement->getId() :  null;
     }
 
-
-    private function createFromAmzDate($value)
-    {
-        $date = explode('T', $value);
-        return DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
-    }
 
 
     private function checkIfImportAttribute($key)

@@ -2,6 +2,11 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\AliexpressOrderCrudController;
+use App\Controller\Admin\ChannelAdvisorOrderCrudController;
+use App\Controller\Admin\ErrorOrderCrudController;
+use App\Controller\Admin\OwletCareOrderCrudController;
+use App\Controller\Admin\WebOrderCrudController;
 use App\Entity\ProductCorrelation;
 use App\Entity\User;
 use App\Entity\WebOrder;
@@ -38,6 +43,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::subMenu('Orders', 'fa fa-shopping-cart')->setSubItems([
                 MenuItem::linkToCrud('Amazon', 'fab fa-amazon', WebOrder::class)->setController(ChannelAdvisorOrderCrudController::class),
                 MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)->setController(AliexpressOrderCrudController::class),
+                MenuItem::linkToCrud('Owletcare', 'fas fa-baby', WebOrder::class)->setController(OwletCareOrderCrudController::class),
                 MenuItem::linkToCrud('Errors', 'fas fa-exclamation-triangle', WebOrder::class)->setController(ErrorOrderCrudController::class),
                 MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)->setController(WebOrderCrudController::class),
             ]),

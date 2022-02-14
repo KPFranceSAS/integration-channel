@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
+use App\Helper\Utils\DatetimeUtils;
 use App\Helper\Utils\ExchangeRateCalculator;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -308,7 +308,7 @@ class AmazonOrder
             $attribute = $this->checkIfImportAttribute($key);
             if ($attribute) {
                 if (in_array($key, ["purchase-date", "last-updated-date"])) {
-                    $this->{$attribute} = $this->createFromAmzDate($value);
+                    $this->{$attribute} = DatetimeUtils::transformFromIso8601($value);
                 } elseif (in_array($key, [
                     "item-price",
                     "item-tax",
@@ -341,17 +341,6 @@ class AmazonOrder
     public function getProductId()
     {
         return $this->product ? $this->product->getId() :  null;
-    }
-
-
-
-
-
-
-    private function createFromAmzDate($value)
-    {
-        $date = explode('T', $value);
-        return DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
     }
 
 

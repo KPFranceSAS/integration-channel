@@ -52,7 +52,8 @@ class ExchangeRateCalculator
         if (array_key_exists($dateFormate, $this->changes[$currency])) {
             return $this->changes[$currency][$dateFormate];
         } else {
-            throw new Exception("Exchange rate in $currency is not available for  $dateFormate ");
+            return 1;
+            //throw new Exception("Exchange rate in $currency is not available for  $dateFormate ");
         }
     }
 

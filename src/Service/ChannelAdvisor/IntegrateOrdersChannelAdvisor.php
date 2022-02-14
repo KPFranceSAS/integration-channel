@@ -77,14 +77,14 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
     }
 
 
-    protected function checkAfterPersist(WebOrder $order, stdClass $orderApi)
+    protected function checkAfterPersist(WebOrder $order, $orderApi)
     {
         $this->addLogToOrder($order, 'Marked on channel advisor as exported');
         $this->channel->markOrderAsExported($orderApi->ID);
     }
 
 
-    protected function getOrderId(stdClass $orderApi)
+    protected function getOrderId($orderApi)
     {
         return $orderApi->SiteOrderID;
     }
@@ -135,13 +135,7 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
 
 
 
-    /**
-     * Transform an order as serialized to array
-     *
-     * @param stdClass $order
-     * @return SaleOrder
-     */
-    public function transformToAnBcOrder(stdClass $orderApi): SaleOrder
+    public function transformToAnBcOrder($orderApi): SaleOrder
     {
         $orderBC = new SaleOrder();
         $orderBC->customerNumber = $this->matchChannelAdvisorOrderToCustomer($orderApi);
@@ -237,7 +231,7 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
 
 
 
-    public function getCompanyIntegration(stdClass $orderApi)
+    public function getCompanyIntegration($orderApi)
     {
         $profileId = $orderApi->ProfileID;
         $mapCustomer = [
@@ -256,7 +250,7 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
 
 
 
-    private function matchChannelAdvisorOrderToCustomer(stdClass $orderApi): string
+    private function matchChannelAdvisorOrderToCustomer($orderApi): string
     {
         $profileId = $orderApi->ProfileID;
         $mapCustomer = [

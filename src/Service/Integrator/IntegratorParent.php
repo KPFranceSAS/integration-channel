@@ -38,21 +38,21 @@ abstract class IntegratorParent implements IntegratorInterface
 
 
 
-    public function getBusinessCentralConnector($companyName)
+    public function getBusinessCentralConnector($companyName): BusinessCentralConnector
     {
         return $this->businessCentralAggregator->getBusinessCentralConnector($companyName);
     }
 
 
-    abstract public  function transformToAnBcOrder(stdClass $orderApi): SaleOrder;
+    abstract public  function transformToAnBcOrder($orderApi): SaleOrder;
 
     abstract public function integrateAllOrders();
 
     abstract public function getChannel();
 
-    abstract public function getCompanyIntegration(stdClass $orderApi);
+    abstract public function getCompanyIntegration($orderApi);
 
-    abstract protected function getOrderId(stdClass $orderApi);
+    abstract protected function getOrderId($orderApi);
 
     public function processOrders($reIntegrate = false)
     {
@@ -99,7 +99,7 @@ abstract class IntegratorParent implements IntegratorInterface
 
 
 
-    public function integrateOrder(stdClass $order)
+    public function integrateOrder($order)
     {
         $idOrder = $this->getOrderId($order);
         $company =  $this->getCompanyIntegration($order);
@@ -141,7 +141,7 @@ abstract class IntegratorParent implements IntegratorInterface
     }
 
 
-    protected function checkAfterPersist(WebOrder $order, stdClass $orderApi)
+    protected function checkAfterPersist(WebOrder $order, $orderApi)
     {
     }
 

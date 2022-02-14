@@ -6,6 +6,7 @@ use App\Entity\WebOrder;
 use App\Service\AliExpress\AliExpressIntegrateOrder;
 use App\Service\ChannelAdvisor\IntegrateOrdersChannelAdvisor;
 use App\Service\Integrator\IntegratorInterface;
+use App\Service\OwletCare\OwletCareIntegrateOrder;
 use Exception;
 
 class IntegratorAggregator
@@ -15,10 +16,16 @@ class IntegratorAggregator
 
     private $integrateOrdersChannelAdvisor;
 
-    public function __construct(IntegrateOrdersChannelAdvisor $integrateOrdersChannelAdvisor, AliExpressIntegrateOrder $aliExpressIntegrateOrder)
-    {
+    private $owletCareIntegrateOrder;
+
+    public function __construct(
+        IntegrateOrdersChannelAdvisor $integrateOrdersChannelAdvisor,
+        AliExpressIntegrateOrder $aliExpressIntegrateOrder,
+        OwletCareIntegrateOrder $owletCareIntegrateOrder
+    ) {
         $this->integrateOrdersChannelAdvisor = $integrateOrdersChannelAdvisor;
         $this->aliExpressIntegrateOrder = $aliExpressIntegrateOrder;
+        $this->owletCareIntegrateOrder = $owletCareIntegrateOrder;
     }
 
 
@@ -29,6 +36,8 @@ class IntegratorAggregator
             return $this->integrateOrdersChannelAdvisor;
         } else if ($channel == WebOrder::CHANNEL_ALIEXPRESS) {
             return $this->aliExpressIntegrateOrder;
+        } else if ($channel == WebOrder::CHANNEL_OWLETCARE) {
+            return $this->owletCareIntegrateOrder;
         }
 
         throw new Exception("Channel $channel is not related to any integrator");

@@ -6,6 +6,7 @@ use App\Entity\ProductCorrelation;
 use App\Helper\Utils\CsvExtracter;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -29,12 +30,13 @@ class ImportCorrelationCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription);
+            ->setDescription(self::$defaultDescription)
+            ->addArgument('pathFile', InputArgument::REQUIRED, 'Path of the file for injecting correlation');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $pathFile = __DIR__ . '/../../../docs/equivalence.csv';
+        $pathFile = $input->getArgument('pathFile');
         $products = $this->csvExtracter->extractAssociativeDatasFromCsv($pathFile);
         $output->writeln('Start imports ' . count($products));
         foreach ($products as $product) {

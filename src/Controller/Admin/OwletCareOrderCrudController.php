@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Controller\Admin;
+
+use App\Controller\Admin\WebOrderCrudController;
+use App\Entity\WebOrder;
+use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
+use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
+
+
+class OwletCareOrderCrudController extends WebOrderCrudController
+{
+
+
+    public function getName()
+    {
+        return "Owletcare Order";
+    }
+
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
+        $qb->andWhere('entity.channel = :channel');
+        $qb->setParameter('channel', WebOrder::CHANNEL_OWLETCARE);
+        return $qb;
+    }
+
+
+    public function getCompanies()
+    {
+        return  [
+            BusinessCentralConnector::KIT_PERSONALIZACION_SPORT => BusinessCentralConnector::KIT_PERSONALIZACION_SPORT,
+        ];
+    }
+
+
+    public function getMarketplaces()
+    {
+        return [
+            'Owletcare' => 'Owletcare',
+        ];
+    }
+}

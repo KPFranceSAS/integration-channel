@@ -46,9 +46,8 @@ class IntegrateOrderTestCommand extends Command
         //$this->createOrderTest();
 
 
-        $product = $this->bcConnector->getFullSaleInvoiceByNumber("FV22/0100767");
+        $product = $this->bcConnector->getFullSaleInvoiceByNumber("FV22/0200006");
         dump($product);
-
 
         return Command::SUCCESS;
     }
@@ -103,7 +102,7 @@ class IntegrateOrderTestCommand extends Command
                 "city" => "Bourg Madame",
                 "countryLetterCode" => "FR",
             ],
-
+            "locationCode" => "AMAZON",
             "shipToName" => "Vipul Parmar",
             "shippingPostalAddress" => [
                 "street" => "Calle Berlin 664, Puerta K. Altea Hills Grupo 3, Residencia \r\nPuerta K, Altea Hills Grupo 3, Residencia los Olivos",

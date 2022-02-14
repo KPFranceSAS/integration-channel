@@ -13,7 +13,6 @@ use App\Service\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
-use stdClass;
 
 class AliExpressIntegrateOrder extends IntegratorParent
 
@@ -62,7 +61,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
 
 
 
-    protected function getOrderId(stdClass $orderApi)
+    protected function getOrderId($orderApi)
     {
         return $orderApi->id;
     }
@@ -71,28 +70,22 @@ class AliExpressIntegrateOrder extends IntegratorParent
 
 
 
-    public function getCompanyIntegration(stdClass $orderApi)
+    public function getCompanyIntegration($orderApi)
     {
         return BusinessCentralConnector::GADGET_IBERIA;
     }
 
 
 
-
-    /**
-     * Transform an order as serialized to array
-     *
-     * @param stdClass $order
-     * @return SaleOrder
-     */
-    public function transformToAnBcOrder(stdClass $orderApi): SaleOrder
+    public function transformToAnBcOrder($orderApi): SaleOrder
     {
+
         $orderBC = new SaleOrder();
         $orderBC->customerNumber = '002355';
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->gmt_pay_success, 0, 10));
         $datePayment->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
-
+        $orderBC->locationCode = WebOrder::DEPOT_CENTRAL;
         $orderBC->billToName = $orderApi->receipt_address->contact_person;
         $orderBC->shipToName = $orderApi->receipt_address->contact_person;
 
@@ -131,8 +124,10 @@ class AliExpressIntegrateOrder extends IntegratorParent
 
         $livraisonFees = floatval($orderApi->logistics_amount->amount);
         // ajout livraison 
+        $company = $this->getCompanyIntegration($orderApi);
+
         if ($livraisonFees > 0) {
-            $account = $this->businessCentralConnector->getAccountForExpedition();
+            $account = $this->getBusinessCentralConnector($company)->getAccountForExpedition();
             $saleLineDelivery = new SaleOrderLine();
             $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;
             $saleLineDelivery->quantity = 1;
@@ -147,7 +142,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
 
         // add discount 
         if ($promotionsSeller > 0) {
-            $account = $this->businessCentralConnector->getAccount('7000005');
+            $account = $this->getBusinessCentralConnector($company)->getAccountByNumber('7000005');
             $saleLineDelivery = new SaleOrderLine();
             $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;
             $saleLineDelivery->quantity = 1;

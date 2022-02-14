@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
+use App\Helper\Utils\DatetimeUtils;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
-use stdClass;
 
 /**
  * @ORM\Entity()
@@ -226,19 +226,14 @@ class WebOrder
                 return 'https://gsp.aliexpress.com/apps/order/detail?orderId=' . $this->externalNumber;
             case  WebOrder::CHANNEL_CHANNELADVISOR:
                 return 'https://sellercentral.amazon.fr/orders-v3/order/' . $this->externalNumber;
+            case  WebOrder::CHANNEL_OWLETCARE:
+                $order = $this->getOrderContent();
+                return 'https://owlet-spain.myshopify.com/admin/orders/' . $order['id'];
         }
         throw new Exception('No url link of weborder for ' . $this->channel);
     }
 
-
-
-    /**
-     * Undocumented function
-     *
-     * @param stdClass $orderApi
-     * @return WebOrder
-     */
-    public static function createOneFromChannelAdvisor(stdClass $orderApi)
+    public static function createOneFromChannelAdvisor($orderApi)
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->SiteOrderID);
@@ -266,13 +261,12 @@ class WebOrder
 
     public function setPurchaseDateFromString($purchaseValue)
     {
-        $date = explode('T', $purchaseValue);
-        $this->purchaseDate =  DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
+        $this->purchaseDate =  DatetimeUtils::transformFromIso8601($purchaseValue);
     }
 
 
 
-    public static function createOneFrom(stdClass $orderApi, $channel)
+    public static function createOneFrom($orderApi, $channel)
     {
         if ($channel == WebOrder::CHANNEL_ALIEXPRESS) {
             return WebOrder::createOneFromAliExpress($orderApi);
@@ -285,18 +279,11 @@ class WebOrder
     }
 
 
-
-    /**
-     * Undocumented function
-     *
-     * @param stdClass $orderApi
-     * @return WebOrder
-     */
-    public static function createOneFromOwletcare(stdClass $orderApi)
+    public static function createOneFromOwletcare($orderApi)
     {
         $webOrder = new WebOrder();
-        $webOrder->setExternalNumber($orderApi->id);
-        $webOrder->setPurchaseDate(DateTime::createFromFormat('Y-m-d H:i:s', $orderApi->gmt_pay_succes));
+        $webOrder->setExternalNumber((string)$orderApi['order_number']);
+        $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['processed_at']));
         $webOrder->setStatus(WebOrder::STATE_CREATED);
         $webOrder->setChannel(WebOrder::CHANNEL_OWLETCARE);
         $webOrder->setSubchannel('Owletcare');
@@ -310,13 +297,8 @@ class WebOrder
 
 
 
-    /**
-     * Undocumented function
-     *
-     * @param stdClass $orderApi
-     * @return WebOrder
-     */
-    public static function createOneFromAliExpress(stdClass $orderApi)
+
+    public static function createOneFromAliExpress($orderApi)
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->id);
@@ -386,6 +368,10 @@ class WebOrder
 
     public function getOrderContent()
     {
+        if ($this->channel == self::CHANNEL_OWLETCARE) {
+            return $this->getContent();
+        }
+
         return json_decode(json_encode($this->getContent()));
     }
 

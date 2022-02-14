@@ -3,6 +3,7 @@
 namespace App\Service\Amazon;
 
 use App\Entity\AmazonReturn;
+use App\Helper\Utils\DatetimeUtils;
 use App\Service\Amazon\AmzApiImport;
 use DateTime;
 
@@ -25,7 +26,7 @@ class AmzApiImportReturn extends AmzApiImport
         $returnAmz = $this->manager->getRepository(AmazonReturn::class)->findOneBy([
             "orderId" => $importOrder['order-id'],
             'asin' => $importOrder['asin'],
-            'returnDate' => $this->createFromAmzDate($importOrder['return-date'])
+            'returnDate' => DatetimeUtils::transformFromIso8601($importOrder['return-date'])
         ]);
         if (!$returnAmz) {
             $returnAmz = new AmazonReturn();

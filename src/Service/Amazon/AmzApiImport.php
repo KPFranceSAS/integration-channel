@@ -129,15 +129,6 @@ abstract class AmzApiImport
     }
 
 
-    protected function createFromAmzDate($value)
-    {
-        $date = explode('T', $value);
-        return DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
-    }
-
-
-
-
     /**
      * Undocumented function
      *
