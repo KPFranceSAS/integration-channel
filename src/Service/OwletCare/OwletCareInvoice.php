@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\AliExpress;
+namespace App\Service\OwletCare;
 
 
 use App\Entity\WebOrder;
@@ -11,27 +11,29 @@ use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
 
-class AliExpressInvoice extends InvoiceParent
+class OwletCareInvoice extends InvoiceParent
 {
 
-    private $aliExpressApi;
+    private $owletCareApi;
 
 
     public function __construct(
         ManagerRegistry $manager,
         LoggerInterface $logger,
         MailService $mailer,
-        AliExpressApi $aliExpressApi,
+        OwletCareApi $owletCareApi,
         BusinessCentralAggregator $businessCentralAggregator
     ) {
         parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
-        $this->aliExpressApi = $aliExpressApi;
+        $this->owletCareApi = $owletCareApi;
     }
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_ALIEXPRESS;
+        return WebOrder::CHANNEL_OWLETCARE;
     }
+
+
 
 
     protected function postInvoice(WebOrder $order, $invoice)

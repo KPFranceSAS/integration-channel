@@ -52,5 +52,6 @@ class SendInvoicesToChannelAdvisor extends InvoiceParent
             throw new \Exception('Upload  was not done uploaded on ChannelAdvisor for ' . $invoice['number']);
         }
         $this->addLogToOrder($order, 'Invoice sent to channel Advisor');
+        return true;
     }
 }

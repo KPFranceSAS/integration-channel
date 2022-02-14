@@ -92,11 +92,13 @@ abstract class InvoiceParent
             $invoice =  $businessCentralConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
             if ($invoice) {
                 $order->cleanErrors();
-                $this->postInvoice($order, $invoice);
-                $this->addLogToOrder($order, 'Invoice created in the ERP with number ' . $invoice['number']);
-                $order->setInvoiceErp($invoice['number']);
-                $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
-                $order->setStatus(WebOrder::STATE_INVOICED);
+                $postInvoice = $this->postInvoice($order, $invoice);
+                if ($postInvoice) {
+                    $this->addLogToOrder($order, 'Invoice created in the ERP with number ' . $invoice['number']);
+                    $order->setInvoiceErp($invoice['number']);
+                    $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
+                    $order->setStatus(WebOrder::STATE_INVOICED);
+                }
             } else {
                 if ($order->hasDelayTreatment()) {
                     $messageDelay = $order->getDelayProblemMessage();
