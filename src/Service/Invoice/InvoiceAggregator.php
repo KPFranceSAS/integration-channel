@@ -6,6 +6,7 @@ use App\Entity\WebOrder;
 use App\Service\AliExpress\AliExpressInvoice;
 use App\Service\ChannelAdvisor\SendInvoicesToChannelAdvisor;
 use App\Service\Invoice\InvoiceParent;
+use App\Service\OwletCare\OwletCareInvoice;
 use Exception;
 
 class InvoiceAggregator
@@ -15,10 +16,13 @@ class InvoiceAggregator
 
     private $sendInvoicesToChannelAdvisor;
 
-    public function __construct(SendInvoicesToChannelAdvisor $sendInvoicesToChannelAdvisor, AliExpressInvoice $aliExpressInvoice)
+    private $owletCareInvoice;
+
+    public function __construct(SendInvoicesToChannelAdvisor $sendInvoicesToChannelAdvisor, AliExpressInvoice $aliExpressInvoice, OwletCareInvoice $owletCareInvoice)
     {
         $this->sendInvoicesToChannelAdvisor = $sendInvoicesToChannelAdvisor;
         $this->aliExpressInvoice = $aliExpressInvoice;
+        $this->owletCareInvoice = $owletCareInvoice;
     }
 
 
@@ -31,6 +35,10 @@ class InvoiceAggregator
 
         if ($channel == WebOrder::CHANNEL_ALIEXPRESS) {
             return $this->aliExpressInvoice;
+        }
+
+        if ($channel == WebOrder::CHANNEL_OWLETCARE) {
+            return $this->owletCareInvoice;
         }
 
         throw new Exception("Channel $channel is not related to any invoice");

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Order;
 
-use App\Controller\Admin\WebOrderCrudController;
+use App\Controller\Order\WebOrderCrudController;
 use App\Entity\WebOrder;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -16,7 +16,7 @@ class ErrorOrderCrudController extends WebOrderCrudController
 {
 
 
-    public function getName()
+    public function getName(): string
     {
         return "Error Order";
     }

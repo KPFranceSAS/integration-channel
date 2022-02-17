@@ -108,6 +108,24 @@ abstract class BusinessCentralConnector
 
 
 
+
+    public function deleteSaleOrder($idOrder)
+    {
+        return $this->doDeleteRequest(self::EP_SALES_ORDERS . "($idOrder)");
+    }
+
+
+    public function doDeleteRequest(string $endPoint)
+    {
+        $response = $this->client->request('DELETE', self::EP_COMPANIES . '(' . $this->getCompanyId() . ')/' . $endPoint, [
+            'debug' => $this->debugger
+        ]);
+
+        return $response->getStatusCode() == '204';
+    }
+
+
+
     public function doPostRequest(string $endPoint, array $json, array $query = [])
     {
         if ($this->debugger) {
@@ -213,6 +231,7 @@ abstract class BusinessCentralConnector
         return $this->getElementByNumber(self::EP_SALES_ORDERS, $number, 'externalDocumentNumber');
     }
 
+
     public function getAllSalesLineForOrder(string $orderId)
     {
         return $this->doGetRequest(self::EP_SALES_ORDERS . "($orderId)/" . self::EP_SALES_ORDERS_LINE)["value"];
@@ -222,6 +241,31 @@ abstract class BusinessCentralConnector
     public function getSaleLineOrder(string $orderId, string $id)
     {
         return $this->getElementById(self::EP_SALES_ORDERS . "($orderId)/" . self::EP_SALES_ORDERS_LINE, $id);
+    }
+
+
+    public function getSaleOrderByExternalNumberAndCustomer(string $number, string $customer)
+    {
+        $query = [
+            '$filter' => "externalDocumentNumber eq '$number' and customerNumber eq '$customer' "
+        ];
+
+        $items =  $this->doGetRequest(self::EP_SALES_ORDERS, $query)['value'];
+        if (count($items) > 0) {
+            return reset($items);
+        } else {
+            return null;
+        }
+    }
+
+
+    public function getAllSalesOrderByCustomer(string $customer)
+    {
+        $query = [
+            '$filter' => "customerNumber eq '$customer' "
+        ];
+
+        return $this->doGetRequest(self::EP_SALES_ORDERS, $query)['value'];
     }
 
 

@@ -28,33 +28,26 @@ class ConnectOwletCareCommand extends Command
     {
 
         $mainLocation = $this->owletCareApi->getMainLocation();
-        $inventoies = $this->owletCareApi->getLevelStocksBySku($mainLocation['id']);
-        dump($inventoies);
+        dump($mainLocation);
 
-        $inventoLevelies = $this->owletCareApi->getAllInventoryLevelsFromProduct();
+        $orders = $this->owletCareApi->getAllOrdersToSend();
+        /*foreach ($orders as $order) {
+            //dump($order);
+            $ids = [];
+            foreach ($order['line_items'] as $item) {
+                $ids[] = ['id' => $item['id']];
+            }
 
-        foreach ($inventoLevelies as $inventoLeveli) {
-            $sku =  $inventoLeveli['sku'];
-            $stockLevel = $this->getStockLevelForSku($sku);
-            $output->writeln("SKU $sku => $stockLevel ");
-            $this->owletCareApi->setInventoryLevel($mainLocation['id'], $inventoLeveli['inventory_item_id'], $stockLevel);
-        }
+            $response = $this->owletCareApi->markAsFulfilled($order['id'], $mainLocation['id'], $ids);
+            dump($response->getDecodedBody());
+            return Command::SUCCESS;
+        }*/
 
-
-        $inventoies = $this->owletCareApi->getLevelStocksBySku($mainLocation['id']);
-        dump($inventoies);
 
 
 
 
 
         return Command::SUCCESS;
-    }
-
-
-    private function getStockLevelForSku($sku)
-    {
-
-        return rand(25, 500);
     }
 }

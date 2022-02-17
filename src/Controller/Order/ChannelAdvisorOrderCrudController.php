@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Order;
 
-use App\Controller\Admin\WebOrderCrudController;
+use App\Controller\Order\WebOrderCrudController;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
@@ -18,7 +17,7 @@ class ChannelAdvisorOrderCrudController extends WebOrderCrudController
 {
 
 
-    public function getName()
+    public function getName(): string
     {
         return "Amazon Order";
     }
@@ -36,6 +35,7 @@ class ChannelAdvisorOrderCrudController extends WebOrderCrudController
     {
         return  [
             BusinessCentralConnector::KP_FRANCE => BusinessCentralConnector::KP_FRANCE,
+            BusinessCentralConnector::GADGET_IBERIA => BusinessCentralConnector::GADGET_IBERIA,
         ];
     }
 

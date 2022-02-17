@@ -4,7 +4,7 @@
 
 
 {% set urlOrder = ea_url()
-    .setController('App\\Controller\\Admin\\WebOrderCrudController')
+    .setController('App\\Controller\\Order\\WebOrderCrudController')
     .setAction('index') %}
 
 {% set urlProduct = ea_url()
@@ -19,12 +19,12 @@
     <div class="row">
         <div class="col-4 text-center d-grid gap-2">
             <a href="{{urlOrder}}" class="btn btn-outline-primary btn-lg">
-            <i class="fa fa-shopping-cart"></i><br/>Orders
+            <i class="fa fa-shopping-cart"></i><br/>All Orders
             </a>
         </div>
         <div class="col-4 text-center d-grid gap-2">
             <a href="{{urlProduct}}" class="btn btn-outline-primary btn-lg">
-            <i class="fa fa-exchange"></i><br/>Products Correlations
+            <i class="fa fa-exchange"></i><br/>SKU mapping
             </a>
         </div>
         <div class="col-4 text-center d-grid gap-2">

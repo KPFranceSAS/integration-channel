@@ -90,7 +90,7 @@ class AliExpressApi
 
     public function getAllActiveProducts()
     {
-        $productQuery = new ItemListQuery;
+        $productQuery = new ItemListQuery();
         $productQuery->product_status_type = "onSelling";
         return $this->getAllProducts($productQuery);
     }
@@ -127,7 +127,9 @@ class AliExpressApi
         return $products;
     }
 
-
+    /**
+     * https://developers.aliexpress.com/en/doc.htm?docId=45135&docType=2
+     */
     public function updateStockLevel($productId, $productSku, $inventory)
     {
         $req = new AliexpressSolutionBatchProductInventoryUpdateRequest();
@@ -141,6 +143,10 @@ class AliExpressApi
         $this->logger->info('Update Stock Level ' . $productId . ' / SKU ' . $productSku . ' >> ' . $inventory . 'units');
         return $this->client->execute($req, $this->aliExpressClientAccessToken);
     }
+
+
+
+
 
 
 
@@ -240,5 +246,31 @@ class AliExpressApi
         curl_close($ch);
         $reponse = json_decode($output, true);
         return $reponse;
+    }
+
+
+
+    public function getBrandProduct($productId)
+    {
+        $this->logger->info('Get Band  ' . $productId);
+        $productInfo = $this->getProductInfo($productId);
+        foreach ($productInfo->aeop_ae_product_propertys->global_aeop_ae_product_property as $property) {
+            if ($this->checkIfEgalString($property->attr_name, 'Brand Name')) {
+                return $this->cleanString($property->attr_value);
+            }
+        }
+        return null;
+    }
+
+
+    private function cleanString(string $string)
+    {
+        return strtoupper(trim(str_replace(' ', '', $string)));
+    }
+
+
+    private function checkIfEgalString(string $string1, string $string2)
+    {
+        return $this->cleanString($string1) == $this->cleanString($string2);
     }
 }

@@ -16,7 +16,6 @@ use Exception;
 use Psr\Log\LoggerInterface;
 
 class AliExpressIntegrateOrder extends IntegratorParent
-
 {
 
     protected $businessCentralConnector;
@@ -90,7 +89,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->gmt_pay_success, 0, 10));
         $datePayment->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
-        $orderBC->locationCode = WebOrder::DEPOT_CENTRAL;
+        $orderBC->locationCode = $this->checkLocationCode($orderApi);
         $orderBC->billToName = $orderApi->receipt_address->contact_person;
         $orderBC->shipToName = $orderApi->receipt_address->contact_person;
 
@@ -167,11 +166,37 @@ class AliExpressIntegrateOrder extends IntegratorParent
             $saleLineDelivery->description = 'DISCOUNT ALI EXPRESS // ' . round($promotionsAliExpress, 2) . ' EUR';
             $orderBC->salesLines[] = $saleLineDelivery;
         }
-
-
-
         return $orderBC;
     }
+
+
+
+    public function checkLocationCode($orderApi)
+    {
+
+        $brands = [];
+        foreach ($orderApi->child_order_list->global_aeop_tp_child_order_dto as $line) {
+            $brand = $this->aliExpress->getBrandProduct($line->product_id);
+            if ($brand) {
+                $this->logger->info('Brand ' . $brand);
+                $brands[] = $brand;
+            }
+        }
+        return $this->defineStockBrand($brands);
+    }
+
+
+
+    public function defineStockBrand($brands)
+    {
+        foreach ($brands as $brand) {
+            if (in_array($brand, ['ECOFLOW', 'AUTELROBOTICS'])) {
+                return WebOrder::DEPOT_MADRID;
+            }
+        }
+        return WebOrder::DEPOT_CENTRAL;
+    }
+
 
 
     private function getTotalDiscountByAliExpress($saleLineApis)

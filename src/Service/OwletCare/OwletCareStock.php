@@ -8,6 +8,7 @@ use App\Service\MailService;
 use App\Service\OwletCare\OwletCareApi;
 use App\Service\Stock\StockParent;
 use Doctrine\Persistence\ManagerRegistry;
+use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
 class OwletCareStock extends StockParent
@@ -20,13 +21,14 @@ class OwletCareStock extends StockParent
 
 
     public function __construct(
+        FilesystemOperator $awsStorage,
         ManagerRegistry $manager,
         LoggerInterface $logger,
         MailService $mailer,
         OwletCareApi $owletCareApi,
         BusinessCentralAggregator $businessCentralAggregator
     ) {
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
+        parent::__construct($awsStorage, $manager, $logger, $mailer, $businessCentralAggregator);
         $this->owletCareApi = $owletCareApi;
     }
 

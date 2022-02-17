@@ -31,8 +31,8 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $this->updateStockLevel();
+        $order = $this->aliExpress->getOrder("8146195146026726");
+        dump($order);
 
 
         return Command::SUCCESS;
@@ -50,7 +50,7 @@ class ConnectAeCommand extends Command
 
     private function markCompanyTransport()
     {
-        $order = $this->aliExpress->getOrder("8145815016887916");
+        $order = $this->aliExpress->getOrder("3015645808691774");
         dump($order);
 
         /*$carriers = $this->aliExpress->getCarriers();

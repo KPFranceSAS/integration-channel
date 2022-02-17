@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Order;
 
-use App\Controller\Admin\WebOrderCrudController;
+use App\Controller\Order\WebOrderCrudController;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use Doctrine\ORM\QueryBuilder;
@@ -13,13 +13,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 
 
-class OwletCareOrderCrudController extends WebOrderCrudController
+class AliexpressOrderCrudController extends WebOrderCrudController
 {
 
 
-    public function getName()
+    public function getName(): string
     {
-        return "Owletcare Order";
+        return "Aliexpress Order";
     }
 
 
@@ -27,7 +27,7 @@ class OwletCareOrderCrudController extends WebOrderCrudController
     {
         $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
         $qb->andWhere('entity.channel = :channel');
-        $qb->setParameter('channel', WebOrder::CHANNEL_OWLETCARE);
+        $qb->setParameter('channel', WebOrder::CHANNEL_ALIEXPRESS);
         return $qb;
     }
 
@@ -35,7 +35,7 @@ class OwletCareOrderCrudController extends WebOrderCrudController
     public function getCompanies()
     {
         return  [
-            BusinessCentralConnector::KIT_PERSONALIZACION_SPORT => BusinessCentralConnector::KIT_PERSONALIZACION_SPORT,
+            BusinessCentralConnector::GADGET_IBERIA => BusinessCentralConnector::GADGET_IBERIA,
         ];
     }
 
@@ -43,7 +43,7 @@ class OwletCareOrderCrudController extends WebOrderCrudController
     public function getMarketplaces()
     {
         return [
-            'Owletcare' => 'Owletcare',
+            'AliExpress' => 'AliExpress',
         ];
     }
 }

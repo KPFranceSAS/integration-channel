@@ -2,11 +2,11 @@
 
 namespace App\Controller\Admin;
 
-use App\Controller\Admin\AliexpressOrderCrudController;
-use App\Controller\Admin\ChannelAdvisorOrderCrudController;
-use App\Controller\Admin\ErrorOrderCrudController;
-use App\Controller\Admin\OwletCareOrderCrudController;
-use App\Controller\Admin\WebOrderCrudController;
+use App\Controller\Order\AliexpressOrderCrudController;
+use App\Controller\Order\ChannelAdvisorOrderCrudController;
+use App\Controller\Order\ErrorOrderCrudController;
+use App\Controller\Order\OwletCareOrderCrudController;
+use App\Controller\Order\WebOrderCrudController;
 use App\Entity\ProductCorrelation;
 use App\Entity\User;
 use App\Entity\WebOrder;

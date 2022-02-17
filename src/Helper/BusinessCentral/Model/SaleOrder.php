@@ -27,6 +27,8 @@ class SaleOrder
 
     public $number;
 
+    public $locationCode;
+
     public $currencyCode;
 
     public $pricesIncludeTax = true;

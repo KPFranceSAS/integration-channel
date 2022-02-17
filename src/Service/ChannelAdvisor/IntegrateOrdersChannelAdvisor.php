@@ -153,6 +153,8 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
             $orderBC->sellingPostalAddress->state = $orderApi->BillingStateOrProvinceName;
         }
 
+        $orderBC->locationCode = WebOrder::DEPOT_FBA_AMAZON;
+
 
         $orderBC->shipToName = $orderApi->ShippingFirstName . ' ' . $orderApi->ShippingLastName;
         $orderBC->shippingPostalAddress->street = substr($orderApi->ShippingAddressLine1, 0, 100);

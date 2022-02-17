@@ -10,7 +10,6 @@ class ChannelWebservice
 {
 
 
-
     const AUTH_URL = 'https://api.channeladvisor.com/oauth2/token';
 
     const API_URL = 'https://api.channeladvisor.com/v1/';
@@ -145,6 +144,17 @@ class ChannelWebservice
     }
 
 
+    public function getNewOrdersByBatch($notExported = true)
+    {
+        $params = [
+            '$expand' => 'Items($expand=Adjustments,Promotions, BundleComponents),Fulfillments($expand=Items),Adjustments',
+            '$filter' => "PaymentStatus eq 'Cleared' and CheckoutStatus eq 'Completed' and CreatedDateUtc gt 2022-02-01"
+        ];
+        if ($notExported) {
+            $params['exported'] = 'false';
+        }
+        return $this->getOrders($params);
+    }
 
     /**
      * Send request to mark an order as exported
@@ -349,18 +359,5 @@ class ChannelWebservice
             }
         }
         return $orderRetrieve;
-    }
-
-
-    public function getNewOrdersByBatch($notExported = true)
-    {
-        $params = [
-            '$expand' => 'Items($expand=Adjustments,Promotions, BundleComponents),Fulfillments($expand=Items),Adjustments',
-            '$filter' => "PaymentStatus eq 'Cleared' and CheckoutStatus eq 'Completed' and CreatedDateUtc gt 2022-02-01"
-        ];
-        if ($notExported) {
-            $params['exported'] = 'false';
-        }
-        return $this->getOrders($params);
     }
 }

@@ -48,11 +48,13 @@ class BuildHistoricCommand extends Command
         $param0->create_date_end = $input->getArgument('dateEnd') . " 00:00:00";
         $param0->order_status = "FINISH";
 
+        $notFounds = [];
+
         $orders = $this->aliExpressApi->getAllOrders($param0);
 
         $progressPar = new ProgressBar($output, count($orders));
         $progressPar->start();
-
+        $counter = 0;
         foreach ($orders as $order) {
 
             if ($this->checkIfImport($order->order_id)) {
@@ -70,14 +72,24 @@ class BuildHistoricCommand extends Command
                     $output->writeln('Importation ' . $order->order_id);
                 } else {
                     $output->writeln('No invoice found for ' . $order->order_id);
+                    $notFounds[] = $order->order_id;
                 }
             } else {
-                $output->writeln('Alreday imported ' . $order->order_id);
+                $output->writeln('Already imported ' . $order->order_id);
             }
+            if ($counter % 30 == 0) {
+                $output->writeln('Flushed ');
+                $this->manager->flush();
+                $this->manager->clear();
+            }
+            $counter++;
             $progressPar->advance();
         }
         $this->manager->flush();
         $progressPar->finish();
+        foreach ($notFounds as $notFound) {
+            $output->writeln($notFound);
+        }
         return Command::SUCCESS;
     }
 

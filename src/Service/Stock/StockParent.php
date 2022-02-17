@@ -8,6 +8,7 @@ use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
+use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
 
@@ -23,13 +24,18 @@ abstract class StockParent
 
     protected $businessCentralAggregator;
 
+    protected $awsStorage;
 
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator)
+    protected $stockLevels;
+
+
+    public function __construct(FilesystemOperator $awsStorage, ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator)
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->businessCentralAggregator = $businessCentralAggregator;
+        $this->awsStorage = $awsStorage;
     }
 
 
@@ -43,14 +49,23 @@ abstract class StockParent
 
     protected function getStockProductWarehouse($sku, $depot = WebOrder::DEPOT_CENTRAL): int
     {
-        $skuFinal = $this->getProductCorrelationSku($sku);
-        $product = $this->getBusinessCentralConnector(BusinessCentralConnector::KIT_PERSONALIZACION_SPORT)->getItemByNumber($skuFinal);
-        if (!$product) {
-            $this->logger->error($skuFinal . ' is unknown in Business central');
-            return 0;
-        } else {
-            return  $product['inventory'];
+
+        if (!$this->stockLevels) {
+            $this->initializeStockLevels();
         }
+        $skuFinal = $this->getProductCorrelationSku($sku);
+        $key = $skuFinal . '_' . $depot;
+        if (array_key_exists($key, $this->stockLevels)) {
+            $stock = $this->stockLevels[$key];
+            $this->logger->info('Stock available ' . $skuFinal . ' in ' . $depot . ' >>> ' . $stock);
+            if ($stock >= 5) {
+                return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
+            }
+        } else {
+            $this->logger->error('Not found ' . $skuFinal . ' in ' . $depot);
+        }
+
+        return 0;
     }
 
     public function getBusinessCentralConnector($companyName): BusinessCentralConnector
@@ -64,5 +79,24 @@ abstract class StockParent
         $skuSanitized = strtoupper($sku);
         $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
         return $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
+    }
+
+
+
+    public function initializeStockLevels()
+    {
+        $this->logger->info('Get the file stock/stocks.csv');
+        $this->stockLevels = [];
+        $contentFile = $this->awsStorage->readStream('stock/StockMarketplaces.csv');
+        $header = fgetcsv($contentFile, null, ';');
+        while (($values = fgetcsv($contentFile, null, ';')) !== false) {
+            if (count($values) == count($header)) {
+                $stock = array_combine($header, $values);
+                $key = $stock['SKU'] . '_' . $stock['LocationCode'];
+                $this->stockLevels[$key] = (int)$stock['AvailableQty'];
+            }
+        }
+        $this->logger->info('Nb of lines :' . count($this->stockLevels));
+        return $this->stockLevels;
     }
 }

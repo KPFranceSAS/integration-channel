@@ -56,7 +56,7 @@ abstract class AmzApiImport
             }
             throw new Exception('Report takes too long to be processed');
         } catch (Exception $e) {
-            $this->mailer->sendEmail("[REPORT AMAZON ORDERS]", $e->getMessage());
+            $this->mailer->sendEmail("[REPORT AMAZON ORDERS]", $e->getMessage(), 'stephane.lanjard@kpsport.com');
         }
     }
 

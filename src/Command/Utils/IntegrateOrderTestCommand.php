@@ -21,7 +21,7 @@ class IntegrateOrderTestCommand extends Command
         IntegratorAggregator $integratorAggregator,
         ChannelWebservice $channelWebservice
     ) {
-        $this->bcConnector = $bcAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
+        $this->bcConnector = $bcAggregator->getBusinessCentralConnector(BusinessCentralConnector::GADGET_IBERIA);
         $this->integrator = $integratorAggregator->getIntegrator(WebOrder::CHANNEL_CHANNELADVISOR);
         $this->channelWebservice = $channelWebservice;
         parent::__construct();
@@ -46,8 +46,17 @@ class IntegrateOrderTestCommand extends Command
         //$this->createOrderTest();
 
 
-        $product = $this->bcConnector->getSaleInvoiceByExternalNumber("204-1223334-4143527");
-        dump($product);
+        $orders = $this->bcConnector->getAllSalesOrderByCustomer('002355');
+
+        $output->writeln('Delete ' . count($orders));
+        foreach ($orders as $order) {
+            $output->writeln('Delete ' . $order['id'] . ' ' . $order['number']);
+            try {
+                $resposne = $this->bcConnector->deleteSaleOrder($order['id']);
+            } catch (\Exception $e) {
+                $output->writeln('Error ' . $order['id'] . ' ' . $e->getMessage());
+            }
+        }
 
         return Command::SUCCESS;
     }
@@ -56,7 +65,7 @@ class IntegrateOrderTestCommand extends Command
 
     private function getOldInvoice()
     {
-        $product = $this->bcConnector->getSaleInvoiceByNumber("FV20/0200127");
+        $product = $this->bcConnector->getFullSaleOrderByNumber("FV20/0200127");
         dump($product);
     }
 

@@ -1,24 +1,18 @@
 <?php
 
-namespace App\Controller\Admin;
+namespace App\Controller\Fba;
 
+use App\Controller\Admin\AdminCrudController;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\Integrator\IntegratorAggregator;
-use Box\Spout\Common\Entity\Style\Color;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
-use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -26,7 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use Symfony\Component\HttpFoundation\Response;
 
-class WebOrderCrudController extends AbstractCrudController
+class ShippingCrudController extends AdminCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -45,9 +39,9 @@ class WebOrderCrudController extends AbstractCrudController
     }
 
 
-    public function getName()
+    public function getName(): string
     {
-        return "Order";
+        return "Shippings";
     }
 
 
@@ -91,11 +85,7 @@ class WebOrderCrudController extends AbstractCrudController
         $viewOrderIndex = Action::new(Action::DETAIL, '', 'fa fa-eye')
             ->linkToCrudAction(Action::DETAIL);
 
-        $retryAllIntegrationBatchs = Action::new('retryAllIntegrations', 'Retry integrations', 'fas fa-redo')
-            ->addCssClass('btn btn-primary')
-            ->linkToCrudAction('retryAllIntegrations');
-
-        $exportIndex = Action::new('export', 'Export to xlsx')
+        $exportIndex = Action::new('export', 'Export to csv')
             ->setIcon('fa fa-download')
             ->linkToCrudAction('export')
             ->setCssClass('btn btn-primary')
@@ -111,7 +101,6 @@ class WebOrderCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, $exportIndex)
             ->add(Crud::PAGE_INDEX, $retryIntegrationIndex)
             ->add(Crud::PAGE_INDEX, $viewOrderIndex)
-            ->addBatchAction($retryAllIntegrationBatchs)
             ->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE, Action::EDIT);
     }
 
@@ -127,9 +116,14 @@ class WebOrderCrudController extends AbstractCrudController
 
 
         $choicesFulfiled = [
-            'External' => WebOrder::FULFILLED_BY_EXTERNAL,
-            'Seller'  => WebOrder::FULFILLED_BY_SELLER,
-            'Mixed' => WebOrder::FULFILLED_MIXED,
+            WebOrder::FULFILLED_BY_EXTERNAL => WebOrder::FULFILLED_BY_EXTERNAL,
+            WebOrder::FULFILLED_BY_SELLER  => WebOrder::FULFILLED_BY_SELLER
+        ];
+
+
+        $choicesWarehouse = [
+            WebOrder::DEPOT_CENTRAL => WebOrder::DEPOT_CENTRAL,
+            WebOrder::DEPOT_FBA_AMAZON  => WebOrder::DEPOT_FBA_AMAZON
         ];
 
 
@@ -138,7 +132,8 @@ class WebOrderCrudController extends AbstractCrudController
             ->add(DateTimeFilter::new('purchaseDate', "Purchase date"))
             ->add(ChoiceFilter::new('subchannel', "Marketplace")->canSelectMultiple(true)->setChoices($this->getMarketplaces()))
             ->add(ChoiceFilter::new('company', "Company")->canSelectMultiple(true)->setChoices($this->getCompanies()))
-            ->add(ChoiceFilter::new('fulfilledBy')->canSelectMultiple(true)->setChoices($choicesFulfiled));
+            ->add(ChoiceFilter::new('fulfilledBy')->canSelectMultiple(true)->setChoices($choicesFulfiled))
+            ->add(ChoiceFilter::new('warehouse')->canSelectMultiple(true)->setChoices($choicesWarehouse));
     }
 
 
@@ -165,49 +160,6 @@ class WebOrderCrudController extends AbstractCrudController
         ];
     }
 
-
-
-
-
-
-    public function export(AdminContext $context)
-    {
-        $fields = FieldCollection::new($this->configureFields(Crud::PAGE_INDEX));
-        $filters = $this->get(FilterFactory::class)->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
-        $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
-        $entities = $this->get(EntityFactory::class)->createCollection($context->getEntity(), $queryBuilder->getQuery()->getResult());
-        $this->get(EntityFactory::class)->processFieldsForAll($entities, $fields);
-        $writer = WriterEntityFactory::createXLSXWriter();
-        $writer->openToBrowser('export_orders_' . date('Ymd-His') . '.xlsx');
-        $h = fopen('php://output', 'r');
-
-
-        /** Create a style with the StyleBuilder */
-        $style = (new StyleBuilder())
-            ->setFontColor(Color::WHITE)
-            ->setBackgroundColor(Color::BLUE)
-            ->build();
-
-        $cellHeaders = [];
-        foreach ($fields as $field) {
-            $cellHeaders[] = WriterEntityFactory::createCell($field->getLabel());
-        }
-        $singleRow = WriterEntityFactory::createRow($cellHeaders, $style);
-        $writer->addRow($singleRow);
-
-        $entitiesArray = $entities->getIterator();
-        foreach ($entitiesArray as $entityArray) {
-            $fieldsEntity = $entityArray->getFields();
-            $cellDatas = [];
-            foreach ($fieldsEntity as $fieldEntity) {
-                $cellDatas[] = WriterEntityFactory::createCell($fieldEntity->getFormattedValue());
-            }
-            $singleRowData = WriterEntityFactory::createRow($cellDatas);
-            $writer->addRow($singleRowData);
-        }
-        $writer->close();
-        return new Response(stream_get_contents($h));
-    }
 
 
 
@@ -277,6 +229,7 @@ class WebOrderCrudController extends AbstractCrudController
             TextField::new('erpDocument', "Document type"),
             TextField::new('documentInErp', "Document N°"),
             TextField::new('fulfilledBy', "Fulfillement"),
+            TextField::new('warehouse', "Warehouse"),
             TextField::new('getStatusLitteral', "Status")->setTemplatePath('admin/fields/status.html.twig'),
             DateTimeField::new('purchaseDate', "Purchase date"),
             DateTimeField::new('createdAt', "Created at"),

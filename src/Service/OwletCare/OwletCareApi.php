@@ -46,6 +46,8 @@ class OwletCareApi
 
 
 
+
+
     public function getAllOrders($status = 'any', $financialStatus = 'any', $fulfillmentStatus = 'any')
     {
         return $this->getPaginatedElements(
@@ -118,19 +120,13 @@ class OwletCareApi
         foreach ($products as $product) {
             foreach ($product['variants'] as $variant) {
                 $inventoryLevels[] = [
-                    'sku' => $variant['inventory_item_id'],
+                    'sku' => $variant['sku'],
                     'inventory_item_id' => $variant['inventory_item_id']
                 ];
             }
         }
         return $inventoryLevels;
     }
-
-
-
-
-
-
 
     public function getInventoryItems(array $inventoryItemIds)
     {
@@ -157,7 +153,26 @@ class OwletCareApi
 
 
 
+    public function markAsFulfilled(int $orderId, int $locationId, array $itemLineId, string $trackingNumber = null, string $trackingUrl = null)
+    {
+        $params = [
+            "location_id" =>  $locationId,
+            "line_items" => $itemLineId
+        ];
 
+        if ($trackingNumber) {
+            $params['tracking_number'] = $trackingNumber;
+        }
+
+        if ($trackingUrl) {
+            $params['tracking_url'] = $trackingUrl;
+        }
+
+        return $this->client->post(
+            "orders/$orderId/fulfillments",
+            ["fulfillment" => $params]
+        );
+    }
 
 
 

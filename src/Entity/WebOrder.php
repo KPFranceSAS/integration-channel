@@ -30,8 +30,13 @@ class WebOrder
 
     const DEPOT_ACTIVE_ANTS = 'ACTIVE';
 
+    const DEPOT_MADRID = 'MADRID';
+
     const DEPOT_MIXED = 'MIXED';
 
+    const TIMING_INTEGRATION = 24;
+
+    const TIMING_SHIPPING = 72;
 
     const FULFILLED_BY_EXTERNAL = 'EXTERNALLY MANAGED';
 
@@ -208,9 +213,7 @@ class WebOrder
         return '';
     }
 
-    const TIMING_INTEGRATION = 24;
 
-    const TIMING_SHIPPING = 72;
 
 
     public function hasDelayTreatment()
