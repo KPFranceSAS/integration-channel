@@ -65,16 +65,15 @@ class AliExpressStock extends StockParent
         $this->logger->info('Sku ' . $skuCode  . ' / stock BC ' . $stockBC . ' units in ' . $stockTocHeck);
 
         if ($stockBC != $stockSku) {
-            //$this->aliExpress->updateStockLevel($product->product_id, $skuCode, $stockBC);
+            $this->aliExpress->updateStockLevel($product->product_id, $skuCode, $stockBC);
         }
-
         $this->logger->info('---------------');
     }
 
 
     public function defineStockBrand($brand)
     {
-        if ($brand && in_array($brand, ['ECOFLOW', 'AUTELROBOTICS'])) {
+        if ($brand && in_array($brand, ['ECOFLOW', 'AUTELROBOTICS', 'DJI', 'PGYTECH', 'TRIDENT'])) {
             return WebOrder::DEPOT_MADRID;
         }
         return WebOrder::DEPOT_CENTRAL;

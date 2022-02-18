@@ -49,7 +49,6 @@ abstract class StockParent
 
     protected function getStockProductWarehouse($sku, $depot = WebOrder::DEPOT_CENTRAL): int
     {
-
         if (!$this->stockLevels) {
             $this->initializeStockLevels();
         }
@@ -58,13 +57,16 @@ abstract class StockParent
         if (array_key_exists($key, $this->stockLevels)) {
             $stock = $this->stockLevels[$key];
             $this->logger->info('Stock available ' . $skuFinal . ' in ' . $depot . ' >>> ' . $stock);
-            if ($stock >= 5) {
-                return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
+            if ($depot == WebOrder::DEPOT_CENTRAL) {
+                if ($stock >= 5) {
+                    return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
+                }
+            } elseif ($depot == WebOrder::DEPOT_CENTRAL) {
+                return $stock;
             }
         } else {
             $this->logger->error('Not found ' . $skuFinal . ' in ' . $depot);
         }
-
         return 0;
     }
 
@@ -88,6 +90,7 @@ abstract class StockParent
         $this->logger->info('Get the file stock/stocks.csv');
         $this->stockLevels = [];
         $contentFile = $this->awsStorage->readStream('stock/StockMarketplaces.csv');
+        $toRemove = fgetcsv($contentFile, null, ';');
         $header = fgetcsv($contentFile, null, ';');
         while (($values = fgetcsv($contentFile, null, ';')) !== false) {
             if (count($values) == count($header)) {
