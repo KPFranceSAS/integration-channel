@@ -20,7 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 use Symfony\Component\HttpFoundation\Response;
 
-class ShippingCrudController extends AdminCrudController
+class AmazonReimbursementController extends AdminCrudController
 {
     public static function getEntityFqcn(): string
     {
