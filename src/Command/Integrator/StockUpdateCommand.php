@@ -34,7 +34,7 @@ class StockUpdateCommand extends Command
         $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
 
         $stockUtil = $this->stockAggregator->getStock($channelIntegration);
-        $stockUtil->sendStocks();
+        $stockUtil->send();
         return Command::SUCCESS;
     }
 }
