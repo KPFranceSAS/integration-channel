@@ -72,7 +72,7 @@ abstract class StockParent
                 if ($stock >= 5) {
                     return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
                 }
-            } elseif ($depot == WebOrder::DEPOT_CENTRAL) {
+            } elseif ($depot == WebOrder::DEPOT_MADRID) {
                 return $stock;
             }
         } else {
@@ -110,6 +110,10 @@ abstract class StockParent
                 $this->stockLevels[$key] = (int)$stock['AvailableQty'];
             }
         }
+        if (count($this->stockLevels) == 0) {
+            throw new \Exception('Error of mapping for stock files ' . json_encode($header));
+        }
+
         $this->logger->info('Nb of lines :' . count($this->stockLevels));
         return $this->stockLevels;
     }
