@@ -192,7 +192,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
     public function defineStockBrand($brands)
     {
         foreach ($brands as $brand) {
-            if (in_array($brand, ['ECOFLOW', 'AUTELROBOTICS', 'DJI', 'PGYTECH', 'TRIDENT'])) {
+            if (in_array($brand, AliExpressStock::getBrandsFromMadrid())) {
                 return WebOrder::DEPOT_MADRID;
             }
         }

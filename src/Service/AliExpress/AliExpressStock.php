@@ -11,8 +11,13 @@ use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
 class AliExpressStock extends StockParent
-
 {
+
+
+    public static function getBrandsFromMadrid()
+    {
+        return ['ECOFLOW', 'AUTELROBOTICS', 'DJI', 'PGYTECH', 'TRIDENT'];
+    }
 
     protected $businessCentralConnector;
 
@@ -73,7 +78,7 @@ class AliExpressStock extends StockParent
 
     public function defineStockBrand($brand)
     {
-        if ($brand && in_array($brand, ['ECOFLOW', 'AUTELROBOTICS', 'DJI', 'PGYTECH', 'TRIDENT'])) {
+        if ($brand && in_array($brand, self::getBrandsFromMadrid())) {
             return WebOrder::DEPOT_MADRID;
         }
         return WebOrder::DEPOT_CENTRAL;
