@@ -140,7 +140,7 @@ class AliExpressApi
         $multipleSkuUpdateList->inventory = $inventory;
         $mutipleProductUpdateList->multiple_sku_update_list = $multipleSkuUpdateList;
         $req->setMutipleProductUpdateList(json_encode($mutipleProductUpdateList));
-        $this->logger->info('Update Stock Level ' . $productId . ' / SKU ' . $productSku . ' >> ' . $inventory . 'units');
+        $this->logger->info('Update Stock Level ' . $productId . ' / SKU ' . $productSku . ' >> ' . $inventory . ' units');
         return $this->client->execute($req, $this->aliExpressClientAccessToken);
     }
 
@@ -161,7 +161,7 @@ class AliExpressApi
         $req->setProductId($productId);
         $this->logger->info('Get Product info ' . $productId);
         $reponse = $this->client->execute($req, $this->aliExpressClientAccessToken);
-        return $reponse->result;
+        return (property_exists($reponse, 'result')) ? $reponse->result : null;
     }
 
 

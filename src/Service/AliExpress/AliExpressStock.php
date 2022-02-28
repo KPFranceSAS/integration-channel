@@ -60,15 +60,18 @@ class AliExpressStock extends StockParent
     public function sendStock($product)
     {
         $this->logger->info('Send stock for ' . $product->subject . ' / Id ' . $product->product_id);
-        $productInfo = $this->aliExpress->getProductInfo($product->product_id);
-
+        $productInfo = $this->getProductInfo($product->product_id);
+        if (!$productInfo) {
+            $this->logger->error('No product info');
+            return;
+        }
         $brand = $this->extractBrandFromResponse($productInfo);
         $stockTocHeck = $this->defineStockBrand($brand);
 
 
         $skus = $this->extractSkuFromResponse($productInfo);
         foreach ($skus as $skuCode) {
-            $this->logger->info('Sku ' . $skuCode  . ' BRand ' . $brand);
+            $this->logger->info('Sku ' . $skuCode  . ' Brand ' . $brand);
             $stockBC = $this->getStockProductWarehouse($skuCode, $stockTocHeck);
             $this->logger->info('Sku ' . $skuCode  . ' / stock BC ' . $stockBC . ' units in ' . $stockTocHeck);
             $this->aliExpress->updateStockLevel($product->product_id, $skuCode, $stockBC);
@@ -76,6 +79,21 @@ class AliExpressStock extends StockParent
 
 
         $this->logger->info('---------------');
+    }
+
+
+
+    public function getProductInfo($productId)
+    {
+        for ($i = 0; $i < 3; $i++) {
+            $productInfo = $this->aliExpress->getProductInfo($productId);
+            if ($productInfo) {
+                return $productInfo;
+            } else {
+                sleep(2);
+            }
+        }
+        return null;
     }
 
 
