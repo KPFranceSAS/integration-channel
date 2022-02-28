@@ -39,7 +39,7 @@ class AliExpressStock extends StockParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_OWLETCARE;
+        return WebOrder::CHANNEL_ALIEXPRESS;
     }
 
     /**
@@ -61,17 +61,20 @@ class AliExpressStock extends StockParent
     {
         $this->logger->info('Send stock for ' . $product->subject . ' / Id ' . $product->product_id);
         $productInfo = $this->aliExpress->getProductInfo($product->product_id);
-        $skuCode = $this->extractSkuFromResponse($productInfo);
-        $brand = $this->extractBrandFromResponse($productInfo);
-        $stockSku = $this->extractStockFromResponse($productInfo);
-        $this->logger->info('Sku ' . $skuCode  . ' BRand ' . $brand . ' / stock AE ' . $stockSku . ' units');
-        $stockTocHeck = $this->defineStockBrand($brand);
-        $stockBC = $this->getStockProductWarehouse($skuCode, $stockTocHeck);
-        $this->logger->info('Sku ' . $skuCode  . ' / stock BC ' . $stockBC . ' units in ' . $stockTocHeck);
 
-        if ($stockBC != $stockSku) {
+        $brand = $this->extractBrandFromResponse($productInfo);
+        $stockTocHeck = $this->defineStockBrand($brand);
+
+
+        $skus = $this->extractSkuFromResponse($productInfo);
+        foreach ($skus as $skuCode) {
+            $this->logger->info('Sku ' . $skuCode  . ' BRand ' . $brand);
+            $stockBC = $this->getStockProductWarehouse($skuCode, $stockTocHeck);
+            $this->logger->info('Sku ' . $skuCode  . ' / stock BC ' . $stockBC . ' units in ' . $stockTocHeck);
             $this->aliExpress->updateStockLevel($product->product_id, $skuCode, $stockBC);
         }
+
+
         $this->logger->info('---------------');
     }
 
@@ -110,14 +113,12 @@ class AliExpressStock extends StockParent
 
     private function extractSkuFromResponse($productInfo)
     {
-        $skuList = reset($productInfo->aeop_ae_product_s_k_us->global_aeop_ae_product_sku);
-        return $skuList->sku_code;
-    }
-
-
-    private function extractStockFromResponse($productInfo)
-    {
-        $skuList = reset($productInfo->aeop_ae_product_s_k_us->global_aeop_ae_product_sku);
-        return $skuList->ipm_sku_stock;
+        $skus = [];
+        foreach ($productInfo->aeop_ae_product_s_k_us->global_aeop_ae_product_sku as $skuList) {
+            if (property_exists($skuList, 'sku_code')) {
+                $skus[] = $skuList->sku_code;
+            }
+        }
+        return $skus;
     }
 }

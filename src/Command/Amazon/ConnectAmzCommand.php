@@ -5,6 +5,7 @@ namespace App\Command\Amazon;
 use App\Helper\Utils\ExchangeRateCalculator;
 use App\Service\Amazon\AmzApi;
 use App\Service\Amazon\AmzApiImportReimbursement;
+use DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,10 +32,10 @@ class ConnectAmzCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        //$this->calculate();
+        $this->getFinancialEvents();
 
         //$this->createReport();
-        $this->readReport();
+        //$this->readReport();
 
         //B01N95Z86Y
 
@@ -52,10 +53,21 @@ class ConnectAmzCommand extends Command
 
 
 
-    protected function getFinancial()
+    protected function getFinancials()
     {
-        $this->api->getAllFinancials();
+        $dateTime = new DateTime('2021-12-01');
+        $dateTimeFin = new DateTime('2022-01-01');
+        $financialGroups = $this->api->getAllFinancials($dateTime, $dateTimeFin);
+        dump($financialGroups);
     }
+
+    protected function getFinancialEvents()
+    {
+        $financialGroups = $this->api->getFinancialEventsInGroup('PlXkhrP47lI7zCGHWCtjntHhQRFvPYf7-paF5aVjhRA');
+        dump($financialGroups);
+    }
+
+
 
 
     protected function calculate()

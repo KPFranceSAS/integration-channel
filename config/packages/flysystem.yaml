@@ -22,3 +22,16 @@ flysystem:
             adapter: 'local'
             options:
                 directory: '%kernel.project_dir%/public/report' 
+        dhl.storage:
+            adapter: 'sftp'
+            options:
+                host: '%env(resolve:DHL_HOST)%'
+                port: 22
+                username: '%env(resolve:DHL_USERNAME)%'
+                password: '%env(resolve:DHL_PASSWORD)%'
+                privateKey: 
+                root: '/out'
+                timeout: 60
+                directoryPerm: 0744
+                permPublic: 0700
+                permPrivate: 0744             

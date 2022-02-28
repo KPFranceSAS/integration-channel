@@ -166,19 +166,52 @@ class AmzApi
     }
 
 
-    public function getAllFinancials()
+    public function getAllFinancials($dateTime, $dateTimeFin)
     {
-        $dateTime = new DateTime('2019-12-01');
-        $dateTimeFin = new DateTime('2020-01-01');
-        $events = $this->sdk->finances()->listFinancialEventGroups(
-            $this->getAccessToken(),
-            Regions::EUROPE,
-            100,
 
-            $dateTimeFin,
-            $dateTime,
-        );
+        $allEvents = [];
+        $nextToken = null;
+        do {
+            $reponse = $this->sdk->finances()->listFinancialEventGroups(
+                $this->getAccessToken(),
+                Regions::EUROPE,
+                100,
+                $dateTimeFin,
+                $dateTime,
+                $nextToken
+            );
+            $payLoad = $reponse->getPayload();
+            $allEvents = array_merge($allEvents, $payLoad->getFinancialEventGroupList());
+            $nextToken = $payLoad->getNextToken();
+        } while ($nextToken);
+
+        return $allEvents;
     }
+
+    public function getFinancialEventsInGroup($groupEventId)
+    {
+        $allEvents = [];
+        $nextToken = null;
+        $counter = 1;
+        do {
+            $this->logger->info('Batch ' . $counter);
+            $reponse = $this->sdk->finances()->listFinancialEventsByGroupId(
+                $this->getAccessToken(),
+                Regions::EUROPE,
+                $groupEventId,
+                100,
+                null,
+                $nextToken
+            );
+            $payLoad = $reponse->getPayload();
+            $allEvents[] = $payLoad->getFinancialEvents();
+            $nextToken = $payLoad->getNextToken();
+            $counter++;
+        } while ($nextToken);
+
+        return $allEvents;
+    }
+
 
 
 
@@ -189,8 +222,7 @@ class AmzApi
         $reports = [];
         $status = count($status) > 0 ? $status : $this->getAllStatusReport();
         $nextToken = null;
-        while (true) {
-
+        do {
             $reponse = $this->sdk->reports()->getReports(
                 $this->getAccessToken(),
                 Regions::EUROPE,
@@ -205,13 +237,9 @@ class AmzApi
 
             $payLoad = $reponse->getPayload();
             $reports = array_merge($reports, $payLoad);
-            if ($reponse->getNextToken()) {
-                $nextToken = $reponse->getNextToken();
-                return $reports;
-            } else {
-                return $reports;
-            }
-        }
+            $nextToken = $reponse->getNextToken();
+        } while ($nextToken);
+        return $reports;
     }
 
 
