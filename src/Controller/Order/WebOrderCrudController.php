@@ -116,7 +116,7 @@ class WebOrderCrudController extends AdminCrudController
             WebOrder::STATE_ERROR_TEXT => WebOrder::STATE_ERROR,
             WebOrder::STATE_SYNC_TO_ERP_TEXT  => WebOrder::STATE_SYNC_TO_ERP,
             WebOrder::STATE_INVOICED_TEXT => WebOrder::STATE_INVOICED,
-            WebOrder::STATE_ERROR_INVOICE_TEXT => WebOrder::STATE_ERROR_INVOICE,
+            WebOrder::STATE_CANCELLED_TEXT => WebOrder::STATE_CANCELLED,
         ];
 
 

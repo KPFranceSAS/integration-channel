@@ -4,7 +4,7 @@
 	{% set classColor = 'primary' %}
 {% elseif  entity.instance.status == constant('App\\Entity\\WebOrder::STATE_INVOICED') %}
 	{% set classColor = 'success' %}
-{% elseif  entity.instance.status == constant('App\\Entity\\WebOrder::STATE_ERROR_INVOICE') %}
+{% elseif  entity.instance.status == constant('App\\Entity\\WebOrder::STATE_CANCELLED') %}
 	{% set classColor = 'warning' %}
 {% else %}
 	{% set classColor = 'secondary' %}

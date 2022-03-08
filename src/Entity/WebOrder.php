@@ -54,6 +54,8 @@ class WebOrder
 
     const STATE_INVOICED = 5;
 
+    const STATE_CANCELLED = 7;
+
 
     const STATE_ERROR_INVOICE_TEXT = 'Error send invoice';
 
@@ -68,6 +70,8 @@ class WebOrder
     const STATE_INVOICED_TEXT = 'Invoice integrated';
 
     const STATE_UNDEFINED_TEXT = 'Undefined';
+
+    const STATE_CANCELLED_TEXT = "Cancelled";
 
 
     /**
@@ -197,6 +201,8 @@ class WebOrder
             return $this->fulfilledBy == self::FULFILLED_BY_SELLER ? self::STATE_SYNC_TO_WAITING_DELIVERY_TEXT : self::STATE_SYNC_TO_ERP_TEXT;
         } else if ($this->status ==  self::STATE_INVOICED) {
             return self::STATE_INVOICED_TEXT;
+        } else if ($this->status ==  self::STATE_CANCELLED) {
+            return self::STATE_CANCELLED_TEXT;
         } else if ($this->status ==  self::STATE_ERROR_INVOICE) {
             return self::STATE_ERROR_INVOICE_TEXT;
         } else {
