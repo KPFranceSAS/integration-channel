@@ -100,11 +100,11 @@ class AliExpressIntegrateOrder extends IntegratorParent
             if (property_exists($orderApi->receipt_address, 'address2') && strlen($orderApi->receipt_address->address2) > 0) {
                 $orderBC->{$val . "PostalAddress"}->street .= "\r\n" . substr($orderApi->receipt_address->address2, 0, 100);
             }
-            $orderBC->{$val . "PostalAddress"}->city = substr($orderApi->receipt_address->city, 0, 30);
+            $orderBC->{$val . "PostalAddress"}->city = substr($orderApi->receipt_address->city, 0, 100);
             $orderBC->{$val . "PostalAddress"}->postalCode = $orderApi->receipt_address->zip;
             $orderBC->{$val . "PostalAddress"}->countryLetterCode = $orderApi->receipt_address->country;
             if (strlen($orderApi->receipt_address->province) > 0) {
-                $orderBC->{$val . "PostalAddress"}->state = $orderApi->receipt_address->province;
+                $orderBC->{$val . "PostalAddress"}->state = substr($orderApi->receipt_address->province, 0, 30);
             }
         }
 

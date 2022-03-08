@@ -212,11 +212,11 @@ class OwletCareIntegrateOrder extends IntegratorParent
         if (strlen($addressShopifyType['address2']) > 0) {
             $saleOrder->{$addressBusinessType . "PostalAddress"}->street .= "\r\n" . substr($addressShopifyType['address2'], 0, 100);
         }
-        $saleOrder->{$addressBusinessType . "PostalAddress"}->city = substr($addressShopifyType['city'], 0, 30);
+        $saleOrder->{$addressBusinessType . "PostalAddress"}->city = substr($addressShopifyType['city'], 0, 100);
         $saleOrder->{$addressBusinessType . "PostalAddress"}->postalCode = $addressShopifyType['zip'];
         $saleOrder->{$addressBusinessType . "PostalAddress"}->countryLetterCode = $addressShopifyType['country_code'];
         if (strlen($addressShopifyType['province']) > 0) {
-            $saleOrder->{$addressBusinessType . "PostalAddress"}->state = $addressShopifyType['province'];
+            $saleOrder->{$addressBusinessType . "PostalAddress"}->state = substr($addressShopifyType['province'], 0, 30);;
         }
     }
 

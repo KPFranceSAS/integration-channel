@@ -146,11 +146,11 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
         if (strlen($orderApi->BillingAddressLine2) > 0) {
             $orderBC->sellingPostalAddress->street .= "\r\n" . substr($orderApi->BillingAddressLine2, 0, 100);
         }
-        $orderBC->sellingPostalAddress->city = $orderApi->BillingCity;
+        $orderBC->sellingPostalAddress->city = substr($orderApi->BillingCity, 0, 100);
         $orderBC->sellingPostalAddress->postalCode = $orderApi->BillingPostalCode;
         $orderBC->sellingPostalAddress->countryLetterCode = $orderApi->BillingCountry;
         if (strlen($orderApi->BillingStateOrProvinceName) > 0 && $orderApi->BillingStateOrProvinceName != "--") {
-            $orderBC->sellingPostalAddress->state = $orderApi->BillingStateOrProvinceName;
+            $orderBC->sellingPostalAddress->state = substr($orderApi->BillingStateOrProvinceName, 0, 30);
         }
 
         $orderBC->locationCode = WebOrder::DEPOT_FBA_AMAZON;
@@ -161,11 +161,11 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
         if (strlen($orderApi->ShippingAddressLine2) > 0) {
             $orderBC->shippingPostalAddress->street .= "\r\n" . substr($orderApi->ShippingAddressLine2, 0, 100);
         }
-        $orderBC->shippingPostalAddress->city = $orderApi->ShippingCity;
+        $orderBC->shippingPostalAddress->city = substr($orderApi->ShippingCity, 0, 100);
         $orderBC->shippingPostalAddress->postalCode = $orderApi->ShippingPostalCode;
         $orderBC->shippingPostalAddress->countryLetterCode = $orderApi->ShippingCountry;
         if (strlen($orderApi->ShippingStateOrProvinceName) > 0 && $orderApi->ShippingStateOrProvinceName != "--") {
-            $orderBC->shippingPostalAddress->state = $orderApi->ShippingStateOrProvinceName;
+            $orderBC->shippingPostalAddress->state = substr($orderApi->BillingStateOrProvinceName, 0, 30);
         }
 
         $orderBC->email = $orderApi->BuyerEmailAddress;

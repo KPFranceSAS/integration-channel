@@ -21,7 +21,7 @@ class IntegrateOrderTestCommand extends Command
         IntegratorAggregator $integratorAggregator,
         ChannelWebservice $channelWebservice
     ) {
-        $this->bcConnector = $bcAggregator->getBusinessCentralConnector(BusinessCentralConnector::GADGET_IBERIA);
+        $this->bcConnector = $bcAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
         $this->integrator = $integratorAggregator->getIntegrator(WebOrder::CHANNEL_CHANNELADVISOR);
         $this->channelWebservice = $channelWebservice;
         parent::__construct();
@@ -43,8 +43,8 @@ class IntegrateOrderTestCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        //$this->createOrderTest();
-
+        $this->createOrderTest();
+        return Command::SUCCESS;
 
         $orders = $this->bcConnector->getAllSalesOrderByCustomer('002355');
 
@@ -108,14 +108,14 @@ class IntegrateOrderTestCommand extends Command
             "sellingPostalAddress" => [
                 "street" => "Calle Berlin 664, Puerta K. Altea Hills Grupo 3, Residencia \r\nPuerta K, Altea Hills Grupo 3, Residencia los Olivos",
                 "postalCode" => "66840",
-                "city" => "Bourg Madame",
+                "city" => "Calle Berlin 664, Puerta K. Altea Hills Grupo 3, Residencia Calle Berlin 664, Puerta K. Altea Hills Grupo 3, Residencia",
                 "countryLetterCode" => "FR",
             ],
             "locationCode" => "AMAZON",
             "shipToName" => "Vipul Parmar",
             "shippingPostalAddress" => [
                 "street" => "Calle Berlin 664, Puerta K. Altea Hills Grupo 3, Residencia \r\nPuerta K, Altea Hills Grupo 3, Residencia los Olivos",
-                "city" => "LUTON",
+                "city" => "Calle Berlin 664, Puerta K. Altea Hills Grupo 3, Residencia Calle Berlin 664, Puerta K. Altea Hills Grupo 3, Residencia",
                 "state" => "West Yorkshire",
                 "postalCode" => "LU3 4EZ",
                 "countryLetterCode" => "GB",
