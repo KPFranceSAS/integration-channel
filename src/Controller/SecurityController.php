@@ -20,6 +20,7 @@ class SecurityController extends AbstractController
         return $this->render('@EasyAdmin/page/login.html.twig', [
             'error' => $error,
             'last_username' => $lastUsername,
+            'remember_me_enabled' => true,
         ]);
     }
 

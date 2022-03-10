@@ -43,11 +43,10 @@ class AliExpressInvoice extends InvoiceParent
 
     protected function postInvoice(WebOrder $order, $invoice)
     {
-
+        return true;
         $tracking = $this->tracker->getTracking($order->getCompany(), $invoice['number']);
         if (!$tracking) {
             $this->logger->info('Not found tracking');
-            dump($invoice);
             return false;
         } else {
             $this->addLogToOrder($order, 'Order was fulfilled by ' . $tracking['Carrier'] . " with tracking number " . $tracking['Tracking number']);
