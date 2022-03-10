@@ -8,7 +8,7 @@ A local database is steup to store all transactions and enabled workers to get a
 Moreover some setting will be accessible to ensure some 
 
 ## Technologies
-php>=7.4, mysql8, symfony5, php cli
+php>=7.4, mysql8, symfony5.4, php cli
 
 ## Installation
 ```
@@ -16,21 +16,7 @@ cd path\toproject
 composer install
 ```
 
-You need to create a .env.local file and define mandatory parameters
-```
-SFTP_HOST_AWS="hostexample.server.transfer.eu-west-3.amazonaws.com"
-SFTP_USERNAME_AWS="loginexample"
-SFTP_KEY_AWS="%kernel.project_dir%/var/key/pathtokey.ppk"
-CHANNEL_REFRESHTOKEN="channel_advisor_refresh_token"
-CHANNEL_APPLICATIONID="channel_advisor_applicationid"
-CHANNEL_SECRET="channel_advisor_secret"
-DATABASE_URL="mysql://username:password@127.0.0.1:3306/databasename?serverVersion=5.7"
-MAILER_DSN="gmail+smtp://nameUser:password@default"
-APP_ENV=prod
-BC_URL="http://BCurl.cloudapp.azure.com:BCPORT/BCFOLDER"
-BC_LOGIN="APIUSER"
-BC_PASSWORD="APIPASSWORD"
-```
+You need to create a .env.local file and define mandatory parameters.
 Then clean the cache and we are good
 
 ```
@@ -39,24 +25,30 @@ php bin/console cache:clear
 
 ## Functionalities
 ### Order integration
-This process will integrate in Business Central all the new orders shipped through the marketplace.
+This process will integrate in Business Central all the new orders shipped through the marketplace or all the orders that must be fulfilled by the seller.
 This task should be setup at least every 30 minutes. 
 
 ```
-php bin/console app:integrate-orders-from-channel --env=prod
+php bin/console app:integrate-orders-from CHANNEL --env=prod
 ```
 
+For each sale channel, you will need to put this command. Channels are :
+
+CHANNELADVISOR
+OWLETCARE
+ALIEXPRESS
+
 This task will :
-1. Connect to ChannelAdvisor
-2. Retrieve all orders shipped and not marked as exported
+1. Connect to the marketplace
+2. Retrieve all orders that need to be shipped by sellers or the one shiiped by FBA and to invoice
 3. For each order, the process will be the following one. A log is filled up for each step and accesible through the web app.
     1. Transform the sale header to fit with the one to business central
-    2. Do the correspondance between Amazon marketplaces and Business central customers
-    3. Store the order in a local database.
-    4. Mark on ChannelAdvisor the order as exported
-    5. For each order line, the process checks for a product correlation in its own local database. If not, it will uses the Channeladvisor as SKU. If no product is found in BC, an error is thrown. And the order is marked as Error integration and state is stored. Process is stopped for this order.
+    2. Define the company ERP in which integrate the sale order
+    3. Do the correspondance between Marketplaces and Business central customers
+    4. Store the order in a local database.
+    5. For each order line, the process checks for a sku mapping in its own local database. If not, it will uses the marketplace one as SKU. If no product is found in BC, an error is thrown. And the order is marked as Error integration and state is stored. Process is stopped for this order.
     6. A total is done for each shipping part of an order. The shipping fees will then be included in a order line with G/L Account and account number.
-    7. Integrate the order in Business central using the Business central API. If an error is encountred, the order is marked as Error integration and state is stored. Process is stopped for this order.
+    7. Integrate the order in Business central using the Business central API. If an error is encountred, the order is marked as Error integration and state is stored. Process is stopped for this order. 
     8. Change the order status locally as Integrated and stored the Business central Order number.
 4. At the end of the process, if some errors were encountred, an email is sent to resume all errors and warn users and propose solutions.
 
@@ -66,13 +58,20 @@ This process will reintegrate in Business Central all the orders in error on the
 This task should be setup at least once a day 
 
 ```
-php bin/console reintegrate-orders-from-channel --env=prod
+php bin/console app:integrate-orders-from CHANNEL 1 --env=prod
 ```
+For each sale channel, you will need to put this command. Channels are :
+
+CHANNELADVISOR
+OWLETCARE
+ALIEXPRESS
+
 
 This task will :
-1. Retrieve all local orders marked as In erro of integration
+1. Retrieve all local orders marked as In error of integration
 2. For each order, the process of the integration will be the same as above.
 3. At the end of the process, if some errors were encountred, an email is sent to resume all errors and warn users and propose solutions.
+
 
 
 ### Invoice upload
@@ -80,17 +79,27 @@ This order will check all the orders transformed in Business central in invoices
 This task should be setup at least every 30 minutes. 
 
 ```
-php bin/console app:send-invoices-to-channeladvisor --env=prod
+php bin/console app:integrate-invoices-from CHANNEL --env=prod
 ```
+For each sale channel, you will need to put this command. Channels are :
+
+CHANNELADVISOR
+OWLETCARE
+ALIEXPRESS
 
 This task will :
 1. Retrieve all orders marked as integrated in the local database
 2. For each order, the process will be the following one. A log is filled up for each step and accesible through the web app.
     1. Check if the order in Business central is transformed and posted as a sale invoice. If not, process for this order is stopped
     2. Get from the BC api the content of pdf invoice.
-    3. Upload the document to the ChannelAdvisor using the restful API.
+    3. Do some treatme,ts relative to the sale channel
+    > ChannelAdvisor : Upload the document to the ChannelAdvisor using the restful API.
+    > Aliexpress : Check if delivery and put the tracking code
+    > Owletcare : Check if delivery and put the tracking code
     4. Change the status of local database and mark it as invoice integrated and store the invoice number.
 4. At the end of the process, if some errors were encountred, an email is sent to resume all errors and warn users and propose solutions.
+
+A control is done regarding to the channel about the delay of treatment.
 
 ### Administration
 The application come with an interface enabling to get 3 different tabs:
@@ -164,6 +173,13 @@ It upload the document throught the API sending file and metadata (amount, type,
 It saves the record on the local database
 
 At the end, it send a log rapport with errors, not found, metrics.
+
+
+## Documentation Aliexpress
+[Aliexpress](https://developers.aliexpress.com/en/doc.htm?docId=108970&docType=1)
+
+## Documentation Shopify
+[Shopify](https://shopify.dev/api/admin-rest)
 
 ## Documentation ChannelAdvisor
 [ChannelAdvisor](https://developer.channeladvisor.com/working-with-orders/channel-documents/)

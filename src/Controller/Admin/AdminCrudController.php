@@ -2,28 +2,18 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\Integrator\IntegratorAggregator;
-use Box\Spout\Common\Entity\Style\Color;
-use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use App\Helper\Utils\StringUtils;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
+use function Symfony\Component\String\u;
+
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AdminCrudController extends AbstractCrudController
@@ -54,22 +44,22 @@ abstract class AdminCrudController extends AbstractCrudController
     }
 
 
-    public function export(FilterFactory $filterFactory, AdminContext $context)
+    public function export(FilterFactory $filterFactory, AdminContext $context, EntityFactory $entityFactory)
     {
-        $fields = FieldCollection::new($this->configureFields(Crud::PAGE_INDEX));
+        $fields = $this->getFieldsExport();
         $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
         $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
-        $entities = $this->get(EntityFactory::class)->createCollection($context->getEntity(), $queryBuilder->getQuery()->getResult());
-        $this->get(EntityFactory::class)->processFieldsForAll($entities, $fields);
+        $entities = $entityFactory->createCollection($context->getEntity(), $queryBuilder->getQuery()->getResult());
+        $entityFactory->processFieldsForAll($entities, $fields);
         $writer = WriterEntityFactory::createCSVWriter();
-        $writer->openToBrowser('export_' . str_replace(' ', '_', $this->getName()) . '_' . date('Ymd-His') . '.csv');
+        $fileName = u('Export ' . $this->getName() . '_' . date('Ymd-His') . '.csv')->snake();
+        $writer->openToBrowser($fileName);
         $h = fopen('php://output', 'r');
-
-
 
         $cellHeaders = [];
         foreach ($fields as $field) {
-            $cellHeaders[] = WriterEntityFactory::createCell($field->getLabel());
+            $label = strlen($field->getLabel()) > 0 ? $field->getLabel() : StringUtils::humanizeString($field->getProperty());
+            $cellHeaders[] = WriterEntityFactory::createCell($label);
         }
         $singleRow = WriterEntityFactory::createRow($cellHeaders);
         $writer->addRow($singleRow);
@@ -86,5 +76,12 @@ abstract class AdminCrudController extends AbstractCrudController
         }
         $writer->close();
         return new Response(stream_get_contents($h));
+    }
+
+
+
+    protected function getFieldsExport()
+    {
+        return FieldCollection::new($this->configureFields(Crud::PAGE_INDEX));
     }
 }
