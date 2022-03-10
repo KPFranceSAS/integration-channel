@@ -31,13 +31,12 @@ class DhlGetTracking
 
 
 
-    protected function getTrackingExternal($externalOrderNumber): string
+    public function getTrackingExternal($externalOrderNumber): ?array
     {
         if (!$this->trackings) {
             $this->initializeTrackings();
         }
-
-        return "";
+        return (array_key_exists($externalOrderNumber, $this->trackings)) ? $this->trackings[$externalOrderNumber] : null;
     }
 
 
@@ -51,11 +50,7 @@ class DhlGetTracking
 
         $files = $this->getAllFiles();
         $this->extraContentFromFiles($files);
-        count($this->trackings);
-        foreach ($this->trackings as $orderNumber => $tracking) {
-            $this->logger->info($orderNumber . ' > ' . $tracking['tracking']);
-        }
-
+        $this->logger->info('Nb lines of trackings ' . count($this->trackings));
         return $this->trackings;
     }
 

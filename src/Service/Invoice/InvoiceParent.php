@@ -4,7 +4,6 @@ namespace App\Service\Invoice;
 
 
 use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,6 +22,8 @@ abstract class InvoiceParent
     protected $mailer;
 
     protected $businessCentralAggregator;
+
+
 
 
     public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator)

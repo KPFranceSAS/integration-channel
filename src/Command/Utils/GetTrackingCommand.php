@@ -26,7 +26,24 @@ class GetTrackingCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->dhlGetTracking->initializeTrackings();
+        $test = [
+            "GALV22/000369",
+            "GALV22/000367",
+            "GALV22/000366",
+            "GALV22/000365",
+            "GALV22/000364",
+        ];
+
+        foreach ($test as $tes) {
+            $tracking = $this->dhlGetTracking->getTrackingExternal($tes);
+            $output->writeln($tes);
+            dump($tracking);
+        }
+
+
+
+
+
         return Command::SUCCESS;
     }
 }

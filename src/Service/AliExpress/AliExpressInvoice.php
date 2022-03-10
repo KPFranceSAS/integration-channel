@@ -5,6 +5,7 @@ namespace App\Service\AliExpress;
 
 use App\Entity\WebOrder;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
+use App\Service\Carriers\GetTracking;
 use App\Service\Invoice\InvoiceParent;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,15 +18,21 @@ class AliExpressInvoice extends InvoiceParent
     private $aliExpressApi;
 
 
+    private $tracker;
+
+
+
     public function __construct(
         ManagerRegistry $manager,
         LoggerInterface $logger,
         MailService $mailer,
         AliExpressApi $aliExpressApi,
-        BusinessCentralAggregator $businessCentralAggregator
+        BusinessCentralAggregator $businessCentralAggregator,
+        GetTracking $tracker
     ) {
         parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
         $this->aliExpressApi = $aliExpressApi;
+        $this->tracker = $tracker;
     }
 
     public function getChannel()
@@ -36,6 +43,18 @@ class AliExpressInvoice extends InvoiceParent
 
     protected function postInvoice(WebOrder $order, $invoice)
     {
+
+        $tracking = $this->tracker->getTracking($order->getCompany(), $invoice['number']);
+        if (!$tracking) {
+            $this->logger->info('Not found tracking');
+            dump($invoice);
+            return false;
+        } else {
+            $this->addLogToOrder($order, 'Order was fulfilled by ' . $tracking['Carrier'] . " with tracking number " . $tracking['Tracking number']);
+            //$result = $this->aliExpressApi->markOrderAsFulfill($order->getExternalNumber(), "SPAIN_LOCAL_DHL", $tracking['Tracking number']);
+            return false;
+        }
+
         return true;
     }
 }

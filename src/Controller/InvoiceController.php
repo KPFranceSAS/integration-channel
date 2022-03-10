@@ -2,11 +2,13 @@
 
 namespace App\Controller;
 
-use AmazonPHP\SellingPartner\Model\FulfillmentInbound\Weight;
+
 use App\Entity\WebOrder;
 use App\Helper\Utils\InvoiceDownload;
 use App\Service\BusinessCentral\GadgetIberiaConnector;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,12 +21,13 @@ class InvoiceController extends AbstractController
     /**
      * @Route("/invoice/aliexpress", name="invoice_list", methods={"GET","POST"})
      */
-    public function getInvoice(Request $request, GadgetIberiaConnector $gadgetIberiaConnector): Response
+    public function getInvoice(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector): Response
     {
 
         $invoice = new InvoiceDownload();
         $form = $this->createFormBuilder($invoice)
             ->add('externalNumber', TextType::class, ['label' => 'ID del pedido', 'help' => 'Por favor, introduzca su número de pedido de Aliexpress', 'required' => true])
+            ->add('dateInvoice', DateType::class, ['label' => 'Fecha del pedido', 'help' => 'Por favor, introduzca la fecha de pedido de Aliexpress', 'widget' => 'single_text', 'required' => true])
             ->add('submit', SubmitType::class, ['label' => 'Descargo mi factura'])
             ->getForm();
 
@@ -32,13 +35,21 @@ class InvoiceController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $webOrder = $this->getDoctrine()->getManager()->getRepository(WebOrder::class)->findOneBy(
-                [
-                    'externalNumber' => $invoice->externalNumber,
-                    'channel' => WebOrder::CHANNEL_ALIEXPRESS
-                ]
-            );
+            $qb = $doctrine->getManager()->createQueryBuilder();
+            $qb->select('w')
+                ->from(WebOrder::class, 'w')
+                ->where('w.externalNumber = :externalNumber')
+                ->andWhere('w.channel = :channel')
+                ->andWhere('w.purchaseDate >= :date_start')
+                ->andWhere('w.purchaseDate <= :date_end')
+                ->setParameter('date_start', $invoice->dateInvoice->format('Y-m-d 00:00:00'))
+                ->setParameter('date_end',   $invoice->dateInvoice->format('Y-m-d 23:59:59'))
+                ->setParameter('channel',  WebOrder::CHANNEL_ALIEXPRESS)
+                ->setParameter('externalNumber',  $invoice->externalNumber);
 
+
+            $webOrders = $qb->getQuery()->getResult();
+            $webOrder = count($webOrders) > 0 ? reset($webOrders) : null;
             if ($webOrder) {
                 if ($webOrder->getStatus() == WebOrder::STATE_INVOICED) {
                     $invoice = $gadgetIberiaConnector->getSaleInvoiceByNumber($webOrder->getInvoiceErp());
