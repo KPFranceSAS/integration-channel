@@ -1,11 +1,10 @@
-# Channel tools
+# KPS tools
 
 ## Purposes
-With the migration from Navision to Business central, we need to replace the current integration of marketplace orders in Business central. 
-The new system will use the current application as as middleware to connect both to ChannelAdvisor through their restful API and to BUsiness central using it Odata API.
-All requests will be done through http.
-A local database is steup to store all transactions and enabled workers to get an overview of all transactions and integrations.
-Moreover some setting will be accessible to ensure some 
+With the migration from Navision to Business central, we need to replace the current integration of marketplace orders in Business central.\
+The new system will use the current application as as middleware to connect both to marketplaces through their restful API and to BUsiness central using it Odata API.\
+All requests will be done through http.\
+A local database is setup to store all transactions and enabled workers to get an overview of all transactions and integrations.
 
 ## Technologies
 php>=7.4, mysql8, symfony5.4, php cli
@@ -16,7 +15,7 @@ cd path\toproject
 composer install
 ```
 
-You need to create a .env.local file and define mandatory parameters.
+You need to create a .env.local file and define mandatory parameters.\
 Then clean the cache and we are good
 
 ```
@@ -25,7 +24,7 @@ php bin/console cache:clear
 
 ## Functionalities
 ### Order integration
-This process will integrate in Business Central all the new orders shipped through the marketplace or all the orders that must be fulfilled by the seller.
+This process will integrate in Business Central all the new orders shipped through the marketplace or all the orders that must be fulfilled by the seller.\
 This task should be setup at least every 30 minutes. 
 
 ```
@@ -34,8 +33,8 @@ php bin/console app:integrate-orders-from CHANNEL --env=prod
 
 For each sale channel, you will need to put this command. Channels are :
 
-CHANNELADVISOR
-OWLETCARE
+CHANNELADVISOR\
+OWLETCARE\
 ALIEXPRESS
 
 This task will :
@@ -54,7 +53,7 @@ This task will :
 
 
 ### Order reintegration
-This process will reintegrate in Business Central all the orders in error on the local database.
+This process will reintegrate in Business Central all the orders in error on the local database.\
 This task should be setup at least once a day 
 
 ```
@@ -62,8 +61,8 @@ php bin/console app:integrate-orders-from CHANNEL 1 --env=prod
 ```
 For each sale channel, you will need to put this command. Channels are :
 
-CHANNELADVISOR
-OWLETCARE
+CHANNELADVISOR\
+OWLETCARE\
 ALIEXPRESS
 
 
@@ -74,8 +73,11 @@ This task will :
 
 
 
-### Invoice upload
+### Invoice and delivery notification
 This order will check all the orders transformed in Business central in invoices and will upload the invoice pdf attached to the ERP document.
+In the case of orders fulfilled by KPS, the service will push notifications of delivery and tracking code to the marketplace.
+
+
 This task should be setup at least every 30 minutes. 
 
 ```
@@ -83,8 +85,8 @@ php bin/console app:integrate-invoices-from CHANNEL --env=prod
 ```
 For each sale channel, you will need to put this command. Channels are :
 
-CHANNELADVISOR
-OWLETCARE
+CHANNELADVISOR\
+OWLETCARE\
 ALIEXPRESS
 
 This task will :
@@ -92,10 +94,10 @@ This task will :
 2. For each order, the process will be the following one. A log is filled up for each step and accesible through the web app.
     1. Check if the order in Business central is transformed and posted as a sale invoice. If not, process for this order is stopped
     2. Get from the BC api the content of pdf invoice.
-    3. Do some treatme,ts relative to the sale channel
-    > ChannelAdvisor : Upload the document to the ChannelAdvisor using the restful API.
-    > Aliexpress : Check if delivery and put the tracking code
-    > Owletcare : Check if delivery and put the tracking code
+    3. Do some treatme,ts relative to the sale channel\
+    ChannelAdvisor : Upload the document to the ChannelAdvisor using the restful API.\
+    Aliexpress : Check if delivery and put the tracking code\
+    Owletcare : Check if delivery and put the tracking code
     4. Change the status of local database and mark it as invoice integrated and store the invoice number.
 4. At the end of the process, if some errors were encountred, an email is sent to resume all errors and warn users and propose solutions.
 
@@ -104,8 +106,8 @@ A control is done regarding to the channel about the delay of treatment.
 ### Administration
 The application come with an interface enabling to get 3 different tabs:
 > **Orders**.
-List of all orders stored in the local database. An user can filter by created date, status.
-Each order can be viewed in detail, with logs, errors, detail from Channel advisor and from Business central. Once order is post as invoice, an user can also downmload the invoice file.
+List of all orders stored in the local database. An user can filter by created date, status.\
+Each order can be viewed in detail, with logs, errors, detail from Channel advisor and from Business central. Once order is post as invoice, an user can also downmload the invoice file.\
 An user can also launch again the integration of an order in error or launch a batch of integration of orders on error.
 
 > **Product correlations**.
@@ -177,6 +179,9 @@ At the end, it send a log rapport with errors, not found, metrics.
 
 ## Documentation Aliexpress
 [Aliexpress](https://developers.aliexpress.com/en/doc.htm?docId=108970&docType=1)
+
+## Documentation Amazon webservices
+[Selling Partner API](https://developer-docs.amazon.com/sp-api)
 
 ## Documentation Shopify
 [Shopify](https://shopify.dev/api/admin-rest)
