@@ -63,7 +63,7 @@ class AmzApiFinancial
         foreach ($this->getFinancialTypes() as $financialType) {
             $this->logger->info('Nb Events ' . $financialType . ' >>> ' . count($financialEventFormates[$financialType]));
             foreach ($financialEventFormates[$financialType] as $financialEvent) {
-                dump($financialEvent);
+                //dump($financialEvent);
             }
         }
     }

@@ -48,7 +48,7 @@ class OwletCareStock extends StockParent
         $mainLocation = $this->owletCareApi->getMainLocation();
         $inventoLevelies = $this->owletCareApi->getAllInventoryLevelsFromProduct();
         foreach ($inventoLevelies as $inventoLeveli) {
-            $sku =  "OW-" . $inventoLeveli['sku'];
+            $sku = $inventoLeveli['sku'];
             $stockLevel = $this->getStockProductWarehouse($sku);
             $this->owletCareApi->setInventoryLevel($mainLocation['id'], $inventoLeveli['inventory_item_id'], $stockLevel);
         }

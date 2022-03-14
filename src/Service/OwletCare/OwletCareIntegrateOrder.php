@@ -181,7 +181,7 @@ class OwletCareIntegrateOrder extends IntegratorParent
                 $discountApplication = $orderApi["discount_applications"][$discountLine["discount_application_index"]];
                 $discounts[] = [
                     'value' => floatval($discountLine['amount']),
-                    'description' => 'DISCUENTO ' . 'OW-' . $line["sku"] . " / " . $this->getValueDiscount($discountApplication) . " / " . $this->getDescriptionDiscount($discountApplication)
+                    'description' => 'DISCUENTO ' .  $line["sku"] . " / " . $this->getValueDiscount($discountApplication) . " / " . $this->getDescriptionDiscount($discountApplication)
                 ];
             }
         }
@@ -234,7 +234,7 @@ class OwletCareIntegrateOrder extends IntegratorParent
 
             $saleLine = new SaleOrderLine();
             $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
-            $sku = 'OW-' . $line['sku'];
+            $sku = $line['sku'];
             $saleLine->itemId = $this->getProductCorrelationSku($sku, $company);
             $saleLine->unitPrice = floatval($line["price"]);
             $saleLine->quantity = $line["quantity"];
