@@ -2,6 +2,8 @@
 
 namespace App\Service\Amazon;
 
+use AmazonPHP\SellingPartner\Model\Finances\FinancialEventGroup;
+use App\Entity\AmazonFinancialEventGroup;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Helper\Utils\ExchangeRateCalculator;
@@ -24,44 +26,127 @@ class AmzApiFinancial
 
     protected $amzApi;
 
+    protected $calculator;
+
     public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ExchangeRateCalculator $exchangeRate)
     {
         $this->logger = $logger;
         $this->amzApi = $amzApi;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
-        $this->exchangeRate = $exchangeRate;
+        $this->calculator = $exchangeRate;
     }
 
 
-    private function getAllTypes()
+
+    public function getAllFinancials($startDate, $startEnd)
     {
-        $financialTypes = ["ShipmentEventList", "RefundEventList", "GuaranteeClaimEventList", "ChargebackEventList", "PayWithAmazonEventList", "ServiceProviderCreditEventList", "RetrochargeEventList", "RentalTransactionEventList", "ProductAdsPaymentEventList", "ServiceFeeEventList", "SellerDealPaymentEventList", "DebtRecoveryEventList", "LoanServicingEventList", "AdjustmentEventList", "SAFETReimbursementEventList", "SellerReviewEnrollmentPaymentEventList", "FBALiquidationEventList", "CouponPaymentEventList", "ImagingServicesFeeEventList", "NetworkComminglingTransactionEventList", "AffordabilityExpenseEventList", "AffordabilityExpenseReversalEventList", "TaxWithholdingEventList", "RemovalShipmentEventList", "RemovalShipmentAdjustmentEventList"];
-        return $financialTypes;
+
+        $financialGroups = $this->amzApi->getAllFinancials($startDate, $startEnd);
+
+
+        foreach ($financialGroups as $financialGroup) {
+            $financialGroupFormate = $this->convertFinancialEventGroup($financialGroup);
+        }
     }
+
 
 
     public function saveFinancialEvent($groupEventId)
     {
+        //$financialEvents = $this->amzApi->getFinancialEventsInOrder("407-4201659-2202760");
 
         $financialEvents = $this->amzApi->getFinancialEventsInGroup($groupEventId);
-        foreach ($financialEvents as $financialEvent) {
+        $financialEventFormates = $this->formateFinancialEvents($financialEvents);
+
+
+        foreach ($this->getFinancialTypes() as $financialType) {
+            $this->logger->info('Nb Events ' . $financialType . ' >>> ' . count($financialEventFormates[$financialType]));
+            foreach ($financialEventFormates[$financialType] as $financialEvent) {
+                dump($financialEvent);
+            }
         }
     }
 
-    /*$financialTypes = ["ShipmentEventList", "RefundEventList", "GuaranteeClaimEventList", "ChargebackEventList", "PayWithAmazonEventList", "ServiceProviderCreditEventList", "RetrochargeEventList", "RentalTransactionEventList", "ProductAdsPaymentEventList", "ServiceFeeEventList", "SellerDealPaymentEventList", "DebtRecoveryEventList", "LoanServicingEventList", "AdjustmentEventList", "SAFETReimbursementEventList", "SellerReviewEnrollmentPaymentEventList", "FBALiquidationEventList", "CouponPaymentEventList", "ImagingServicesFeeEventList", "NetworkComminglingTransactionEventList", "AffordabilityExpenseEventList", "AffordabilityExpenseReversalEventList", "TaxWithholdingEventList", "RemovalShipmentEventList", "RemovalShipmentAdjustmentEventList"];
-            $financialEvents = $payLoad->getFinancialEvents();
-            foreach ($financialTypes as $financialType) {
-                $eventsFinancialTypes = $financialEvents->{'get' . $financialType}();
-                foreach ($eventsFinancialTypes as $eventsFinancialType) {
-                    $allEvents[] = $eventsFinancialType;
-                }
-            }*/
 
-
-
-
-    public function createReportAndImport(?DateTime $dateTimeStart = null)
+    protected function formateFinancialEvents($financialEvents)
     {
+        $financialTypes = $this->getFinancialTypes();
+        $allEvents = array_fill_keys($financialTypes, []);
+        foreach ($financialEvents as $financialEvent) {
+            foreach ($financialTypes as $financialType) {
+                $eventsFinancialTypes = $financialEvent->{'get' . $financialType}();
+                foreach ($eventsFinancialTypes as $eventsFinancialType) {
+                    $allEvents[$financialType][] = $eventsFinancialType;
+                }
+            }
+        }
+        return $allEvents;
+    }
+
+    protected function convertFinancialEventGroup(FinancialEventGroup $financialEventGroup)
+    {
+        $amzFinancialEventGroup = new AmazonFinancialEventGroup();
+        $amzFinancialEventGroup->setFinancialEventId($financialEventGroup->getFinancialEventGroupId());
+        $amzFinancialEventGroup->setProcessingStatus($financialEventGroup->getProcessingStatus());
+        $amzFinancialEventGroup->setFundTransfertStatus($financialEventGroup->getFundTransferStatus());
+        $amzFinancialEventGroup->setFundTransferDate($financialEventGroup->getFundTransferDate());
+        $amzFinancialEventGroup->setTraceIdentfier($financialEventGroup->getTraceId());
+        $amzFinancialEventGroup->setProcessingStatus($financialEventGroup->getProcessingStatus());
+        $amzFinancialEventGroup->setStartDate($financialEventGroup->getFinancialEventGroupStart());
+        $amzFinancialEventGroup->setEndDate($financialEventGroup->getFinancialEventGroupEnd());
+        $attributes = ['BeginningBalance', 'OriginalTotal', 'ConvertedTotal'];
+
+
+        foreach ($attributes as $attribute) {
+            $value = $financialEventGroup->{'get' . $attribute}();
+            if ($value) {
+                $valueFormate = $value->getCurrencyAmount();
+                if ($valueFormate >= 0) {
+                    $dateCalcul = $amzFinancialEventGroup->getEndDate() ? $amzFinancialEventGroup->getEndDate() : $amzFinancialEventGroup->getStartDate();
+                    $valueFormateCurrency = round($this->calculator->getConvertedAmountDate($valueFormate, $value->getCurrencyCode(), $dateCalcul), 2);
+                    $amzFinancialEventGroup->{'set' . $attribute . 'Currency'}($valueFormate);
+                    $amzFinancialEventGroup->{'set' . $attribute}($valueFormateCurrency);
+                }
+                if (!$amzFinancialEventGroup->getCurrencyCode()) {
+                    $amzFinancialEventGroup->setCurrencyCode($value->getCurrencyCode());
+                }
+            }
+        }
+        return $amzFinancialEventGroup;
+    }
+
+
+
+
+    protected function getFinancialTypes(): array
+    {
+        return [
+            "ShipmentEventList",
+            "RefundEventList",
+            "GuaranteeClaimEventList",
+            "ChargebackEventList",
+            "PayWithAmazonEventList",
+            "ServiceProviderCreditEventList",
+            "RetrochargeEventList",
+            "RentalTransactionEventList",
+            "ProductAdsPaymentEventList",
+            "ServiceFeeEventList",
+            "SellerDealPaymentEventList",
+            "DebtRecoveryEventList",
+            "LoanServicingEventList",
+            "AdjustmentEventList",
+            "SAFETReimbursementEventList",
+            "SellerReviewEnrollmentPaymentEventList",
+            "FBALiquidationEventList",
+            "CouponPaymentEventList",
+            "ImagingServicesFeeEventList",
+            "NetworkComminglingTransactionEventList",
+            "AffordabilityExpenseEventList",
+            "AffordabilityExpenseReversalEventList",
+            "TaxWithholdingEventList",
+            "RemovalShipmentEventList",
+            "RemovalShipmentAdjustmentEventList"
+        ];
     }
 }

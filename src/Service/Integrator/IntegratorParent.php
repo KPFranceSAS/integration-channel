@@ -11,9 +11,9 @@ use App\Service\Integrator\IntegratorInterface;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
+use function Symfony\Component\String\u;
 use Psr\Log\LoggerInterface;
 use stdClass;
-
 
 abstract class IntegratorParent implements IntegratorInterface
 {
@@ -280,5 +280,33 @@ abstract class IntegratorParent implements IntegratorInterface
         } else {
             return  $product['id'];
         }
+    }
+
+
+
+
+    public function simplifyAddress($adress)
+    {
+        $simplificationAddress = [
+            "AVENIDA" => "AVE",
+            "AVINGUDA" => "AVE",
+            "CALLE" => "C\\",
+            "CARRER" => "C\\",
+            "CAMINITO" => "CMT",
+            "CAMINO" => "CAM",
+            "CERRADA" => "CER",
+            "CIRCULO" => "CIR",
+            "ENTRADA" => "ENT",
+            "PASEO" => "PSO",
+            "PUERTO" => "PTO",
+            "PLACITA" => "PLA",
+            "PLAZA" => "PZA",
+        ];
+
+
+        $adress = strtoupper($adress);
+        $adress = str_replace(array_keys($simplificationAddress), array_values($simplificationAddress), $adress);
+
+        return ucwords(strtolower($adress));
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Helper\Utils;
 
-use DateTime;
+use DateTimeInterface;
 use Exception;
 use GuzzleHttp\Client;
 
@@ -69,7 +69,7 @@ class ExchangeRateCalculator
     }
 
 
-    public function getConvertedAmountDate(float $amount, string $currency, DateTime $date): float
+    public function getConvertedAmountDate(float $amount, string $currency, DateTimeInterface $date): float
     {
         return $this->getConvertedAmount($amount, $currency, $date->format('Y-m-d'));
     }
@@ -81,7 +81,7 @@ class ExchangeRateCalculator
     }
 
 
-    public function getRateDate(string $currency, DateTime $date): float
+    public function getRateDate(string $currency, DateTimeInterface $date): float
     {
         return $this->getRate($currency, $date->format('Y-m-d'));
     }

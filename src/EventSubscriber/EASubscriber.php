@@ -17,7 +17,7 @@ class EASubscriber implements EventSubscriberInterface
         $this->businessCentralAggregator = $businessCentralAggregator;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             BeforeCrudActionEvent::class => ['setDisplayContent'],

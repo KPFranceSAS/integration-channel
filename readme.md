@@ -6,6 +6,9 @@ The new system will use the current application as as middleware to connect both
 All requests will be done through http.\
 A local database is setup to store all transactions and enabled workers to get an overview of all transactions and integrations.
 
+A full picture of the process is visible on [this schema](docs/Processus_integration_D2C.jpg) 
+
+
 ## Technologies
 php>=7.4, mysql8, symfony5.4, php cli
 
@@ -177,8 +180,19 @@ It saves the record on the local database
 At the end, it send a log rapport with errors, not found, metrics.
 
 
-## Documentation Aliexpress
-[Aliexpress](https://developers.aliexpress.com/en/doc.htm?docId=108970&docType=1)
+## Aliexpress
+[Api documentation Aliexpress](https://developers.aliexpress.com/en/doc.htm?docId=108970&docType=1)
+
+### Get credentials for Aliexpress
+Go on your brower with the master account of aliexpress
+And replace client_id value by ALI_EXPRESS_ID get on [Console Aliexpress](https://console.aliexpress.com/app/app.htm?appId=10234288#/?appId=10234288&_k=h5u3py)\
+In your browser floow this url replacing the XXXXX value https://oauth.aliexpress.com/authorize?response_type=code&client_id=XXXXXXX&redirect_uri=https://aliexpress.gadgetiberia.es/es/module/aliexpress_official/auth?token=a1d930a3e4332d2c083978e8b5293b78&state=1212&view=web&sp=ae\
+In the html request get the code of auth and use it in the command to regenerate the token. Token is valid for one year.
+With the code you get, generate a new token
+```
+php bin/console app:aliexpress-generate-code CODE
+```
+Place the token, in your .env.local
 
 ## Documentation Amazon webservices
 [Selling Partner API](https://developer-docs.amazon.com/sp-api)

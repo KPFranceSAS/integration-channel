@@ -4,6 +4,7 @@ namespace App\Command\Amazon;
 
 use App\Helper\Utils\ExchangeRateCalculator;
 use App\Service\Amazon\AmzApi;
+use App\Service\Amazon\AmzApiFinancial;
 use App\Service\Amazon\AmzApiImportReimbursement;
 use DateTime;
 use Symfony\Component\Console\Command\Command;
@@ -15,15 +16,18 @@ class ConnectAmzCommand extends Command
     protected static $defaultName = 'app:amz-test';
     protected static $defaultDescription = 'Add a short description for your command';
 
-    public function __construct(AmzApi $api, ExchangeRateCalculator $caluclator, AmzApiImportReimbursement $amzApiImportReimbursement)
+    public function __construct(AmzApi $api, ExchangeRateCalculator $caluclator, AmzApiImportReimbursement $amzApiImportReimbursement, AmzApiFinancial $financial)
     {
         $this->api = $api;
         $this->amzApiImportReimbursement = $amzApiImportReimbursement;
         $this->caluclator = $caluclator;
+        $this->fincancial = $financial;
         parent::__construct();
     }
 
     private $api;
+
+    private $fincancial;
 
     private $amzApiImportReimbursement;
 
@@ -31,16 +35,9 @@ class ConnectAmzCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $this->getFinancialEvents();
-
-        //$this->createReport();
-        //$this->readReport();
-
-        //B01N95Z86Y
-
-        //dump($this->getProductData());
-
+        $dateTime = new DateTime('2022-01-01');
+        $dateTimeFin = new DateTime('2022-02-01');
+        $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);
         return Command::SUCCESS;
     }
 
@@ -55,16 +52,16 @@ class ConnectAmzCommand extends Command
 
     protected function getFinancials()
     {
-        $dateTime = new DateTime('2021-12-01');
-        $dateTimeFin = new DateTime('2022-01-01');
+        $dateTime = new DateTime('2022-01-01');
+        $dateTimeFin = new DateTime('2022-02-01');
         $financialGroups = $this->api->getAllFinancials($dateTime, $dateTimeFin);
         dump($financialGroups);
     }
 
     protected function getFinancialEvents()
     {
-        $financialGroups = $this->api->getFinancialEventsInGroup('PlXkhrP47lI7zCGHWCtjntHhQRFvPYf7-paF5aVjhRA');
-        dump($financialGroups);
+
+        $this->fincancial->saveFinancialEvent('NuRxNbWRYUiGQ1hdkAkVAVwjG0khSelzEx6m5xr6nsA');
     }
 
 

@@ -190,17 +190,31 @@ class AmzApi
 
     public function getFinancialEventsInGroup($groupEventId)
     {
+        return $this->getFinancialEventPer('listFinancialEventsByGroupId', $groupEventId);
+    }
+
+
+    public function getFinancialEventsInOrder($amzonOrderId)
+    {
+        return $this->getFinancialEventPer('listFinancialEventsByOrderId', $amzonOrderId);
+    }
+
+
+
+
+
+    public function getFinancialEventPer($type, $typeId)
+    {
         $allEvents = [];
         $nextToken = null;
         $counter = 1;
         do {
             $this->logger->info('Batch ' . $counter);
-            $reponse = $this->sdk->finances()->listFinancialEventsByGroupId(
+            $reponse = $this->sdk->finances()->{$type}(
                 $this->getAccessToken(),
                 Regions::EUROPE,
-                $groupEventId,
+                $typeId,
                 100,
-                null,
                 $nextToken
             );
             $payLoad = $reponse->getPayload();
@@ -211,7 +225,6 @@ class AmzApi
 
         return $allEvents;
     }
-
 
 
 

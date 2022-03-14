@@ -96,9 +96,19 @@ class AliExpressIntegrateOrder extends IntegratorParent
         $valuesAddress = ['selling', 'shipping'];
 
         foreach ($valuesAddress as $val) {
-            $orderBC->{$val . "PostalAddress"}->street = substr($orderApi->receipt_address->detail_address, 0, 100);
+
+            $adress =  $orderApi->receipt_address->detail_address;
             if (property_exists($orderApi->receipt_address, 'address2') && strlen($orderApi->receipt_address->address2) > 0) {
-                $orderBC->{$val . "PostalAddress"}->street .= "\r\n" . substr($orderApi->receipt_address->address2, 0, 100);
+                $adress .= ', ' . $orderApi->receipt_address->address2;
+            }
+
+            $adress = $this->simplifyAddress($adress);
+
+
+            if (strlen($adress) < 100) {
+                $orderBC->{$val . "PostalAddress"}->street = $adress;
+            } else {
+                $orderBC->{$val . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
             }
             $orderBC->{$val . "PostalAddress"}->city = substr($orderApi->receipt_address->city, 0, 100);
             $orderBC->{$val . "PostalAddress"}->postalCode = $orderApi->receipt_address->zip;
@@ -120,11 +130,29 @@ class AliExpressIntegrateOrder extends IntegratorParent
             $orderBC->phoneNumber = $orderApi->receipt_address->phone_country . '-' . $orderApi->receipt_address->phone_number;
         }
 
+
+        $orderBC->salesLines = [];
+
+
         $orderBC->externalDocumentNumber = (string)$orderApi->id;
 
-
         $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
-        $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
+
+        // add phone number 
+        if ($orderBC->phoneNumber) {
+            $saleLineDelivery = new SaleOrderLine();
+            $saleLineDelivery->lineType = SaleOrderLine::TYPE_COMMENT;
+            $saleLineDelivery->description = 'N. DE TELEFONO ' . $orderBC->phoneNumber;
+            $orderBC->salesLines[] = $saleLineDelivery;
+        }
+
+        $saleLinesProduct = $this->getSalesOrderLines($orderApi);
+
+        foreach ($saleLinesProduct as $saleLineProduct) {
+            $orderBC->salesLines[] = $saleLineProduct;
+        }
+
+
 
         $livraisonFees = floatval($orderApi->logistics_amount->amount);
         // ajout livraison 
@@ -168,6 +196,10 @@ class AliExpressIntegrateOrder extends IntegratorParent
         }
         return $orderBC;
     }
+
+
+
+
 
 
 
