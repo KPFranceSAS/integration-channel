@@ -27,11 +27,17 @@ class GetTrackingCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $test = [
-            "GALV22/000369",
-            "GALV22/000367",
-            "GALV22/000366",
-            "GALV22/000365",
-            "GALV22/000364",
+            "GALV22/000521",
+            "GALV22/000520",
+            "GALV22/000519",
+            "GALV22/000518",
+            "GALV22/000517",
+            "GALV22/000516",
+            "GALV22/000515",
+            "GALV22/000514",
+            "GALV22/000513",
+            "GALV22/000512",
+            "GALV22/000511",
         ];
 
         foreach ($test as $tes) {

@@ -46,11 +46,26 @@ class AliExpressInvoice extends InvoiceParent
         return true;
         $tracking = $this->tracker->getTracking($order->getCompany(), $invoice['number']);
         if (!$tracking) {
-            $this->logger->info('Not found tracking');
+            $this->logger->info('Not found tracking for invoice ' . $invoice['number']);
             return false;
         } else {
             $this->addLogToOrder($order, 'Order was fulfilled by ' . $tracking['Carrier'] . " with tracking number " . $tracking['Tracking number']);
-            //$result = $this->aliExpressApi->markOrderAsFulfill($order->getExternalNumber(), "SPAIN_LOCAL_DHL", $tracking['Tracking number']);
+            if ($this->isATrackingNumber($tracking['Tracking number'])) {
+                //$result = $this->aliExpressApi->markOrderAsFulfill($order->getExternalNumber(), "SPAIN_LOCAL_DHL", $tracking['Tracking number']);
+
+            } else {
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private function isATrackingNumber($trackingNumber)
+    {
+        if (substr($trackingNumber, 0, 5) == 'GALV2') {
             return false;
         }
 

@@ -197,10 +197,6 @@ class OwletCareIntegrateOrder extends IntegratorParent
                 ];
             }
         }
-
-
-
-
         return $discounts;
     }
 
@@ -208,10 +204,19 @@ class OwletCareIntegrateOrder extends IntegratorParent
 
     private function transformAddress(SaleOrder $saleOrder, array $addressShopifyType, string $addressBusinessType)
     {
-        $saleOrder->{$addressBusinessType . "PostalAddress"}->street = substr($addressShopifyType['address1'], 0, 100);
+        $adress =  trim($addressShopifyType['address1']);
         if (strlen($addressShopifyType['address2']) > 0) {
-            $saleOrder->{$addressBusinessType . "PostalAddress"}->street .= "\r\n" . substr($addressShopifyType['address2'], 0, 100);
+            $adress .= ', ' . trim($addressShopifyType['address2']);
         }
+
+        $adress = $this->simplifyAddress($adress);
+
+        if (strlen($adress) < 100) {
+            $saleOrder->{$addressBusinessType . "PostalAddress"}->street = $adress;
+        } else {
+            $saleOrder->{$addressBusinessType . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
+        }
+
         $saleOrder->{$addressBusinessType . "PostalAddress"}->city = substr($addressShopifyType['city'], 0, 100);
         $saleOrder->{$addressBusinessType . "PostalAddress"}->postalCode = $addressShopifyType['zip'];
         $saleOrder->{$addressBusinessType . "PostalAddress"}->countryLetterCode = $addressShopifyType['country_code'];

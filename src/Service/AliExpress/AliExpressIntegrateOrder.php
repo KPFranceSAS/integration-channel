@@ -104,7 +104,6 @@ class AliExpressIntegrateOrder extends IntegratorParent
 
             $adress = $this->simplifyAddress($adress);
 
-
             if (strlen($adress) < 100) {
                 $orderBC->{$val . "PostalAddress"}->street = $adress;
             } else {
@@ -130,30 +129,11 @@ class AliExpressIntegrateOrder extends IntegratorParent
             $orderBC->phoneNumber = $orderApi->receipt_address->phone_country . '-' . $orderApi->receipt_address->phone_number;
         }
 
-
-        $orderBC->salesLines = [];
-
-
         $orderBC->externalDocumentNumber = (string)$orderApi->id;
 
         $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
 
-        // add phone number 
-        if ($orderBC->phoneNumber) {
-            $saleLineDelivery = new SaleOrderLine();
-            $saleLineDelivery->lineType = SaleOrderLine::TYPE_COMMENT;
-            $saleLineDelivery->description = 'N. DE TELEFONO ' . $orderBC->phoneNumber;
-            $orderBC->salesLines[] = $saleLineDelivery;
-        }
-
-        $saleLinesProduct = $this->getSalesOrderLines($orderApi);
-
-        foreach ($saleLinesProduct as $saleLineProduct) {
-            $orderBC->salesLines[] = $saleLineProduct;
-        }
-
-
-
+        $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
         $livraisonFees = floatval($orderApi->logistics_amount->amount);
         // ajout livraison 
         $company = $this->getCompanyIntegration($orderApi);

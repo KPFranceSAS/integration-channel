@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Helper\Utils\DatetimeUtils;
-use App\Helper\Utils\ExchangeRateCalculator;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -108,6 +108,16 @@ class AmazonFinancialEventGroup
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $currencyCode;
+
+    /**
+     * @ORM\OneToMany(targetEntity=AmazonFinancialEvent::class, mappedBy="eventGroup", orphanRemoval=true)
+     */
+    private $amazonFinancialEvents;
+
+    public function __construct()
+    {
+        $this->amazonFinancialEvents = new ArrayCollection();
+    }
 
     /**
      * @ORM\PrePersist
@@ -319,6 +329,36 @@ class AmazonFinancialEventGroup
     public function setCurrencyCode(?string $currencyCode): self
     {
         $this->currencyCode = $currencyCode;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AmazonFinancialEvent[]
+     */
+    public function getAmazonFinancialEvents(): Collection
+    {
+        return $this->amazonFinancialEvents;
+    }
+
+    public function addAmazonFinancialEvent(AmazonFinancialEvent $amazonFinancialEvent): self
+    {
+        if (!$this->amazonFinancialEvents->contains($amazonFinancialEvent)) {
+            $this->amazonFinancialEvents[] = $amazonFinancialEvent;
+            $amazonFinancialEvent->setEventGroup($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAmazonFinancialEvent(AmazonFinancialEvent $amazonFinancialEvent): self
+    {
+        if ($this->amazonFinancialEvents->removeElement($amazonFinancialEvent)) {
+            // set the owning side to null (unless already changed)
+            if ($amazonFinancialEvent->getEventGroup() === $this) {
+                $amazonFinancialEvent->setEventGroup(null);
+            }
+        }
 
         return $this;
     }

@@ -19,10 +19,11 @@ class GetTracking
     protected $trackings;
 
 
-    public function __construct(FilesystemOperator $awsStorage, LoggerInterface $logger)
+    public function __construct(FilesystemOperator $awsStorage, LoggerInterface $logger, DhlGetTracking $dhlGetTracking)
     {
         $this->logger = $logger;
         $this->awsStorage = $awsStorage;
+        $this->dhlGetTracking = $dhlGetTracking;
     }
 
 
@@ -56,8 +57,9 @@ class GetTracking
         while (($values = fgetcsv($contentFile, null, ';')) !== false) {
             if (count($values) == count($header)) {
                 $tracking = array_combine($header, $values);
+                $trackings[$tracking['Invoice number']] = $tracking;
                 if ($this->isATrackingNumber($tracking['Tracking number'])) {
-                    $trackings[$tracking['Invoice number']] = $tracking;
+                    // $trackings[$tracking['Invoice number']] = $tracking;
                 }
             }
         }
@@ -68,6 +70,15 @@ class GetTracking
         $this->logger->info('Nb of lines :' . count($trackings));
         return $trackings;
     }
+
+
+
+    public function getDhlTracking($externalNumber): ?array
+    {
+        $this->logger->info('Check DHL :' . $externalNumber);
+        return $this->dhlGetTracking->getTrackingExternal($externalNumber);
+    }
+
 
 
     private function isATrackingNumber($trackingNumber)

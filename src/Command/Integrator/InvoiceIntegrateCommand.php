@@ -12,7 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class InvoiceIntegrateCommand extends Command
 {
     protected static $defaultName = 'app:integrate-invoices-from';
-    protected static $defaultDescription = 'INtegrates all invoices waiting to be transformed to invoices with the given sale channel';
+    protected static $defaultDescription = 'Integrates all invoices waiting to be transformed to invoices with the given sale channel';
 
     public function __construct(InvoiceAggregator $invoiceAggregator)
     {

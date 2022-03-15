@@ -224,9 +224,9 @@ class StockCalculCommand extends Command
         $contentFile = $this->awsStorage->readStream('stock/StockMarketplaces.csv');
 
         $toRemove = fgetcsv($contentFile, null, ';');
-        dump($toRemove);
+        var_dump($toRemove);
         $header = fgetcsv($contentFile, null, ';');
-        dump($header);
+        var_dump($header);
         while (($values = fgetcsv($contentFile, null, ';')) !== false) {
             if (count($values) == count($header)) {
                 $stock = array_combine($header, $values);
@@ -235,7 +235,7 @@ class StockCalculCommand extends Command
             }
         }
 
-        dump($this->stockLevels);
+        var_dump($this->stockLevels);
 
         $this->logger->info('Nb of lines :' . count($this->stockLevels));
         return $this->stockLevels;

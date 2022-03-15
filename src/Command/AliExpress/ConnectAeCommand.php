@@ -32,7 +32,7 @@ class ConnectAeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $order = $this->aliExpress->getProductInfo("1005001800841932");
-        dump($order);
+        var_dump($order);
 
 
         return Command::SUCCESS;
@@ -43,7 +43,7 @@ class ConnectAeCommand extends Command
     private function updateStockLevel()
     {
         $result = $this->aliExpress->updateStockLevel("1005001800940160", "X-PFJ4086EU", 1029);
-        dump($result);
+        var_dump($result);
     }
 
 
@@ -51,18 +51,18 @@ class ConnectAeCommand extends Command
     private function markCompanyTransport()
     {
         $order = $this->aliExpress->getOrder("3015645808691774");
-        dump($order);
+        var_dump($order);
 
         /*$carriers = $this->aliExpress->getCarriers();
         foreach ($carriers as $carrier) {
-            dump($carrier->service_name);
+            var_dump($carrier->service_name);
         }
         */
 
 
 
         $result = $this->aliExpress->markOrderAsFulfill("3015403747487139", "SPAIN_LOCAL_DHL", "0837572830");
-        dump($result);
+        var_dump($result);
     }
 
 
@@ -77,7 +77,7 @@ class ConnectAeCommand extends Command
 
         $orderIntegrate = $this->gadgetIberiaConnector->createSaleOrder($transforme->transformToArray());
         $orderIntegrate = $this->gadgetIberiaConnector->getFullSaleOrder($orderIntegrate['id']);
-        dump($orderIntegrate);
-        dump($orderIntegrate['totalAmountIncludingTax']);
+        var_dump($orderIntegrate);
+        var_dump($orderIntegrate['totalAmountIncludingTax']);
     }
 }

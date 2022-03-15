@@ -1,0 +1,118 @@
+{% if field.value|length > 0 %}
+
+	<div class="row " style="margin:0!important">
+		<div class="mb-3 col-4">
+			<h6>Billing</h6>
+			<div class="">
+				{{field.value.billing_address.name}}<br/>
+				{{field.value.billing_address.address1}}<br/>
+				{% if field.value.billing_address.address2| length > 0%}
+					{{field.value.billing_address.address2}}<br/>
+				{% endif %}
+				{{field.value.billing_address.zip}}
+				{{field.value.billing_address.city}},
+				{% if field.value.billing_address.province|length > 0 %}
+					{{field.value.billing_address.province}},
+				{% endif %}
+				{{field.value.billing_address.country_code}}
+
+			</div>
+		</div>
+
+		<div class="mb-3 col-4">
+			<h6>Shipping</h6>
+			<div class="">
+				{{field.value.shipping_address.name}}<br/>
+				{{field.value.shipping_address.address1}}<br/>
+				{% if field.value.shipping_address.address2| length > 0%}
+					{{field.value.shipping_address.address2}}<br/>
+				{% endif %}
+				{{field.value.shipping_address.zip}}
+				{{field.value.shipping_address.city}},
+				{% if field.value.shipping_address.province|length > 0 %}
+					{{field.value.shipping_address.province}},
+				{% endif %}
+				{{field.value.shipping_address.country_code}}
+
+			</div>
+		</div>
+
+		<div class="col-12">
+			<h6>List of items</h6>
+			<div class="">
+				<table class="table datagrid ">
+					<thead>
+						<tr>
+							<th>
+								Sku
+							</th>
+							<th>
+								Title
+							</th>
+
+							<th>
+								Unit Price
+							</th>
+							<th>
+								Qty
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for line in field.value.line_items %}
+							<tr>
+								<td>
+									{{line.sku}}
+								</td>
+								<td>
+									{{line.title|slice(0,20)}}
+								</td>
+								<td>
+									{{line.price}}
+									EUR
+								</td>
+								<td>
+									{{line.quantity}}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+					<tfooter>
+						<tr>
+							<td colspan="3" class="text-right">
+								<strong>Total shipping</strong>
+							</td>
+							<td colspan="">
+								{{field.value.total_shipping_price_set.shop_money.amount}}
+								{{field.value.total_shipping_price_set.shop_money.currency_code}}
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3" class="text-right">
+								<strong>Total discount</strong>
+							</td>
+							<td colspan="">
+								{{field.value.total_discounts_set.shop_money.amount}}
+								{{field.value.total_discounts_set.shop_money.currency_code}}
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3" class="text-right">
+								<strong>Total price</strong>
+							</td>
+							<td colspan="">
+								{{field.value.total_price_set.shop_money.amount}}
+							    {{field.value.total_price_set.shop_money.currency_code}}
+							</td>
+						</tr>
+					</tfooter>
+				</table>
+
+			</div>
+		</div>
+	</div>
+{% else %}
+	<span class="badge badge-secondary">
+		Data not accessible from Owletcare
+	</span>
+{% endif %}

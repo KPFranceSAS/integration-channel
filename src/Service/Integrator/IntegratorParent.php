@@ -290,17 +290,20 @@ abstract class IntegratorParent implements IntegratorInterface
         $simplificationAddress = [
             "AVENIDA" => "AVE",
             "AVINGUDA" => "AVE",
-            "CALLE" => "C\\",
-            "CARRER" => "C\\",
+            "CALLE" => "C/",
+            "CARRER" => "C/",
             "CAMINITO" => "CMT",
             "CAMINO" => "CAM",
             "CERRADA" => "CER",
             "CIRCULO" => "CIR",
             "ENTRADA" => "ENT",
+            "NUMBER" => "No",
+            "NUMERO" => "No",
             "PASEO" => "PSO",
             "PUERTO" => "PTO",
             "PLACITA" => "PLA",
             "PLAZA" => "PZA",
+
         ];
 
 

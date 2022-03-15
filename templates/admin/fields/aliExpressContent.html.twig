@@ -6,7 +6,7 @@
 			<div class="">
 				{{field.value.receipt_address.contact_person}}<br/>
 				{{field.value.receipt_address.detail_address}}<br/>
-				{% if field.value.receipt_address.address2 is defined %}
+				{% if field.value.receipt_address.address2 is defined  and field.value.receipt_address.address2|length >0 %}
 					{{field.value.receipt_address.address2}}<br/>
 				{% endif %}
 				{{field.value.receipt_address.zip}}
@@ -24,7 +24,7 @@
 			<div class="">
 				{{field.value.receipt_address.contact_person}}<br/>
 				{{field.value.receipt_address.detail_address}}<br/>
-				{% if field.value.receipt_address.address2 is defined %}
+				{% if field.value.receipt_address.address2 is defined  and field.value.receipt_address.address2|length >0  %}
 					{{field.value.receipt_address.address2}}<br/>
 				{% endif %}
 				{{field.value.receipt_address.zip}}

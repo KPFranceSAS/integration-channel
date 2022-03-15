@@ -54,8 +54,6 @@ class AmzApiFinancial
 
     public function saveFinancialEvent($groupEventId)
     {
-        //$financialEvents = $this->amzApi->getFinancialEventsInOrder("407-4201659-2202760");
-
         $financialEvents = $this->amzApi->getFinancialEventsInGroup($groupEventId);
         $financialEventFormates = $this->formateFinancialEvents($financialEvents);
 
@@ -63,13 +61,12 @@ class AmzApiFinancial
         foreach ($this->getFinancialTypes() as $financialType) {
             $this->logger->info('Nb Events ' . $financialType . ' >>> ' . count($financialEventFormates[$financialType]));
             foreach ($financialEventFormates[$financialType] as $financialEvent) {
-                //dump($financialEvent);
             }
         }
     }
 
 
-    protected function formateFinancialEvents($financialEvents)
+    protected function formateFinancialEvents($financialEvents): array
     {
         $financialTypes = $this->getFinancialTypes();
         $allEvents = array_fill_keys($financialTypes, []);
@@ -84,7 +81,7 @@ class AmzApiFinancial
         return $allEvents;
     }
 
-    protected function convertFinancialEventGroup(FinancialEventGroup $financialEventGroup)
+    protected function convertFinancialEventGroup(FinancialEventGroup $financialEventGroup): AmazonFinancialEventGroup
     {
         $amzFinancialEventGroup = new AmazonFinancialEventGroup();
         $amzFinancialEventGroup->setFinancialEventId($financialEventGroup->getFinancialEventGroupId());
@@ -115,6 +112,21 @@ class AmzApiFinancial
         }
         return $amzFinancialEventGroup;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

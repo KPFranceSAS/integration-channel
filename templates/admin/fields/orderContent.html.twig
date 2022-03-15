@@ -5,3 +5,6 @@
 {% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_ALIEXPRESS')  %}
 	{% include "admin/fields/aliExpressContent.html.twig" with {'field': field} %}
 {% endif %}
+{% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_OWLETCARE')  %}
+	{% include "admin/fields/owletCareContent.html.twig" with {'field': field} %}
+{% endif %}

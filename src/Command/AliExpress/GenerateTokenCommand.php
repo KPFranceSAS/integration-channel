@@ -34,7 +34,7 @@ class GenerateTokenCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $token = $this->aliExpress->getNewAccessToken($input->getArgument('code'));
-        dump($token);
+        var_dump($token);
         return Command::SUCCESS;
     }
 }
