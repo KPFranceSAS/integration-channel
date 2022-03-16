@@ -52,7 +52,7 @@ class OwletCareInvoice extends InvoiceParent
             }
             $result = $this->owletCareApi->markAsFulfilled($jsonOrder['id'], $mainLocation['id'], $ids, $tracking['Tracking number'], 'https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking['Tracking number']);
             if ($result) {
-                $this->addLogToOrder($order, 'Mark as fulfilled on Aliexpress');
+                $this->addLogToOrder($order, 'Mark as fulfilled on Owletcare');
                 return true;
             } else {
                 $this->addLogToOrder($order, 'Error posting tracking number ' . $tracking['Tracking number']);
