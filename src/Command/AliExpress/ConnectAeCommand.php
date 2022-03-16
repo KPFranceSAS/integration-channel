@@ -31,7 +31,11 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $result = $this->aliExpress->markOrderAsFulfill("3015988148626826", "SPAIN_LOCAL_DHL", "0837590170");
+        // $result = $this->aliExpress->markOrderAsFulfill("3015988148626826", "SPAIN_LOCAL_DHL", "0837590170");
+
+        $result = $this->aliExpress->getOrder("3015999257641175");
+
+
 
 
         dump($result);
