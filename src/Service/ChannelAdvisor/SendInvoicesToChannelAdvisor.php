@@ -40,7 +40,6 @@ class SendInvoicesToChannelAdvisor extends InvoiceParent
     }
 
 
-
     protected function postInvoice(WebOrder $order, $invoice)
     {
         $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());

@@ -45,12 +45,12 @@ class OwletCareInvoice extends InvoiceParent
             $this->logger->info('Not found tracking for invoice ' . $invoice['number']);
         } else {
             $this->addLogToOrder($order, 'Order was fulfilled by ' . $tracking['Carrier'] . " with tracking number " . $tracking['Tracking number']);
-
+            $jsonOrder = $order->getOrderContent();
             $mainLocation = $this->owletCareApi->getMainLocation();
-            foreach ($order['line_items'] as $item) {
+            foreach ($jsonOrder['line_items'] as $item) {
                 $ids[] = ['id' => $item['id']];
             }
-            $result = $this->owletCareApi->markAsFulfilled($order['id'], $mainLocation['id'], $ids, $tracking['Tracking number'], 'https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking['Tracking number']);
+            $result = $this->owletCareApi->markAsFulfilled($jsonOrder['id'], $mainLocation['id'], $ids, $tracking['Tracking number'], 'https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking['Tracking number']);
             if ($result) {
                 $this->addLogToOrder($order, 'Mark as fulfilled on Aliexpress');
                 return true;

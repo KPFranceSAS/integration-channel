@@ -141,8 +141,6 @@ class OwletCareApi
 
     public function setInventoryLevel(int $locationId, int $inventoryItemId, int $avalaible)
     {
-
-
         return $this->client->post(
             "inventory_levels/set",
             [
@@ -152,6 +150,8 @@ class OwletCareApi
             ]
         );
     }
+
+
 
 
 
