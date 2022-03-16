@@ -54,10 +54,9 @@ abstract class InvoiceParent
     {
         $tracking = $this->tracker->getTracking($order->getCompany(), $invoice['number']);
         if (!$tracking) {
-            $this->logger->info('Not found tracking for invoice ' . $invoice['number']);
+            $this->logger->info('Invoice ' . $invoice['number'] . ' is not present');
         } else {
             if ($this->isATrackingNumber($tracking['Tracking number'])) {
-
                 return $tracking;
             } else {
                 $this->logger->info('Tracking number is not retrieved from DHL ' . $tracking['Tracking number']);
