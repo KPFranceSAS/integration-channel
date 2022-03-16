@@ -192,6 +192,11 @@ class AliExpressApi
         return $resp->result_list->aeop_logistics_service_result;
     }
 
+    private  function checkIfAlreadySent($orderId)
+    {
+        $order = $this->getOrder($orderId);
+        return $order->logistics_status == "SELLER_SEND_GOODS";
+    }
 
 
     /**
@@ -199,13 +204,18 @@ class AliExpressApi
      */
     public function markOrderAsFulfill($orderId, $serviceName, $trackingNumber, $sendType = 'all')
     {
-        $req = new AliexpressSolutionOrderFulfillRequest();
-        $req->setServiceName($serviceName);
-        $req->setOutRef($orderId);
-        $req->setSendType($sendType);
-        $req->setLogisticsNo($trackingNumber);
-        $resp = $this->client->execute($req, $this->aliExpressClientAccessToken);
-        return $resp;
+        if (!$this->checkIfAlreadySent($orderId)) {
+            $req = new AliexpressSolutionOrderFulfillRequest();
+            $req->setServiceName($serviceName);
+            $req->setOutRef($orderId);
+            $req->setSendType($sendType);
+            $req->setLogisticsNo($trackingNumber);
+            $result = $this->client->execute($req, $this->aliExpressClientAccessToken);
+            return (property_exists($result, 'result_success') && $result->result_success == true);
+        } else {
+            $this->logger->info('Info already send');
+            return true;
+        }
     }
 
 

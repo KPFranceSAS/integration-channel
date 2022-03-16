@@ -58,9 +58,6 @@ class GetTracking
             if (count($values) == count($header)) {
                 $tracking = array_combine($header, $values);
                 $trackings[$tracking['Invoice number']] = $tracking;
-                if ($this->isATrackingNumber($tracking['Tracking number'])) {
-                    // $trackings[$tracking['Invoice number']] = $tracking;
-                }
             }
         }
         if (count($trackings) == 0) {
@@ -73,20 +70,9 @@ class GetTracking
 
 
 
-    public function getDhlTracking($externalNumber): ?array
+    public function getDhlTracking($externalNumber): ?string
     {
         $this->logger->info('Check DHL :' . $externalNumber);
-        return $this->dhlGetTracking->getTrackingExternal($externalNumber);
-    }
-
-
-
-    private function isATrackingNumber($trackingNumber)
-    {
-        if (substr($trackingNumber, 0, 5) == 'GALV2') {
-            return false;
-        }
-
-        return true;
+        return $this->dhlGetTracking->getTrackingExternalWeb($externalNumber);
     }
 }

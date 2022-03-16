@@ -236,6 +236,9 @@ class WebOrder
 
 
 
+
+
+
     public function getDelayProblemMessage()
     {
         if ($this->channel == self::CHANNEL_CHANNELADVISOR && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL && $this->status != self::STATE_INVOICED) {

@@ -4,8 +4,11 @@ namespace App\Service\Invoice;
 
 
 use App\Entity\WebOrder;
+use App\Helper\Utils\DatetimeUtils;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
+use App\Service\Carriers\GetTracking;
 use App\Service\MailService;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -23,15 +26,16 @@ abstract class InvoiceParent
 
     protected $businessCentralAggregator;
 
+    protected $tracker;
 
 
-
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator)
+    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, GetTracking $tracker)
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->businessCentralAggregator = $businessCentralAggregator;
+        $this->tracker = $tracker;
     }
 
 
@@ -44,6 +48,49 @@ abstract class InvoiceParent
     {
         return $this->businessCentralAggregator->getBusinessCentralConnector($companyName);
     }
+
+
+    protected function getTracking($order, $invoice)
+    {
+        $tracking = $this->tracker->getTracking($order->getCompany(), $invoice['number']);
+        if (!$tracking) {
+            $this->logger->info('Not found tracking for invoice ' . $invoice['number']);
+        } else {
+            if ($this->isATrackingNumber($tracking['Tracking number'])) {
+
+                return $tracking;
+            } else {
+                $this->logger->info('Tracking number is not retrieved from DHL ' . $tracking['Tracking number']);
+                $trackingFromWeb =  $this->tracker->getDhlTracking($tracking['Tracking number']);
+                if ($trackingFromWeb) {
+                    $tracking['Tracking number'] = $trackingFromWeb;
+                    return $tracking;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
+    protected function isATrackingNumber($trackingNumber): bool
+    {
+        // Gadeget iberia expedition
+        if (substr($trackingNumber, 0, 5) == 'GALV2') {
+            return false;
+        }
+        // kps expedition
+        if (substr($trackingNumber, 0, 4) == 'ALV2') {
+            return false;
+        }
+        // kp france expedition
+        if (substr($trackingNumber, 0, 5) == 'ALVF2') {
+            return false;
+        }
+        return true;
+    }
+
+
 
     /**
      * 
@@ -92,6 +139,7 @@ abstract class InvoiceParent
             $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
             $invoice =  $businessCentralConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
             if ($invoice) {
+                $this->logger->info('Invoice created in the ERP with number ' . $invoice['number']);
                 $order->cleanErrors();
                 $postInvoice = $this->postInvoice($order, $invoice);
                 if ($postInvoice) {
@@ -99,15 +147,11 @@ abstract class InvoiceParent
                     $order->setInvoiceErp($invoice['number']);
                     $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
                     $order->setStatus(WebOrder::STATE_INVOICED);
+                } else {
+                    $this->checkInvoiceIsLate($order, $invoice);
                 }
             } else {
-                if ($order->hasDelayTreatment()) {
-                    $messageDelay = $order->getDelayProblemMessage();
-                    if ($order->haveNoLogWithMessage($messageDelay)) {
-                        $this->addLogToOrder($order, $messageDelay);
-                        $this->addError($messageDelay);
-                    }
-                }
+                $this->checkOrderIsLate($order);
             }
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
@@ -120,6 +164,36 @@ abstract class InvoiceParent
 
     protected function postInvoice(WebOrder $order, $invoice)
     {
+    }
+
+
+    protected function checkOrderIsLate(WebOrder $order)
+    {
+        $this->logger->info('Check if order is late ');
+        if ($order->hasDelayTreatment()) {
+            $messageDelay = $order->getDelayProblemMessage();
+            if ($order->haveNoLogWithMessage($messageDelay)) {
+                $this->addLogToOrder($order, $messageDelay);
+                $this->addError($messageDelay);
+            }
+        }
+    }
+
+
+    public function checkInvoiceIsLate(WebOrder $order, $invoice)
+    {
+        $this->logger->info('Check if late ' . $invoice['number'] . " >> " . $invoice['lastModifiedDateTime']);
+        $invoiceDate = DatetimeUtils::transformFromIso8601($invoice['lastModifiedDateTime']);
+        $now = new DateTime();
+        $interval = $now->diff($invoiceDate, true);
+        $nbHours = $interval->format('%a') * 24 + $interval->format('%h');
+        if ($nbHours > 36) {
+            $messageDelay = 'Order ' . $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. PLease confirm tracking on ' . $this->getChannel();
+            if ($order->haveNoLogWithMessage($messageDelay)) {
+                $this->addLogToOrder($order, $messageDelay);
+                $this->addError($messageDelay);
+            }
+        }
     }
 
 

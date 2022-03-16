@@ -5,6 +5,7 @@ namespace App\Service\OwletCare;
 
 use App\Entity\WebOrder;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
+use App\Service\Carriers\GetTracking;
 use App\Service\Invoice\InvoiceParent;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
@@ -22,9 +23,10 @@ class OwletCareInvoice extends InvoiceParent
         LoggerInterface $logger,
         MailService $mailer,
         OwletCareApi $owletCareApi,
-        BusinessCentralAggregator $businessCentralAggregator
+        BusinessCentralAggregator $businessCentralAggregator,
+        GetTracking $tracker
     ) {
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
+        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator, $tracker);
         $this->owletCareApi = $owletCareApi;
     }
 
@@ -38,6 +40,24 @@ class OwletCareInvoice extends InvoiceParent
 
     protected function postInvoice(WebOrder $order, $invoice)
     {
+        $tracking = $this->getTracking($order, $invoice);
+        if (!$tracking) {
+            $this->logger->info('Not found tracking for invoice ' . $invoice['number']);
+        } else {
+            $this->addLogToOrder($order, 'Order was fulfilled by ' . $tracking['Carrier'] . " with tracking number " . $tracking['Tracking number']);
+
+            $mainLocation = $this->owletCareApi->getMainLocation();
+            foreach ($order['line_items'] as $item) {
+                $ids[] = ['id' => $item['id']];
+            }
+            $result = $this->owletCareApi->markAsFulfilled($order['id'], $mainLocation['id'], $ids, $tracking['Tracking number'], 'https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking['Tracking number']);
+            if ($result) {
+                $this->addLogToOrder($order, 'Mark as fulfilled on Aliexpress');
+                return true;
+            } else {
+                $this->addLogToOrder($order, 'Error posting tracking number ' . $tracking['Tracking number']);
+            }
+        }
         return true;
     }
 }

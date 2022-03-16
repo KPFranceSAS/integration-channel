@@ -37,11 +37,10 @@ class GetTrackingCommand extends Command
             "GALV22/000514",
             "GALV22/000513",
             "GALV22/000512",
-            "GALV22/000511",
         ];
 
         foreach ($test as $tes) {
-            $tracking = $this->dhlGetTracking->getTrackingExternal($tes);
+            $tracking = $this->dhlGetTracking->getTrackingExternalWeb($tes);
             $output->writeln($tes);
             dump($tracking);
         }

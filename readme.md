@@ -8,6 +8,7 @@ A local database is setup to store all transactions and enabled workers to get a
 
 A full picture of the process is visible on [this schema](docs/Processus_integration_D2C.jpg) 
 
+ ![Full picture of the process](docs/Processus_integration_D2C.jpg "Integration proccess")
 
 ## Technologies
 php>=7.4, mysql8, symfony5.4, php cli
@@ -119,6 +120,20 @@ List of all skus which need a correlation between the one used on ChannelAdvisor
 > **User** 
 List of all the users.
 An user can add, edit or delete of user.
+
+### Errors
+
+#### Sku mapping
+In the case, you received an error with SKU mapping error. the steps are :\
+1. Find on Business central what is the real SKU
+2. Connect to the application.
+3. Go in the Sku mapping section
+4. Add a new sku mapping. Put the sku used on marketplace and the one in Business central
+5. Save.
+6. Go to the order marked as Error of integration. 
+7. Click on Retry.
+8. The Weborder is integrated. If you don't do the steps 6 to 8, a process would do it twice a day for you.
+[Check the video](https://www.loom.com/share/8f0cc5e142a947d8b66ffdf93eaf25d3)
 
 
 ### Import invoices [deprecated]

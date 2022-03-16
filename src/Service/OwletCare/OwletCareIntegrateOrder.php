@@ -8,6 +8,7 @@ use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
+use App\Service\Carriers\GetTracking;
 use App\Service\Integrator\IntegratorParent;
 use App\Service\MailService;
 use App\Service\OwletCare\OwletCareApi;

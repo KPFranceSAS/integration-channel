@@ -2,9 +2,11 @@
 
 namespace App\Service\Carriers;
 
-
+use Exception;
+use GuzzleHttp\Client;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
+
 
 
 
@@ -14,11 +16,11 @@ class DhlGetTracking
 
     protected $logger;
 
-    protected $manager;
-
     protected $dhlStorage;
 
     protected $trackings;
+
+    protected $client;
 
 
     public function __construct(FilesystemOperator $dhlStorage, LoggerInterface $logger)
@@ -31,13 +33,20 @@ class DhlGetTracking
 
 
 
-    public function getTrackingExternal($externalOrderNumber): ?array
+    public function getTrackingExternalWeb($externalOrderNumber): ?string
     {
-        if (!$this->trackings) {
-            $this->initializeTrackings();
+
+        $client = new Client();
+        $response = $client->get('https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $externalOrderNumber, ['connect_timeout' => 1]);
+        $body = json_decode((string) $response->getBody(), true);
+        if ($body) {
+            return str_replace("08 20", "08", $body['NumeroExpedicionTLG']);
         }
-        return (array_key_exists($externalOrderNumber, $this->trackings)) ? $this->trackings[$externalOrderNumber] : null;
+
+        return null;
     }
+
+
 
 
 

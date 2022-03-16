@@ -5,6 +5,7 @@ namespace App\Service\ChannelAdvisor;
 
 use App\Entity\WebOrder;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
+use App\Service\Carriers\GetTracking;
 use App\Service\ChannelAdvisor\ChannelWebservice;
 use App\Service\Invoice\InvoiceParent;
 use App\Service\MailService;
@@ -26,9 +27,10 @@ class SendInvoicesToChannelAdvisor extends InvoiceParent
         LoggerInterface $logger,
         MailService $mailer,
         ChannelWebservice $channel,
-        BusinessCentralAggregator $businessCentralAggregator
+        BusinessCentralAggregator $businessCentralAggregator,
+        GetTracking $tracker
     ) {
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
+        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator, $tracker);
         $this->channel = $channel;
     }
 

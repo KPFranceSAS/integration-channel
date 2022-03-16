@@ -31,8 +31,10 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $order = $this->aliExpress->getProductInfo("1005001800841932");
-        var_dump($order);
+        $result = $this->aliExpress->markOrderAsFulfill("3015988148626826", "SPAIN_LOCAL_DHL", "0837590170");
+
+
+        dump($result);
 
 
         return Command::SUCCESS;
@@ -61,7 +63,7 @@ class ConnectAeCommand extends Command
 
 
 
-        $result = $this->aliExpress->markOrderAsFulfill("3015403747487139", "SPAIN_LOCAL_DHL", "0837572830");
+        $result = $this->aliExpress->markOrderAsFulfill("3015988148626826", "SPAIN_LOCAL_DHL", "0837590170");
         var_dump($result);
     }
 
