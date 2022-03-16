@@ -72,7 +72,7 @@ class GetTracking
 
     public function getDhlTracking($externalNumber): ?string
     {
-        $this->logger->info('Check DHL :' . $externalNumber);
+        $this->logger->info('Check on DHL API :' . $externalNumber);
         return $this->dhlGetTracking->getTrackingExternalWeb($externalNumber);
     }
 }
