@@ -194,6 +194,7 @@ class AliExpressApi
 
     private  function checkIfAlreadySent($orderId)
     {
+        $this->looger->info('Check if already send');
         $order = $this->getOrder($orderId);
         return $order->logistics_status == "SELLER_SEND_GOODS";
     }
