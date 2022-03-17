@@ -436,6 +436,16 @@ class WebOrder
      */
     private $purchaseDate;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $customerNumber;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $trackingUrl;
+
 
 
     /**
@@ -639,6 +649,30 @@ class WebOrder
     public function setPurchaseDate(?\DateTimeInterface $purchaseDate): self
     {
         $this->purchaseDate = $purchaseDate;
+
+        return $this;
+    }
+
+    public function getCustomerNumber(): ?string
+    {
+        return $this->customerNumber;
+    }
+
+    public function setCustomerNumber(?string $customerNumber): self
+    {
+        $this->customerNumber = $customerNumber;
+
+        return $this;
+    }
+
+    public function getTrackingUrl(): ?string
+    {
+        return $this->trackingUrl;
+    }
+
+    public function setTrackingUrl(?string $trackingUrl): self
+    {
+        $this->trackingUrl = $trackingUrl;
 
         return $this;
     }

@@ -116,6 +116,7 @@ abstract class IntegratorParent implements IntegratorInterface
 
                 $orderBC = $this->transformToAnBcOrder($order);
                 $webOrder->setWarehouse($orderBC->locationCode);
+                $webOrder->setCustomerNumber($orderBC->customerNumber);
 
                 $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
                 $this->addLogToOrder($webOrder, 'Order creation in the ERP ' . $businessCentralConnector->getCompanyName());
@@ -163,7 +164,7 @@ abstract class IntegratorParent implements IntegratorInterface
 
             $this->addLogToOrder($order, 'Order transformation to fit to ERP model');
             $orderApi = $order->getOrderContent();
-            $orderBC = $this->transformToAnBcOrder($orderApi, $order->getCompany());
+            $orderBC = $this->transformToAnBcOrder($orderApi);
             $order->setWarehouse($orderBC->locationCode);
 
             $this->addLogToOrder($order, 'Order creation in the ERP');

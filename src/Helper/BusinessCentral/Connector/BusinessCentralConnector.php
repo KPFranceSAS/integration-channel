@@ -332,6 +332,38 @@ abstract class BusinessCentralConnector
         return $this->getElementByNumber(self::EP_SALES_INVOICES, $number, 'orderNumber', ['$expand' => 'salesInvoiceLines,customer']);
     }
 
+
+    public function getSaleInvoiceByExternalDocumentNumberCustomer(string $number, string $customerNumber)
+    {
+        $filters = "externalDocumentNumber eq '$number' and customerNumber eq '$customerNumber' ";
+        return $this->getElementsByArray(self::EP_SALES_INVOICES, $filters, false, ['$expand' => 'salesInvoiceLines,customer']);
+    }
+
+
+
+    public function getElementsByArray(string $type, string $filters, bool $all = false, array $paramSupps = [])
+    {
+        $query = [
+            '$filter' => $filters
+        ];
+        foreach ($paramSupps as $keyParam => $valParam) {
+            $query[$keyParam] = $valParam;
+        }
+        $items =  $this->doGetRequest($type, $query)['value'];
+        if ($all) {
+            return $items;
+        } else {
+            if (count($items) > 0) {
+                return reset($items);
+            } else {
+                return null;
+            }
+        }
+    }
+
+
+
+
     public function getContentInvoicePdf(string $id): string
     {
         $value = $this->doGetRequest(self::EP_SALES_INVOICES . "($id)/pdfDocument")["value"];

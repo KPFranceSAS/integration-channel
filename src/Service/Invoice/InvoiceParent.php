@@ -135,10 +135,8 @@ abstract class InvoiceParent
     protected function sendInvoice(WebOrder $order)
     {
         try {
-            $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
-            $invoice =  $businessCentralConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
+            $invoice =  $this->getInvoiceNumber($order);
             if ($invoice) {
-                $this->logger->info('Invoice created in the ERP with number ' . $invoice['number']);
                 $order->cleanErrors();
                 $postInvoice = $this->postInvoice($order, $invoice);
                 if ($postInvoice) {
@@ -163,7 +161,29 @@ abstract class InvoiceParent
 
     protected function postInvoice(WebOrder $order, $invoice)
     {
+        return true;
     }
+
+
+    protected function getInvoiceNumber(WebOrder $order)
+    {
+        $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
+        $invoice =  $businessCentralConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
+        if ($invoice) {
+            $this->logger->info("Invoice found by reference to the order number");
+            return $invoice;
+        }
+
+        $invoice =  $businessCentralConnector->getSaleInvoiceByExternalDocumentNumberCustomer($order->getExternalNumber(), $order->getCustomerNumber());
+
+        if ($invoice) {
+            $this->logger->info("Invoice found by reference to the order external and customer number");
+            return $invoice;
+        }
+        return null;
+    }
+
+
 
 
     protected function checkOrderIsLate(WebOrder $order)
