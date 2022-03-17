@@ -194,9 +194,15 @@ class AliExpressApi
 
     private  function checkIfAlreadySent($orderId)
     {
-        $this->logger->info('Check if already send');
-        $order = $this->getOrder($orderId);
-        return $order->logistics_status == "SELLER_SEND_GOODS";
+        try {
+            $this->logger->info('Check if already send');
+            $order = $this->getOrder($orderId);
+            return $order->logistics_status == "SELLER_SEND_GOODS";
+        } catch (\Exception $e) {
+            $this->logger->info('Exception ' . $e->getMessage());
+
+            return false;
+        }
     }
 
 
@@ -206,6 +212,7 @@ class AliExpressApi
     public function markOrderAsFulfill($orderId, $serviceName, $trackingNumber, $sendType = 'all')
     {
         if (!$this->checkIfAlreadySent($orderId)) {
+            $this->logger->info('Order is not marked as sent');
             $req = new AliexpressSolutionOrderFulfillRequest();
             $req->setServiceName($serviceName);
             $req->setOutRef($orderId);
