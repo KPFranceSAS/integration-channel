@@ -44,6 +44,7 @@ class AliExpressInvoice extends InvoiceParent
             $this->logger->info('Any tracking found for invoice ' . $invoice['number']);
         } else {
             $this->addLogToOrder($order, 'Order was fulfilled by ' . $tracking['Carrier'] . " with tracking number " . $tracking['Tracking number']);
+            $order->setTrackingUrl('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking['Tracking number']);
             $result = $this->aliExpressApi->markOrderAsFulfill($order->getExternalNumber(), "SPAIN_LOCAL_DHL", $tracking['Tracking number']);
             if ($result) {
                 $this->addLogToOrder($order, 'Mark as fulfilled on Aliexpress');

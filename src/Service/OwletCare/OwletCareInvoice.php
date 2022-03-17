@@ -50,6 +50,7 @@ class OwletCareInvoice extends InvoiceParent
             foreach ($jsonOrder['line_items'] as $item) {
                 $ids[] = ['id' => $item['id']];
             }
+            $order->setTrackingUrl('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking['Tracking number']);
             $result = $this->owletCareApi->markAsFulfilled($jsonOrder['id'], $mainLocation['id'], $ids, $tracking['Tracking number'], 'https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking['Tracking number']);
             if ($result) {
                 $this->addLogToOrder($order, 'Mark as fulfilled on Owletcare');

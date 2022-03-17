@@ -54,7 +54,7 @@ abstract class InvoiceParent
     {
         $tracking = $this->tracker->getTracking($order->getCompany(), $invoice['number']);
         if (!$tracking) {
-            $this->logger->info('Invoice ' . $invoice['number'] . ' is not present');
+            $this->logger->info('Invoice ' . $invoice['number'] . ' is not present in the file');
         } else {
             if ($this->isATrackingNumber($tracking['Tracking number'])) {
                 return $tracking;
@@ -170,16 +170,18 @@ abstract class InvoiceParent
         $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
         $invoice =  $businessCentralConnector->getSaleInvoiceByOrderNumber($order->getOrderErp());
         if ($invoice) {
-            $this->logger->info("Invoice found by reference to the order number");
+            $this->logger->info("Invoice found by reference to the order number " . $order->getOrderErp());
             return $invoice;
         }
 
         $invoice =  $businessCentralConnector->getSaleInvoiceByExternalDocumentNumberCustomer($order->getExternalNumber(), $order->getCustomerNumber());
 
         if ($invoice) {
-            $this->logger->info("Invoice found by reference to the order external and customer number");
+            $this->logger->info("Invoice found by reference to the order external " . $order->getExternalNumber() . " and customer number " . $order->getCustomerNumber());
             return $invoice;
         }
+
+        $this->logger->info("Invoice not found for moment " . $order->getOrderErp() . " for " . $order->getCustomerNumber());
         return null;
     }
 
