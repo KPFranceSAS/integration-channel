@@ -34,6 +34,7 @@ class ConnectAeCommand extends Command
         // $result = $this->aliExpress->markOrderAsFulfill("3015988148626826", "SPAIN_LOCAL_DHL", "0837590170");
 
         // $result = $this->aliExpress->getOrder("3016042381461820");
+        $result  = $this->gadgetIberiaConnector->getSaleInvoiceByOrderNumber("3016049952530321", "002355");
         $result  = $this->gadgetIberiaConnector->getSaleInvoiceByExternalDocumentNumberCustomer("3016049952530321", "002355");
         dump($result);
 

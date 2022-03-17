@@ -211,10 +211,16 @@ class AliExpressApi
             $req->setOutRef($orderId);
             $req->setSendType($sendType);
             $req->setLogisticsNo($trackingNumber);
-            $result = $this->client->execute($req, $this->aliExpressClientAccessToken);
-            return (property_exists($result, 'result_success') && $result->result_success == true);
+            try {
+                $result = $this->client->execute($req, $this->aliExpressClientAccessToken);
+                return (property_exists($result, 'result_success') && $result->result_success == true);
+            } catch (\Exception $e) {
+                $this->logger->info('Exception ' . $e->getMessage());
+                $this->logger->info('result ' . json_encode($result));
+                return false;
+            }
         } else {
-            $this->logger->info('Info already send');
+            $this->logger->info('Tracking already sent');
             return true;
         }
     }
