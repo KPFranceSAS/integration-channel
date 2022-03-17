@@ -200,7 +200,6 @@ class AliExpressApi
             return $order->logistics_status == "SELLER_SEND_GOODS";
         } catch (\Exception $e) {
             $this->logger->info('Exception ' . $e->getMessage());
-
             return false;
         }
     }
