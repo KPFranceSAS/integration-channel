@@ -222,7 +222,7 @@ class AliExpressApi
                 dump($result);
                 $positive = property_exists($result, 'result_success') && $result->result_success == true;
                 dump($positive);
-                return;
+                return $positive;
             } catch (\Exception $e) {
                 $this->logger->info('Exception ' . $e->getMessage());
                 $this->logger->info('result ' . json_encode($result));
