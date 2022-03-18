@@ -4,6 +4,7 @@ namespace App\Command\AliExpress;
 
 use App\Entity\WebOrder;
 use App\Service\AliExpress\AliExpressApi;
+use App\Service\MailService;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
@@ -21,12 +22,13 @@ class SaveCancelCommand extends Command
 
 
 
-    public function __construct(ManagerRegistry $manager, AliExpressApi $aliExpressApi, LoggerInterface $logger)
+    public function __construct(ManagerRegistry $manager, AliExpressApi $aliExpressApi, LoggerInterface $logger, MailService $mailService)
     {
         parent::__construct();
         $this->aliExpressApi = $aliExpressApi;
         $this->logger = $logger;
         $this->manager = $manager->getManager();
+        $this->mailService = $mailService;
     }
 
     private $manager;
@@ -34,6 +36,8 @@ class SaveCancelCommand extends Command
     private $aliExpressApi;
 
     private $logger;
+
+    private $mailService;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -56,6 +60,12 @@ class SaveCancelCommand extends Command
         if ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "cancel_order_close_trade") {
             $webOrder->addLog('Order has been cancelled online on ' . $orderAliexpress->gmt_trade_end);
             $this->logger->info('Order has been cancelled online ' . $webOrder);
+            $webOrder->setStatus(WebOrder::STATE_CANCELLED);
+        }
+
+        if ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "seller_send_goods_timeout") {
+            $webOrder->addLog('Order has been cancelled online because delay of expedition is out of delay on ' . $orderAliexpress->gmt_trade_end);
+            $this->logger->info('Order has been cancelled online because delay of expedition is out of delay on ' . $webOrder);
             $webOrder->setStatus(WebOrder::STATE_CANCELLED);
         }
     }
