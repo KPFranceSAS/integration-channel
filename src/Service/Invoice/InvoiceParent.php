@@ -203,12 +203,12 @@ abstract class InvoiceParent
 
     public function checkInvoiceIsLate(WebOrder $order, $invoice)
     {
-        $this->logger->info('Check if late ' . $invoice['number'] . " >> " . $invoice['lastModifiedDateTime']);
-        $invoiceDate = DatetimeUtils::transformFromIso8601($invoice['lastModifiedDateTime']);
+        $this->logger->info('Check if late ' . $invoice['number'] . " >> " . $invoice['invoiceDate']);
+        $invoiceDate = DateTime::createFromFormat('Y-m-d H:i', $invoice['invoiceDate'] . ' 16:00');
         $now = new DateTime();
         $interval = $now->diff($invoiceDate, true);
         $nbHours = $interval->format('%a') * 24 + $interval->format('%h');
-        if ($nbHours > 36) {
+        if ($nbHours > 24) {
             $messageDelay = 'Order ' . $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. PLease confirm tracking on ' . $this->getChannel();
             if ($order->haveNoLogWithMessage($messageDelay)) {
                 $this->addLogToOrder($order, $messageDelay);
