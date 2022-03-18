@@ -75,7 +75,7 @@ class WebOrderCrudController extends AdminCrudController
                 return strlen($entity->getTrackingUrl()) > 0;
             })
             ->linkToUrl(static function ($entity) {
-                return $entity->getUrl();
+                return $entity->getTrackingUrl();
             });
 
         $viewInvoiceIndex = Action::new('downloadInvoice', '', 'fa fa-file-invoice')
