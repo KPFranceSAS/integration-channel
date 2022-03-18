@@ -68,6 +68,16 @@ class WebOrderCrudController extends AdminCrudController
                 return $entity->getUrl();
             });
 
+        $seeTrackOrder = Action::new('checkOrderOnline', 'Track order', 'fas fa-truck')
+            ->addCssClass('btn')
+            ->setHtmlAttributes(['target' => '_blank'])
+            ->displayIf(static function ($entity) {
+                return strlen($entity->getTrackingUrl()) > 0;
+            })
+            ->linkToUrl(static function ($entity) {
+                return $entity->getUrl();
+            });
+
         $viewInvoiceIndex = Action::new('downloadInvoice', '', 'fa fa-file-invoice')
             ->displayIf(static function ($entity) {
                 return $entity->haveInvoice();
