@@ -152,6 +152,24 @@ class WebOrder
      */
     private $company;
 
+    public $orderBCContent = [];
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $purchaseDate;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $customerNumber;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $trackingUrl;
+
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -429,22 +447,6 @@ class WebOrder
     }
 
 
-    public $orderBCContent = [];
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $purchaseDate;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $customerNumber;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $trackingUrl;
 
 
 

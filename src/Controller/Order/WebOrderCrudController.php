@@ -7,6 +7,7 @@ use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\Integrator\IntegratorAggregator;
+use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -18,6 +19,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
+use Illuminate\Support\Manager;
 use Symfony\Component\HttpFoundation\Response;
 
 class WebOrderCrudController extends AdminCrudController
@@ -199,9 +201,9 @@ class WebOrderCrudController extends AdminCrudController
 
 
 
-    public function retryAllIntegrations(BatchActionDto $batchActionDto,  IntegratorAggregator $integratorAggregator)
+    public function retryAllIntegrations(BatchActionDto $batchActionDto,  IntegratorAggregator $integratorAggregator, ManagerRegistry $managerRegistry)
     {
-        $entityManager = $this->getDoctrine()->getManagerForClass($batchActionDto->getEntityFqcn());
+        $entityManager = $managerRegistry->getManagerForClass($batchActionDto->getEntityFqcn());
         foreach ($batchActionDto->getEntityIds() as $id) {
             $webOrder = $entityManager->find($batchActionDto->getEntityFqcn(), $id);
             if ($webOrder->getStatus() == WebOrder::STATE_ERROR) {
@@ -243,6 +245,7 @@ class WebOrderCrudController extends AdminCrudController
             TextField::new('channel', "Channel"),
             TextField::new('subchannel',  "Marketplace"),
             TextField::new('company', "Company"),
+            TextField::new('customerNumber', "Customer N°"),
             TextField::new('erpDocument', "Document type"),
             TextField::new('documentInErp', "Document N°"),
             TextField::new('fulfilledBy', "Fulfillement"),
