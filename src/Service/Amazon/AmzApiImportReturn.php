@@ -25,8 +25,7 @@ class AmzApiImportReturn extends AmzApiImport
     {
         $returnAmz = $this->manager->getRepository(AmazonReturn::class)->findOneBy([
             "orderId" => $importOrder['order-id'],
-            'asin' => $importOrder['asin'],
-            'returnDate' => DatetimeUtils::transformFromIso8601($importOrder['return-date'])
+            'licencePlateNumber' => $importOrder['licencePlateNumber'],
         ]);
         if (!$returnAmz) {
             $returnAmz = new AmazonReturn();
