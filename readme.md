@@ -10,21 +10,7 @@ A full picture of the process is visible on [this schema](docs/Processus_integra
 
  ![Full picture of the process](docs/Processus_integration_D2C.jpg "Integration proccess")
 
-## Technologies
-php>=7.4, mysql8, symfony5.4, php cli
 
-## Installation
-```
-cd path\toproject
-composer install
-```
-
-You need to create a .env.local file and define mandatory parameters.\
-Then clean the cache and we are good
-
-```
-php bin/console cache:clear
-```
 
 ## Functionalities
 ### Order integration
@@ -194,6 +180,24 @@ It saves the record on the local database
 
 At the end, it send a log rapport with errors, not found, metrics.
 
+## Technologies
+php>=7.4, mysql8, symfony5.4, php cli
+
+## Installation
+```
+cd path\toproject
+composer install
+```
+
+You need to create a .env.local file and define mandatory parameters.\
+Then clean the cache and we are good
+
+```
+php bin/console cache:clear
+```
+
+## List of cron tasks implemented
+[List of cron tasks and frequency](/docs/cron.txt)
 
 ## Aliexpress
 [Api documentation Aliexpress](https://developers.aliexpress.com/en/doc.htm?docId=108970&docType=1)

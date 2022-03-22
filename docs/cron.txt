@@ -1,0 +1,44 @@
+## BUILD REPORT ####
+30 */1 * * * php /home/prod/integration/bin/console app:amz-full-maj-report-updates -vvv --env=prod
+40 */1 * * * php /home/prod/integration/bin/console app:amz-check-invoiced -vvv --env=prod
+
+#### CHANNELAVISOR ####
+# Get orders and integrate orders
+5 * * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR -vvv --env=prod
+35 * * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR -vvv --env=prod
+
+# Integrate invoice and upload invoice
+15 5 * * * php /home/prod/integration/bin/console app:integrate-invoices-from CHANNELADVISOR -vvv --env=prod
+
+# Reintegrate orders in error
+5 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR 1 -vvv --env=prod
+30 11 * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR 1 -vvv --env=prod
+
+
+
+
+#### ALIEXPRESS ####
+# Get orders and integrate orders
+10 * * * * php /home/prod/integration/bin/console app:integrate-orders-from ALIEXPRESS -vvv --env=prod
+40 * * * * php /home/prod/integration/bin/console app:integrate-orders-from ALIEXPRESS -vvv --env=prod
+
+# Reintegrate orders
+10 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from ALIEXPRESS 1 -vvv --env=prod
+35 11 * * * php /home/prod/integration/bin/console app:integrate-orders-from ALIEXPRESS 1 -vvv --env=prod
+
+# Integrate invoice and send tracking
+20 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from ALIEXPRESS -vvv --env=prod
+
+# Check Cancelation online
+30 * * * * php /home/prod/integration/bin/console app:aliexpress-cancel-orders -vvv --env=prod
+
+# Send stoc levels
+15 * * * * php /home/prod/integration/bin/console app:update-stocks-to ALIEXPRESS --env=prod
+45 * * * * php /home/prod/integration/bin/console app:update-stocks-to ALIEXPRESS --env=prod
+
+#### OWLETCARE ####
+# Maj stock
+10 * * * * php /home/prod/integration/bin/console app:update-stocks-to OWLETCARE --env=prod
+40 * * * * php /home/prod/integration/bin/console app:update-stocks-to OWLETCARE --env=prod
+
+####### END INTEGRATION #######
