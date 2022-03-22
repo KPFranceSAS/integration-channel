@@ -38,6 +38,7 @@ abstract class AmzApiImport
     public function createReportAndImport(?DateTime $dateTimeStart = null)
     {
         try {
+            $this->logger->info('Report creation ' . $this->getName());
             $report = $this->createReport($dateTimeStart);
             $this->logger->info('Report processing ReportId = ' . $report->getReportId());
             for ($i = 0; $i < 30; $i++) {
@@ -50,15 +51,18 @@ abstract class AmzApiImport
                     $datasReport = $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
                     $this->importDatas($datasReport);
                     return;
+                } else if ($reportState->getPayload()->getProcessingStatus() == 'FATAL') {
+                    throw new Exception('Fatal error to get report ' . $this->getName());
                 } else {
                     $this->logger->info('Report processing not yet');
                 }
             }
             throw new Exception('Report takes too long to be processed');
         } catch (Exception $e) {
-            $this->mailer->sendEmail("[REPORT AMAZON ORDERS]", $e->getMessage(), 'stephane.lanjard@kpsport.com');
+            $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", $e->getMessage(), 'stephane.lanjard@kpsport.com');
         }
     }
+
 
 
 
@@ -69,6 +73,10 @@ abstract class AmzApiImport
     abstract protected function getLastReportContent();
 
 
+    protected function getName()
+    {
+        return strtoupper(str_replace("App\Service\Amazon\AmzApiImport", "", get_class($this)));
+    }
 
     public function treatLastReport()
     {
@@ -104,11 +112,7 @@ abstract class AmzApiImport
         $product = $this->manager->getRepository(Product::class)->findOneBy([
             'asin' => $asin
         ]);
-        if ($product) {
-            if (!$product->getAsin()) {
-                $product->setAsin();
-            }
-        } else {
+        if (!$product) {
             $product = $this->manager->getRepository(Product::class)->findOneBy([
                 'sku' => $sku
             ]);
@@ -120,7 +124,14 @@ abstract class AmzApiImport
                 $this->logger->info('New product ' . $sku);
                 $product = new Product();
                 $product->setAsin($amz->getAsin());
-                $product->setDescription($orderArray['product-name']);
+                if (array_key_exists('product-name', $orderArray)) {
+                    $product->setDescription($orderArray['product-name']);
+                } else {
+                    $product->setDescription('Unknown');
+                }
+                if (array_key_exists('fnsku', $orderArray)) {
+                    $product->setFnsku($orderArray['fnsku']);
+                }
                 $product->setSku($sku);
                 $this->manager->persist($product);
                 $this->manager->flush();

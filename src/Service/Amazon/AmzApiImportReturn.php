@@ -4,7 +4,9 @@ namespace App\Service\Amazon;
 
 use App\Entity\AmazonReturn;
 use App\Helper\Utils\DatetimeUtils;
+use App\Service\Amazon\AmzApi;
 use App\Service\Amazon\AmzApiImport;
+use DateInterval;
 use DateTime;
 
 
@@ -13,12 +15,16 @@ class AmzApiImportReturn extends AmzApiImport
 
     protected function createReport(?DateTime $dateTimeStart = null)
     {
-        return $this->amzApi->createReportReturnsByLastUpdate($dateTimeStart);
+        if (!$dateTimeStart) {
+            $dateTimeStart = new DateTime('now');
+            $dateTimeStart->sub(new DateInterval('P3D'));
+        }
+        return $this->amzApi->createReport($dateTimeStart, AmzApi::TYPE_REPORT_RETURNS_DATA);
     }
 
     protected function getLastReportContent()
     {
-        return $this->amzApi->getContentLastReportReturnByLastUpdate();
+        return $this->amzApi->getContentLastReport(AmzApi::TYPE_REPORT_RETURNS_DATA);
     }
 
     protected function upsertData(array $importOrder)

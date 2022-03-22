@@ -28,7 +28,7 @@ class AmzApi
     const TYPE_REPORT_MANAGE_INVENTORY = 'GET_FBA_MYI_UNSUPPRESSED_INVENTORY_DATA';
     const TYPE_REPORT_RESTOCK_INVENTORY = 'GET_RESTOCK_INVENTORY_RECOMMENDATIONS_REPORT';
     const TYPE_REPORT_REIMBURSEMENT = 'GET_FBA_REIMBURSEMENTS_DATA';
-
+    const TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED = 'GET_FBA_MYI_ALL_INVENTORY_DATA';
     const TYPE_REPORT_REMOVAL_SHIPMENT_DETAIL = 'GET_FBA_FULFILLMENT_REMOVAL_SHIPMENT_DETAIL_DATA';
     const TYPE_REPORT_REMOVAL_ORDER_DETAIL = 'GET_FBA_FULFILLMENT_REMOVAL_ORDER_DETAIL_DATA';
 
@@ -103,28 +103,6 @@ class AmzApi
 
 
 
-    /***
-     * Report creation and read
-     */
-
-    public function getContentLastReportReimbursementByLastUpdate(DateTime $dateTimeStart = null)
-    {
-        return $this->getContentLastReport(self::TYPE_REPORT_REIMBURSEMENT, $dateTimeStart);
-    }
-
-    public function getContentLastReportReturnByLastUpdate(DateTime $dateTimeStart = null)
-    {
-        return $this->getContentLastReport(self::TYPE_REPORT_RETURNS_DATA, $dateTimeStart);
-    }
-
-
-
-    public function getContentLastReportOrdersByLastUpdate(DateTime $dateTimeStart = null)
-    {
-        return $this->getContentLastReport(self::TYPE_REPORT_LAST_UPDATE_ORDERS, $dateTimeStart);
-    }
-
-
     public function getReport($idReport)
     {
         return $this->sdk->reports()->getReport(
@@ -135,76 +113,8 @@ class AmzApi
     }
 
 
-
-    public function createReportRemovalOrderByLastUpdate(?DateTime $dateTimeStart = null)
-    {
-        if (!$dateTimeStart) {
-            $dateTimeStart = new DateTime('now');
-            $dateTimeStart->sub(new DateInterval('P3D'));
-        }
-        return $this->createReport($dateTimeStart, self::TYPE_REPORT_REMOVAL_ORDER_DETAIL);
-    }
-
-
-    public function createReportRemovalShipmentByLastUpdate(?DateTime $dateTimeStart = null)
-    {
-        if (!$dateTimeStart) {
-            $dateTimeStart = new DateTime('now');
-            $dateTimeStart->sub(new DateInterval('P3D'));
-        }
-        return $this->createReport($dateTimeStart, self::TYPE_REPORT_REMOVAL_SHIPMENT_DETAIL);
-    }
-
-
-
-    public function createReportReturnsByLastUpdate(?DateTime $dateTimeStart = null)
-    {
-        if (!$dateTimeStart) {
-            $dateTimeStart = new DateTime('now');
-            $dateTimeStart->sub(new DateInterval('P3D'));
-        }
-        return $this->createReport($dateTimeStart, self::TYPE_REPORT_RETURNS_DATA);
-    }
-
-
-    public function createReportReimbursementsByLastUpdate(?DateTime $dateTimeStart = null)
-    {
-        if (!$dateTimeStart) {
-            $dateTimeStart = new DateTime('now');
-            $dateTimeStart->sub(new DateInterval('P3D'));
-        }
-        return $this->createReport($dateTimeStart, self::TYPE_REPORT_REIMBURSEMENT);
-    }
-
-
-
-    public function createReportOrdersByLastUpdate(?DateTime $dateTimeStart = null)
-    {
-        if (!$dateTimeStart) {
-            $dateTimeStart = new DateTime('now');
-            $dateTimeStart->sub(new DateInterval('P3D'));
-        }
-        return $this->createReport($dateTimeStart, self::TYPE_REPORT_LAST_UPDATE_ORDERS);
-    }
-
-
-    public function getContentReport($documentReportId, $toArray = true)
-    {
-        $response = $this->sdk->reports()->getReportDocument(
-            $this->getAccessToken(),
-            Regions::EUROPE,
-            $documentReportId
-        );
-        $textEncrypted = file_get_contents($response->getPayload()->getUrl());
-        $encryptedMethod = $response->getPayload()->getEncryptionDetails();
-        $decrypted_data = openssl_decrypt($textEncrypted, "aes-256-cbc", base64_decode($encryptedMethod->getKey()), OPENSSL_RAW_DATA,  base64_decode($encryptedMethod->getInitializationVector()));
-        return $toArray ? $this->transformDocumentReportToArray($decrypted_data) : $decrypted_data;
-    }
-
-
     public function getAllFinancials($dateTime, $dateTimeFin)
     {
-
         $allEvents = [];
         $nextToken = null;
         do {
@@ -234,9 +144,6 @@ class AmzApi
     {
         return $this->getFinancialEventPer('listFinancialEventsByOrderId', $amzonOrderId);
     }
-
-
-
 
 
     public function getFinancialEventPer($type, $typeId)
@@ -299,12 +206,25 @@ class AmzApi
     }
 
 
+    public function getContentReport($documentReportId, $toArray = true)
+    {
+        $response = $this->sdk->reports()->getReportDocument(
+            $this->getAccessToken(),
+            Regions::EUROPE,
+            $documentReportId
+        );
+        $textEncrypted = file_get_contents($response->getPayload()->getUrl());
+        $encryptedMethod = $response->getPayload()->getEncryptionDetails();
+        $decrypted_data = openssl_decrypt($textEncrypted, "aes-256-cbc", base64_decode($encryptedMethod->getKey()), OPENSSL_RAW_DATA,  base64_decode($encryptedMethod->getInitializationVector()));
+        return $toArray ? $this->transformDocumentReportToArray($decrypted_data) : $decrypted_data;
+    }
+
+
     public function getLastReport(string $type, array $status = [self::STATUS_REPORT_DONE], DateTime $createdSince = null)
     {
         $reports = $this->getAllReports([$type], $status, $createdSince);
         return end($reports);
     }
-
 
 
     public function createReport(DateTime $dateTimeStart, $reportType)
@@ -322,6 +242,32 @@ class AmzApi
         return $reponse->getPayload();
     }
 
+    private function transformDocumentReportToArray($decryptedData)
+    {
+        $datas = [];
+        $contentArray =  explode("\r\n", $decryptedData);
+        $header = explode("\t", array_shift($contentArray));
+        foreach ($contentArray as $contentLine) {
+            $values = explode("\t", $contentLine);
+            if (count($values) == count($header)) {
+                $datas[] = array_combine($header, $values);
+            }
+        }
+        return $datas;
+    }
+
+
+    private function getAllStatusReport()
+    {
+        return [
+            self::STATUS_REPORT_FATAL,
+            self::STATUS_REPORT_DONE,
+            self::STATUS_REPORT_CANCELLED,
+            self::STATUS_REPORT_FATAL,
+            self::STATUS_REPORT_IN_PROGRESS,
+            self::STATUS_REPORT_IN_QUEUE
+        ];
+    }
 
 
     public function getProductData($asin)
@@ -427,34 +373,6 @@ class AmzApi
             Marketplace::DE()->id(),
             Marketplace::IT()->id(),
 
-        ];
-    }
-
-
-    private function transformDocumentReportToArray($decryptedData)
-    {
-        $datas = [];
-        $contentArray =  explode("\r\n", $decryptedData);
-        $header = explode("\t", array_shift($contentArray));
-        foreach ($contentArray as $contentLine) {
-            $values = explode("\t", $contentLine);
-            if (count($values) == count($header)) {
-                $datas[] = array_combine($header, $values);
-            }
-        }
-        return $datas;
-    }
-
-
-    private function getAllStatusReport()
-    {
-        return [
-            self::STATUS_REPORT_FATAL,
-            self::STATUS_REPORT_DONE,
-            self::STATUS_REPORT_CANCELLED,
-            self::STATUS_REPORT_FATAL,
-            self::STATUS_REPORT_IN_PROGRESS,
-            self::STATUS_REPORT_IN_QUEUE
         ];
     }
 }

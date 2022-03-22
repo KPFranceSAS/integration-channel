@@ -3,7 +3,9 @@
 namespace App\Service\Amazon;
 
 use App\Entity\AmazonReimbursement;
+use App\Service\Amazon\AmzApi;
 use App\Service\Amazon\AmzApiImport;
+use DateInterval;
 use DateTime;
 
 
@@ -12,12 +14,16 @@ class AmzApiImportReimbursement extends AmzApiImport
 
     protected function createReport(?DateTime $dateTimeStart = null)
     {
-        return $this->amzApi->createReportReimbursementsByLastUpdate($dateTimeStart);
+        if (!$dateTimeStart) {
+            $dateTimeStart = new DateTime('now');
+            $dateTimeStart->sub(new DateInterval('P3D'));
+        }
+        return $this->amzApi->createReport($dateTimeStart, AmzApi::TYPE_REPORT_REIMBURSEMENT);
     }
 
     protected function getLastReportContent()
     {
-        return $this->amzApi->getContentLastReportReimbursementByLastUpdate();
+        return $this->amzApi->getContentLastReport(AmzApi::TYPE_REPORT_REIMBURSEMENT);
     }
 
     protected function upsertData(array $importOrder)

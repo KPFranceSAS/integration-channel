@@ -14,9 +14,6 @@
 5 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR 1 -vvv --env=prod
 30 11 * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR 1 -vvv --env=prod
 
-
-
-
 #### ALIEXPRESS ####
 # Get orders and integrate orders
 10 * * * * php /home/prod/integration/bin/console app:integrate-orders-from ALIEXPRESS -vvv --env=prod
@@ -41,4 +38,3 @@
 10 * * * * php /home/prod/integration/bin/console app:update-stocks-to OWLETCARE --env=prod
 40 * * * * php /home/prod/integration/bin/console app:update-stocks-to OWLETCARE --env=prod
 
-####### END INTEGRATION #######

@@ -64,6 +64,12 @@ class Product
      */
     private $brand;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_product"})
+     */
+    private $fnsku;
+
 
     /**
      * @Groups({"export_product"})
@@ -198,6 +204,18 @@ class Product
     public function setBrand(?Brand $brand): self
     {
         $this->brand = $brand;
+
+        return $this;
+    }
+
+    public function getFnsku(): ?string
+    {
+        return $this->fnsku;
+    }
+
+    public function setFnsku(?string $fnsku): self
+    {
+        $this->fnsku = $fnsku;
 
         return $this;
     }

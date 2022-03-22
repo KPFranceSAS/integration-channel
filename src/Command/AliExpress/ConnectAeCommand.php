@@ -72,11 +72,6 @@ class ConnectAeCommand extends Command
     }
 
 
-    /* demande d'annulation
-        logistics_status WAIT_SELLER_SEND_GOODS
-        over_time_left 2022-03-23 14:16:15
-        order_status IN_CANCEL **/
-
 
     private function transformeOrder()
     {
