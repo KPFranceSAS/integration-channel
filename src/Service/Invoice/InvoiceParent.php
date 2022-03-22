@@ -208,7 +208,7 @@ abstract class InvoiceParent
         $now = new DateTime();
         $interval = $now->diff($invoiceDate, true);
         $nbHours = $interval->format('%a') * 24 + $interval->format('%h');
-        if ($nbHours > 24) {
+        if ($nbHours > 36) {
             $messageDelay = 'Order ' . $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. PLease confirm tracking on ' . $this->getChannel();
             if ($order->haveNoLogWithMessage($messageDelay)) {
                 $this->addLogToOrder($order, $messageDelay);
