@@ -219,9 +219,7 @@ class AliExpressApi
             $req->setLogisticsNo($trackingNumber);
             try {
                 $result = $this->client->execute($req, $this->aliExpressClientAccessToken);
-                dump($result);
-                $positive = property_exists($result, 'result_success') && $result->result_success == true;
-                dump($positive);
+                $positive = property_exists($result, 'result') && property_exists($result->result, 'result_success') && $result->result->result_success == true;
                 return $positive;
             } catch (\Exception $e) {
                 $this->logger->info('Exception ' . $e->getMessage());

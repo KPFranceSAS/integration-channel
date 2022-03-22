@@ -104,6 +104,11 @@ class AmazonReturn
     private $product;
 
     /**
+     * @ORM\ManyToOne(targetEntity=AmazonRemovalOrder::class, inversedBy="returns")
+     */
+    private $amazonRemovalOrder;
+
+    /**
      *  @Groups({"export_order"})
      */
     public function getProductId()
@@ -340,6 +345,18 @@ class AmazonReturn
     public function setLicensePlateNumber(?string $licensePlateNumber): self
     {
         $this->licensePlateNumber = $licensePlateNumber;
+
+        return $this;
+    }
+
+    public function getAmazonRemovalOrder(): ?AmazonRemovalOrder
+    {
+        return $this->amazonRemovalOrder;
+    }
+
+    public function setAmazonRemovalOrder(?AmazonRemovalOrder $amazonRemovalOrder): self
+    {
+        $this->amazonRemovalOrder = $amazonRemovalOrder;
 
         return $this;
     }

@@ -29,6 +29,8 @@ class AmzApi
     const TYPE_REPORT_RESTOCK_INVENTORY = 'GET_RESTOCK_INVENTORY_RECOMMENDATIONS_REPORT';
     const TYPE_REPORT_REIMBURSEMENT = 'GET_FBA_REIMBURSEMENTS_DATA';
 
+    const TYPE_REPORT_REMOVAL_SHIPMENT_DETAIL = 'GET_FBA_FULFILLMENT_REMOVAL_SHIPMENT_DETAIL_DATA';
+    const TYPE_REPORT_REMOVAL_ORDER_DETAIL = 'GET_FBA_FULFILLMENT_REMOVAL_ORDER_DETAIL_DATA';
 
 
     const STATUS_REPORT_DONE = 'DONE';
@@ -89,6 +91,18 @@ class AmzApi
         $this->sdk = SellingPartnerSDK::create($client, $factory, $factory, $configuration, $this->logger);
     }
 
+
+    public function getShipmentReceived()
+    {
+        return $this->sdk->fulfillmentOutbound()->listAllFulfillmentOrders(
+            $this->getAccessToken(),
+            Regions::EUROPE
+        );
+    }
+
+
+
+
     /***
      * Report creation and read
      */
@@ -119,6 +133,28 @@ class AmzApi
             $idReport
         );
     }
+
+
+
+    public function createReportRemovalOrderByLastUpdate(?DateTime $dateTimeStart = null)
+    {
+        if (!$dateTimeStart) {
+            $dateTimeStart = new DateTime('now');
+            $dateTimeStart->sub(new DateInterval('P3D'));
+        }
+        return $this->createReport($dateTimeStart, self::TYPE_REPORT_REMOVAL_ORDER_DETAIL);
+    }
+
+
+    public function createReportRemovalShipmentByLastUpdate(?DateTime $dateTimeStart = null)
+    {
+        if (!$dateTimeStart) {
+            $dateTimeStart = new DateTime('now');
+            $dateTimeStart->sub(new DateInterval('P3D'));
+        }
+        return $this->createReport($dateTimeStart, self::TYPE_REPORT_REMOVAL_SHIPMENT_DETAIL);
+    }
+
 
 
     public function createReportReturnsByLastUpdate(?DateTime $dateTimeStart = null)
@@ -268,13 +304,6 @@ class AmzApi
         $reports = $this->getAllReports([$type], $status, $createdSince);
         return end($reports);
     }
-
-
-
-
-
-
-
 
 
 

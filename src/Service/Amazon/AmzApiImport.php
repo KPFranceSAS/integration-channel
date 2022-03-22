@@ -117,6 +117,7 @@ abstract class AmzApiImport
                     $product->setAsin($asin);
                 }
             } else {
+                $this->logger->info('New product ' . $sku);
                 $product = new Product();
                 $product->setAsin($amz->getAsin());
                 $product->setDescription($orderArray['product-name']);

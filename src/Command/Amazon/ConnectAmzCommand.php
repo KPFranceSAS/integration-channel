@@ -35,9 +35,17 @@ class ConnectAmzCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $dateTime = new DateTime('2022-01-01');
+
+        //$fincaie = $this->api->getFinancialEventsInOrder('171-4016031-4375520');
+        //dump($fincaie);
+        $reportState = $this->api->getReport('708474019072');
+        $datasReport = $this->api->getContentReport($reportState->getPayload()->getReportDocumentId());
+        dump($datasReport);
+
+
+        /*$dateTime = new DateTime('2022-01-01');
         $dateTimeFin = new DateTime('2022-02-01');
-        $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);
+        $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);*/
         return Command::SUCCESS;
     }
 
