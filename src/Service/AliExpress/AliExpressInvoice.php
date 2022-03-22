@@ -50,7 +50,13 @@ class AliExpressInvoice extends InvoiceParent
                 $this->addLogToOrder($order, 'Mark as fulfilled on Aliexpress');
                 return true;
             } else {
-                $this->addError($order, 'Error posting tracking number ' . $tracking['Tracking number']);
+
+                $orderAliexpress = $this->aliExpressApi->getOrder($order->getExternalNumber());
+                if ($orderAliexpress->logistics_status == "WAIT_SELLER_SEND_GOODS" && $orderAliexpress->order_status == "IN_CANCEL") {
+                    $this->addError($order, 'Error posting tracking number ' . $tracking['Tracking number'] . ' Customer asks for cancelation and no response was done online. A response should be brought before ' . $orderAliexpress['over_time_left']);
+                } else {
+                    $this->addError($order, 'Error posting tracking number ' . $tracking['Tracking number']);
+                }
             }
         }
         return false;
