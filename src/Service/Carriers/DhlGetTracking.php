@@ -30,7 +30,13 @@ class DhlGetTracking
     }
 
 
-
+    public function getTrackingExternal($externalOrderNumber): ?array
+    {
+        if (!$this->trackings) {
+            $this->initializeTrackings();
+        }
+        return (array_key_exists($externalOrderNumber, $this->trackings)) ? $this->trackings[$externalOrderNumber] : null;
+    }
 
 
     public function getTrackingExternalWeb($externalOrderNumber): ?string

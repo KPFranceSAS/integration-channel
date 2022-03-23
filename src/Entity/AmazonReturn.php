@@ -99,7 +99,6 @@ class AmazonReturn
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class)
-     * @ORM\JoinColumn(nullable=false)
      */
     private $product;
 

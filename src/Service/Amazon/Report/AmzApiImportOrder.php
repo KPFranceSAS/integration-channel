@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Service\Amazon;
+namespace App\Service\Amazon\Report;
 
 use App\Entity\AmazonOrder;
 use App\Service\Amazon\AmzApi;
-use App\Service\Amazon\AmzApiImport;
+use App\Service\Amazon\Report\AmzApiImport;
 use DateInterval;
 use DateTime;
 
@@ -38,14 +38,9 @@ class AmzApiImportOrder extends AmzApiImport
         if (!$orderAmz) {
             $orderAmz = new AmazonOrder();
             $this->manager->persist($orderAmz);
-            $new = true;
-        } else {
-            $new = false;
         }
         $orderAmz->importData($this->exchangeRate, $importOrder);
-        if ($new) {
-            $this->addProductAndBrand($orderAmz, $importOrder);
-        }
+        $this->addProductByAsin($orderAmz);
         return $orderAmz;
     }
 }

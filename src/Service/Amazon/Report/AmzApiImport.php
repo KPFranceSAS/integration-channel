@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Service\Amazon;
+namespace App\Service\Amazon\Report;
 
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Helper\Utils\ExchangeRateCalculator;
 use App\Service\Amazon\AmzApi;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,13 +25,14 @@ abstract class AmzApiImport
 
     protected $amzApi;
 
-    public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ExchangeRateCalculator $exchangeRate)
+    public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ExchangeRateCalculator $exchangeRate, BusinessCentralAggregator $businessCentralAggregator)
     {
         $this->logger = $logger;
         $this->amzApi = $amzApi;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->exchangeRate = $exchangeRate;
+        $this->businessCentralAggregator = $businessCentralAggregator;
     }
 
     const WAITING_TIME = 20;
@@ -75,7 +77,7 @@ abstract class AmzApiImport
 
     protected function getName()
     {
-        return strtoupper(str_replace("App\Service\Amazon\AmzApiImport", "", get_class($this)));
+        return strtoupper(str_replace("App\Service\Amazon\Report\AmzApiImport", "", get_class($this)));
     }
 
     public function treatLastReport()
@@ -89,56 +91,61 @@ abstract class AmzApiImport
     public function importDatas(array $datas)
     {
         $counter = 0;
+        $this->errors = [];
         foreach ($datas as $data) {
-            $dataAmz = $this->upsertData($data);
-            $counter++;
-            $this->logger->info('Treatment ' . $counter . ' / ' . count($datas));
-            if ($counter % 20 == 0) {
-                $this->manager->flush();
-                $this->manager->clear();
+            try {
+                $dataAmz = $this->upsertData($data);
+                $counter++;
+                $this->logger->info('Treatment ' . $counter . ' / ' . count($datas));
+                if ($counter % 20 == 0) {
+                    $this->manager->flush();
+                    $this->manager->clear();
+                }
+            } catch (\Exception $e) {
+                $this->logger->alert($e->getMessage());
+                $this->errors[] = $e->getMessage();
             }
         }
         $this->manager->flush();
+
+        if (count($this->errors) > 0) {
+            throw new Exception(implode('<br/>', $this->errors));
+        }
     }
 
 
 
 
-    protected function addProductAndBrand($amz, $orderArray)
+    protected function addProductByAsin($amz)
     {
         $sku = $this->getProductCorrelationSku($amz->getSku());
         $asin = $amz->getAsin();
 
         $product = $this->manager->getRepository(Product::class)->findOneBy([
-            'asin' => $asin
+            'asin' => $asin,
+            "sku" => $sku
         ]);
-        if (!$product) {
-            $product = $this->manager->getRepository(Product::class)->findOneBy([
-                'sku' => $sku
-            ]);
-            if ($product) {
-                if (!$product->getAsin()) {
-                    $product->setAsin($asin);
-                }
-            } else {
-                $this->logger->info('New product ' . $sku);
-                $product = new Product();
-                $product->setAsin($amz->getAsin());
-                if (array_key_exists('product-name', $orderArray)) {
-                    $product->setDescription($orderArray['product-name']);
-                } else {
-                    $product->setDescription('Unknown');
-                }
-                if (array_key_exists('fnsku', $orderArray)) {
-                    $product->setFnsku($orderArray['fnsku']);
-                }
-                $product->setSku($sku);
-                $this->manager->persist($product);
-                $this->manager->flush();
-            }
+        if ($product) {
+            $amz->setProduct($product);
         }
-        $amz->setProduct($product);
     }
+
+
+    protected function addProductByFnsku($amz)
+    {
+        $sku = $this->getProductCorrelationSku($amz->getSku());
+        $fnsku = $amz->getFnsku();
+
+        $product = $this->manager->getRepository(Product::class)->findOneBy([
+            'fnsku' => $fnsku,
+            "sku" => $sku
+        ]);
+        if ($product) {
+            $amz->setProduct($product);
+        }
+    }
+
+
 
 
     /**

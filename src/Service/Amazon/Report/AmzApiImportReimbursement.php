@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Service\Amazon;
+namespace App\Service\Amazon\Report;
 
 use App\Entity\AmazonReimbursement;
 use App\Service\Amazon\AmzApi;
-use App\Service\Amazon\AmzApiImport;
+use App\Service\Amazon\Report\AmzApiImport;
 use DateInterval;
 use DateTime;
 
@@ -36,9 +36,8 @@ class AmzApiImportReimbursement extends AmzApiImport
             $reimbursementAmz = new AmazonReimbursement();
             $this->manager->persist($reimbursementAmz);
             $reimbursementAmz->importData($this->exchangeRate, $importOrder);
-            $this->addProductAndBrand($reimbursementAmz, $importOrder);
         }
-
+        $this->addProductByFnsku($reimbursementAmz);
         if ($importOrder['original-reimbursement-id']) {
             $reimbursementOriginalAmz = $this->manager->getRepository(AmazonReimbursement::class)->findOneBy([
                 "reimbursementId" => $importOrder['original-reimbursement-id'],
@@ -48,7 +47,6 @@ class AmzApiImportReimbursement extends AmzApiImport
                 $reimbursementAmz->setOriginalReimbursement($reimbursementOriginalAmz);
             }
         }
-
         return $reimbursementAmz;
     }
 }

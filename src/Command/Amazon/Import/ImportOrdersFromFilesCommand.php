@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Command\Amazon;
+namespace App\Command\Amazon\Import;
 
 use App\Helper\Utils\CsvExtracter;
-use App\Service\Amazon\AmzApiImportOrder;
+use App\Service\Amazon\Report\AmzApiImportOrder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

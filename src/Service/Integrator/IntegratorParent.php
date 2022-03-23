@@ -166,6 +166,7 @@ abstract class IntegratorParent implements IntegratorInterface
             $orderApi = $order->getOrderContent();
             $orderBC = $this->transformToAnBcOrder($orderApi);
             $order->setWarehouse($orderBC->locationCode);
+            $order->setCustomerNumber($orderBC->customerNumber);
 
             $this->addLogToOrder($order, 'Order creation in the ERP');
             $erpOrder = $this->getBusinessCentralConnector($order->getCompany())->createSaleOrder($orderBC->transformToArray());
@@ -300,16 +301,25 @@ abstract class IntegratorParent implements IntegratorInterface
             "ENTRADA" => "ENT",
             "NUMBER" => "No",
             "NUMERO" => "No",
+            "NúMERO" => "No",
             "PASEO" => "PSO",
             "PUERTO" => "PTO",
             "PLACITA" => "PLA",
             "PLAZA" => "PZA",
-
+            "ESCALERA" => "ESC"
         ];
+
+        $keysTofind = [];
+        $simplificationAddressKeys = array_keys($simplificationAddress);
+        foreach ($simplificationAddressKeys as $simplificationAddressKey) {
+            $keysTofind[] = "/\b" . $simplificationAddressKey . "\b/";
+        }
+
+
 
 
         $adress = strtoupper($adress);
-        $adress = str_replace(array_keys($simplificationAddress), array_values($simplificationAddress), $adress);
+        $adress = preg_replace($keysTofind, array_values($simplificationAddress), $adress);
 
         return ucwords(strtolower($adress));
     }

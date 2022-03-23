@@ -27,11 +27,11 @@ class GetTrackingCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $test = [
-            "GALV22/00565",
+            "GALV22/000674",
         ];
 
         foreach ($test as $tes) {
-            $tracking = $this->dhlGetTracking->getTrackingExternalWeb($tes);
+            $tracking = $this->dhlGetTracking->getTrackingExternal($tes);
             $output->writeln($tes);
             dump($tracking);
         }

@@ -2,7 +2,7 @@
 
 namespace App\Command\Amazon;
 
-use App\Service\Amazon\PublishPowerBi;
+use App\Service\Amazon\Report\PublishPowerBi;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

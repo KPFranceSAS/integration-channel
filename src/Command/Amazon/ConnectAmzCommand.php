@@ -5,7 +5,7 @@ namespace App\Command\Amazon;
 use App\Helper\Utils\ExchangeRateCalculator;
 use App\Service\Amazon\AmzApi;
 use App\Service\Amazon\AmzApiFinancial;
-use App\Service\Amazon\AmzApiImportReimbursement;
+use App\Service\Amazon\Report\AmzApiImportReimbursement;
 use DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

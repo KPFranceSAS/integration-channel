@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Service\Amazon;
+namespace App\Service\Amazon\Report;
 
 use App\Entity\AmazonReturn;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Amazon\AmzApi;
-use App\Service\Amazon\AmzApiImport;
+use App\Service\Amazon\Report\AmzApiImport;
 use DateInterval;
 use DateTime;
 
@@ -37,11 +37,8 @@ class AmzApiImportReturn extends AmzApiImport
             $returnAmz = new AmazonReturn();
             $this->manager->persist($returnAmz);
             $returnAmz->importData($importOrder);
-            $this->addProductAndBrand($returnAmz, $importOrder);
         }
-
-
-
+        $this->addProductByFnsku($returnAmz);
         return $returnAmz;
     }
 }

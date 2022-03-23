@@ -1,32 +1,32 @@
 <?php
 
-namespace App\Command\Amazon;
+namespace App\Command\Amazon\Import;
 
-use App\Service\Amazon\AmzApiImportProduct;
+use App\Service\Amazon\Report\AmzApiImportReimbursement;
 use DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ImportProductCommand extends Command
+class ImportReimbursementsCommand extends Command
 {
-    protected static $defaultName = 'app:amz-import-products-inventory';
-    protected static $defaultDescription = 'Import products inventory';
+    protected static $defaultName = 'app:amz-import-reimbursements';
+    protected static $defaultDescription = 'Import reimbursements from AMZ';
 
-    public function __construct(AmzApiImportProduct $amzApiImportProduct)
+    public function __construct(AmzApiImportReimbursement $amzApiImportReimbursement)
     {
-        $this->amzApiImportProduct = $amzApiImportProduct;
+        $this->amzApiImportReimbursement = $amzApiImportReimbursement;
         parent::__construct();
     }
 
-    private $amzApiImportProduct;
+    private $amzApiImportReimbursement;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $dateImport = ($input->getArgument('dateIntegration') && DateTime::createFromFormat("Y-m-d", $input->getArgument('dateIntegration'))) ? DateTime::createFromFormat("Y-m-d", $input->getArgument('dateIntegration')) : null;
-        $this->amzApiImportProduct->createReportAndImport($dateImport);
+        $this->amzApiImportReimbursement->createReportAndImport($dateImport);
         return Command::SUCCESS;
     }
 

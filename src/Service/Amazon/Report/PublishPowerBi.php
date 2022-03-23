@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Amazon;
+namespace App\Service\Amazon\Report;
 
 use App\Entity\AmazonReimbursement;
 use App\Entity\AmazonReturn;

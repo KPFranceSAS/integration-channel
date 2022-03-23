@@ -242,6 +242,9 @@ class AmzApi
         return $reponse->getPayload();
     }
 
+
+
+
     private function transformDocumentReportToArray($decryptedData)
     {
         $datas = [];
@@ -364,7 +367,7 @@ class AmzApi
     }
 
 
-    private function getAllMarketplaces()
+    public function getAllMarketplaces()
     {
         return [
             Marketplace::ES()->id(),
