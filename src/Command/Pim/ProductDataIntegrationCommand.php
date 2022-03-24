@@ -10,10 +10,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class BrandIntegrationCommand extends Command
+class ProductDataIntegrationCommand extends Command
 {
-    protected static $defaultName = 'app:pim-product-brand-integration-from-pim';
-    protected static $defaultDescription = 'Import all brands';
+    protected static $defaultName = 'app:pim-product-data-integration-from-pim';
+    protected static $defaultDescription = 'Import all products and brands';
 
     public function __construct(ManagerRegistry $manager, AkeneoConnector $akeneoConnector)
     {
@@ -36,18 +36,27 @@ class BrandIntegrationCommand extends Command
             $productDb = $this->manager->getRepository(Product::class)->findOneBy([
                 'sku' => $product['identifier']
             ]);
-            if ($productDb) {
-                if (array_key_exists("brand", $product['values'])) {
-                    $brand = $this->getBrand($product['values']['brand'][0]['data']);
-                    if ($brand) {
-                        $brand->addProduct($productDb);
-                    }
-                }
-                $output->writeln('Product ' . $product['identifier']);
-            } else {
-                $output->writeln('<error>Product not found ' . $product['identifier'] . '</error>');
+            if (!$productDb) {
+                $productDb = new Product();
+                $productDb->setSku($product['identifier']);
+                $this->manager->persist($productDb);
+            }
+            if (array_key_exists("asin", $product['values'])) {
+                $productDb->setAsin($product['values']['asin'][0]['data']);
             }
 
+            if (array_key_exists("brand", $product['values'])) {
+                $brand = $this->getBrand($product['values']['brand'][0]['data']);
+                if ($brand) {
+                    $brand->addProduct($productDb);
+                }
+            }
+
+
+            if (array_key_exists("erp_name", $product['values'])) {
+                $productDb->setDescription($product['values']['erp_name'][0]['data']);
+            }
+            $output->writeln('Product ' . $product['identifier']);
             $this->manager->flush();
         }
         return Command::SUCCESS;
