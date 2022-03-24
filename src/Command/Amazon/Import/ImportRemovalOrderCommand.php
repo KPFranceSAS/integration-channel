@@ -25,16 +25,7 @@ class ImportRemovalOrderCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $dateImport = ($input->getArgument('dateIntegration') && DateTime::createFromFormat("Y-m-d", $input->getArgument('dateIntegration'))) ? DateTime::createFromFormat("Y-m-d", $input->getArgument('dateIntegration')) : null;
-        $this->amzApiImportRemovalOrder->createReportAndImport($dateImport);
+        $this->amzApiImportRemovalOrder->createReportAndImport();
         return Command::SUCCESS;
-    }
-
-
-    protected function configure(): void
-    {
-        $this
-            ->setDescription(self::$defaultDescription)
-            ->addArgument('dateIntegration', InputArgument::OPTIONAL, 'Date format YYYY-MM-DD');
     }
 }

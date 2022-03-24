@@ -3,10 +3,8 @@
 namespace App\Service\Amazon\Report;
 
 use App\Entity\AmazonRemovalOrder;
-use App\Entity\Product;
 use App\Service\Amazon\AmzApi;
 use App\Service\Amazon\Report\AmzApiImport;
-use DateInterval;
 use DateTime;
 
 
@@ -15,10 +13,7 @@ class AmzApiImportRemovalOrder extends AmzApiImport
 
     protected function createReport(?DateTime $dateTimeStart = null)
     {
-        if (!$dateTimeStart) {
-            $dateTimeStart = new DateTime('now');
-            $dateTimeStart->sub(new DateInterval('P3D'));
-        }
+        $dateTimeStart = DateTime::createFromFormat('Y-m-d', '2019-11-01');
         return $this->amzApi->createReport($dateTimeStart, AmzApi::TYPE_REPORT_REMOVAL_ORDER_DETAIL);
     }
 

@@ -5,9 +5,7 @@ namespace App\Command\AliExpress;
 use App\Entity\WebOrder;
 use App\Service\AliExpress\AliExpressApi;
 use App\Service\MailService;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Doctrine\Persistence\ManagerRegistry;
-use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,7 +35,6 @@ class SaveCancelCommand extends Command
 
     private $logger;
 
-    private $mailService;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int
