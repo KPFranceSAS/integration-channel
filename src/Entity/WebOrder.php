@@ -312,7 +312,7 @@ class WebOrder
         $webOrder->setChannel(WebOrder::CHANNEL_CHANNELADVISOR);
         $webOrder->setSubchannel($orderApi->SiteName);
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $webOrder->setPurchaseDateFromString($orderApi->PaymentDateUtc);
+        $webOrder->setPurchaseDateFromString($orderApi->CreatedDateUtc);
 
         if ($orderApi->DistributionCenterTypeRollup == 'ExternallyManaged') {
             $webOrder->setWarehouse(WebOrder::DEPOT_FBA_AMAZON);
