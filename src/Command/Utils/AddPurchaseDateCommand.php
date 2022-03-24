@@ -2,6 +2,7 @@
 
 namespace App\Command\Utils;
 
+use App\Entity\WebOrder;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -27,25 +28,14 @@ class AddPurchaseDateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-
-        $batchSize = 200;
-        $i = 1;
-        $q = $this->manager->createQuery('select a from App\Entity\WebOrder a where a.channel =:channel')->setParameter('channel', 'ALIEXPRESS');
-        foreach ($q->toIterable() as $amz) {
-
-            $purchaseDate = $amz->getPurchaseDate();
+        $amzs = $this->manager->getRepository(WebOrder::class)->findBy(['channel' => 'ALIEXPRESS']);
+        foreach ($amzs as $amz) {
+            $purchaseDate = clone ($amz->getPurchaseDate());
             $purchaseDate->add(new \DateInterval('PT8H'));
             $amz->setPurchaseDate($purchaseDate);
-
-            ++$i;
-            if (($i % $batchSize) === 0) {
-                $this->logger->info("Saved  $i orders ");
-                $this->manager->flush();
-                $this->manager->clear();
-            }
         }
-        $this->logger->info("Test  $i orders ");
         $this->manager->flush();
+
         return Command::SUCCESS;
     }
 }

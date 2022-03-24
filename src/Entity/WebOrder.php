@@ -652,7 +652,6 @@ class WebOrder
     public function setPurchaseDate(?\DateTimeInterface $purchaseDate): self
     {
         $this->purchaseDate = $purchaseDate;
-
         return $this;
     }
 
