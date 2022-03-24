@@ -52,7 +52,7 @@ class FullMajReportCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->amzApiImportProduct->createReportAndImport();
-        $this->amzApiImportRemovalOrder->createReportAndImport();
+        //$this->amzApiImportRemovalOrder->createReportAndImport();
         $this->amzApiImportOrder->createReportAndImport();
         $this->amzApiImportReturn->createReportAndImport();
         $this->amzApiImportReimbursement->createReportAndImport();
