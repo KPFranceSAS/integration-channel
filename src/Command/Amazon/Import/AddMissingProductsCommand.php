@@ -46,6 +46,8 @@ class AddMissingProductsCommand extends Command
                 $this->manager->clear();
             }
         }
+        $this->manager->flush();
+        $this->manager->clear();
 
 
         $i = 1;
@@ -59,6 +61,8 @@ class AddMissingProductsCommand extends Command
                 $this->manager->clear();
             }
         }
+        $this->manager->flush();
+        $this->manager->clear();
 
 
         $i = 1;
@@ -72,6 +76,8 @@ class AddMissingProductsCommand extends Command
                 $this->manager->clear();
             }
         }
+        $this->manager->flush();
+        $this->manager->clear();
 
 
         $this->logger->info("Export orders done ");
