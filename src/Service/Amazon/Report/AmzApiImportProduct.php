@@ -19,7 +19,7 @@ class AmzApiImportProduct extends AmzApiImport
     public function createReportAndImport(?DateTime $dateTimeStart = null)
     {
 
-
+        $this->errorProducts = [];
 
         try {
             $createdSince = new DateTime('now');
@@ -27,26 +27,20 @@ class AmzApiImportProduct extends AmzApiImport
             $marketplaces = $this->amzApi->getAllMarketplaces();
             $reports = $this->amzApi->getAllReports([AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED], [AmzApi::STATUS_REPORT_DONE], $createdSince);
 
-            $errors = [];
-
             foreach ($marketplaces as $marketplace) {
                 foreach ($reports as $report) {
 
                     if (in_array($marketplace, $report->getMarketplaceIds())) {
                         $datasReport = $this->amzApi->getContentReport($report->getReportDocumentId());
-                        try {
-                            $this->importDatas($datasReport);
-                            break;
-                        } catch (Exception $e) {
-                            $errors[] = $e;
-                        }
+                        $this->importDatas($datasReport);
+                        break;
                     }
                 }
             }
 
 
-            if (count($errors) > 0) {
-                throw new Exception(implode('<br/>', $errors));
+            if (count($this->errorProducts) > 0) {
+                $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", implode('<br/>', $this->errorProducts), 'stephane.lanjard@kpsport.com');
             }
         } catch (Exception $e) {
             $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", $e->getMessage(), 'stephane.lanjard@kpsport.com');
@@ -96,7 +90,7 @@ class AmzApiImportProduct extends AmzApiImport
                 $product->setSku($sku);
                 $this->manager->persist($product);
             } else {
-                throw new Exception('Product ' . $sku . ' not found in Business central');
+                $this->errorProducts[] = 'Product ' . $sku . ' not found in Business central';
             }
         }
     }
