@@ -139,8 +139,13 @@ abstract class InvoiceParent
             if ($invoice) {
                 $order->cleanErrors();
                 $postInvoice = $this->postInvoice($order, $invoice);
+                $logMessageInvoice = 'Invoice created in the ERP with number ' . $invoice['number'] . ' on ' . $invoice['invoiceDate'];
+                if ($order->haveNoLogWithMessage($logMessageInvoice)) {
+                    $this->addLogToOrder($order, $logMessageInvoice);
+                } else {
+                    $this->logger->info($logMessageInvoice);
+                }
                 if ($postInvoice) {
-                    $this->addLogToOrder($order, 'Invoice created in the ERP with number ' . $invoice['number']);
                     $order->setInvoiceErp($invoice['number']);
                     $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
                     $order->setStatus(WebOrder::STATE_INVOICED);
@@ -208,7 +213,7 @@ abstract class InvoiceParent
         $now = new DateTime();
         $interval = $now->diff($invoiceDate, true);
         $nbHours = $interval->format('%a') * 24 + $interval->format('%h');
-        if ($nbHours > 36) {
+        if ($nbHours > 30) {
             $messageDelay = 'Order ' . $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. PLease confirm tracking on ' . $this->getChannel();
             if ($order->haveNoLogWithMessage($messageDelay)) {
                 $this->addLogToOrder($order, $messageDelay);

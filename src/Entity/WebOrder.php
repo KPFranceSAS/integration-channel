@@ -378,6 +378,7 @@ class WebOrder
         $webOrder->setSubchannel('AliExpress');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $datePurchase = DateTime::createFromFormat('Y-m-d H:i:s', $orderApi->gmt_pay_success);
+        $datePurchase->add(new \DateInterval('PT8H'));
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_CENTRAL);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);

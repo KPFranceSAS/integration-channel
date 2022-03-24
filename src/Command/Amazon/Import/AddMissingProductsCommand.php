@@ -2,8 +2,6 @@
 
 namespace App\Command\Amazon\Import;
 
-use App\Entity\AmazonOrder;
-use App\Entity\AmazonReturn;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use Doctrine\Persistence\ManagerRegistry;

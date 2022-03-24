@@ -120,6 +120,7 @@ abstract class IntegratorParent implements IntegratorInterface
 
                 $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
                 $this->addLogToOrder($webOrder, 'Order creation in the ERP ' . $businessCentralConnector->getCompanyName());
+                $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
 
                 $erpOrder = $businessCentralConnector->createSaleOrder($orderBC->transformToArray());
 
