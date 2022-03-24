@@ -53,7 +53,7 @@ abstract class AmzApiImport
                     $datasReport = $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
                     $this->importDatas($datasReport);
                     return;
-                } else if ($reportState->getPayload()->getProcessingStatus() == 'FATAL') {
+                } else if (in_array($reportState->getPayload()->getProcessingStatus(), [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL])) {
                     throw new Exception('Fatal error to get report ' . $this->getName());
                 } else {
                     $this->logger->info('Report processing not yet');
