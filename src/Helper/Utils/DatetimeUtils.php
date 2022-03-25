@@ -41,7 +41,7 @@ class DatetimeUtils
             $dateLimit->add(new DateInterval('PT' . $nbHoursRestant . 'H'));
         }
 
-        var_dump($dateLimit->format('Ymd'));
+
         return $dateLimit < $toverify;
     }
 
