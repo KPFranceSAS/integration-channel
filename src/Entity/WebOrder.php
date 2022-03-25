@@ -36,7 +36,7 @@ class WebOrder
 
     const TIMING_INTEGRATION = 24;
 
-    const TIMING_SHIPPING = 72;
+    const TIMING_SHIPPING = 30;
 
     const FULFILLED_BY_EXTERNAL = 'EXTERNALLY MANAGED';
 
@@ -200,6 +200,7 @@ class WebOrder
     }
 
 
+
     public function haveInvoice()
     {
         return $this->invoiceErp != null;
@@ -243,11 +244,9 @@ class WebOrder
     public function hasDelayTreatment()
     {
         if ($this->channel == self::CHANNEL_CHANNELADVISOR && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL && $this->status != self::STATE_INVOICED) {
-            $delay = $this->getNbHoursSinceCreation();
-            return $delay >= self::TIMING_INTEGRATION;
+            return DatetimeUtils::isOutOfDelay($this->createdAt, self::TIMING_INTEGRATION);
         } elseif ($this->fulfilledBy == self::FULFILLED_BY_SELLER && $this->status != self::STATE_INVOICED) {
-            $delay = $this->getNbHoursSincePurchaseDate();
-            return $delay >= self::TIMING_SHIPPING;
+            return DatetimeUtils::isOutOfDelay($this->purchaseDate, self::TIMING_SHIPPING);
         }
         return false;
     }
@@ -260,10 +259,8 @@ class WebOrder
     public function getDelayProblemMessage()
     {
         if ($this->channel == self::CHANNEL_CHANNELADVISOR && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL && $this->status != self::STATE_INVOICED) {
-            $delay = $this->getNbHoursSinceCreation();
             return 'Invoice integration should be done in ' . self::TIMING_INTEGRATION . ' hours  for ' . $this->__toString();
         } elseif ($this->fulfilledBy == self::FULFILLED_BY_SELLER && $this->status != self::STATE_INVOICED) {
-            $delay = $this->getNbHoursSincePurchaseDate();
             return 'Shipping should be processed in ' . self::TIMING_SHIPPING . ' hours  for ' . $this->__toString();
         }
         return 'No delay message for ' . $this->__toString();

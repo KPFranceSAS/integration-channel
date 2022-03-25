@@ -279,7 +279,7 @@ abstract class IntegratorParent implements IntegratorInterface
 
         $product = $this->getBusinessCentralConnector($company)->getItemByNumber($skuFinal);
         if (!$product) {
-            throw new Exception("Product with Sku $skuFinal cannot be found in business central $company. Check Product correlation ");
+            throw new Exception("Product with Sku $skuFinal cannot be found in business central $company. Create a Sku mapping");
         } else {
             return  $product['id'];
         }

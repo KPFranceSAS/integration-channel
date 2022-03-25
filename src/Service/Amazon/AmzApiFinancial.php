@@ -3,6 +3,7 @@
 namespace App\Service\Amazon;
 
 use AmazonPHP\SellingPartner\Model\Finances\FinancialEventGroup;
+use AmazonPHP\SellingPartner\Model\Finances\ShipmentEvent;
 use App\Entity\AmazonFinancialEventGroup;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
@@ -43,16 +44,15 @@ class AmzApiFinancial
     {
 
         $financialGroups = $this->amzApi->getAllFinancials($startDate, $startEnd);
-
-
         foreach ($financialGroups as $financialGroup) {
             $financialGroupFormate = $this->convertFinancialEventGroup($financialGroup);
+            dump($financialGroupFormate);
         }
     }
 
 
 
-    public function saveFinancialEvent($groupEventId)
+    public function storeFinancialEventsGroup($groupEventId)
     {
         $financialEvents = $this->amzApi->getFinancialEventsInGroup($groupEventId);
         $financialEventFormates = $this->formateFinancialEvents($financialEvents);
@@ -61,9 +61,30 @@ class AmzApiFinancial
         foreach ($this->getFinancialTypes() as $financialType) {
             $this->logger->info('Nb Events ' . $financialType . ' >>> ' . count($financialEventFormates[$financialType]));
             foreach ($financialEventFormates[$financialType] as $financialEvent) {
+                try {
+                    $this->{"convert" . $financialType}($financialEvent);
+                } catch (Exception $e) {
+                }
             }
         }
     }
+
+    protected function convertShipmentEventList(ShipmentEvent $financialEvent)
+    {
+
+        $shipmentLists = $financialEvent->getShipmentItemList();
+        foreach ($shipmentLists as $shipmentList) {
+        }
+
+        dump($financialEvent);
+    }
+
+
+    protected function convertServiceFeeEventList($financialEvent)
+    {
+        //dump($financialEvent);
+    }
+
 
 
     protected function formateFinancialEvents($financialEvents): array
@@ -112,19 +133,6 @@ class AmzApiFinancial
         }
         return $amzFinancialEventGroup;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
