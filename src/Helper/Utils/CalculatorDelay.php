@@ -29,10 +29,7 @@ class CalculatorDelay
     private $freeDays = array();
 
     /** @var int[] */
-    private $freeWeekDays = [
-        self::SATURDAY,
-        self::SUNDAY
-    ];
+    private $freeWeekDays = array();
 
     /**
      * @param \DateTime $startDate Date to start calculations from
@@ -213,5 +210,19 @@ class CalculatorDelay
         }
 
         return false;
+    }
+
+
+    public function skipToBegin()
+    {
+        if (!$this->isBusinessDay($this->getDate())) {
+            $this->getDate()->setTime(1, 0, 0);
+            while (true) {
+                $this->getDate()->modify('+1 day');
+                if ($this->isBusinessDay($this->getDate())) {
+                    return;
+                }
+            }
+        }
     }
 }

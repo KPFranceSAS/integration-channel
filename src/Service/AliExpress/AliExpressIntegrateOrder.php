@@ -192,7 +192,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
         $street = str_replace(" ", "", strtoupper($postalAddress->street));
         $forbiddenDestinations = ['CITYBOX', 'CITIBOX', 'CITYPAQ', 'CORREOPOSTAL', 'APARTADOPOSTAL', 'SMARTPOINT'];
         if (u($street)->containsAny($forbiddenDestinations)) {
-            throw new Exception("Adress " . $postalAddress->street . " contains one of the forbidden word. We let you cancel the order online");
+            throw new Exception("Address " . $postalAddress->street . " contains one of the forbidden word. We let you cancel the order online");
         }
     }
 

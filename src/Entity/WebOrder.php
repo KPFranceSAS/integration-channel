@@ -246,7 +246,7 @@ class WebOrder
         if ($this->channel == self::CHANNEL_CHANNELADVISOR && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL && $this->status != self::STATE_INVOICED) {
             return DatetimeUtils::isOutOfDelay($this->createdAt, self::TIMING_INTEGRATION);
         } elseif ($this->fulfilledBy == self::FULFILLED_BY_SELLER && $this->status != self::STATE_INVOICED) {
-            return DatetimeUtils::isOutOfDelay($this->purchaseDate, self::TIMING_SHIPPING);
+            return DatetimeUtils::isOutOfDelayBusinessDays($this->purchaseDate, self::TIMING_SHIPPING);
         }
         return false;
     }
