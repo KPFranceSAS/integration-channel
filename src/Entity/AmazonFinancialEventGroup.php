@@ -114,6 +114,11 @@ class AmazonFinancialEventGroup
      */
     private $amazonFinancialEvents;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $marketplace;
+
     public function __construct()
     {
         $this->amazonFinancialEvents = new ArrayCollection();
@@ -359,6 +364,18 @@ class AmazonFinancialEventGroup
                 $amazonFinancialEvent->setEventGroup(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMarketplace(): ?string
+    {
+        return $this->marketplace;
+    }
+
+    public function setMarketplace(?string $marketplace): self
+    {
+        $this->marketplace = $marketplace;
 
         return $this;
     }

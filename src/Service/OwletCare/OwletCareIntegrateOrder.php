@@ -18,6 +18,9 @@ class OwletCareIntegrateOrder extends IntegratorParent
 
 {
 
+    const OWLETCARE_CUSTOMER_NUMBER = "130803";
+
+
     protected $businessCentralConnector;
 
     protected $owletCareApi;
@@ -73,7 +76,7 @@ class OwletCareIntegrateOrder extends IntegratorParent
     public function transformToAnBcOrder($orderApi): SaleOrder
     {
         $orderBC = new SaleOrder();
-        $orderBC->customerNumber = '130803';
+        $orderBC->customerNumber = self::OWLETCARE_CUSTOMER_NUMBER;
 
         $dateCreated = DatetimeUtils::transformFromIso8601($orderApi['processed_at']);
         $dateCreated->add(new \DateInterval('P3D'));

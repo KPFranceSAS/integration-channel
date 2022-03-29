@@ -4,6 +4,7 @@ namespace App\Service\AliExpress;
 
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Helper\BusinessCentral\Model\PostalAddress;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
 use App\Service\AliExpress\AliExpressApi;
@@ -13,10 +14,12 @@ use App\Service\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
+use function Symfony\Component\String\u;
 use Psr\Log\LoggerInterface;
 
 class AliExpressIntegrateOrder extends IntegratorParent
 {
+    const ALIEXPRESS_CUSTOMER_NUMBER = "002355";
 
     protected $businessCentralConnector;
 
@@ -85,7 +88,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
     {
 
         $orderBC = new SaleOrder();
-        $orderBC->customerNumber = '002355';
+        $orderBC->customerNumber = self::ALIEXPRESS_CUSTOMER_NUMBER;
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->gmt_pay_success, 0, 10));
         $datePayment->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
@@ -116,6 +119,11 @@ class AliExpressIntegrateOrder extends IntegratorParent
                 $orderBC->{$val . "PostalAddress"}->state = substr($orderApi->receipt_address->province, 0, 30);
             }
         }
+
+
+        $this->checkAdressPostal($orderBC->shippingPostalAddress);
+
+
 
         if ($orderApi->settlement_currency != 'EUR') {
             $orderBC->currencyCode =  $orderApi->settlement_currency;
@@ -179,7 +187,14 @@ class AliExpressIntegrateOrder extends IntegratorParent
 
 
 
-
+    public function checkAdressPostal(PostalAddress $postalAddress)
+    {
+        $street = str_replace(" ", "", strtoupper($postalAddress->street));
+        $forbiddenDestinations = ['CITYBOX', 'CITIBOX', 'CITYPAQ', 'CORREOPOSTAL', 'APARTADOPOSTAL', 'SMARTPOINT'];
+        if (u($street)->containsAny($forbiddenDestinations)) {
+            throw new Exception("Adress " . $postalAddress->street . " contains one of the forbidden word. We let you cancel the order online");
+        }
+    }
 
 
 

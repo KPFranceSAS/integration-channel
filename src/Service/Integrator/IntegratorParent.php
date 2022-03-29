@@ -112,8 +112,8 @@ abstract class IntegratorParent implements IntegratorInterface
                 $webOrder->setCompany($company);
                 $this->manager->persist($webOrder);
                 $this->checkAfterPersist($webOrder, $order);
+                // creation of the order
                 $this->addLogToOrder($webOrder, 'Order transformation to fit to ERP model');
-
                 $orderBC = $this->transformToAnBcOrder($order);
                 $webOrder->setWarehouse($orderBC->locationCode);
                 $webOrder->setCustomerNumber($orderBC->customerNumber);
@@ -121,13 +121,18 @@ abstract class IntegratorParent implements IntegratorInterface
                 $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
                 $this->addLogToOrder($webOrder, 'Order creation in the ERP ' . $businessCentralConnector->getCompanyName());
                 $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
-
+                // creation in Business central
                 $erpOrder = $businessCentralConnector->createSaleOrder($orderBC->transformToArray());
 
                 $this->addLogToOrder($webOrder, 'Order created in the ERP ' . $businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
                 $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
                 $webOrder->setOrderErp($erpOrder['number']);
                 $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
+
+                // check if limit of 40 is overlimited
+                if ($webOrder->getFulfilledBy() == WebOrder::FULFILLED_BY_SELLER &&  strlen($orderBC->shippingPostalAddress->street) > 40) {
+                    $this->addError('The BC sale order ' . $erpOrder['number'] . ' corresponding to the weborder  ' . $webOrder->getExternalNumber() . ' has been created with an address length of the street over 40 characters. ' . $orderBC->shippingPostalAddress->street . ". PLease modify it on Business central");
+                }
             } catch (Exception $e) {
                 $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
                 $webOrder->addError($message);
@@ -176,6 +181,10 @@ abstract class IntegratorParent implements IntegratorInterface
             $order->setStatus(WebOrder::STATE_SYNC_TO_ERP);
             $order->setOrderErp($erpOrder['number']);
             $this->addLogToOrder($order, 'Integration done ' . $erpOrder['number']);
+            // check if limit of 40 is overlimited
+            if ($order->getFulfilledBy() == WebOrder::FULFILLED_BY_SELLER &&  strlen($orderBC->shippingPostalAddress->street) > 40) {
+                $this->addError('The BC sale order ' . $erpOrder['number'] . ' corresponding to the weborder  ' . $order->getExternalNumber() . ' has been created with an address length of the street over 40 characters. ' . $orderBC->shippingPostalAddress->street . ". PLease modify it on Business central");
+            }
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
             $order->addError($message);
@@ -291,23 +300,40 @@ abstract class IntegratorParent implements IntegratorInterface
     public function simplifyAddress($adress)
     {
         $simplificationAddress = [
+            "APARTAMENTO" => "APTO",
             "AVENIDA" => "AVE",
+            "AVENUE" => "AVE",
             "AVINGUDA" => "AVE",
+            "BARRIO" => "BO",
+            "BAJO" => "BJ",
+            "BLOQUE" => "BL",
             "CALLE" => "C/",
             "CARRER" => "C/",
             "CAMINITO" => "CMT",
             "CAMINO" => "CAM",
+            "CARRETERA" => "CTRA",
             "CERRADA" => "CER",
             "CIRCULO" => "CIR",
+            "CIUDAD" => "CDAD",
+            "DERECHA" => "DCHA",
+            "ESCALERA" => "ESC",
             "ENTRADA" => "ENT",
+            "IZQUIERDA" => "IZDA",
             "NUMBER" => "No",
             "NUMERO" => "No",
             "NúMERO" => "No",
             "PASEO" => "PSO",
-            "PUERTO" => "PTO",
             "PLACITA" => "PLA",
             "PLAZA" => "PZA",
-            "ESCALERA" => "ESC"
+            "POBLACIóN" => "POBL",
+            "POBLACION" => "POBL",
+            "PUERTO" => "PTO",
+            "PUERTA" => "PTA",
+            "PRESIDENTE" => "PDTE",
+            "TRAVERSíA" => "TRVA",
+            "TRAVERSIA" => "TRVA",
+            "URBANIZACION" => "URB",
+            "URBANIZACIóN" => "URB",
         ];
 
         $keysTofind = [];
@@ -315,9 +341,6 @@ abstract class IntegratorParent implements IntegratorInterface
         foreach ($simplificationAddressKeys as $simplificationAddressKey) {
             $keysTofind[] = "/\b" . $simplificationAddressKey . "\b/";
         }
-
-
-
 
         $adress = strtoupper($adress);
         $adress = preg_replace($keysTofind, array_values($simplificationAddress), $adress);
