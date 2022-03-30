@@ -46,7 +46,7 @@ class DhlGetTracking
         $response = $client->get('https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $externalOrderNumber, ['connect_timeout' => 1]);
         $body = json_decode((string) $response->getBody(), true);
         if ($body) {
-            return str_replace("08 20", "08", $body['NumeroExpedicionTLG']);
+            return str_replace(" 20", "", $body['NumeroExpedicionTLG']);
         }
 
         return null;
