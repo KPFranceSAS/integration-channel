@@ -85,6 +85,9 @@ class SaveCancelCommand extends Command
     private function cancelSaleOrder(WebOrder $webOrder, $reason)
     {
         $this->addLog($webOrder, $reason);
+        $this->errors[] = $webOrder->__toString() . '  has been cancelled';
+        $this->errors[] = $reason;
+
         $webOrder->setStatus(WebOrder::STATE_CANCELLED);
         $saleOrder = $this->gadgetIberiaConnector->getSaleOrderByNumber($webOrder->getOrderErp());
         if ($saleOrder) {
@@ -96,6 +99,14 @@ class SaveCancelCommand extends Command
             }
         } else {
             $this->addLog($webOrder, 'Sale order have already been deleted');
+        }
+
+
+        $saleInvoice = $this->gadgetIberiaConnector->getSaleInvoiceByOrderNumber($webOrder->getOrderErp());
+        if ($saleInvoice) {
+            $this->errors[] = 'Invoice has been created. Check with warehouse the state of the shipment';
+        } else {
+            $this->addLog($webOrder, 'No sale invoice have already been created');
         }
     }
 

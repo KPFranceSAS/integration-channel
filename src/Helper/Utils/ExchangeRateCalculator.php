@@ -60,9 +60,13 @@ class ExchangeRateCalculator
 
     public function getConvertedAmount(float $amount, string $currency, string $date): float
     {
+        if ($amount == 0) {
+            return 0;
+        }
         if ($currency == self::BASE_EURO) {
             return $amount;
         } else {
+
             $rateForDay = $this->getRateForDay($currency, $date);
             return $amount / $rateForDay;
         }

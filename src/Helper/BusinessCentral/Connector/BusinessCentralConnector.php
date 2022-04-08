@@ -21,6 +21,8 @@ abstract class BusinessCentralConnector
 
     const EP_ITEMS = "items";
 
+    const EP_SHIPMENT_METHODS = "shipmentMethods";
+
     const EP_CUSTOMERS = "customers";
 
     const EP_SALES_ORDERS = "salesOrders";
@@ -266,6 +268,18 @@ abstract class BusinessCentralConnector
         ];
 
         return $this->doGetRequest(self::EP_SALES_ORDERS, $query)['value'];
+    }
+
+
+    public function getAllShipmentMethods()
+    {
+        return $this->doGetRequest(self::EP_SHIPMENT_METHODS);
+    }
+
+
+    public function getShipmentMethodByCode(string $code)
+    {
+        return $this->getElementsByArray(self::EP_SHIPMENT_METHODS, "code eq '$code' ");
     }
 
 

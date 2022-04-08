@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\WebOrder;
 use App\Helper\Utils\InvoiceDownload;
+use App\Service\AliExpress\AliExpressApi;
 use App\Service\BusinessCentral\GadgetIberiaConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,7 +22,7 @@ class InvoiceController extends AbstractController
     /**
      * @Route("/invoice/aliexpress", name="invoice_list", methods={"GET","POST"})
      */
-    public function getInvoice(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector): Response
+    public function getInvoice(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector, AliExpressApi $aliExpressApi): Response
     {
 
         $invoice = new InvoiceDownload();
@@ -52,16 +53,26 @@ class InvoiceController extends AbstractController
             $webOrder = count($webOrders) > 0 ? reset($webOrders) : null;
             if ($webOrder) {
                 if ($webOrder->getStatus() == WebOrder::STATE_INVOICED) {
-                    $invoice = $gadgetIberiaConnector->getSaleInvoiceByNumber($webOrder->getInvoiceErp());
-                    $contentInvoice  = $gadgetIberiaConnector->getContentInvoicePdf($invoice['id']);
-                    $response = new Response();
-                    $response->headers->set('Cache-Control', 'private');
-                    $response->headers->set('Content-type', "application/pdf");
-                    $response->headers->set('Content-Disposition', 'attachment; filename="' . $invoice['id'] . '-' . $invoice['number'] . '.pdf";');
-                    $response->headers->set('Content-length', strlen($contentInvoice));
-                    $response->sendHeaders();
-                    $response->setContent($contentInvoice);
-                    return $response;
+                    $orderAli = $aliExpressApi->getOrder($webOrder->getExternalNumber());
+                    if (!$orderAli) {
+                        $this->addFlash('danger', 'Actualmente no podemos conectar con Aliexpress.');
+                    } else {
+
+                        if ($orderAli->order_status == "FINISH" && $orderAli->order_end_reason == "buyer_accept_goods") {
+                            $invoice = $gadgetIberiaConnector->getSaleInvoiceByNumber($webOrder->getInvoiceErp());
+                            $contentInvoice  = $gadgetIberiaConnector->getContentInvoicePdf($invoice['id']);
+                            $response = new Response();
+                            $response->headers->set('Cache-Control', 'private');
+                            $response->headers->set('Content-type', "application/pdf");
+                            $response->headers->set('Content-Disposition', 'attachment; filename="' . $webOrder->getExternalNumber() . '-' . $invoice['number'] . '.pdf";');
+                            $response->headers->set('Content-length', strlen($contentInvoice));
+                            $response->sendHeaders();
+                            $response->setContent($contentInvoice);
+                            return $response;
+                        } else {
+                            $this->addFlash('info', 'Tiene que confirmar la recepcion de tu pedido en Aliexpress para poder descargarlo.');
+                        }
+                    }
                 } else {
                     $this->addFlash('info', 'Su factura aún no está lista. Tiene que esperar a que le enviemos su pedido para poder descargarlo.');
                 }

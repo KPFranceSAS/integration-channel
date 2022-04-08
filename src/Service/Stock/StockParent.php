@@ -45,7 +45,7 @@ abstract class StockParent
             $this->sendStocks();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmail('[Send stock Integration ' . $this->getChannel() . '] Error', $e->getMessage(), 'stephane.lanjard@kpsport.com');
+            $this->mailer->sendEmail('[Send stock Integration ' . $this->getChannel() . '] Error', $e->getMessage());
         }
     }
 

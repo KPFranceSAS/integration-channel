@@ -36,9 +36,14 @@ class ConnectAmzCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
+        dump($this->api->getFinancialEventsInOrder('408-5305282-8647508'));
+        //$this->getFinancialEvents();
+        //$this->getFinancialsGroup();
 
         return Command::SUCCESS;
     }
+
+
 
 
     protected function getProductData()
@@ -49,19 +54,40 @@ class ConnectAmzCommand extends Command
 
 
 
-    protected function getFinancials()
+    protected function getFinancialsGroup()
     {
-        $dateTime = new DateTime('2022-01-01');
+
+        /*
+    Select ROUND(SUM(afe.amount_currency)) as total,  ROUND(afeg.original_total_currency) as groupe,  afeg.id, afeg.start_date, afeg.end_date, afeg.financial_event_id , afeg.marketplace  FROM integration_channel.amazon_financial_event afe
+    LEFT JOIN integration_channel.amazon_financial_event_group afeg on afeg.id = afe.event_group_id 
+    GROUP BY afeg.id 
+
+    Select SUM(afe.amount), SUM(afe.amount_currency), afe.transaction_type, afe.amount_type, afe.amount_description 
+FROM integration_channel.amazon_financial_event afe
+WHERE event_group_id = 1
+GROUP BY afe.transaction_type, afe.amount_type, afe.amount_description 
+    */
+
+        $financialGroups = $this->fincancial->getAllFinancialEventsByGroup('uPW0zIwADqLA6Tsph6HJsPUcixVUvfkhBqAcJu7cLF0');
+        $sum = 0;
+        foreach ($financialGroups as $financial) {
+            $sum += $financial->getAmountCurrency();
+        }
+        dump($sum);
+
+
+
+        /* $dateTime = new DateTime('2022-01-01');
         $dateTimeFin = new DateTime('2022-02-01');
-        $financialGroups = $this->api->getAllFinancials($dateTime, $dateTimeFin);
+        $financialGroups = $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);*/
     }
 
     protected function getFinancialEvents()
     {
 
-        $dateTime = new DateTime('2022-01-01');
-        $dateTimeFin = new DateTime('2022-02-01');
-        $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);
+        $dateTime = new DateTime('2019-11-01');
+        $dateTimeFin = new DateTime('2020-06-03');
+        $financialGroups = $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);
     }
 
 
