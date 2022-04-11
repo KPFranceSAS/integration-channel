@@ -11,7 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class IntegrateOrderTestCommand extends Command
+class IntegrateOrderCommand extends Command
 {
     protected static $defaultName = 'app:integrate-order-test';
     protected static $defaultDescription = 'integrate order test';
