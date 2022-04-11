@@ -52,7 +52,7 @@ abstract class AdminCrudController extends AbstractCrudController
         $entities = $entityFactory->createCollection($context->getEntity(), $queryBuilder->getQuery()->getResult());
         $entityFactory->processFieldsForAll($entities, $fields);
         $writer = WriterEntityFactory::createCSVWriter();
-        $fileName = u('Export ' . $this->getName() . '_' . date('Ymd-His') . '.csv')->snake();
+        $fileName = u('Export ' . $this->getName() . '_' . date('Ymd-His'))->snake() . '.csv';
         $writer->openToBrowser($fileName);
         $h = fopen('php://output', 'r');
 
