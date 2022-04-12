@@ -7,6 +7,7 @@ use App\Entity\WebOrder;
 use App\Helper\Utils\InvoiceDownload;
 use App\Service\AliExpress\AliExpressApi;
 use App\Service\BusinessCentral\GadgetIberiaConnector;
+use App\Service\FitbitExpress\FitbitExpressApi;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -22,7 +23,7 @@ class InvoiceController extends AbstractController
     /**
      * @Route("/invoice/aliexpress", name="invoice_list", methods={"GET","POST"})
      */
-    public function getInvoice(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector, AliExpressApi $aliExpressApi): Response
+    public function getInvoice(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector, AliExpressApi $aliExpressApi, FitbitExpressApi $fitbitExpressApi): Response
     {
 
         $invoice = new InvoiceDownload();
@@ -53,7 +54,7 @@ class InvoiceController extends AbstractController
             $webOrder = count($webOrders) > 0 ? reset($webOrders) : null;
             if ($webOrder) {
                 if ($webOrder->getStatus() == WebOrder::STATE_INVOICED) {
-                    $orderAli = $aliExpressApi->getOrder($webOrder->getExternalNumber());
+                    $orderAli = $webOrder->getChannel() == WebOrder::CHANNEL_ALIEXPRESS ? $aliExpressApi->getOrder($webOrder->getExternalNumber()) : $fitbitExpressApi->getOrder($webOrder->getExternalNumber());
                     if (!$orderAli) {
                         $this->addFlash('danger', 'Actualmente no podemos conectar con Aliexpress.');
                     } else {

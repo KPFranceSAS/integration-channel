@@ -61,7 +61,7 @@ class BuildHistoricCommand extends Command
             if ($this->checkIfImport($order->order_id)) {
                 $invoice = $this->bcConnector->getSaleInvoiceByExternalDocumentNumberCustomer($order->order_id, AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER);
                 if ($invoice) {
-                    $orderApi = $this->aliExpressApi->getOrder($order->order_id);
+                    $orderApi = $this->fitbitExpressApi->getOrder($order->order_id);
                     $webOrder = WebOrder::createOneFrom($orderApi, WebOrder::CHANNEL_FITBITEXPRESS);
                     $this->manager->persist($webOrder);
                     $webOrder->setCompany($this->bcConnector->getCompanyName());
