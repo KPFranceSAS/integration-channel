@@ -57,7 +57,7 @@ class SaveCancelCommand extends Command
         $this->manager->flush();
 
         if (count($this->errors) > 0) {
-            $this->mailer->sendEmail('[Order Cancelation ' . $this->getChannel() . '] Error', implode("<br/>", $this->errors));
+            $this->mailService->sendEmail('[Order Cancelation ' . $this->getChannel() . '] Error', implode("<br/>", $this->errors));
         }
 
 
@@ -87,7 +87,7 @@ class SaveCancelCommand extends Command
     protected function cancelSaleOrder(WebOrder $webOrder, $reason)
     {
         $this->addLog($webOrder, $reason);
-        $this->errors[] = $webOrder->__toString() . '  has been cancelled';
+        $this->errors[] = $webOrder . '  has been cancelled';
         $this->errors[] = $reason;
 
         $webOrder->setStatus(WebOrder::STATE_CANCELLED);
