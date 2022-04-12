@@ -34,7 +34,7 @@ class StockAggregator
         } else if ($channel == WebOrder::CHANNEL_OWLETCARE) {
             return $this->owletCareStock;
         } else if ($channel == WebOrder::CHANNEL_FITBITEXPRESS) {
-            return $this->owletCareStock;
+            return $this->fitbitExpressStock;
         }
 
         throw new Exception("Channel $channel is not related to any stock");
