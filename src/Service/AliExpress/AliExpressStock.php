@@ -99,25 +99,25 @@ class AliExpressStock extends StockParent
 
     public function defineStockBrand($brand)
     {
-        if ($brand && in_array($brand, self::getBrandsFromMadrid())) {
+        if ($brand && in_array($brand, AliExpressStock::getBrandsFromMadrid())) {
             return WebOrder::DEPOT_MADRID;
         }
         return WebOrder::DEPOT_CENTRAL;
     }
 
 
-    private function cleanString(string $string)
+    protected function cleanString(string $string)
     {
         return strtoupper(trim(str_replace(' ', '', $string)));
     }
 
 
-    private function checkIfEgalString(string $string1, string $string2)
+    protected function checkIfEgalString(string $string1, string $string2)
     {
         return $this->cleanString($string1) == $this->cleanString($string2);
     }
 
-    private function extractBrandFromResponse($productInfo)
+    protected function extractBrandFromResponse($productInfo)
     {
         foreach ($productInfo->aeop_ae_product_propertys->global_aeop_ae_product_property as $property) {
             if ($this->checkIfEgalString($property->attr_name, 'Brand Name')) {
@@ -129,7 +129,7 @@ class AliExpressStock extends StockParent
 
 
 
-    private function extractSkuFromResponse($productInfo)
+    protected function extractSkuFromResponse($productInfo)
     {
         $skus = [];
         foreach ($productInfo->aeop_ae_product_s_k_us->global_aeop_ae_product_sku as $skuList) {

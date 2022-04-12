@@ -2,7 +2,7 @@
 {% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_CHANNELADVISOR')  %}
 	{% include "admin/fields/channelContent.html.twig" with {'field': field} %}
 {% endif %}
-{% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_ALIEXPRESS')  %}
+{% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_ALIEXPRESS') or entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_FITBITEXPRESS')  %}
 	{% include "admin/fields/aliExpressContent.html.twig" with {'field': field} %}
 {% endif %}
 {% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_OWLETCARE')  %}

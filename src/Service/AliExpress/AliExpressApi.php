@@ -21,15 +21,15 @@ class AliExpressApi
 {
 
 
-    private $aliExpressClientId;
+    protected $aliExpressClientId;
 
-    private $aliExpressClientSecret;
+    protected $aliExpressClientSecret;
 
-    private $aliExpressClientAccessToken;
+    protected $aliExpressClientAccessToken;
 
-    private $client;
+    protected $client;
 
-    private $logger;
+    protected $logger;
 
 
     public function __construct(LoggerInterface $logger, $aliExpressClientId, $aliExpressClientSecret, $aliExpressClientAccessToken)
@@ -187,7 +187,7 @@ class AliExpressApi
         return $resp->result_list->aeop_logistics_service_result;
     }
 
-    private  function checkIfAlreadySent($orderId)
+    protected  function checkIfAlreadySent($orderId)
     {
         try {
             $this->logger->info('Check if already send');
@@ -282,13 +282,13 @@ class AliExpressApi
     }
 
 
-    private function cleanString(string $string)
+    protected function cleanString(string $string)
     {
         return strtoupper(trim(str_replace(' ', '', $string)));
     }
 
 
-    private function checkIfEgalString(string $string1, string $string2)
+    protected function checkIfEgalString(string $string1, string $string2)
     {
         return $this->cleanString($string1) == $this->cleanString($string2);
     }

@@ -351,7 +351,6 @@ class AmzApiFinancial
     protected function convertServiceFeeEventList(ServiceFeeEvent $financialEvent): array
     {
         $financialEvents = [];
-        dump($financialEvent);
 
         foreach ($financialEvent->getFeeList() as $feeCharge) {
             $amzFinancialEvent = new AmazonFinancialEvent();

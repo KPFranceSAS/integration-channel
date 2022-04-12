@@ -17,6 +17,8 @@ class WebOrder
 
     const CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
 
+    const CHANNEL_FITBITEXPRESS = 'FITBITEXPRESS';
+
     const CHANNEL_OWLETCARE = 'OWLETCARE';
 
     const DOCUMENT_ORDER = 'ORDER';
@@ -290,6 +292,7 @@ class WebOrder
     public function getUrl()
     {
         switch ($this->channel) {
+            case  WebOrder::CHANNEL_FITBITEXPRESS:
             case  WebOrder::CHANNEL_ALIEXPRESS:
                 return 'https://gsp.aliexpress.com/apps/order/detail?orderId=' . $this->externalNumber;
             case  WebOrder::CHANNEL_CHANNELADVISOR:
@@ -301,7 +304,7 @@ class WebOrder
         throw new Exception('No url link of weborder for ' . $this->channel);
     }
 
-    public static function createOneFromChannelAdvisor($orderApi)
+    public static function createOneFromChannelAdvisor($orderApi): WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->SiteOrderID);
@@ -334,10 +337,14 @@ class WebOrder
 
 
 
-    public static function createOneFrom($orderApi, $channel)
+    public static function createOneFrom($orderApi, $channel): WebOrder
     {
         if ($channel == WebOrder::CHANNEL_ALIEXPRESS) {
             return WebOrder::createOneFromAliExpress($orderApi);
+        } elseif ($channel == WebOrder::CHANNEL_FITBITEXPRESS) {
+            $webOrder = WebOrder::createOneFromAliExpress($orderApi);
+            $webOrder->setChannel(WebOrder::CHANNEL_FITBITEXPRESS);
+            return $webOrder;
         } else if ($channel == WebOrder::CHANNEL_CHANNELADVISOR) {
             return WebOrder::createOneFromChannelAdvisor($orderApi);
         } else if ($channel == WebOrder::CHANNEL_OWLETCARE) {
@@ -347,7 +354,7 @@ class WebOrder
     }
 
 
-    public static function createOneFromOwletcare($orderApi)
+    public static function createOneFromOwletcare($orderApi): WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber((string)$orderApi['order_number']);
@@ -366,7 +373,7 @@ class WebOrder
 
 
 
-    public static function createOneFromAliExpress($orderApi)
+    public static function createOneFromAliExpress($orderApi): WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->id);
@@ -375,7 +382,7 @@ class WebOrder
         $webOrder->setSubchannel('AliExpress');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $datePurchase = DateTime::createFromFormat('Y-m-d H:i:s', $orderApi->gmt_pay_success);
-        $datePurchase->add(new \DateInterval('PT8H'));
+        $datePurchase->add(new \DateInterval('PT9H'));
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_CENTRAL);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
@@ -384,7 +391,7 @@ class WebOrder
         return $webOrder;
     }
 
-    public function haveNoLogWithMessage($logMessage)
+    public function haveNoLogWithMessage($logMessage): bool
     {
         foreach ($this->logs as $log) {
             if ($log['content'] == $logMessage) {

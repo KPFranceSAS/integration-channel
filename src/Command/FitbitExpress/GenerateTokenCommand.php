@@ -1,10 +1,8 @@
 <?php
 
-namespace App\Command\AliExpress;
+namespace App\Command\FitbitExpress;
 
-use App\Service\AliExpress\AliExpressApi;
-use App\Service\AliExpress\AliExpressIntegrateOrder;
-use App\Service\BusinessCentral\GadgetIberiaConnector;
+use App\Service\FitbitExpress\FitbitExpressApi;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,16 +10,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GenerateTokenCommand extends Command
 {
-    protected static $defaultName = 'app:aliexpress-generate-code';
+    protected static $defaultName = 'app:fitbitexpress-generate-code';
     protected static $defaultDescription = 'Generate a new token';
 
-    public function __construct(AliExpressApi $aliExpress)
+    public function __construct(FitbitExpressApi $fitbitExpress)
     {
-        $this->aliExpress = $aliExpress;
+        $this->fitbitExpress = $fitbitExpress;
         parent::__construct();
     }
 
-    private $aliExpress;
+    private $fitbitExpress;
 
     protected function configure(): void
     {
@@ -33,7 +31,7 @@ class GenerateTokenCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $token = $this->aliExpress->getNewAccessToken($input->getArgument('code'));
+        $token = $this->fitbitExpress->getNewAccessToken($input->getArgument('code'));
         var_dump($token['access_token']);
         return Command::SUCCESS;
     }

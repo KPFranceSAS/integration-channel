@@ -75,6 +75,11 @@ class AliExpressIntegrateOrder extends IntegratorParent
 
 
 
+    protected function getClientNumber()
+    {
+        return self::ALIEXPRESS_CUSTOMER_NUMBER;
+    }
+
 
 
     public function getCompanyIntegration($orderApi)
@@ -88,7 +93,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
     {
 
         $orderBC = new SaleOrder();
-        $orderBC->customerNumber = self::ALIEXPRESS_CUSTOMER_NUMBER;
+        $orderBC->customerNumber = $this->getClientNumber();
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->gmt_pay_success, 0, 10));
         $datePayment->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
@@ -228,18 +233,18 @@ class AliExpressIntegrateOrder extends IntegratorParent
 
 
 
-    private function getTotalDiscountByAliExpress($saleLineApis)
+    protected function getTotalDiscountByAliExpress($saleLineApis)
     {
         return $this->getTotalDiscountBy($saleLineApis, 'PLATFORM');
     }
 
 
-    private function getTotalDiscountBySeller($saleLineApis)
+    protected function getTotalDiscountBySeller($saleLineApis)
     {
         return $this->getTotalDiscountBy($saleLineApis, 'SELLER');
     }
 
-    private function getTotalDiscountBy($saleLineApis, $typeDiscount)
+    protected function getTotalDiscountBy($saleLineApis, $typeDiscount)
     {
         $discount = 0;
         foreach ($saleLineApis as $line) {
@@ -255,7 +260,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
     }
 
 
-    private function getSalesOrderLines($orderApi): array
+    protected function getSalesOrderLines($orderApi): array
     {
         $saleOrderLines = [];
         $company = $this->getCompanyIntegration($orderApi);

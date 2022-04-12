@@ -19,7 +19,7 @@ class IntegrateOrderCommand extends Command
     public function __construct(
         BusinessCentralAggregator $bcAggregator
     ) {
-        $this->bcConnector = $bcAggregator->getBusinessCentralConnector(BusinessCentralConnector::KIT_PERSONALIZACION_SPORT);
+        $this->bcConnector = $bcAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
         parent::__construct();
     }
 

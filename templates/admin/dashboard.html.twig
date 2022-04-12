@@ -3,32 +3,63 @@
 {% block main %}
 
 
-{% set urlOrder = ea_url()
-    .setController('App\\Controller\\Order\\WebOrderCrudController')
-    .setAction('index') %}
 
-{% set urlProduct = ea_url()
-    .setController('App\\Controller\\Admin\\ProductCorrelationCrudController')
-    .setAction('index') %}
+  
 
-{% set urlUser = ea_url()
-    .setController('App\\Controller\\Admin\\UserCrudController')
-    .setAction('index') %}    
-
-<div class="">
-    <div class="row">
-        <div class="col-4 text-center d-grid gap-2">
-            <a href="{{urlOrder}}" class="btn btn-outline-primary btn-lg">
+<div class="mb-4">
+    <div class="row ">
+        <div class="col-4 text-center d-grid gap-2 ">
+            <a href="{{ ea_url().setController('App\\Controller\\Order\\WebOrderCrudController').setAction('index') }}" class="btn btn-outline-primary btn-lg">
             <i class="fa fa-shopping-cart"></i><br/>All Orders
             </a>
         </div>
-        <div class="col-4 text-center d-grid gap-2">
-            <a href="{{urlProduct}}" class="btn btn-outline-primary btn-lg">
+        <div class="col-4 text-center d-grid gap-2 ">
+            <a href="{{ ea_url().setController('App\\Controller\\Order\\ErrorOrderCrudController').setAction('index') }}" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-exclamation-triangle"></i><br/>Errors
+            </a>
+        </div>
+        <div class="col-4 text-center d-grid gap-2 ">
+            <a href="{{ ea_url().setController('App\\Controller\\Order\\DeliveryOrderCrudController').setAction('index') }}" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-truck-loading"></i><br/>On delivery
+            </a>
+        </div>
+    </div>
+ </div>   
+ <div class="mb-4">
+    <div class="row">   
+
+        <div class="col-3 text-center d-grid gap-2 ">
+            <a href="{{ ea_url().setController('App\\Controller\\Order\\ChannelAdvisorOrderCrudController').setAction('index')}}" class="btn btn-outline-primary btn-lg">
+                <i class="fab fa-amazon"></i><br/>Amazon
+            </a>
+        </div>
+        <div class="col-3 text-center d-grid gap-2 ">
+            <a href="{{ ea_url().setController('App\\Controller\\Order\\AliexpressOrderCrudController').setAction('index')}}" class="btn btn-outline-primary btn-lg">
+            <i class="fab fa-alipay"></i><br/>Aliexpress
+            </a>
+        </div>
+        <div class="col-3 text-center d-grid gap-2 ">
+            <a href="{{ ea_url().setController('App\\Controller\\Order\\FitbitExpressOrderCrudController').setAction('index')}}" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-heartbeat"></i><br/>Fitbitexpress
+            </a>
+        </div>
+        <div class="col-3 text-center d-grid gap-2 ">
+            <a href="{{ ea_url().setController('App\\Controller\\Order\\OwletCareOrderCrudController').setAction('index')}}" class="btn btn-outline-primary btn-lg">
+            <i class="fas fa-baby"></i><br/>Owletcare
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="">
+    <div class="row">
+        <div class="col-4 text-center d-grid gap-2 ">
+            <a href="{{ ea_url().setController('App\\Controller\\Order\\ProductCorrelationCrudController').setAction('index')}}" class="btn btn-outline-primary btn-lg">
             <i class="fa fa-exchange"></i><br/>SKU mapping
             </a>
         </div>
-        <div class="col-4 text-center d-grid gap-2">
-            <a href="{{urlUser}}" class="btn btn-outline-primary btn-lg">
+        <div class="col-4 text-center d-grid gap-2 ">
+            <a href="{{ ea_url().setController('App\\Controller\\Admin\\UserCrudController').setAction('index')}}" class="btn btn-outline-primary btn-lg">
             <i class="fa fa-user"></i><br/>Users
             </a>
         </div>

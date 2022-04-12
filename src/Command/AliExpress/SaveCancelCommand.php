@@ -19,9 +19,6 @@ class SaveCancelCommand extends Command
     protected static $defaultDescription = 'Retrieve all Aliexpress orders cancelled online';
 
 
-
-
-
     public function __construct(ManagerRegistry $manager, AliExpressApi $aliExpressApi, LoggerInterface $logger, MailService $mailService, GadgetIberiaConnector $gadgetIberiaConnector)
     {
         parent::__construct();
@@ -32,27 +29,27 @@ class SaveCancelCommand extends Command
         $this->mailService = $mailService;
     }
 
-    private $manager;
+    protected $manager;
 
-    private $gadgetIberiaConnector;
+    protected $gadgetIberiaConnector;
 
-    private $aliExpressApi;
+    protected $aliExpressApi;
 
-    private $logger;
+    protected $logger;
 
-    private $errors = [];
+    protected $errors = [];
 
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $webOrders = $this->manager->getRepository(WebOrder::class)->findBy(['status' => WebOrder::STATE_SYNC_TO_ERP, 'channel' => WebOrder::CHANNEL_ALIEXPRESS]);
+        $webOrders = $this->manager->getRepository(WebOrder::class)->findBy(['status' => WebOrder::STATE_SYNC_TO_ERP, 'channel' =>  $this->getChannel()]);
         foreach ($webOrders as $webOrder) {
             $this->checkOrderStatus($webOrder);
         }
 
-        $webOrdersCancel = $this->manager->getRepository(WebOrder::class)->findBy(['status' => WebOrder::STATE_ERROR, 'channel' => WebOrder::CHANNEL_ALIEXPRESS]);
+        $webOrdersCancel = $this->manager->getRepository(WebOrder::class)->findBy(['status' => WebOrder::STATE_ERROR, 'channel' => $this->getChannel()]);
         foreach ($webOrdersCancel as $webOrderCancel) {
             $this->checkOrderStatus($webOrderCancel);
         }
@@ -60,7 +57,7 @@ class SaveCancelCommand extends Command
         $this->manager->flush();
 
         if (count($this->errors) > 0) {
-            $this->mailer->sendEmail('[Order Cancelation ALIEXPRESS] Error', implode("<br/>", $this->errors));
+            $this->mailer->sendEmail('[Order Cancelation ' . $this->getChannel() . '] Error', implode("<br/>", $this->errors));
         }
 
 
@@ -68,8 +65,13 @@ class SaveCancelCommand extends Command
     }
 
 
+    protected function getChannel()
+    {
+        return WebOrder::CHANNEL_ALIEXPRESS;
+    }
 
-    private function checkOrderStatus(WebOrder $webOrder)
+
+    protected function checkOrderStatus(WebOrder $webOrder)
     {
         $orderAliexpress = $this->aliExpressApi->getOrder($webOrder->getExternalNumber());
         if ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "cancel_order_close_trade") {
@@ -82,7 +84,7 @@ class SaveCancelCommand extends Command
     }
 
 
-    private function cancelSaleOrder(WebOrder $webOrder, $reason)
+    protected function cancelSaleOrder(WebOrder $webOrder, $reason)
     {
         $this->addLog($webOrder, $reason);
         $this->errors[] = $webOrder->__toString() . '  has been cancelled';
@@ -111,7 +113,7 @@ class SaveCancelCommand extends Command
     }
 
 
-    private function addLog(WebOrder $webOrder, $log)
+    protected function addLog(WebOrder $webOrder, $log)
     {
         $webOrder->addLog($log);
         $this->logger->info($log);

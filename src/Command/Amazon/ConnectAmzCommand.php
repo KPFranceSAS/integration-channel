@@ -36,8 +36,8 @@ class ConnectAmzCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        dump($this->api->getFinancialEventsInOrder('408-5305282-8647508'));
-        //$this->getFinancialEvents();
+
+        $this->getFinancialEvents();
         //$this->getFinancialsGroup();
 
         return Command::SUCCESS;
@@ -68,7 +68,7 @@ WHERE event_group_id = 1
 GROUP BY afe.transaction_type, afe.amount_type, afe.amount_description 
     */
 
-        $financialGroups = $this->fincancial->getAllFinancialEventsByGroup('uPW0zIwADqLA6Tsph6HJsPUcixVUvfkhBqAcJu7cLF0');
+        $financialGroups = $this->fincancial->getAllFinancialEventsByGroup('XlFY-Vub4rWx9qpS4LgQeFC2MeRxqbKzTC7CmaREdIw');
         $sum = 0;
         foreach ($financialGroups as $financial) {
             $sum += $financial->getAmountCurrency();
@@ -89,7 +89,6 @@ GROUP BY afe.transaction_type, afe.amount_type, afe.amount_description
         $dateTimeFin = new DateTime('2020-06-03');
         $financialGroups = $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);
     }
-
 
 
 
