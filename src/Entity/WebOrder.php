@@ -30,6 +30,8 @@ class WebOrder
 
     const DEPOT_CENTRAL = 'CENTRAL';
 
+    const DEPOT_LAROCA = 'LAROCA';
+
     const DEPOT_ACTIVE_ANTS = 'ACTIVE';
 
     const DEPOT_MADRID = 'MADRID';

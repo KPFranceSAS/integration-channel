@@ -111,7 +111,12 @@ abstract class StockParent
             }
         }
         if (count($this->stockLevels) == 0) {
-            throw new \Exception('Error of mapping for stock files ' . json_encode($header));
+            throw new \Exception('Error of mapping for stock files published ' . json_encode($header));
+        }
+
+
+        if (count($this->stockLevels) < 5000) {
+            throw new \Exception('Error with number lines of stock files published ' . count($this->stockLevels));
         }
 
         $this->logger->info('Nb of lines :' . count($this->stockLevels));

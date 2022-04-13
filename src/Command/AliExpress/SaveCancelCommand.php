@@ -95,18 +95,20 @@ class SaveCancelCommand extends Command
         if ($saleOrder) {
             try {
                 $result = $this->gadgetIberiaConnector->deleteSaleOrder($saleOrder['id']);
-                $this->addLog($webOrder, 'Sale order have been deleted');
+                $this->addLog($webOrder, 'Sale order ' . $webOrder->getOrderErp() . ' have been deleted');
             } catch (Exception $e) {
                 $this->errors[] = 'Deleting the sale order ' . $webOrder->getOrderErp() . ' did not succeeded ' . $e->getMessage();
             }
         } else {
-            $this->addLog($webOrder, 'Sale order have already been deleted');
+            $this->addLog($webOrder, 'Sale order ' . $webOrder->getOrderErp() . ' have already been deleted');
         }
 
 
         $saleInvoice = $this->gadgetIberiaConnector->getSaleInvoiceByOrderNumber($webOrder->getOrderErp());
         if ($saleInvoice) {
-            $this->errors[] = 'Invoice has been created. Check with warehouse the state of the shipment';
+            $invoiceCreationProblem = 'Invoice ' . $saleInvoice['number'] . ' has been created. Check with warehouse the state of the shipment';
+            $this->errors[] = $invoiceCreationProblem;
+            $this->addLog($webOrder, $invoiceCreationProblem);
         } else {
             $this->addLog($webOrder, 'No sale invoice have already been created');
         }
