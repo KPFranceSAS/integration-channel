@@ -50,7 +50,7 @@ abstract class InvoiceParent
     }
 
 
-    protected function getTracking($order, $invoice)
+    protected function getTracking(WebOrder $order, $invoice)
     {
         $tracking = $this->tracker->getTracking($order->getCompany(), $invoice['number']);
         if (!$tracking) {
@@ -59,7 +59,12 @@ abstract class InvoiceParent
             if ($this->isATrackingNumber($tracking['Tracking number'])) {
                 return $tracking;
             } else {
-                $this->logger->info('Tracking number is not retrieved from DHL ' . $tracking['Tracking number']);
+                $logNotFoundTracking = 'Tracking number is not yet retrieved from DHL for expedition ' . $tracking['Tracking number'];
+                if ($order->haveNoLogWithMessage($logNotFoundTracking)) {
+                    $this->addLogToOrder($order, $logNotFoundTracking);
+                } else {
+                    $this->logger->info($logNotFoundTracking);
+                }
                 $trackingFromWeb =  $this->tracker->getDhlTracking($tracking['Tracking number']);
                 if ($trackingFromWeb) {
                     $tracking['Tracking number'] = $trackingFromWeb;
