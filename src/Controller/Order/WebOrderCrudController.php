@@ -141,6 +141,7 @@ class WebOrderCrudController extends AdminCrudController
 
         $choicesWarehouse = [
             WebOrder::DEPOT_CENTRAL => WebOrder::DEPOT_CENTRAL,
+            WebOrder::DEPOT_LAROCA => WebOrder::DEPOT_LAROCA,
             WebOrder::DEPOT_MADRID => WebOrder::DEPOT_MADRID,
             WebOrder::DEPOT_FBA_AMAZON  => WebOrder::DEPOT_FBA_AMAZON
         ];
@@ -149,6 +150,9 @@ class WebOrderCrudController extends AdminCrudController
         return $filters
             ->add(ChoiceFilter::new('status')->canSelectMultiple(true)->setChoices($choiceStatuts))
             ->add(DateTimeFilter::new('purchaseDate', "Purchase date"))
+            ->add(DateTimeFilter::new('createdAt', "Created at"))
+            ->add(DateTimeFilter::new('updatedAt', "Last updated"))
+            ->add(ChoiceFilter::new('channel', "Channel")->canSelectMultiple(true)->setChoices($this->getChannels()))
             ->add(ChoiceFilter::new('subchannel', "Marketplace")->canSelectMultiple(true)->setChoices($this->getMarketplaces()))
             ->add(ChoiceFilter::new('company', "Company")->canSelectMultiple(true)->setChoices($this->getCompanies()))
             ->add(ChoiceFilter::new('fulfilledBy')->canSelectMultiple(true)->setChoices($choicesFulfiled))
@@ -176,6 +180,17 @@ class WebOrderCrudController extends AdminCrudController
             'Amazon ES' => "Amazon Seller Central - ES",
             'Amazon FR' => 'Amazon Seller Central - FR',
             'OwletCare' => 'Owlet Care',
+        ];
+    }
+
+
+    public function getChannels()
+    {
+        return [
+            WebOrder::CHANNEL_ALIEXPRESS => WebOrder::CHANNEL_ALIEXPRESS,
+            WebOrder::CHANNEL_FITBITEXPRESS => WebOrder::CHANNEL_FITBITEXPRESS,
+            WebOrder::CHANNEL_CHANNELADVISOR => WebOrder::CHANNEL_CHANNELADVISOR,
+            WebOrder::CHANNEL_OWLETCARE  => WebOrder::CHANNEL_OWLETCARE
         ];
     }
 
@@ -245,21 +260,23 @@ class WebOrderCrudController extends AdminCrudController
             TextField::new('channel', "Channel"),
             TextField::new('subchannel',  "Marketplace"),
             TextField::new('company', "Company"),
-            TextField::new('customerNumber', "Customer N°"),
-            TextField::new('erpDocument', "Document type"),
+            TextField::new('customerNumber', "Customer"),
             TextField::new('documentInErp', "Document N°"),
             TextField::new('fulfilledBy', "Fulfillement"),
             TextField::new('warehouse', "Warehouse"),
             TextField::new('getStatusLitteral', "Status")->setTemplatePath('admin/fields/status.html.twig'),
             DateTimeField::new('purchaseDate', "Purchase date"),
             DateTimeField::new('createdAt', "Created at"),
+            DateTimeField::new('updatedAt', "Updated at"),
+            TextField::new('getLastLog', "Last message logged"),
         ];
 
         if ($pageName == CRUD::PAGE_DETAIL) {
             $fields = array_merge(
                 $fields,
                 [
-                    DateTimeField::new('updatedAt', "Updated at"),
+
+                    TextField::new('erpDocument', "Document type"),
                     ArrayField::new('errors')->setTemplatePath('admin/fields/errors.html.twig')->onlyOnDetail(),
                     ArrayField::new('getOrderContent', 'Content')->setTemplatePath('admin/fields/orderContent.html.twig')->onlyOnDetail(),
                     ArrayField::new('orderBCContent', 'ERP Content')->setTemplatePath('admin/fields/orderBCContent.html.twig')->onlyOnDetail(),

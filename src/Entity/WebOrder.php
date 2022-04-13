@@ -291,6 +291,18 @@ class WebOrder
     }
 
 
+    public function getLastLog()
+    {
+        $limitation = 35;
+        $log = end($this->logs);
+        if ($log) {
+            return strlen($log['content']) >  $limitation ?  substr($log['content'], 0,  $limitation) . '...' : $log['content'];
+        } else {
+            return '';
+        }
+    }
+
+
     public function getUrl()
     {
         switch ($this->channel) {
