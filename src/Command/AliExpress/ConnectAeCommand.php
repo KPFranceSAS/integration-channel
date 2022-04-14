@@ -4,6 +4,7 @@ namespace App\Command\AliExpress;
 
 use App\Service\AliExpress\AliExpressApi;
 use App\Service\AliExpress\AliExpressIntegrateOrder;
+use App\Service\AliExpress\AliExpressStock;
 use App\Service\BusinessCentral\GadgetIberiaConnector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,15 +15,19 @@ class ConnectAeCommand extends Command
     protected static $defaultName = 'app:ae-test';
     protected static $defaultDescription = 'Connection to Ali express';
 
-    public function __construct(AliExpressApi $aliExpress, AliExpressIntegrateOrder $aliExpressIntegrateOrder, GadgetIberiaConnector $gadgetIberiaConnector)
+    public function __construct(AliExpressApi $aliExpress, AliExpressIntegrateOrder $aliExpressIntegrateOrder, GadgetIberiaConnector $gadgetIberiaConnector, AliExpressStock $aliExpressStock)
     {
         $this->aliExpress = $aliExpress;
+        $this->aliExpressStock = $aliExpressStock;
         $this->aliExpressIntegrateOrder = $aliExpressIntegrateOrder;
         $this->gadgetIberiaConnector = $gadgetIberiaConnector;
+
         parent::__construct();
     }
 
     private $aliExpress;
+
+    private $aliExpressStock;
 
     private $gadgetIberiaConnector;
 
@@ -31,7 +36,9 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dump($this->aliExpress->getOrder('3016383805006340'));
+
+        $this->aliExpressStock->initializeStockLevels();
+
 
         return Command::SUCCESS;
     }

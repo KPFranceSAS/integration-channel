@@ -123,6 +123,7 @@ class ShippingCrudController extends AdminCrudController
 
         $choicesWarehouse = [
             WebOrder::DEPOT_CENTRAL => WebOrder::DEPOT_CENTRAL,
+            WebOrder::DEPOT_LAROCA => WebOrder::DEPOT_LAROCA,
             WebOrder::DEPOT_FBA_AMAZON  => WebOrder::DEPOT_FBA_AMAZON
         ];
 

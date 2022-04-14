@@ -102,7 +102,7 @@ class AliExpressStock extends StockParent
         if ($brand && in_array($brand, AliExpressStock::getBrandsFromMadrid())) {
             return WebOrder::DEPOT_MADRID;
         }
-        return WebOrder::DEPOT_CENTRAL;
+        return WebOrder::DEPOT_LAROCA;
     }
 
 

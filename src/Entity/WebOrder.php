@@ -332,7 +332,7 @@ class WebOrder
             $webOrder->setWarehouse(WebOrder::DEPOT_FBA_AMAZON);
             $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_EXTERNAL);
         } elseif ($orderApi->DistributionCenterTypeRollup == 'SellerManaged') {
-            $webOrder->setWarehouse(WebOrder::DEPOT_CENTRAL);
+            $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
             $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
         } else {
             $webOrder->setWarehouse(WebOrder::DEPOT_MIXED);
@@ -377,7 +377,7 @@ class WebOrder
         $webOrder->setChannel(WebOrder::CHANNEL_OWLETCARE);
         $webOrder->setSubchannel('Owletcare');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $webOrder->setWarehouse(WebOrder::DEPOT_CENTRAL);
+        $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
         $webOrder->addLog('Retrieved from owletcare.es');
         $webOrder->setContent($orderApi);
@@ -398,7 +398,7 @@ class WebOrder
         $datePurchase = DateTime::createFromFormat('Y-m-d H:i:s', $orderApi->gmt_pay_success);
         $datePurchase->add(new \DateInterval('PT9H'));
         $webOrder->setPurchaseDate($datePurchase);
-        $webOrder->setWarehouse(WebOrder::DEPOT_CENTRAL);
+        $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
         $webOrder->addLog('Retrieved from Aliexpress');
         $webOrder->setContent($orderApi);

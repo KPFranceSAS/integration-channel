@@ -228,7 +228,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
                 return WebOrder::DEPOT_MADRID;
             }
         }
-        return WebOrder::DEPOT_CENTRAL;
+        return WebOrder::DEPOT_LAROCA;
     }
 
 
