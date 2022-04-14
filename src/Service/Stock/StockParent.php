@@ -110,7 +110,7 @@ abstract class StockParent
 
         $this->logger->info('Updated : ' . $differenceCreationMinutes . ' minutes');
 
-        if ($differenceCreationMinutes > 1) {
+        if ($differenceCreationMinutes > 180) {
             throw new \Exception('Update of the stock files published has not been done for  ' . $differenceCreationMinutes . ' minutes');
         }
 
