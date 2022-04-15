@@ -275,6 +275,12 @@ class WebOrder
     }
 
 
+    public function hasErrors()
+    {
+        return count($this->errors) > 0;
+    }
+
+
 
 
     public function hasDelayTreatment()

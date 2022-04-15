@@ -7,6 +7,13 @@
 
 <div class="row">
     <div class="col-12 col-md-8 ">
+            {% if entity.instance.hasErrors %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    {{ _self.render_field(entity, entity.getFields().getByProperty("errors")) }} 
+                </div>
+            </div>
+            {% endif %}
             
 
              <div class="card mb-4">

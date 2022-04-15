@@ -35,10 +35,11 @@ class EASubscriber implements EventSubscriberInterface
         if (in_array($entity->getStatus(),  [WebOrder::STATE_SYNC_TO_ERP, WebOrder::STATE_INVOICED])) {
             $bcConnector =  $this->businessCentralAggregator->getBusinessCentralConnector($entity->getCompany());
             if ($entity->getStatus() == WebOrder::STATE_SYNC_TO_ERP) {
-
                 $content = $bcConnector->getFullSaleOrderByNumber($entity->getOrderErp());
                 if ($content) {
                     $content["salesInvoiceLines"] = $content["salesOrderLines"];
+                } else {
+                    $content = $bcConnector->getSaleInvoiceByOrderNumber($entity->getOrderErp());
                 }
                 $entity->orderBCContent = $content;
             } elseif ($entity->getStatus() == WebOrder::STATE_INVOICED) {
