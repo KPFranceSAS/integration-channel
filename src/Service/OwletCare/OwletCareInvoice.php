@@ -44,7 +44,7 @@ class OwletCareInvoice extends InvoiceParent
         if (!$tracking) {
             $this->logger->info('Not found tracking for invoice ' . $invoice['number']);
         } else {
-            $this->addLogToOrder($order, 'Order was fulfilled by ' . $tracking['Carrier'] . " with tracking number " . $tracking['Tracking number']);
+            $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by ' . $tracking['Carrier'] . " with tracking number " . $tracking['Tracking number']);
             $jsonOrder = $order->getOrderContent();
             $mainLocation = $this->owletCareApi->getMainLocation();
             foreach ($jsonOrder['line_items'] as $item) {
@@ -56,7 +56,7 @@ class OwletCareInvoice extends InvoiceParent
                 $this->addLogToOrder($order, 'Mark as fulfilled on Owletcare');
                 return true;
             } else {
-                $this->addErrorToOrder($order, 'Error posting tracking number ' . $tracking['Tracking number']);
+                $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting tracking number ' . $tracking['Tracking number']);
             }
         }
         return true;

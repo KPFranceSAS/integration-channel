@@ -144,12 +144,7 @@ abstract class InvoiceParent
             if ($invoice) {
                 $order->cleanErrors();
                 $postInvoice = $this->postInvoice($order, $invoice);
-                $logMessageInvoice = 'Invoice created in the ERP with number ' . $invoice['number'] . ' on ' . $invoice['invoiceDate'];
-                if ($order->haveNoLogWithMessage($logMessageInvoice)) {
-                    $this->addLogToOrder($order, $logMessageInvoice);
-                } else {
-                    $this->logger->info($logMessageInvoice);
-                }
+                $this->addOnlyLogToOrderIfNotExists($order, 'Invoice created in the ERP with number ' . $invoice['number'] . ' on ' . $invoice['invoiceDate']);
                 if ($postInvoice) {
                     $order->setInvoiceErp($invoice['number']);
                     $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
@@ -202,9 +197,7 @@ abstract class InvoiceParent
         $this->logger->info('Check if order is late ');
         if ($order->hasDelayTreatment()) {
             $messageDelay = $order->getDelayProblemMessage();
-            if ($order->haveNoLogWithMessage($messageDelay)) {
-                $this->addErrorToOrder($order, $messageDelay);
-            }
+            $this->addOnlyErrorToOrderIfNotExists($order, $messageDelay);
         }
     }
 
@@ -217,10 +210,7 @@ abstract class InvoiceParent
         $interval = $now->diff($invoiceDate, true);
         $nbHours = $interval->format('%a') * 24 + $interval->format('%h');
         if ($nbHours > 34) {
-            $messageDelay = $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. Please confirm tracking on ' . $this->getChannel();
-            if ($order->haveNoLogWithMessage($messageDelay)) {
-                $this->addErrorToOrder($order, $messageDelay);
-            }
+            $this->addOnlyErrorToOrderIfNotExists($order, $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. Please confirm tracking on ' . $this->getChannel());
         }
     }
 
@@ -283,6 +273,26 @@ abstract class InvoiceParent
     {
         $webOrder->addError($message);
         $this->addError($message);
+    }
+
+
+    protected function addOnlyLogToOrderIfNotExists(WebOrder $webOrder, string $message)
+    {
+        if ($webOrder->haveNoLogWithMessage($message)) {
+            $this->addLogToOrder($webOrder, $message);
+        } else {
+            $this->logger->info($message);
+        }
+    }
+
+
+    protected function addOnlyErrorToOrderIfNotExists(WebOrder $webOrder, string $message)
+    {
+        if ($webOrder->haveNoLogWithMessage($message)) {
+            $this->addErrorToOrder($webOrder, $message);
+        } else {
+            $this->logger->error($message);
+        }
     }
 
 
