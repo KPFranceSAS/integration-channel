@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Helper\Utils\DatetimeUtils;
-use App\Service\AliExpress\AliExpressApi;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
@@ -396,7 +395,7 @@ class WebOrder
         $webOrder->setChannel(WebOrder::CHANNEL_ALIEXPRESS);
         $webOrder->setSubchannel('AliExpress');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $datePurchase = AliExpressApi::createDateTimeFromAliExpressDate($orderApi->gmt_pay_success);
+        $datePurchase = DatetimeUtils::createDateTimeFromAliExpressDate($orderApi->gmt_pay_success);
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_CENTRAL);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);

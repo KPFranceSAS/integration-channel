@@ -33,6 +33,7 @@ class WebOrderCrudController extends AdminCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
+            //->overrideTemplate('crud/detail', 'admin/crud/order.html.twig')
             ->setEntityLabelInSingular($this->getName())
             ->setEntityLabelInPlural($this->getName() . 's')
             ->setDateTimeFormat('yyyy-MM-dd HH:mm:ss')

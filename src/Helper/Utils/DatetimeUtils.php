@@ -20,6 +20,25 @@ class DatetimeUtils
 
 
 
+    public static function createDateTimeFromAliExpressDate(string $date): DateTime
+    {
+        $dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $date);
+        $dateTime->add(new DateInterval('PT9H'));
+        return $dateTime;
+    }
+
+
+    public static function createStringTimeFromAliExpressDate(string $date, $format = 'd-m-Y H:i'): string
+    {
+        $dateTime = self::createDateTimeFromAliExpressDate($date);
+        return $dateTime ? $dateTime->format($format) : $date;
+    }
+
+
+
+
+
+
     public static function isOutOfDelayBusinessDays(DateTimeInterface $date, int $nbHours, ?DateTimeInterface $toverify = null): bool
     {
         $toverify =  $toverify ? $toverify :  new DateTime();
