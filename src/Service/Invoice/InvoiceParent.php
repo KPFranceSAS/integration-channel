@@ -162,8 +162,7 @@ abstract class InvoiceParent
             }
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
-            $order->addError($message);
-            $this->addError($order->getExternalNumber() . ' >> ' . $message);
+            $this->addError($order, $order->getExternalNumber() . ' >> ' . $message);
         }
         $this->manager->flush();
     }
