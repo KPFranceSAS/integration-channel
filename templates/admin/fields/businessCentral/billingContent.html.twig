@@ -1,0 +1,12 @@
+{% if field.value|length > 0%}
+		<div class="">
+			{{field.value.billToName|upper}}<br/>
+			{{field.value.billingPostalAddress.street|nl2br}}<br/>
+			{{field.value.billingPostalAddress.postalCode}}
+			{{field.value.billingPostalAddress.city}},
+			{{field.value.billingPostalAddress.state}},
+			{{field.value.billingPostalAddress.countryLetterCode}}
+		</div>
+{% else %}
+	<span class="badge badge-secondary">No retrieved</span>
+{% endif %}

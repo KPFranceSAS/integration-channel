@@ -1,0 +1,75 @@
+{% if field.value|length > 0 %}
+	<div class="">
+		<table class="table datagrid ">
+			<thead>
+				<tr>
+					<th>
+						Sku
+					</th>
+					<th>
+						Title
+					</th>
+
+					<th>
+						Unit Price
+					</th>
+					<th>
+						Qty
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for line in field.value.line_items %}
+					<tr>
+						<td>
+							{{line.sku}}
+						</td>
+						<td>
+							{{line.title|slice(0,20)}}
+						</td>
+						<td>
+							{{line.price}}
+							EUR
+						</td>
+						<td>
+							{{line.quantity}}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+			<tfooter>
+				<tr>
+					<td colspan="3" class="text-right">
+						<strong>Total shipping</strong>
+					</td>
+					<td colspan="">
+						{{field.value.total_shipping_price_set.shop_money.amount}}
+						{{field.value.total_shipping_price_set.shop_money.currency_code}}
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="text-right">
+						<strong>Total discount</strong>
+					</td>
+					<td colspan="">
+						{{field.value.total_discounts_set.shop_money.amount}}
+						{{field.value.total_discounts_set.shop_money.currency_code}}
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="text-right">
+						<strong>Total price</strong>
+					</td>
+					<td colspan="">
+						{{field.value.total_price_set.shop_money.amount}}
+						{{field.value.total_price_set.shop_money.currency_code}}
+					</td>
+				</tr>
+			</tfooter>
+		</table>
+	</div>
+{% else %}
+	<span class="badge badge-secondary">
+		Data not accessible from Owletcare
+	</span>
+{% endif %}

@@ -1,10 +1,10 @@
 
 {% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_CHANNELADVISOR')  %}
-	{% include "admin/fields/channelContent.html.twig" with {'field': field} %}
+	{% include "admin/fields/marketplaces/channelAdvisor/shippingContent.html.twig" with {'field': field} %}
 {% endif %}
 {% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_ALIEXPRESS') or entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_FITBITEXPRESS')  %}
-	{% include "admin/fields/aliExpressContent.html.twig" with {'field': field} %}
+	{% include "admin/fields/marketplaces/aliExpress/shippingContent.html.twig" with {'field': field} %}
 {% endif %}
 {% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_OWLETCARE')  %}
-	{% include "admin/fields/owletCareContent.html.twig" with {'field': field} %}
+	{% include "admin/fields/marketplaces/owletCare/shippingContent.html.twig" with {'field': field} %}
 {% endif %}

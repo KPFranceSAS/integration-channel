@@ -1,0 +1,32 @@
+/* public/css/admin.css */
+:root {
+    --body-max-width: 100%;
+    --font-size-base: 12px;
+
+    --sidebar-bg: #000;
+    --sidebar-logo-color: #fff;
+    --sidebar-menu-color: #fff;
+    --sidebar-menu-icon-color: #fff;
+    --sidebar-menu-submenu-color: #fff;
+    --responsive-header-logo-color: #fff;
+    --responsive-header-bg: #000;
+}
+
+
+@media (min-width: 992px) {
+    body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover .submenu,
+    body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover .menu-item-contents,
+    body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover {
+        background: var(--sidebar-bg);
+    }
+}
+
+#navigation-toggler {
+    color: #fff;
+    filter: none;
+}
+
+.responsive-header .user-menu-wrapper a.user-details, 
+.responsive-header .user-menu-wrapper a.user-details:hover {
+    color:  #fff;
+}

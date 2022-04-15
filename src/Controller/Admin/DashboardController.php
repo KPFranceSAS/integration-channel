@@ -12,6 +12,7 @@ use App\Controller\Order\WebOrderCrudController;
 use App\Entity\ProductCorrelation;
 use App\Entity\User;
 use App\Entity\WebOrder;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -54,6 +55,12 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('SKU Mapping', 'fa fa-exchange', ProductCorrelation::class),
             MenuItem::linkToCrud('Users', 'fa fa-user', User::class),
         ];
+    }
+
+
+    public function configureAssets(): Assets
+    {
+        return Assets::new()->addCssFile('assets/css/admin.css');
     }
 
 

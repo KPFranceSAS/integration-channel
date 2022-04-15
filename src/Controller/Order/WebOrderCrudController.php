@@ -33,7 +33,7 @@ class WebOrderCrudController extends AdminCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            //->overrideTemplate('crud/detail', 'admin/crud/order.html.twig')
+            ->overrideTemplate('crud/detail', 'admin/crud/order.html.twig')
             ->setEntityLabelInSingular($this->getName())
             ->setEntityLabelInPlural($this->getName() . 's')
             ->setDateTimeFormat('yyyy-MM-dd HH:mm:ss')
@@ -268,7 +268,7 @@ class WebOrderCrudController extends AdminCrudController
             TextField::new('getStatusLitteral', "Status")->setTemplatePath('admin/fields/status.html.twig'),
             DateTimeField::new('purchaseDate', "Purchase date"),
             DateTimeField::new('createdAt', "Created at"),
-            DateTimeField::new('updatedAt', "Updated at"),
+            DateTimeField::new('updatedAt', "Last update"),
             TextField::new('getLastLog', "Last message logged"),
         ];
 
@@ -276,11 +276,16 @@ class WebOrderCrudController extends AdminCrudController
             $fields = array_merge(
                 $fields,
                 [
-
                     TextField::new('erpDocument', "Document type"),
+                    TextField::new('orderErp', "Order N°"),
+                    TextField::new('invoiceErp', "Invoice N°"),
                     ArrayField::new('errors')->setTemplatePath('admin/fields/errors.html.twig')->onlyOnDetail(),
-                    ArrayField::new('getOrderContent', 'Content')->setTemplatePath('admin/fields/orderContent.html.twig')->onlyOnDetail(),
-                    ArrayField::new('orderBCContent', 'ERP Content')->setTemplatePath('admin/fields/orderBCContent.html.twig')->onlyOnDetail(),
+                    ArrayField::new('orderLinesContent', 'Order lines')->setTemplatePath('admin/fields/marketplaces/orderContent.html.twig')->onlyOnDetail(),
+                    ArrayField::new('headerShippingContent', 'Shipping Address')->setTemplatePath('admin/fields/marketplaces/shippingContent.html.twig')->onlyOnDetail(),
+                    ArrayField::new('headerBillingContent', 'Billing Address')->setTemplatePath('admin/fields/marketplaces/billingContent.html.twig')->onlyOnDetail(),
+                    ArrayField::new('headerShippingBCContent', 'Shipping Address')->setTemplatePath('admin/fields/businessCentral/shippingContent.html.twig')->onlyOnDetail(),
+                    ArrayField::new('headerBillingBCContent', 'Billing Address')->setTemplatePath('admin/fields/businessCentral/billingContent.html.twig')->onlyOnDetail(),
+                    ArrayField::new('orderLinesBCContent', 'Order lines')->setTemplatePath('admin/fields/businessCentral/orderContent.html.twig')->onlyOnDetail(),
                     ArrayField::new('logs')->setTemplatePath('admin/fields/logs.html.twig')->onlyOnDetail(),
                 ]
             );

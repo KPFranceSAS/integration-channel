@@ -1,0 +1,12 @@
+{% if field.value|length > 0%}
+		<div class="">
+			{{field.value.shipToName|upper}}<br/>
+			{{field.value.shippingPostalAddress.street|nl2br}}<br/>
+			{{field.value.shippingPostalAddress.postalCode}}
+			{{field.value.shippingPostalAddress.city}},
+			{{field.value.shippingPostalAddress.state}},
+			{{field.value.shippingPostalAddress.countryLetterCode}}
+		</div>
+{% else %}
+	<span class="badge badge-secondary">No retrieved</span>
+{% endif %}

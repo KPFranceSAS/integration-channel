@@ -1,0 +1,80 @@
+{% extends '@!EasyAdmin/crud/detail.html.twig' %}
+
+
+   
+
+    {% block detail_fields %}
+
+<div class="row">
+    <div class="col-12 col-md-8 ">
+            
+
+             <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fa fa-shopping-cart"></i> Marketplace</h5>
+                        <div class="row">
+                             <div class="col-12 col-md-3 ">
+                                {{ _self.render_field(entity, entity.getFields().getByProperty("getStatusLitteral")) }}
+                                {{ _self.render_field(entity, entity.getFields().getByProperty("channel")) }}
+                                {{ _self.render_field(entity, entity.getFields().getByProperty("fulfilledBy")) }} 
+                            </div>
+                             <div class="col-12 col-md-3 ">
+                                {{ _self.render_field(entity, entity.getFields().getByProperty("subchannel")) }} 
+                                {{ _self.render_field(entity, entity.getFields().getByProperty("externalNumber")) }}
+                                {{ _self.render_field(entity, entity.getFields().getByProperty("purchaseDate")) }}  
+                             </div>
+                             <div class="col-12 col-md-3">
+                                 {{ _self.render_field(entity, entity.getFields().getByProperty("headerBillingContent")) }}  
+                             </div>
+                             <div class="col-12 col-md-3">
+                                 {{ _self.render_field(entity, entity.getFields().getByProperty("headerShippingContent")) }}  
+                             </div>
+                             
+                        </div>
+                        {{ _self.render_field(entity, entity.getFields().getByProperty("orderLinesContent")) }}   
+                </div>
+             </div>    
+
+
+
+
+             <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fab fa-windows"></i> Business Central</h5>
+                        <div class="row">
+                             <div class="col-12 col-md-3 ">
+                             {{ _self.render_field(entity, entity.getFields().getByProperty("company")) }}
+                             {{ _self.render_field(entity, entity.getFields().getByProperty("customerNumber")) }} 
+                             {{ _self.render_field(entity, entity.getFields().getByProperty("warehouse")) }} 
+
+                             </div>
+                             <div class="col-12 col-md-3 ">
+                             {{ _self.render_field(entity, entity.getFields().getByProperty("orderErp")) }}
+                               {{ _self.render_field(entity, entity.getFields().getByProperty("invoiceErp")) }}  
+                             </div>
+                             <div class="col-12 col-md-3">
+                                 {{ _self.render_field(entity, entity.getFields().getByProperty("headerBillingBCContent")) }}  
+                             </div>
+                             <div class="col-12 col-md-3">
+                                 {{ _self.render_field(entity, entity.getFields().getByProperty("headerShippingBCContent")) }}  
+                             </div>
+                             
+                        </div>
+                        {{ _self.render_field(entity, entity.getFields().getByProperty("orderLinesBCContent")) }}   
+                </div>
+             </div>
+    </div>
+    <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-history"></i> History</h5>
+                        {{ _self.render_field(entity, entity.getFields().getByProperty("createdAt")) }}  
+                        {{ _self.render_field(entity, entity.getFields().getByProperty("updatedAt")) }}  
+                        {{ _self.render_field(entity, entity.getFields().getByProperty("logs")) }}    
+                </div>
+             </div>
+    </div>
+</div>
+
+    
+    {% endblock %}

@@ -158,6 +158,8 @@ class WebOrder
 
     public $orderBCContent = [];
 
+
+
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -204,6 +206,36 @@ class WebOrder
     }
 
 
+    public function getOrderLinesContent()
+    {
+        return $this->getOrderContent();
+    }
+
+    public function getHeaderShippingContent()
+    {
+        return $this->getOrderContent();
+    }
+
+    public function getHeaderBillingContent()
+    {
+        return  $this->getOrderContent();
+    }
+
+
+    public function getOrderLinesBCContent()
+    {
+        return $this->orderBCContent;
+    }
+
+    public function getHeaderShippingBCContent()
+    {
+        return $this->orderBCContent;
+    }
+
+    public function getHeaderBillingBCContent()
+    {
+        return $this->orderBCContent;
+    }
 
     public function haveInvoice()
     {
