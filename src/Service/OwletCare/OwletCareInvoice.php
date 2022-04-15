@@ -56,7 +56,7 @@ class OwletCareInvoice extends InvoiceParent
                 $this->addLogToOrder($order, 'Mark as fulfilled on Owletcare');
                 return true;
             } else {
-                $this->addLogToOrder($order, 'Error posting tracking number ' . $tracking['Tracking number']);
+                $this->addErrorToOrder($order, 'Error posting tracking number ' . $tracking['Tracking number']);
             }
         }
         return true;

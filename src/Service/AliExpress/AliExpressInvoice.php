@@ -53,18 +53,16 @@ class AliExpressInvoice extends InvoiceParent
                 return true;
             } else {
                 $orderAliexpress = $this->aliExpressApi->getOrder($order->getExternalNumber());
-                dump($orderAliexpress);
-                dump(DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->over_time_left));
                 if ($orderAliexpress->logistics_status == "WAIT_SELLER_SEND_GOODS" && $orderAliexpress->order_status == "IN_CANCEL") {
-                    $this->addError($order, 'Error posting tracking number ' . $tracking['Tracking number'] . ' Customer asks for cancelation and no response was done online. A response should be brought before ' . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->over_time_left));
+                    $this->addErrorToOrder($order, 'Error posting tracking number ' . $tracking['Tracking number'] . ' Customer asks for cancelation and no response was done online. A response should be brought before ' . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->over_time_left));
                 } else if ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "cancel_order_close_trade") {
-                    $this->addError($order, 'Error posting tracking number ' . $tracking['Tracking number'] . ' Order has been cancelled online on ' . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end));
+                    $this->addErrorToOrder($order, 'Error posting tracking number ' . $tracking['Tracking number'] . ' Order has been cancelled online on ' . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end));
                     $order->setStatus(WebOrder::STATE_CANCELLED);
                 } else if ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "seller_send_goods_timeout") {
-                    $this->addError($order, 'Error posting tracking number ' . $tracking['Tracking number'] . ' Order has been cancelled online because delay of expedition is out of delay on ' . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end));
+                    $this->addErrorToOrder($order, 'Error posting tracking number ' . $tracking['Tracking number'] . ' Order has been cancelled online because delay of expedition is out of delay on ' . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end));
                     $order->setStatus(WebOrder::STATE_CANCELLED);
                 } else {
-                    $this->addError($order, 'Error posting tracking number ' . $tracking['Tracking number']);
+                    $this->addErrorToOrder($order, 'Error posting tracking number ' . $tracking['Tracking number']);
                 }
             }
         }

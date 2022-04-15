@@ -162,7 +162,7 @@ abstract class InvoiceParent
             }
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
-            $this->addError($order, $order->getExternalNumber() . ' >> ' . $message);
+            $this->addErrorToOrder($order, $order->getExternalNumber() . ' >> ' . $message);
         }
         $this->manager->flush();
     }
@@ -203,8 +203,7 @@ abstract class InvoiceParent
         if ($order->hasDelayTreatment()) {
             $messageDelay = $order->getDelayProblemMessage();
             if ($order->haveNoLogWithMessage($messageDelay)) {
-                $this->addLogToOrder($order, $messageDelay);
-                $this->addError($messageDelay);
+                $this->addErrorToOrder($order, $messageDelay);
             }
         }
     }
@@ -220,8 +219,7 @@ abstract class InvoiceParent
         if ($nbHours > 34) {
             $messageDelay = $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. Please confirm tracking on ' . $this->getChannel();
             if ($order->haveNoLogWithMessage($messageDelay)) {
-                $this->addLogToOrder($order, $messageDelay);
-                $this->addError($messageDelay);
+                $this->addErrorToOrder($order, $messageDelay);
             }
         }
     }
@@ -273,18 +271,22 @@ abstract class InvoiceParent
     }
 
 
-
-
-
-
-    protected function addLogToOrder(WebOrder $webOrder, $message)
+    protected function addLogToOrder(WebOrder $webOrder, string $message)
     {
         $webOrder->addLog($message);
         $this->logger->info($message);
     }
 
 
-    protected function addError($errorMessage)
+
+    protected function addErrorToOrder(WebOrder $webOrder, string $message)
+    {
+        $webOrder->addError($message);
+        $this->addError($message);
+    }
+
+
+    protected function addError(string $errorMessage)
     {
         $this->logger->error($errorMessage);
         $this->errors[] = $errorMessage;
