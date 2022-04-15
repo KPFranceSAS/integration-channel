@@ -75,10 +75,10 @@ class SaveCancelCommand extends Command
     {
         $orderAliexpress = $this->aliExpressApi->getOrder($webOrder->getExternalNumber());
         if ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "cancel_order_close_trade") {
-            $reason =  'Order has been cancelled after acceptation  online on ' . $orderAliexpress->gmt_trade_end;
+            $reason =  'Order has been cancelled after acceptation  online on ' . AliExpressApi::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end);
             $this->cancelSaleOrder($webOrder, $reason);
         } elseif ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "seller_send_goods_timeout") {
-            $reason =  'Order has been cancelled online because delay of expedition is out of delay on ' . $orderAliexpress->gmt_trade_end;
+            $reason =  'Order has been cancelled online because delay of expedition is out of delay on ' . AliExpressApi::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end);
             $this->cancelSaleOrder($webOrder, $reason);
         }
     }

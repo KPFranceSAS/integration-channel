@@ -9,6 +9,7 @@ use AliexpressSolutionOrderGetRequest;
 use AliexpressSolutionOrderInfoGetRequest;
 use AliexpressSolutionProductInfoGetRequest;
 use AliexpressSolutionProductListGetRequest;
+use DateTime;
 use ItemListQuery;
 use OrderDetailQuery;
 use OrderQuery;
@@ -41,6 +42,27 @@ class AliExpressApi
         $this->client->format = 'json';
         $this->logger = $logger;
     }
+
+
+
+    public static function createDateTimeFromAliExpressDate(string $date): DateTime
+    {
+        $dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $date);
+        $dateTime->add(new \DateInterval('PT9H'));
+        return $dateTime;
+    }
+
+
+    public static function createStringTimeFromAliExpressDate(string $date, $format = 'd-m-Y H:i'): string
+    {
+        $dateTime = AliExpressApi::createDateTimeFromAliExpressDate($date);
+        return $dateTime->format($format);
+    }
+
+
+
+
+
 
 
     /**
