@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use App\Entity\WebOrder;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
+use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -12,9 +13,12 @@ class EASubscriber implements EventSubscriberInterface
 {
     private $businessCentralAggregator;
 
-    public function __construct(BusinessCentralAggregator $businessCentralAggregator)
+    private $managerRegistry;
+
+    public function __construct(BusinessCentralAggregator $businessCentralAggregator, ManagerRegistry $managerRegistry)
     {
         $this->businessCentralAggregator = $businessCentralAggregator;
+        $this->managerRegistry = $managerRegistry;
     }
 
     public static function getSubscribedEvents(): array
@@ -45,6 +49,10 @@ class EASubscriber implements EventSubscriberInterface
             } elseif ($entity->getStatus() == WebOrder::STATE_INVOICED) {
                 $entity->orderBCContent = $bcConnector->getFullSaleInvoiceByNumber($entity->getInvoiceErp());
             }
+        }
+
+
+        if (in_array($entity->getChannel(),  [WebOrder::CHANNEL_CHANNELADVISOR])) {
         }
     }
 } {
