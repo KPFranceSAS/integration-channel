@@ -44,8 +44,8 @@ class InvoiceController extends AbstractController
                 ->andWhere('w.channel IN (:channel)')
                 ->andWhere('w.purchaseDate >= :date_start')
                 ->andWhere('w.purchaseDate <= :date_end')
-                ->setParameter('date_start', $invoice->dateInvoice->format('Y-m-d 00:00:00'))
-                ->setParameter('date_end',   $invoice->dateInvoice->format('Y-m-d 23:59:59'))
+                ->setParameter('date_start', $invoice->getDateStartString())
+                ->setParameter('date_end',   $invoice->getDateEndString())
                 ->setParameter('channel',  [WebOrder::CHANNEL_ALIEXPRESS, WebOrder::CHANNEL_FITBITEXPRESS])
                 ->setParameter('externalNumber',  $invoice->externalNumber);
 
