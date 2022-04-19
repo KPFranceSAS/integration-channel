@@ -8,7 +8,8 @@ use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\Integrator\IntegratorParent;
+use App\Service\BusinessCentral\ProductTaxFinder;
+use App\Helper\Integrator\IntegratorParent;
 use App\Service\MailService;
 use App\Service\OwletCare\OwletCareApi;
 use Doctrine\Persistence\ManagerRegistry;
@@ -19,24 +20,6 @@ class OwletCareIntegrateOrder extends IntegratorParent
 {
 
     const OWLETCARE_CUSTOMER_NUMBER = "130803";
-
-
-    protected $businessCentralConnector;
-
-    protected $owletCareApi;
-
-
-    public function __construct(
-        ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        OwletCareApi $owletCareApi,
-        BusinessCentralAggregator $businessCentralAggregator
-    ) {
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
-        $this->owletCareApi = $owletCareApi;
-    }
-
 
     public function getChannel()
     {
@@ -51,7 +34,7 @@ class OwletCareIntegrateOrder extends IntegratorParent
     public function integrateAllOrders()
     {
         $counter = 0;
-        $ordersApi = $this->owletCareApi->getAllOrdersToSend();
+        $ordersApi = $this->getApi()->getAllOrdersToSend();
 
         foreach ($ordersApi as $orderApi) {
             if ($this->integrateOrder($orderApi)) {
@@ -227,10 +210,6 @@ class OwletCareIntegrateOrder extends IntegratorParent
             $saleOrder->{$addressBusinessType . "PostalAddress"}->state = substr($addressShopifyType['province'], 0, 30);;
         }
     }
-
-
-
-
 
 
     private function getSalesOrderLines($orderApi): array

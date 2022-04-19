@@ -4,11 +4,11 @@ namespace App\Service\AliExpress;
 
 
 use App\Entity\WebOrder;
+use App\Helper\Invoice\InvoiceParent;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\AliExpress\AliExpressApi;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\Carriers\GetTracking;
-use App\Service\Invoice\InvoiceParent;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -17,21 +17,6 @@ use Psr\Log\LoggerInterface;
 class AliExpressInvoice extends InvoiceParent
 {
 
-    private $aliExpressApi;
-
-
-
-    public function __construct(
-        ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        AliExpressApi $aliExpressApi,
-        BusinessCentralAggregator $businessCentralAggregator,
-        GetTracking $tracker
-    ) {
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator, $tracker);
-        $this->aliExpressApi = $aliExpressApi;
-    }
 
     public function getChannel()
     {

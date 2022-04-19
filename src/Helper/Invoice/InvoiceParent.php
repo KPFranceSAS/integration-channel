@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Service\Invoice;
+namespace App\Helper\Invoice;
 
 
 use App\Entity\WebOrder;
-use App\Helper\Utils\DatetimeUtils;
+use App\Helper\Api\ApiAggregator;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\Carriers\GetTracking;
 use App\Service\MailService;
@@ -28,20 +28,27 @@ abstract class InvoiceParent
 
     protected $tracker;
 
+    protected $apiAggregator;
 
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, GetTracking $tracker)
+
+    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, GetTracking $tracker, ApiAggregator $apiAggregator)
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->tracker = $tracker;
+        $this->apiAggregator = $apiAggregator;
     }
 
 
     abstract public function getChannel();
 
 
+    public function getApi()
+    {
+        return $this->apiAggregator->getApi($this->getChannel());
+    }
 
 
     public function getBusinessCentralConnector($companyName)

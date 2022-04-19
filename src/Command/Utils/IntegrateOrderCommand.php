@@ -7,7 +7,7 @@ use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\AliExpress\AliExpressIntegrateOrder;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\ChannelAdvisor\ChannelWebservice;
-use App\Service\Integrator\IntegratorAggregator;
+use App\Helper\Integrator\IntegratorAggregator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

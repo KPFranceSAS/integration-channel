@@ -3,12 +3,8 @@
 namespace App\Service\AliExpress;
 
 use App\Entity\WebOrder;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\MailService;
-use App\Service\Stock\StockParent;
-use Doctrine\Persistence\ManagerRegistry;
-use League\Flysystem\FilesystemOperator;
-use Psr\Log\LoggerInterface;
+use App\Helper\Stock\StockParent;
+
 
 class AliExpressStock extends StockParent
 {
@@ -18,24 +14,6 @@ class AliExpressStock extends StockParent
     {
         return ['ECOFLOW', 'AUTELROBOTICS', 'DJI', 'PGYTECH', 'TRIDENT'];
     }
-
-    protected $businessCentralConnector;
-
-    protected $aliExpress;
-
-
-    public function __construct(
-        FilesystemOperator $awsStorage,
-        ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        AliExpressApi $aliExpress,
-        BusinessCentralAggregator $businessCentralAggregator
-    ) {
-        parent::__construct($awsStorage, $manager, $logger, $mailer, $businessCentralAggregator);
-        $this->aliExpress = $aliExpress;
-    }
-
 
     public function getChannel()
     {
@@ -49,7 +27,7 @@ class AliExpressStock extends StockParent
      */
     public function sendStocks()
     {
-        $products = $this->aliExpress->getAllActiveProducts();
+        $products = $this->getApi()->getAllActiveProducts();
         foreach ($products as $product) {
             $this->sendStock($product);
         }
@@ -74,7 +52,7 @@ class AliExpressStock extends StockParent
             $this->logger->info('Sku ' . $skuCode  . ' Brand ' . $brand);
             $stockBC = $this->getStockProductWarehouse($skuCode, $stockTocHeck);
             $this->logger->info('Sku ' . $skuCode  . ' / stock BC ' . $stockBC . ' units in ' . $stockTocHeck);
-            $this->aliExpress->updateStockLevel($product->product_id, $skuCode, $stockBC);
+            $this->getApi()->updateStockLevel($product->product_id, $skuCode, $stockBC);
         }
 
 
@@ -86,7 +64,7 @@ class AliExpressStock extends StockParent
     public function getProductInfo($productId)
     {
         for ($i = 0; $i < 3; $i++) {
-            $productInfo = $this->aliExpress->getProductInfo($productId);
+            $productInfo = $this->getApi()->getProductInfo($productId);
             if ($productInfo) {
                 return $productInfo;
             } else {

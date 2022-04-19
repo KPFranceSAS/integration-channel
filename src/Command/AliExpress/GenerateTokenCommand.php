@@ -3,8 +3,6 @@
 namespace App\Command\AliExpress;
 
 use App\Service\AliExpress\AliExpressApi;
-use App\Service\AliExpress\AliExpressIntegrateOrder;
-use App\Service\BusinessCentral\GadgetIberiaConnector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

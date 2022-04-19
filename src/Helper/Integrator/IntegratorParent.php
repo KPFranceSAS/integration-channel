@@ -1,13 +1,16 @@
 <?php
 
-namespace App\Service\Integrator;
+namespace App\Helper\Integrator;
 
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
+use App\Helper\Api\ApiAggregator;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\SaleOrder;
+use App\Helper\BusinessCentral\Model\SaleOrderLine;
+use App\Helper\Integrator\IntegratorInterface;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\Integrator\IntegratorInterface;
+use App\Service\BusinessCentral\ProductTaxFinder;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -21,19 +24,32 @@ abstract class IntegratorParent implements IntegratorInterface
 
     protected $logger;
 
+    protected $productTaxFinder;
+
     protected $manager;
 
     protected $mailer;
 
     protected $businessCentralAggregator;
 
+    protected $apiAggregator;
 
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator)
+
+    public function __construct(ProductTaxFinder $productTaxFinder, ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, ApiAggregator $apiAggregator)
     {
+        $this->productTaxFinder = $productTaxFinder;
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->businessCentralAggregator = $businessCentralAggregator;
+        $this->apiAggregator = $apiAggregator;
+    }
+
+
+
+    public function getApi()
+    {
+        return $this->apiAggregator->getApi($this->getChannel());
     }
 
 
@@ -115,6 +131,8 @@ abstract class IntegratorParent implements IntegratorInterface
                 // creation of the order
                 $this->addLogToOrder($webOrder, 'Order transformation to fit to ERP model');
                 $orderBC = $this->transformToAnBcOrder($order);
+                $this->addLogToOrder($webOrder, 'Order transformation adjustements prices regarding to taxes');
+                $this->adjustSaleOrder($webOrder, $orderBC);
                 $webOrder->setWarehouse($orderBC->locationCode);
                 $webOrder->setCustomerNumber($orderBC->customerNumber);
 
@@ -131,7 +149,9 @@ abstract class IntegratorParent implements IntegratorInterface
 
                 // check if limit of 40 is overlimited
                 if ($webOrder->getFulfilledBy() == WebOrder::FULFILLED_BY_SELLER &&  strlen($orderBC->shippingPostalAddress->street) > 40) {
-                    $this->addError('The BC sale order ' . $erpOrder['number'] . ' corresponding to the weborder  ' . $webOrder->getExternalNumber() . ' has been created with an address length of the street over 40 characters. ' . $orderBC->shippingPostalAddress->street . ". PLease modify it on Business central");
+                    $errorLength = 'The BC sale order ' . $erpOrder['number'] . ' corresponding to the weborder  ' . $webOrder->getExternalNumber() . ' has been created with an address length of the street over 40 characters. ' . $orderBC->shippingPostalAddress->street . ". Please modify it on Business central";
+                    $this->addLogToOrder($webOrder, $errorLength);
+                    $this->addError($errorLength);
                 }
             } catch (Exception $e) {
                 $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
@@ -155,6 +175,30 @@ abstract class IntegratorParent implements IntegratorInterface
 
 
 
+    protected function adjustSaleOrder(WebOrder $order, SaleOrder $saleOrder)
+    {
+        if ($saleOrder->sellingPostalAddress->countryLetterCode == 'ES' ||  $saleOrder->shippingPostalAddress->countryLetterCode == 'ES') {
+            $this->addSpecificTaxesForSpain($order, $saleOrder);
+        }
+    }
+
+
+
+    protected function addSpecificTaxesForSpain(WebOrder $order, SaleOrder $saleOrder)
+    {
+        foreach ($saleOrder->salesLines as $keySaleLine => $saleLine) {
+            if ($saleLine->lineType  == SaleOrderLine::TYPE_ITEM) {
+                $this->logger->info('Have this product some canon digital');
+                $canonDigital = $this->productTaxFinder->getCanonDigitalForItem($saleLine->itemId, $order->getCompany());
+                if ($canonDigital > 0) {
+                    $newPrice = $saleLine->unitPrice - $canonDigital;
+                    $this->logger->info('Remove canon digital amount ' . $canonDigital . ' Change product price ' . $newPrice);
+                    $saleOrder->salesLines[$keySaleLine]->unitPrice = $newPrice;
+                }
+            }
+        }
+    }
+
 
 
     /**
@@ -171,6 +215,7 @@ abstract class IntegratorParent implements IntegratorInterface
             $this->addLogToOrder($order, 'Order transformation to fit to ERP model');
             $orderApi = $order->getOrderContent();
             $orderBC = $this->transformToAnBcOrder($orderApi);
+            $this->adjustSaleOrder($order, $orderBC);
             $order->setWarehouse($orderBC->locationCode);
             $order->setCustomerNumber($orderBC->customerNumber);
 
@@ -183,7 +228,9 @@ abstract class IntegratorParent implements IntegratorInterface
             $this->addLogToOrder($order, 'Integration done ' . $erpOrder['number']);
             // check if limit of 40 is overlimited
             if ($order->getFulfilledBy() == WebOrder::FULFILLED_BY_SELLER &&  strlen($orderBC->shippingPostalAddress->street) > 40) {
-                $this->addError('The BC sale order ' . $erpOrder['number'] . ' corresponding to the weborder  ' . $order->getExternalNumber() . ' has been created with an address length of the street over 40 characters. ' . $orderBC->shippingPostalAddress->street . ". PLease modify it on Business central");
+                $errorLength = 'The BC sale order ' . $erpOrder['number'] . ' corresponding to the weborder  ' . $order->getExternalNumber() . ' has been created with an address length of the street over 40 characters. ' . $orderBC->shippingPostalAddress->street . ". Please modify it on Business central";
+                $this->addLogToOrder($order, $errorLength);
+                $this->addError($errorLength);
             }
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
@@ -324,6 +371,7 @@ abstract class IntegratorParent implements IntegratorInterface
             "NúMERO" => "No",
             "PASEO" => "PSO",
             "PLACITA" => "PLA",
+            "PLANTA" => "PLTA",
             "PLAZA" => "PZA",
             "POBLACIóN" => "POBL",
             "POBLACION" => "POBL",

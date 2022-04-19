@@ -15,16 +15,6 @@ use Psr\Log\LoggerInterface;
 
 class FitbitExpressInvoice extends AliExpressInvoice
 {
-    public function __construct(
-        ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        FitbitExpressApi $fitbitExpressApi,
-        BusinessCentralAggregator $businessCentralAggregator,
-        GetTracking $tracker
-    ) {
-        parent::__construct($manager, $logger, $mailer, $fitbitExpressApi, $businessCentralAggregator, $tracker);
-    }
 
     public function getChannel()
     {
