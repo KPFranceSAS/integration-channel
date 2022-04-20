@@ -1,0 +1,148 @@
+<?php
+
+namespace App\Tests\Service\BusinessCentral;
+
+use App\Service\AliExpress\AliExpressIntegrateOrder;
+use App\Service\BusinessCentral\GadgetIberiaConnector;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+
+class GadgetIberiaConnectorTest extends KernelTestCase
+{
+    public function testIntegrationClassic(): void
+    {
+        $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);
+        $product = $bcConnector->getItemByNumber("PX-P3D2044");
+        $lines = [
+            [
+                "lineType" => "Item",
+                "itemId" => $product["id"],
+                "unitPrice" => 219.0,
+                "quantity" => 2,
+                'discountAmount' => 0
+            ],
+        ];
+        $order =  [
+            'orderDate' => date("Y-m-d"),
+            'customerNumber' => AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER,
+
+            "billToName" => "Vipul Parmar",
+            "sellingPostalAddress" => [
+                "street" => "Puerta K, Altea Hills Grupo 3, Residencia los Olivos",
+                "postalCode" => "66840",
+                "city" => "Calle Berlin",
+                "countryLetterCode" => "FR",
+            ],
+            "locationCode" => "AMAZON",
+            "shipToName" => "Vipul Parmar",
+            "shippingPostalAddress" => [
+                "street" => "Puerta K, Altea Hills Grupo 3, Residencia los Olivos",
+                "postalCode" => "66840",
+                "city" => "Calle Berlin",
+                "countryLetterCode" => "ES",
+            ],
+            'salesOrderLines' => $lines,
+            'pricesIncludeTax' => true,
+            "phoneNumber" => '0565458585',
+            "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
+            "externalDocumentNumber" => "test-" . date('YmdHis'),
+        ];
+        $order = $bcConnector->createSaleOrder($order);
+        $this->assertIsArray($order);
+
+        $orderFull = $bcConnector->getFullSaleOrder($order['id']);
+        $this->assertIsArray($orderFull);
+        $this->assertCount(1,  $orderFull['salesOrderLines']);
+    }
+
+
+    public function testIntegrationCanonDigital(): void
+    {
+        $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);
+        $product = $bcConnector->getItemByNumber("X-MZB08KWEU");
+        $lines = [
+            [
+                "lineType" => "Item",
+                "itemId" => $product["id"],
+                "unitPrice" => 219.0,
+                "quantity" => 2,
+                'discountAmount' => 0
+            ],
+        ];
+        $order =  [
+            'orderDate' => date("Y-m-d"),
+            'customerNumber' => AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER,
+
+            "billToName" => "Vipul Parmar",
+            "sellingPostalAddress" => [
+                "street" => "Puerta K, Altea Hills Grupo 3, Residencia los Olivos",
+                "postalCode" => "66840",
+                "city" => "Calle Berlin",
+                "countryLetterCode" => "ES",
+            ],
+            "locationCode" => "AMAZON",
+            "shipToName" => "Vipul Parmar",
+            "shippingPostalAddress" => [
+                "street" => "Puerta K, Altea Hills Grupo 3, Residencia los Olivos",
+                "postalCode" => "66840",
+                "city" => "Calle Berlin",
+                "countryLetterCode" => "ES",
+            ],
+            'salesOrderLines' => $lines,
+            'pricesIncludeTax' => true,
+            "phoneNumber" => '0565458585',
+            "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
+            "externalDocumentNumber" => "test-" . date('YmdHis'),
+        ];
+        $order = $bcConnector->createSaleOrder($order);
+        $this->assertIsArray($order);
+        $orderFull = $bcConnector->getFullSaleOrder($order['id']);
+        $this->assertIsArray($orderFull);
+        $this->assertCount(2,  $orderFull['salesOrderLines']);
+    }
+
+
+    public function testIntegrationNoCanonDigital(): void
+    {
+        $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);
+        $product = $product = $bcConnector->getItemByNumber("X-MZB08KWEU");
+        $lines = [
+            [
+                "lineType" => "Item",
+                "itemId" => $product["id"],
+                "unitPrice" => 219.0,
+                "quantity" => 2,
+                'discountAmount' => 0
+            ],
+        ];
+        $order =  [
+            'orderDate' => date("Y-m-d"),
+            'customerNumber' => AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER,
+
+            "billToName" => "Vipul Parmar",
+            "sellingPostalAddress" => [
+                "street" => "Puerta K, Altea Hills Grupo 3, Residencia los Olivos",
+                "postalCode" => "66840",
+                "city" => "Calle Berlin",
+                "countryLetterCode" => "FR",
+            ],
+            "locationCode" => "AMAZON",
+            "shipToName" => "Vipul Parmar",
+            "shippingPostalAddress" => [
+                "street" => "Puerta K, Altea Hills Grupo 3, Residencia los Olivos",
+                "postalCode" => "66840",
+                "city" => "Calle Berlin",
+                "countryLetterCode" => "ES",
+            ],
+            'salesOrderLines' => $lines,
+            'pricesIncludeTax' => true,
+            "phoneNumber" => '0565458585',
+            "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
+            "externalDocumentNumber" => "test-" . date('YmdHis'),
+        ];
+        $order = $bcConnector->createSaleOrder($order);
+        $this->assertIsArray($order);
+        $orderFull = $bcConnector->getFullSaleOrder($order['id']);
+        $this->assertIsArray($orderFull);
+        $this->assertCount(1,  $orderFull['salesOrderLines']);
+    }
+}

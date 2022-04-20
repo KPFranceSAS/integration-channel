@@ -158,6 +158,8 @@ class WebOrder
 
     public $orderBCContent = [];
 
+
+
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -204,6 +206,36 @@ class WebOrder
     }
 
 
+    public function getOrderLinesContent()
+    {
+        return $this->getOrderContent();
+    }
+
+    public function getHeaderShippingContent()
+    {
+        return $this->getOrderContent();
+    }
+
+    public function getHeaderBillingContent()
+    {
+        return  $this->getOrderContent();
+    }
+
+
+    public function getOrderLinesBCContent()
+    {
+        return $this->orderBCContent;
+    }
+
+    public function getHeaderShippingBCContent()
+    {
+        return $this->orderBCContent;
+    }
+
+    public function getHeaderBillingBCContent()
+    {
+        return $this->orderBCContent;
+    }
 
     public function haveInvoice()
     {
@@ -240,6 +272,12 @@ class WebOrder
             return $error['content'];
         }
         return '';
+    }
+
+
+    public function hasErrors()
+    {
+        return count($this->errors) > 0;
     }
 
 
@@ -395,8 +433,7 @@ class WebOrder
         $webOrder->setChannel(WebOrder::CHANNEL_ALIEXPRESS);
         $webOrder->setSubchannel('AliExpress');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $datePurchase = DateTime::createFromFormat('Y-m-d H:i:s', $orderApi->gmt_pay_success);
-        $datePurchase->add(new \DateInterval('PT9H'));
+        $datePurchase = DatetimeUtils::createDateTimeFromAliExpressDate($orderApi->gmt_pay_success);
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);

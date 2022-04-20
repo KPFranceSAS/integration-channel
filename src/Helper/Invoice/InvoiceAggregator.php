@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Service\Invoice;
+namespace App\Helper\Invoice;
 
 use App\Entity\WebOrder;
 use App\Service\AliExpress\AliExpressInvoice;
 use App\Service\ChannelAdvisor\SendInvoicesToChannelAdvisor;
 use App\Service\FitbitExpress\FitbitExpressInvoice;
-use App\Service\Invoice\InvoiceParent;
+use App\Helper\Invoice\InvoiceParent;
 use App\Service\OwletCare\OwletCareInvoice;
 use Exception;
 

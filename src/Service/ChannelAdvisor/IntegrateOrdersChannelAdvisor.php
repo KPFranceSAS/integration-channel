@@ -7,8 +7,9 @@ use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
+use App\Service\BusinessCentral\ProductTaxFinder;
 use App\Service\ChannelAdvisor\ChannelWebservice;
-use App\Service\Integrator\IntegratorParent;
+use App\Helper\Integrator\IntegratorParent;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -23,34 +24,16 @@ use stdClass;
 class IntegrateOrdersChannelAdvisor extends IntegratorParent
 {
 
-    private $channel;
-
-
-
-    public function __construct(
-        ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        ChannelWebservice $channel,
-        BusinessCentralAggregator $businessCentralAggregator
-    ) {
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
-        $this->channel = $channel;
-    }
-
-
     public function getChannel()
     {
         return WebOrder::CHANNEL_CHANNELADVISOR;
     }
 
 
-
-
     public function integrateAllOrders()
     {
         $counter = 0;
-        $ordersApi = $this->channel->getNewOrdersByBatch(true);
+        $ordersApi = $this->getApi()->getNewOrdersByBatch(true);
         $this->logLine('Integration first batch');
         foreach ($ordersApi->value as $orderApi) {
             if ($this->integrateOrder($orderApi)) {
@@ -63,7 +46,7 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
             if (property_exists($ordersApi, '@odata.nextLink')) {
 
                 $this->logLine('Integration next batch');
-                $ordersApi = $this->channel->getNextResults($ordersApi->{'@odata.nextLink'});
+                $ordersApi = $this->getApi()->getNextResults($ordersApi->{'@odata.nextLink'});
                 foreach ($ordersApi->value as $orderApi) {
                     if ($this->integrateOrder($orderApi)) {
                         $counter++;
@@ -80,7 +63,7 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
     protected function checkAfterPersist(WebOrder $order, $orderApi)
     {
         $this->addLogToOrder($order, 'Marked on channel advisor as exported');
-        $this->channel->markOrderAsExported($orderApi->ID);
+        $this->getApi()->markOrderAsExported($orderApi->ID);
     }
 
 
@@ -94,13 +77,13 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
     {
         $company = $this->getCompanyIntegration($order);
         if ($this->isAlreadyRecordedDatabase($order->SiteOrderID)) {
-            $this->channel->markOrderAsExported($order->ID);
+            $this->getApi()->markOrderAsExported($order->ID);
             $this->logger->info('Marked on channel advisor as exported');
             $this->logger->info('Is Already Recorded Database');
             return false;
         }
         if ($this->alreadyIntegratedErp($order->SiteOrderID, $company)) {
-            $this->channel->markOrderAsExported($order->ID);
+            $this->getApi()->markOrderAsExported($order->ID);
             $this->logger->info('Marked on channel advisor as exported');
             $this->logger->info('Is Already Recorded on ERP');
             return false;

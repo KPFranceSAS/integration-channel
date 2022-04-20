@@ -6,7 +6,7 @@ use App\Controller\Admin\AdminCrudController;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\Integrator\IntegratorAggregator;
+use App\Helper\Integrator\IntegratorAggregator;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;

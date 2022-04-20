@@ -4,9 +4,10 @@ namespace App\Command\Utils;
 
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Service\AliExpress\AliExpressIntegrateOrder;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\ChannelAdvisor\ChannelWebservice;
-use App\Service\Integrator\IntegratorAggregator;
+use App\Helper\Integrator\IntegratorAggregator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -52,8 +53,12 @@ class IntegrateOrderCommand extends Command
 
     private function createOrderTest()
     {
-        $product = $this->bcConnector->getItemByNumber("X-MZB08KWEU");
+        //$product = $this->bcConnector->getItemByNumber("X-MZB08KWEU");
 
+        $product = $this->bcConnector->getItemByNumber("PX-P3D2044");
+
+        dump($product);
+        return;
         $lines = [
             [
                 "lineType" => "Item",
@@ -65,21 +70,33 @@ class IntegrateOrderCommand extends Command
         ];
 
 
-        $shipments = $this->bcConnector->getShipmentMethodByCode('AIR');
-        dump($shipments);
 
         $order =  [
             'orderDate' => date("Y-m-d"),
-            'customerNumber' => "008452",
-            "locationCode" => "CENTRAL",
+            'customerNumber' => AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER,
+
+            "billToName" => "Vipul Parmar",
+            "sellingPostalAddress" => [
+                "street" => "Puerta K, Altea Hills Grupo 3, Residencia los Olivos",
+                "postalCode" => "66840",
+                "city" => "Calle Berlin",
+                "countryLetterCode" => "FR",
+            ],
+            "locationCode" => "AMAZON",
+            "shipToName" => "Vipul Parmar",
+            "shippingPostalAddress" => [
+                "street" => "Puerta K, Altea Hills Grupo 3, Residencia los Olivos",
+                "postalCode" => "66840",
+                "city" => "Calle Berlin",
+                "countryLetterCode" => "ES",
+            ],
             'salesOrderLines' => $lines,
             'pricesIncludeTax' => true,
-            "shippingAgent" => 'DHL PARCEL',
-            "shippingAgentService" => 'AEREO',
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
-            "externalDocumentNumber" => "length-XXXX-XXXX-XXXX",
+            "externalDocumentNumber" => "tets-" . date('YmdHis'),
         ];
+
 
 
 

@@ -7,35 +7,15 @@ use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\PostalAddress;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
-use App\Service\AliExpress\AliExpressApi;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\Integrator\IntegratorParent;
-use App\Service\MailService;
+use App\Service\AliExpress\AliExpressStock;
+use App\Helper\Integrator\IntegratorParent;
 use DateTime;
-use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use function Symfony\Component\String\u;
-use Psr\Log\LoggerInterface;
 
 class AliExpressIntegrateOrder extends IntegratorParent
 {
     const ALIEXPRESS_CUSTOMER_NUMBER = "002355";
-
-    protected $businessCentralConnector;
-
-    protected $aliExpress;
-
-
-    public function __construct(
-        ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        AliExpressApi $aliExpress,
-        BusinessCentralAggregator $businessCentralAggregator
-    ) {
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator);
-        $this->aliExpress = $aliExpress;
-    }
 
 
     public function getChannel()
@@ -51,11 +31,11 @@ class AliExpressIntegrateOrder extends IntegratorParent
     public function integrateAllOrders()
     {
         $counter = 0;
-        $ordersApi = $this->aliExpress->getOrdersToSend();
+        $ordersApi = $this->getApi()->getOrdersToSend();
 
         foreach ($ordersApi as $orderApi) {
             try {
-                $orderFull = $this->aliExpress->getOrder($orderApi->order_id);
+                $orderFull = $this->getApi()->getOrder($orderApi->order_id);
                 if ($this->integrateOrder($orderFull)) {
                     $counter++;
                     $this->logger->info("Orders integrated : $counter ");
@@ -208,7 +188,7 @@ class AliExpressIntegrateOrder extends IntegratorParent
 
         $brands = [];
         foreach ($orderApi->child_order_list->global_aeop_tp_child_order_dto as $line) {
-            $brand = $this->aliExpress->getBrandProduct($line->product_id);
+            $brand = $this->getApi()->getBrandProduct($line->product_id);
             if ($brand) {
                 $this->logger->info('Brand ' . $brand);
                 $brands[] = $brand;

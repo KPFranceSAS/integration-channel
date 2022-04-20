@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Integrator;
+namespace App\Helper\Integrator;
 
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Model\SaleOrder;

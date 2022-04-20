@@ -4,10 +4,9 @@ namespace App\Controller;
 
 
 use App\Entity\WebOrder;
+use App\Helper\Api\ApiAggregator;
 use App\Helper\Utils\InvoiceDownload;
-use App\Service\AliExpress\AliExpressApi;
 use App\Service\BusinessCentral\GadgetIberiaConnector;
-use App\Service\FitbitExpress\FitbitExpressApi;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -23,7 +22,7 @@ class InvoiceController extends AbstractController
     /**
      * @Route("/invoice/aliexpress", name="invoice_list", methods={"GET","POST"})
      */
-    public function getInvoice(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector, AliExpressApi $aliExpressApi, FitbitExpressApi $fitbitExpressApi): Response
+    public function getInvoice(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector, ApiAggregator $apiAggregator): Response
     {
 
         $invoice = new InvoiceDownload();
@@ -44,8 +43,8 @@ class InvoiceController extends AbstractController
                 ->andWhere('w.channel IN (:channel)')
                 ->andWhere('w.purchaseDate >= :date_start')
                 ->andWhere('w.purchaseDate <= :date_end')
-                ->setParameter('date_start', $invoice->dateInvoice->format('Y-m-d 00:00:00'))
-                ->setParameter('date_end',   $invoice->dateInvoice->format('Y-m-d 23:59:59'))
+                ->setParameter('date_start', $invoice->getDateStartString())
+                ->setParameter('date_end',   $invoice->getDateEndString())
                 ->setParameter('channel',  [WebOrder::CHANNEL_ALIEXPRESS, WebOrder::CHANNEL_FITBITEXPRESS])
                 ->setParameter('externalNumber',  $invoice->externalNumber);
 
@@ -54,7 +53,7 @@ class InvoiceController extends AbstractController
             $webOrder = count($webOrders) > 0 ? reset($webOrders) : null;
             if ($webOrder) {
                 if ($webOrder->getStatus() == WebOrder::STATE_INVOICED) {
-                    $orderAli = $webOrder->getChannel() == WebOrder::CHANNEL_ALIEXPRESS ? $aliExpressApi->getOrder($webOrder->getExternalNumber()) : $fitbitExpressApi->getOrder($webOrder->getExternalNumber());
+                    $orderAli = $apiAggregator->getApi($webOrder->getChannel())->getOrder($webOrder->getExternalNumber());
                     if (!$orderAli) {
                         $this->addFlash('danger', 'Actualmente no podemos conectar con Aliexpress.');
                     } else {

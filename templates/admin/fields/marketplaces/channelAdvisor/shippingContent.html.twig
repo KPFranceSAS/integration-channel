@@ -1,0 +1,22 @@
+{% if field.value|length > 0 %}
+
+		<div class="">
+			{{field.value.ShippingFirstName}}
+			{{field.value.ShippingLastName}}<br/>
+			{{field.value.ShippingAddressLine1}}<br/>
+			{% if field.value.ShippingAddressLine2|length > 0 %}
+				{{field.value.ShippingAddressLine2}}<br/>
+			{% endif %}
+			{{field.value.ShippingPostalCode}}
+			{{field.value.ShippingCity}},
+			{% if field.value.ShippingStateOrProvinceName|length > 0 and field.value.ShippingStateOrProvinceName != "--" %}
+				{{field.value.ShippingStateOrProvinceName}},
+			{% endif %}
+			{{field.value.ShippingCountry}}
+
+		</div>
+
+{% else %}
+<span class="badge badge-secondary"> Data not accessible from Channel advisor</span>
+
+{% endif %}

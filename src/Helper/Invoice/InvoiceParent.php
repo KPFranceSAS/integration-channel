@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Service\Invoice;
+namespace App\Helper\Invoice;
 
 
 use App\Entity\WebOrder;
-use App\Helper\Utils\DatetimeUtils;
+use App\Helper\Api\ApiAggregator;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\Carriers\GetTracking;
 use App\Service\MailService;
@@ -28,20 +28,27 @@ abstract class InvoiceParent
 
     protected $tracker;
 
+    protected $apiAggregator;
 
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, GetTracking $tracker)
+
+    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, GetTracking $tracker, ApiAggregator $apiAggregator)
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->tracker = $tracker;
+        $this->apiAggregator = $apiAggregator;
     }
 
 
     abstract public function getChannel();
 
 
+    public function getApi()
+    {
+        return $this->apiAggregator->getApi($this->getChannel());
+    }
 
 
     public function getBusinessCentralConnector($companyName)
@@ -144,12 +151,7 @@ abstract class InvoiceParent
             if ($invoice) {
                 $order->cleanErrors();
                 $postInvoice = $this->postInvoice($order, $invoice);
-                $logMessageInvoice = 'Invoice created in the ERP with number ' . $invoice['number'] . ' on ' . $invoice['invoiceDate'];
-                if ($order->haveNoLogWithMessage($logMessageInvoice)) {
-                    $this->addLogToOrder($order, $logMessageInvoice);
-                } else {
-                    $this->logger->info($logMessageInvoice);
-                }
+                $this->addOnlyLogToOrderIfNotExists($order, 'Invoice created in the ERP with number ' . $invoice['number'] . ' on ' . $invoice['invoiceDate']);
                 if ($postInvoice) {
                     $order->setInvoiceErp($invoice['number']);
                     $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
@@ -162,8 +164,7 @@ abstract class InvoiceParent
             }
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
-            $order->addError($message);
-            $this->addError($order->getExternalNumber() . ' >> ' . $message);
+            $this->addErrorToOrder($order, $order->getExternalNumber() . ' >> ' . $message);
         }
         $this->manager->flush();
     }
@@ -203,10 +204,7 @@ abstract class InvoiceParent
         $this->logger->info('Check if order is late ');
         if ($order->hasDelayTreatment()) {
             $messageDelay = $order->getDelayProblemMessage();
-            if ($order->haveNoLogWithMessage($messageDelay)) {
-                $this->addLogToOrder($order, $messageDelay);
-                $this->addError($messageDelay);
-            }
+            $this->addOnlyErrorToOrderIfNotExists($order, $messageDelay);
         }
     }
 
@@ -219,11 +217,7 @@ abstract class InvoiceParent
         $interval = $now->diff($invoiceDate, true);
         $nbHours = $interval->format('%a') * 24 + $interval->format('%h');
         if ($nbHours > 34) {
-            $messageDelay = $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. Please confirm tracking on ' . $this->getChannel();
-            if ($order->haveNoLogWithMessage($messageDelay)) {
-                $this->addLogToOrder($order, $messageDelay);
-                $this->addError($messageDelay);
-            }
+            $this->addOnlyErrorToOrderIfNotExists($order, $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. Please confirm tracking on ' . $this->getChannel());
         }
     }
 
@@ -274,18 +268,42 @@ abstract class InvoiceParent
     }
 
 
-
-
-
-
-    protected function addLogToOrder(WebOrder $webOrder, $message)
+    protected function addLogToOrder(WebOrder $webOrder, string $message)
     {
         $webOrder->addLog($message);
         $this->logger->info($message);
     }
 
 
-    protected function addError($errorMessage)
+
+    protected function addErrorToOrder(WebOrder $webOrder, string $message)
+    {
+        $webOrder->addError($message);
+        $this->addError($message);
+    }
+
+
+    protected function addOnlyLogToOrderIfNotExists(WebOrder $webOrder, string $message)
+    {
+        if ($webOrder->haveNoLogWithMessage($message)) {
+            $this->addLogToOrder($webOrder, $message);
+        } else {
+            $this->logger->info($message);
+        }
+    }
+
+
+    protected function addOnlyErrorToOrderIfNotExists(WebOrder $webOrder, string $message)
+    {
+        if ($webOrder->haveNoLogWithMessage($message)) {
+            $this->addErrorToOrder($webOrder, $message);
+        } else {
+            $this->logger->error($message);
+        }
+    }
+
+
+    protected function addError(string $errorMessage)
     {
         $this->logger->error($errorMessage);
         $this->errors[] = $errorMessage;

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Service\Stock;
+namespace App\Helper\Stock;
 
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
+use App\Helper\Api\ApiAggregator;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\MailService;
@@ -22,6 +23,8 @@ abstract class StockParent
 
     protected $mailer;
 
+    protected $apiAggregator;
+
     protected $businessCentralAggregator;
 
     protected $awsStorage;
@@ -29,14 +32,19 @@ abstract class StockParent
     protected $stockLevels;
 
 
-    public function __construct(FilesystemOperator $awsStorage, ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator)
+    public function __construct(FilesystemOperator $awsStorage, ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator,  ApiAggregator $apiAggregator)
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->awsStorage = $awsStorage;
+        $this->apiAggregator = $apiAggregator;
     }
+
+    abstract public function sendStocks();
+
+    abstract public function getChannel();
 
 
     public function send()
@@ -49,16 +57,21 @@ abstract class StockParent
         }
     }
 
-
-    abstract public function sendStocks();
-
-    abstract public function getChannel();
-
-    protected function getStocksProductWarehouse(array $skus, $depot = WebOrder::DEPOT_LAROCA)
+    public function getApi()
     {
+        return $this->apiAggregator->getApi($this->getChannel());
     }
 
-    protected function getStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA): int
+    public function getStocksProductWarehouse(array $skus, $depot = WebOrder::DEPOT_LAROCA): array
+    {
+        $skuStocks = [];
+        foreach ($skus as $sku) {
+            $skuStocks[$sku] = $this->getStockProductWarehouse($sku, $depot);
+        }
+        return $skuStocks;
+    }
+
+    public function getStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA): int
     {
         if (!$this->stockLevels) {
             $this->initializeStockLevels();
@@ -80,6 +93,8 @@ abstract class StockParent
         }
         return 0;
     }
+
+
 
     public function getBusinessCentralConnector($companyName): BusinessCentralConnector
     {
@@ -150,11 +165,5 @@ abstract class StockParent
 
 
         return $this->stockLevels;
-    }
-
-
-
-    private function checkResults($warehouseLists, $stockLevels)
-    {
     }
 }

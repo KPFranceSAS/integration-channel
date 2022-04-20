@@ -2,7 +2,7 @@
 
 namespace App\Command\Integrator;
 
-use App\Service\Integrator\IntegratorAggregator;
+use App\Helper\Integrator\IntegratorAggregator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Stock;
+namespace App\Helper\Stock;
 
 use App\Entity\WebOrder;
 use App\Service\AliExpress\AliExpressStock;

@@ -1,46 +1,4 @@
 {% if field.value|length > 0 %}
-
-<div class="row " style="margin:0!important">
-	<div class="mb-3 col-4">
-		<h6>Billing</h6>
-		<div class="">
-			{{field.value.BillingFirstName}}
-			{{field.value.BillingLastName}}<br/>
-			{{field.value.BillingAddressLine1}}<br/>
-			{% if field.value.BillingAddressLine2|length > 0 %}
-				{{field.value.BillingAddressLine2}}<br/>
-			{% endif %}
-			{{field.value.BillingPostalCode}}
-			{{field.value.BillingCity}},
-			{% if field.value.BillingStateOrProvinceName|length > 0 and field.value.BillingStateOrProvinceName != "--" %}
-				{{field.value.BillingStateOrProvinceName}},
-			{% endif %}
-			{{field.value.BillingCountry}}
-
-		</div>
-	</div>
-
-	<div class="mb-3 col-4">
-		<h6>Shipping</h6>
-		<div class="">
-			{{field.value.ShippingFirstName}}
-			{{field.value.ShippingLastName}}<br/>
-			{{field.value.ShippingAddressLine1}}<br/>
-			{% if field.value.ShippingAddressLine2|length > 0 %}
-				{{field.value.ShippingAddressLine2}}<br/>
-			{% endif %}
-			{{field.value.ShippingPostalCode}}
-			{{field.value.ShippingCity}},
-			{% if field.value.ShippingStateOrProvinceName|length > 0 and field.value.ShippingStateOrProvinceName != "--" %}
-				{{field.value.ShippingStateOrProvinceName}},
-			{% endif %}
-			{{field.value.ShippingCountry}}
-
-		</div>
-	</div>
-
-	<div class="col-12">
-		<h6>List of items</h6>
 		<div class="">
 			<table class="table datagrid ">
 				<thead>
@@ -106,8 +64,6 @@
 			</table>
 
 		</div>
-	</div>
-</div>
 {% else %}
 <span class="badge badge-secondary"> Data not accessible from Channel advisor</span>
 

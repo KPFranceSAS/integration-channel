@@ -2,7 +2,7 @@
 
 namespace App\Command\Integrator;
 
-use App\Service\Stock\StockAggregator;
+use App\Helper\Stock\StockAggregator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

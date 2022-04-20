@@ -1,34 +1,4 @@
 {% if field.value|length > 0%}
-	<div class="row " style="margin:0!important">
-
-<div class="row " style="margin:0!important">
-	<div class="mb-3 col-4">
-		<h6>Billing</h6>
-		<div class="">
-			{{field.value.billToName}}<br/>
-			{{field.value.billingPostalAddress.street|nl2br}}<br/>
-			{{field.value.billingPostalAddress.postalCode}}
-			{{field.value.billingPostalAddress.city}},
-			{{field.value.billingPostalAddress.state}},
-			{{field.value.billingPostalAddress.countryLetterCode}}
-
-		</div>
-	</div>
-
-	<div class="mb-3 col-4">
-		<h6>Shipping</h6>
-		<div class="">
-			{{field.value.shipToName}}<br/>
-			{{field.value.shippingPostalAddress.street|nl2br}}<br/>
-			{{field.value.shippingPostalAddress.postalCode}}
-			{{field.value.shippingPostalAddress.city}},
-			{{field.value.shippingPostalAddress.state}},
-			{{field.value.shippingPostalAddress.countryLetterCode}}
-		</div>
-	</div>
-
-	<div class="col-12">
-		<h6>List of items</h6>
 			<div class="">
 				<table class="table datagrid ">
 					<thead>
@@ -117,8 +87,6 @@
 				</table>
 
 			</div>
-		</div>
-	</div>
 {% else %}
 	<span class="badge badge-secondary">No retrieved</span>
 {% endif %}

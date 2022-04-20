@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Service\Integrator;
+namespace App\Helper\Integrator;
 
 use App\Entity\WebOrder;
 use App\Service\AliExpress\AliExpressIntegrateOrder;
 use App\Service\ChannelAdvisor\IntegrateOrdersChannelAdvisor;
 use App\Service\FitbitExpress\FitbitExpressIntegrateOrder;
-use App\Service\Integrator\IntegratorInterface;
+use App\Helper\Integrator\IntegratorInterface;
 use App\Service\OwletCare\OwletCareIntegrateOrder;
 use Exception;
 
