@@ -39,8 +39,9 @@ class ProductTaxFinder
         if ($item) {
             $sku = $item['number'];
             if (array_key_exists($sku, $this->canonDigitals)) {
-                $this->logger->info('Canon digital de ' . $$this->canonDigitals[$sku] . ' for ' . $sku);
-                return $this->canonDigitals[$sku];
+                $this->logger->info('Canon digital de ' . $this->canonDigitals[$sku]['UnitPriceDigitalCanon'] . ' for ' . $sku);
+                $value = floatval(str_replace(',', '.', $this->canonDigitals[$sku]['UnitPriceDigitalCanon']));
+                return $value;
             } else {
                 $this->logger->info('No canon digital for ' . $sku);
             }
@@ -55,6 +56,9 @@ class ProductTaxFinder
     {
         return $this->businessCentralAggregator->getBusinessCentralConnector($companyName);
     }
+
+
+
 
 
 

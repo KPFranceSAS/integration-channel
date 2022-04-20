@@ -175,7 +175,7 @@ abstract class IntegratorParent implements IntegratorInterface
 
 
 
-    protected function adjustSaleOrder(WebOrder $order, SaleOrder $saleOrder)
+    public function adjustSaleOrder(WebOrder $order, SaleOrder $saleOrder)
     {
         if ($saleOrder->sellingPostalAddress->countryLetterCode == 'ES' ||  $saleOrder->shippingPostalAddress->countryLetterCode == 'ES') {
             $this->addSpecificTaxesForSpain($order, $saleOrder);
