@@ -2,12 +2,12 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\AdminCrudController;
 use App\Entity\ProductCorrelation;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class ProductCorrelationCrudController extends AbstractCrudController
+class ProductCorrelationCrudController extends AdminCrudController
 {
     public static function getEntityFqcn(): string
     {
@@ -15,14 +15,11 @@ class ProductCorrelationCrudController extends AbstractCrudController
     }
 
 
-
-    public function configureCrud(Crud $crud): Crud
+    public function getName(): string
     {
-        return $crud
-            ->setEntityLabelInSingular('Sku Mapping')
-            ->setEntityLabelInPlural('Sku Mappings')
-            ->showEntityActionsInlined();
+        return 'Sku Mapping';
     }
+
 
 
     public function configureFields(string $pageName): iterable

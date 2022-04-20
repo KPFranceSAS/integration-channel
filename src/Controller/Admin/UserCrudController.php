@@ -2,10 +2,11 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\Admin\AdminCrudController;
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -17,25 +18,35 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
-class UserCrudController extends AbstractCrudController
+class UserCrudController extends AdminCrudController
 {
     public static function getEntityFqcn(): string
     {
         return User::class;
     }
+
+    public function getName(): string
+    {
+        return 'User';
+    }
+
     public function configureFields(string $pageName): iterable
     {
-        return [
+        $fields = [
             Field::new('email', 'Email')->setFormType(EmailType::class),
-            Field::new('plainPassword', 'New password')->onlyOnForms()
+        ];
+
+        if ($pageName != Crud::PAGE_INDEX) {
+            $fields[] = Field::new('plainPassword', 'New password')->onlyOnForms()
                 ->setFormType(RepeatedType::class)
                 ->setFormTypeOptions([
                     'type' => PasswordType::class,
                     'first_options' => ['label' => 'New password'],
                     'second_options' => ['label' => 'Repeat password'],
-                    'required' => true
-                ]),
-        ];
+                    'required' => $pageName == Crud::PAGE_NEW
+                ]);
+        }
+        return $fields;
     }
 
     public function createEditFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
