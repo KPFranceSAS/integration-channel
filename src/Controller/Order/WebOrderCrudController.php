@@ -3,10 +3,14 @@
 namespace App\Controller\Order;
 
 use App\Controller\Admin\AdminCrudController;
+use App\Controller\Admin\DashboardController;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Helper\Integrator\IntegratorAggregator;
+use App\Helper\Utils\DatetimeUtils;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
+use DateInterval;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -19,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Illuminate\Support\Manager;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -36,7 +41,7 @@ class WebOrderCrudController extends AdminCrudController
             ->overrideTemplate('crud/detail', 'admin/crud/order.html.twig')
             ->setEntityLabelInSingular($this->getName())
             ->setEntityLabelInPlural($this->getName() . 's')
-            ->setDateTimeFormat('yyyy-MM-dd HH:mm:ss')
+            ->setDateTimeFormat('yyyy-MM-dd HH:mm')
             ->setDefaultSort(['purchaseDate' => 'DESC'])
             ->showEntityActionsInlined();
     }
@@ -109,8 +114,27 @@ class WebOrderCrudController extends AdminCrudController
             ->createAsGlobalAction();
 
 
+        $filterDelay = $this->getFilterDelay();
 
-        return $actions
+        if (count($filterDelay) > 0) {
+            $url = $this->container->get(AdminUrlGenerator::class)
+                ->setDashboard(DashboardController::class)
+                ->setController(get_class($this))
+                ->set('filters', $filterDelay)
+                ->setAction(Action::INDEX)
+                ->generateUrl();
+
+            $lateIndex = Action::new('late', 'Check late orders')
+                ->setIcon('fas fa-hourglass-end')
+                ->linkToUrl($url)
+                ->setCssClass('btn btn-danger')
+                ->createAsGlobalAction();
+
+            $actions->add(Crud::PAGE_INDEX, $lateIndex);
+        }
+
+
+        $actions
             ->add(Crud::PAGE_DETAIL, $viewInvoice)
             ->add(Crud::PAGE_DETAIL, $seeOriginalOrder)
             ->add(Crud::PAGE_DETAIL, $seeTrackOrder)
@@ -121,7 +145,61 @@ class WebOrderCrudController extends AdminCrudController
             ->add(Crud::PAGE_INDEX, $viewOrderIndex)
             ->addBatchAction($retryAllIntegrationBatchs)
             ->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE, Action::EDIT);
+
+        return $actions;
     }
+
+
+    protected function getFilterDelay()
+    {
+        return [];
+    }
+
+
+    protected function getFilterDelayDelivery()
+    {
+
+        $dateTime = DatetimeUtils::getDateOutOfDelayBusinessDaysFrom(36);
+
+        return [
+            "status" => [
+                "comparison" => "=",
+                "value" => [
+                    WebOrder::STATE_SYNC_TO_ERP
+                ]
+            ],
+            "purchaseDate" => [
+                "comparison" => "<",
+                "value" => $dateTime->format('Y-m-d') . 'T' . $dateTime->format('H:i'),
+                "value2" => "",
+            ]
+
+        ];
+    }
+
+
+    protected function getFilterDelayNoDelivery()
+    {
+
+        $dateTime = DatetimeUtils::getDateOutOfDelay(24);
+
+        return [
+            "status" => [
+                "comparison" => "=",
+                "value" => [
+                    WebOrder::STATE_SYNC_TO_ERP
+                ]
+            ],
+            "createdAt" => [
+                "comparison" => "<",
+                "value" => $dateTime->format('Y-m-d') . 'T' . $dateTime->format('H:i'),
+                "value2" => "",
+            ]
+
+        ];
+    }
+
+
 
 
     public function configureFilters(Filters $filters): Filters

@@ -6,14 +6,9 @@ use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
-use App\Helper\Utils\DatetimeUtils;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\BusinessCentral\ProductTaxFinder;
 use App\Helper\Integrator\IntegratorParent;
-use App\Service\MailService;
-use App\Service\OwletCare\OwletCareApi;
-use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
+use App\Helper\Utils\DatetimeUtils;
+
 
 class OwletCareIntegrateOrder extends IntegratorParent
 
@@ -194,15 +189,12 @@ class OwletCareIntegrateOrder extends IntegratorParent
         if (strlen($addressShopifyType['address2']) > 0) {
             $adress .= ', ' . trim($addressShopifyType['address2']);
         }
-
         $adress = $this->simplifyAddress($adress);
-
         if (strlen($adress) < 100) {
             $saleOrder->{$addressBusinessType . "PostalAddress"}->street = $adress;
         } else {
             $saleOrder->{$addressBusinessType . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
         }
-
         $saleOrder->{$addressBusinessType . "PostalAddress"}->city = substr($addressShopifyType['city'], 0, 100);
         $saleOrder->{$addressBusinessType . "PostalAddress"}->postalCode = $addressShopifyType['zip'];
         $saleOrder->{$addressBusinessType . "PostalAddress"}->countryLetterCode = $addressShopifyType['country_code'];

@@ -31,4 +31,9 @@ class DeliveryOrderCrudController extends WebOrderCrudController
         $qb->setParameter('fulfilledByState', [WebOrder::FULFILLED_BY_SELLER]);
         return $qb;
     }
+
+    protected function getFilterDelay()
+    {
+        return $this->getFilterDelayDelivery();
+    }
 }

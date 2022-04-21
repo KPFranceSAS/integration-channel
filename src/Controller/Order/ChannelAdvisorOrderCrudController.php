@@ -5,6 +5,8 @@ namespace App\Controller\Order;
 use App\Controller\Order\WebOrderCrudController;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use DateInterval;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -50,5 +52,12 @@ class ChannelAdvisorOrderCrudController extends WebOrderCrudController
             'Amazon ES' => "Amazon Seller Central - ES",
             'Amazon FR' => 'Amazon Seller Central - FR',
         ];
+    }
+
+
+
+    protected function getFilterDelay()
+    {
+        return $this->getFilterDelayNoDelivery();
     }
 }

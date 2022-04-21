@@ -4,24 +4,15 @@ namespace App\Service\OwletCare;
 
 
 use App\Entity\WebOrder;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\Carriers\GetTracking;
 use App\Helper\Invoice\InvoiceParent;
-use App\Service\MailService;
-use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
-
 
 class OwletCareInvoice extends InvoiceParent
 {
-
 
     public function getChannel()
     {
         return WebOrder::CHANNEL_OWLETCARE;
     }
-
-
 
 
     protected function postInvoice(WebOrder $order, $invoice)

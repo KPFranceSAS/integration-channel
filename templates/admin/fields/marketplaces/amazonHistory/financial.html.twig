@@ -1,0 +1,8 @@
+
+<div class="">
+	<div style="float:right; {{event.object.amount > 0 ? 'color:black': 'color:red'}}">
+		{{event.object.getLitteralPrice}}
+	</div>
+	<i class="fas fa-euro-sign"></i> <strong>{{event.object.transactionType}}</strong><br/>
+	{{event.object.amountType}} ({{event.object.amountDescription}})
+</div>

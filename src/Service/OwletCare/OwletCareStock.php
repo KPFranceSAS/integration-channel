@@ -3,16 +3,9 @@
 namespace App\Service\OwletCare;
 
 use App\Entity\WebOrder;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\MailService;
-use App\Service\OwletCare\OwletCareApi;
 use App\Helper\Stock\StockParent;
-use Doctrine\Persistence\ManagerRegistry;
-use League\Flysystem\FilesystemOperator;
-use Psr\Log\LoggerInterface;
 
 class OwletCareStock extends StockParent
-
 {
 
 

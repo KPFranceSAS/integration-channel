@@ -1,0 +1,10 @@
+
+{% if event.type == constant('App\\Service\\Amazon\\History\\AmzHistoryEvent::TYPE_FINANCIAL')  %}
+	{% include "admin/fields/marketplaces/amazonHistory/financial.html.twig" with {'event': event, 'order' : order} %}
+{% elseif event.type == constant('App\\Service\\Amazon\\History\\AmzHistoryEvent::TYPE_ORDER')  %}
+	{% include "admin/fields/marketplaces/amazonHistory/order.html.twig" with {'event': event, 'order' : order} %}
+{% elseif event.type == constant('App\\Service\\Amazon\\History\\AmzHistoryEvent::TYPE_FINANCIAL')  %}
+	{% include "admin/fields/marketplaces/amazonHistory/return.html.twig" with {'event': event, 'order' : order} %}
+{% elseif event.type == constant('App\\Service\\Amazon\\History\\AmzHistoryEvent::TYPE_REIMBURSEMENT')  %}
+	{% include "admin/fields/marketplaces/amazonHistory/reimbursement.html.twig" with {'event': event, 'order' : order} %}	
+{% endif %}

@@ -140,6 +140,11 @@ class AmazonFinancialEvent
     }
 
 
+    public function getLitteralPrice(): string
+    {
+        return ($this->amountCurrency != $this->amount) ? $this->amountCurrency . ' GBP' : $this->amountCurrency . ' EUR';
+    }
+
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;

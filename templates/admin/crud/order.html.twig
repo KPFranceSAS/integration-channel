@@ -72,7 +72,7 @@
              </div>
     </div>
     <div class="col-12 col-md-4">
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-body">
                     <h5 class="card-title"><i class="fas fa-history"></i> History</h5>
                         {{ _self.render_field(entity, entity.getFields().getByProperty("createdAt")) }}  
@@ -80,7 +80,32 @@
                         {{ _self.render_field(entity, entity.getFields().getByProperty("logs")) }}    
                 </div>
              </div>
+             {% if entity.instance.amzEvents %}
+             <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fab fa-amazon"></i> Amazon</h5>
+                    {% for eventDay in entity.instance.amzEvents %}
+                        <hr/>
+                        <div class="">
+                            <div class=""><h6>{{eventDay.dateEvent}}</h6></div>
+                            <div class="">
+                                {% for event in eventDay.events %}
+                                    <div>
+                                    {% include "admin/fields/marketplaces/amazonHistory/historyEvent.html.twig" with {'event' : event, 'order':entity.instance } %}
+                                    </div> 
+                                {% endfor %} 
+                            </div> 
+                        </div>
+                        
+                    {% endfor %}    
+                </div>
+             </div>
+             {% endif %}
+
     </div>
+
+   
+
 </div>
 
     

@@ -39,19 +39,23 @@ class DatetimeUtils
 
 
 
-    public static function isOutOfDelayBusinessDays(DateTimeInterface $date, int $nbHours, ?DateTimeInterface $toverify = null): bool
+    public static function isOutOfDelayBusinessDays(DateTimeInterface $date, int $nbHours, ?DateTimeInterface $toverify = null, $withHolidays = true): bool
     {
         $toverify =  $toverify ? $toverify :  new DateTime();
-
-        $holidays = self::getHolidaysFrom($date);
         $calculator = new CalculatorDelay();
-        $calculator->setFreeWeekDays([
-            CalculatorDelay::SATURDAY,
-            CalculatorDelay::SUNDAY
-        ]);
         $calculator->setStartDate($date);
-        $calculator->setHolidays($holidays);
-        $calculator->skipToBegin();
+        if ($withHolidays) {
+            $holidays = self::getHolidaysFrom($date);
+
+            $calculator->setFreeWeekDays([
+                CalculatorDelay::SATURDAY,
+                CalculatorDelay::SUNDAY
+            ]);
+
+            $calculator->setHolidays($holidays);
+            $calculator->skipToBegin();
+        }
+
 
         $nbDays = intdiv($nbHours, 24);
         if ($nbDays > 0) {
@@ -70,19 +74,7 @@ class DatetimeUtils
 
     public static function isOutOfDelay(DateTimeInterface $date, int $nbHours, ?DateTimeInterface $toverify = null): bool
     {
-        $toverify =  $toverify ? $toverify :  new DateTime();
-        $calculator = new CalculatorDelay();
-        $calculator->setStartDate($date);
-        $nbDays = intdiv($nbHours, 24);
-        if ($nbDays > 0) {
-            $calculator->addBusinessDays($nbDays);
-        }
-        $dateLimit =  $calculator->getDate();
-        $nbHoursRestant = $nbHours % 24;
-        if ($nbHoursRestant > 0) {
-            $dateLimit->add(new DateInterval('PT' . $nbHoursRestant . 'H'));
-        }
-        return $dateLimit < $toverify;
+        return self::isOutOfDelayBusinessDays($date, $nbHours, $toverify, false);
     }
 
 
@@ -102,5 +94,45 @@ class DatetimeUtils
             $holidayDateTime[] = $holiday->getDate();
         }
         return $holidayDateTime;
+    }
+
+
+
+    public static function getDateOutOfDelayBusinessDaysFrom(int $nbHours, ?DateTimeInterface $toverify = null, $withBusineesDays = true): DateTimeInterface
+    {
+        $date =  $toverify ? $toverify :  new DateTime();
+
+        $calculator = new CalculatorDelay();
+        $calculator->setStartDate($date);
+        if ($withBusineesDays) {
+            $holidays = self::getHolidaysFrom($date);
+            $calculator->setFreeWeekDays([
+                CalculatorDelay::SATURDAY,
+                CalculatorDelay::SUNDAY
+            ]);
+
+            $calculator->setHolidays($holidays);
+            $calculator->skipToBegin();
+        }
+
+
+        $nbDays = intdiv($nbHours, 24);
+        if ($nbDays > 0) {
+            $calculator->removeBusinessDays($nbDays);
+        }
+
+        $dateLimit =  $calculator->getDate();
+
+        $nbHoursRestant = $nbHours % 24;
+        if ($nbHoursRestant > 0) {
+            $dateLimit->sub(new DateInterval('PT' . $nbHoursRestant . 'H'));
+        }
+        return $dateLimit;
+    }
+
+
+    public static function getDateOutOfDelay(int $nbHours, ?DateTimeInterface $toverify = null): DateTimeInterface
+    {
+        return self::getDateOutOfDelayBusinessDaysFrom($nbHours, $toverify, false);
     }
 }

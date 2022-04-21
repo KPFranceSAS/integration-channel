@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\WebOrder;
+use App\Service\Amazon\History\AmzHistoryAggregator;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
@@ -13,12 +14,13 @@ class EASubscriber implements EventSubscriberInterface
 {
     private $businessCentralAggregator;
 
-    private $managerRegistry;
+    private $amzHistoryAggregator;
 
-    public function __construct(BusinessCentralAggregator $businessCentralAggregator, ManagerRegistry $managerRegistry)
+    public function __construct(BusinessCentralAggregator $businessCentralAggregator, AmzHistoryAggregator $amzHistoryAggregator)
     {
         $this->businessCentralAggregator = $businessCentralAggregator;
-        $this->managerRegistry = $managerRegistry;
+
+        $this->amzHistoryAggregator = $amzHistoryAggregator;
     }
 
     public static function getSubscribedEvents(): array
@@ -53,6 +55,7 @@ class EASubscriber implements EventSubscriberInterface
 
 
         if (in_array($entity->getChannel(),  [WebOrder::CHANNEL_CHANNELADVISOR])) {
+            $entity->amzEvents = $this->amzHistoryAggregator->getAllEventsOrder($entity->getExternalNumber());
         }
     }
 } {

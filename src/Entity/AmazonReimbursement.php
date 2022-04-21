@@ -145,6 +145,12 @@ class AmazonReimbursement
     private $updatedAt;
 
 
+
+    public function getLitteralPrice(): string
+    {
+        return ($this->amountTotalCurrency != $this->amountTotal) ? $this->amountTotalCurrency . ' GBP' : $this->amountTotalCurrency . ' EUR';
+    }
+
     public function importData(ExchangeRateCalculator $calculator, array $reimbursementAmz)
     {
         foreach ($reimbursementAmz as $key => $value) {
