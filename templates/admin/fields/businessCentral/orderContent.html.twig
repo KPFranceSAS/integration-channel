@@ -31,59 +31,59 @@
 						{% for line in field.value.salesInvoiceLines %}
 							<tr>
 								
-								<td>
-									{% if line.lineDetails.number is defined %} {{line.lineDetails.number}} {% endif %}
+								<td data-label="Sku" class=" text-left field-text">
+									{% if line.lineDetails.number is defined %} {{line.lineDetails.number}} {% else %}-{% endif %}
 								</td>
-								<td>
+								<td data-label="Title" class=" text-left field-text">
 									{{line.description}}
 								</td>
-								<td>
+								<td data-label="Unit Price" class=" text-left field-text">
 									{{line.unitPrice}} {{field.value.currencyCode}}
 								</td>
-								<td>
+								<td data-label="Qty" class=" text-left field-text">
 									{{line.quantity}} 
 								</td>
-								<td>
+								<td data-label="Net Amount" class=" text-left field-text">
 									{{line.netAmount}} {{field.value.currencyCode}}
 								</td>
-								<td>
+								<td data-label="Net Tax Amount" class=" text-left field-text">
 									{{line.netTaxAmount}} {{field.value.currencyCode}}
 								</td>
-								<td>
+								<td data-label="Amount with tax" class=" text-left field-text">
 									{{line.netAmountIncludingTax}} {{field.value.currencyCode}}
 								</td>
 							</tr>
 						{% endfor %}
 					</tbody>
-					<tfooter>
-						<tr>
-							<td colspan="6" class="text-right">
+					<tfoot>
+						<tr >
+							<td colspan="6" class="tfoot-col-label">
 								<strong>Total excl taxes</strong>
 							</td>
-							<td colspan="">
+							<td colspan="" data-label="Total excl taxes" class="text-left field-text">
 								{{field.value.totalAmountExcludingTax}}
 								{{field.value.currencyCode}}
 							</td>
 						</tr>
-						<tr>
-							<td colspan="6" class="text-right">
+						<tr >
+							<td colspan="6" class="tfoot-col-label">
 								<strong>Total tax amount</strong>
 							</td>
-							<td colspan="">
+							<td colspan="" data-label="Total tax amount" class="text-left field-text"> 
 								{{field.value.totalTaxAmount}}
 								{{field.value.currencyCode}}
 							</td>
 						</tr>
-						<tr>
-							<td colspan="6" class="text-right">
+						<tr >
+							<td colspan="6" class="tfoot-col-label">
 								<strong>Total price</strong>
 							</td>
-							<td colspan="">
+							<td colspan="" data-label="Total price" class="text-left field-text">
 								{{field.value.totalAmountIncludingTax}}
 								{{field.value.currencyCode}}
 							</td>
 						</tr>
-					</tfooter>
+					</tfoot>
 				</table>
 
 			</div>

@@ -10,7 +10,26 @@
     --sidebar-menu-submenu-color: #fff;
     --responsive-header-logo-color: #fff;
     --responsive-header-bg: #000;
+    --responsive-table-label-color: #000;
 }
+
+
+
+
+#navigation-toggler {
+    color: #fff;
+    filter: none;
+}
+
+.responsive-header .user-menu-wrapper a.user-details, 
+.responsive-header .user-menu-wrapper a.user-details:hover {
+    color:  #fff;
+}
+
+.tfoot-col-label {
+    text-align: right;
+}
+
 
 
 @media (min-width: 992px) {
@@ -21,12 +40,12 @@
     }
 }
 
-#navigation-toggler {
-    color: #fff;
-    filter: none;
-}
+@media (max-width: 992px){
+    table.datagrid:not(.datagrid-empty) tr {
+        margin-bottom: 10px;
+    }
 
-.responsive-header .user-menu-wrapper a.user-details, 
-.responsive-header .user-menu-wrapper a.user-details:hover {
-    color:  #fff;
+    .tfoot-col-label {
+       display:none!important;
+    }
 }

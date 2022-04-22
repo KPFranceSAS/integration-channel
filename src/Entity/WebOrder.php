@@ -181,6 +181,10 @@ class WebOrder
      */
     private $fulfilledBy;
 
+
+    public $amzEvents;
+
+
     /**
      * @ORM\PrePersist
      */

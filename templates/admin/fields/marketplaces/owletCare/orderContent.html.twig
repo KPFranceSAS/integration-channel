@@ -21,51 +21,51 @@
 			<tbody>
 				{% for line in field.value.line_items %}
 					<tr>
-						<td>
+						<td data-label="Sku" class="text-left field-text">
 							{{line.sku}}
 						</td>
-						<td>
+						<td data-label="Title" class="text-left field-text">
 							{{line.title|slice(0,20)}}
 						</td>
-						<td>
+						<td data-label="Unit Price" class="text-left field-text">
 							{{line.price}}
 							EUR
 						</td>
-						<td>
+						<td data-label="Qty" class="text-left field-text">
 							{{line.quantity}}
 						</td>
 					</tr>
 				{% endfor %}
 			</tbody>
-			<tfooter>
-				<tr>
-					<td colspan="3" class="text-right">
+			<tfoot>
+				<tr >
+					<td colspan="3" class="tfoot-col-label">
 						<strong>Total shipping</strong>
 					</td>
-					<td colspan="">
+					<td colspan="" data-label="Total shipping" class="text-left field-text">
 						{{field.value.total_shipping_price_set.shop_money.amount}}
 						{{field.value.total_shipping_price_set.shop_money.currency_code}}
 					</td>
 				</tr>
-				<tr>
-					<td colspan="3" class="text-right">
+				<tr >
+					<td colspan="3" class="tfoot-col-label">
 						<strong>Total discount</strong>
 					</td>
-					<td colspan="">
+					<td colspan="" data-label="Total discount" class="text-left field-text">
 						{{field.value.total_discounts_set.shop_money.amount}}
 						{{field.value.total_discounts_set.shop_money.currency_code}}
 					</td>
 				</tr>
-				<tr>
-					<td colspan="3" class="text-right">
+				<tr >
+					<td colspan="3" class="tfoot-col-label">
 						<strong>Total price</strong>
 					</td>
-					<td colspan="">
+					<td colspan="" data-label="Total price" class="text-left field-text">
 						{{field.value.total_price_set.shop_money.amount}}
 						{{field.value.total_price_set.shop_money.currency_code}}
 					</td>
 				</tr>
-			</tfooter>
+			</tfoot>
 		</table>
 	</div>
 {% else %}

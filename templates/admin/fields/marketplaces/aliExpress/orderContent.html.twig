@@ -22,17 +22,17 @@
 			<tbody>
 				{% for line in field.value.child_order_list.global_aeop_tp_child_order_dto %}
 					<tr>
-						<td>
+						<td data-label="Sku" class="text-left field-text">
 							{{line.sku_code}}
 						</td>
-						<td>
+						<td data-label="Title" class="text-left field-text">
 							{{line.product_name|slice(0,20)}}
 						</td>
-						<td>
+						<td data-label="Unit price" class="text-left field-text">
 							{{line.product_price.amount}}
 							{{field.value.settlement_currency}}
 						</td>
-						<td>
+						<td data-label="Qty" class="text-left field-text">
 							{{line.product_count}}
 						</td>
 					</tr>
@@ -42,58 +42,58 @@
 						{% for lineDiscount in line.child_order_discount_detail_list.global_aeop_tp_sale_discount_info  %}
 							{% if lineDiscount.promotion_owner == 'SELLER' %}
 								<tr>
-									<td>
+									<td data-label="Sku" class="text-left field-text">
 										DISCOUNT
 									</td>
-									<td>
+									<td data-label="Title" class="text-left field-text">
 										{{lineDiscount.promotion_owner}}
 									</td>
-									<td>
+									<td data-label="Unit price" class="text-left field-text">
 										-{{lineDiscount.discount_detail.amount}}
 										{{field.value.settlement_currency}}
 									</td>
-									<td>1</td>
+									<td data-label="Qty" class="text-left field-text">1</td>
 								</tr>
 							{% else %}
 								<tr>
-									<td>
+									<td data-label="Sku" class="text-left field-text">
 										COUPON
 									</td>
-									<td>
+									<td data-label="Title" class="text-left field-text">
 										Aliexpress (-{{lineDiscount.discount_detail.amount}}
 										{{field.value.settlement_currency}})
 									</td>
-									<td>
+									<td data-label="Unit price" class="text-left field-text">
 										0
 										{{field.value.settlement_currency}}
 									</td>
-									<td>0</td>
+									<td data-label="Qty" class="text-left field-text">1</td>
 								</tr>
 							{% endif %}
 						{% endfor %}
 					{% endif %}
 				{% endfor %}
 			</tbody>
-			<tfooter>
-				<tr>
-					<td colspan="3" class="text-right">
+			<tfoot>
+				<tr >
+					<td colspan="3" class="tfoot-col-label">
 						<strong>Total shipping</strong>
 					</td>
-					<td colspan="">
+					<td colspan="" data-label="Total shipping" class="text-left field-text">
 						{{field.value.logistics_amount.amount}}
 						{{field.value.settlement_currency}}
 					</td>
 				</tr>
-				<tr>
-					<td colspan="3" class="text-right">
+				<tr >
+					<td colspan="3" class="tfoot-col-label">
 						<strong>Total price</strong>
 					</td>
-					<td colspan="">
+					<td colspan="" data-label="Total price" class="text-left field-text">
 						{{field.value.order_amount.amount}}
 						{{field.value.settlement_currency}}
 					</td>
 				</tr>
-			</tfooter>
+			</tfoot>
 		</table>
 	</div>
 {% else %}

@@ -159,7 +159,7 @@ class WebOrderCrudController extends AdminCrudController
     protected function getFilterDelayDelivery()
     {
 
-        $dateTime = DatetimeUtils::getDateOutOfDelayBusinessDaysFrom(36);
+        $dateTime = DatetimeUtils::getDateOutOfDelayBusinessDaysFrom(30);
 
         return [
             "status" => [

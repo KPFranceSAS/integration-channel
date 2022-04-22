@@ -24,43 +24,43 @@
 				<tbody>
 					{% for line in field.value.Items %}
 						<tr>
-							<td>
+							<td data-label="Sku" class="text-left field-text">
 								{{line.Sku}}
 							</td>
-							<td>
+							<td data-label="Title" class="text-left field-text">
 								{{line.Title|slice(0,20)}}
 							</td>
-							<td>
+							<td data-label="Unit price" class="text-left field-text">
 								{{line.UnitPrice}} {{field.value.Currency}}
 							</td>
-							<td>
+							<td data-label="Qty" class="text-left field-text">
 								{{line.Quantity}}
 							</td>
-							<td>
+							<td data-label="Shipping fees" class="text-left field-text">
 								{{line.ShippingPrice}} {{field.value.Currency}}
 							</td>
 							
 						</tr>
 					{% endfor %}
 				</tbody>
-				<tfooter>
-					<tr>
-							<td colspan="4" class="text-right">
+				<tfoot>
+					<tr >
+							<td colspan="4" class="tfoot-col-label">
 									<strong>Total shipping</strong>
 							</td>
-							<td colspan="">
+							<td colspan="" data-label="Total shipping" class="text-left field-text">
 								{{field.value.TotalShippingPrice}} {{field.value.Currency}}
 							</td>
 					</tr>
-					<tr>
-							<td colspan="4" class="text-right">
+					<tr >
+							<td colspan="4" class="tfoot-col-label">
 									<strong>Total price</strong>
 							</td>
-							<td colspan="">
+							<td colspan="" data-label="Total price" class="text-left field-text">
 								{{field.value.TotalPrice}} {{field.value.Currency}}
 							</td>
 					</tr>
-				</tfooter>
+				</tfoot>
 			</table>
 
 		</div>
