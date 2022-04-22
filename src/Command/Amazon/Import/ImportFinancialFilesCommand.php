@@ -133,11 +133,8 @@ class ImportFinancialFilesCommand extends Command
         $eventGroup = $this->manager->getRepository(AmazonFinancialEventGroup::class)->findOneBy(["financialEventId" => $eventGroupName]);
         $currency = $this->getCurrency($marketplace);
         $this->output->writeln('Currency  ' . $currency . ' >>  Marketplace ' . $marketplace);
-
+        $eventGroup->setMarketplaceName($marketplace);
         unset($datas[0]);
-        //array_pop($datas);
-        //array_pop($datas);
-
         foreach ($datas as $data) {
             $amzFinancialEvent = new AmazonFinancialEvent();
             $amzFinancialEvent->setAdjustmentId($data["adjustment-id"]);
