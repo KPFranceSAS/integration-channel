@@ -122,10 +122,12 @@ class AmzApiFinancial
 
         if ($financialEventGroupDb->getFundTransfertStatus() != $financialEventGroup->getFundTransferStatus() && $financialEventGroupDb->getFundTransfertStatus() != 'Succeeded') {
             $this->logger->info('Fund transfer change ' . $financialEventGroupDb->getFundTransfertStatus() . ' >>>' . $financialEventGroup->getFundTransferStatus());
-            $this->setupAmountProperties($financialEventGroup, $financialEventGroupDb);
 
+            $this->setupAmountProperties($financialEventGroup, $financialEventGroupDb);
             return false;
         }
+
+        $this->setupAmountProperties($financialEventGroup, $financialEventGroupDb);
 
         $this->logger->info('No need to import again');
 
