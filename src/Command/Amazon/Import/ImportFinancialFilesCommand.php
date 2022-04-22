@@ -93,6 +93,34 @@ class ImportFinancialFilesCommand extends Command
     }
 
 
+    protected function addSql()
+    {
+        $sql = " UPDATE `amazon_financial_event_group` SET `marketplace`='Amazon.co.uk' WHERE currency_code ='GBP';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.de' WHERE `amazon_financial_event_group`.`financial_event_id` = '-g9KjxzG_8FbxR8O0DpMW2YiwXfnZfXBM9bQmFln-1g';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.de' WHERE `amazon_financial_event_group`.`financial_event_id` = 'khq82BbuQ2aZVJXyOYpGtvJ_NS2Wc1isON2lbsXFN5c';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.de' WHERE `amazon_financial_event_group`.`financial_event_id` = '0S4BM_YWmdMXgQAF1C4FQZQ_447udgcn4o1yqHTG9Vs';
+
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.de' WHERE `amazon_financial_event_group`.`financial_event_id` = 'zv0Y2aWawBsvdgTmNImyggCfHeC2Xq0i57VXYvuTHk8';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.de' WHERE `amazon_financial_event_group`.`financial_event_id` = 'o9kOqfWYG4_e4nqdn5LAz54VrENrESDhpGLGCqfA7eQ';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.de' WHERE `amazon_financial_event_group`.`financial_event_id` = '37J0xVhJskqOnZJz7x8ZGu8YHAh8Y40S3RyPHNL5lsE';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.de' WHERE `amazon_financial_event_group`.`financial_event_id` = 's6Swbkl6w8DWFTdkoH_vRFXnT6JNEt7QEt9GxfI_y7o';
+        UPDATE `amazon_financial_event_group` SET `marketplace`='Amazon.se' WHERE currency_code ='SEK';
+        UPDATE `amazon_financial_event_group` SET `marketplace`='Amazon.pl' WHERE currency_code ='PLN';
+
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.it' WHERE `amazon_financial_event_group`.`financial_event_id` = 'RTkDhdeDRwMeXUARQckCVbElnseRaG949FDyXyqZmzE';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.es' WHERE `amazon_financial_event_group`.`financial_event_id` = 'SUqR5CsqXiTX-amDwkbmoot3nlV4jDNclhbabEa-w-I';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.it' WHERE `amazon_financial_event_group`.`financial_event_id` = 'Vv8FEt6eNtenhGdcdjUBGOeGQg7Ze16o6q9cJN-gB6M';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.fr' WHERE `amazon_financial_event_group`.`financial_event_id` = 'ohjtiETuAE_3eloXtalihZA6o15xoG-ROTyJEFd3C2M';
+
+
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.de' WHERE `amazon_financial_event_group`.`financial_event_id` = 'MxEYH8y_b4aKgxHIAuJ8kNq29PZ65CvG85w_a-A-28g';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.es' WHERE `amazon_financial_event_group`.`financial_event_id` = '6m7ZJo8XWsl9M-Z_4d5Uhkih1G3Um7AFHX2lewVNjSQ';
+        UPDATE `amazon_financial_event_group` SET `marketplace` = 'Amazon.fr' WHERE `amazon_financial_event_group`.`financial_event_id` = '_4qPRKb74Fsg6HiQ_7A75F7womFlfKBWZWXabz6rOkA';
+
+
+        ";
+    }
+
 
     protected function getDataFromFiles($file)
     {
