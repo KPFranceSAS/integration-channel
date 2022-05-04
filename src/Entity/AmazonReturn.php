@@ -110,6 +110,14 @@ class AmazonReturn
     /**
      *  @Groups({"export_order"})
      */
+    public function getAmazonOrderIdProductId()
+    {
+        return $this->product ? $this->orderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
+    }
+
+    /**
+     *  @Groups({"export_order"})
+     */
     public function getProductId()
     {
         return $this->product ? $this->product->getId() :  null;

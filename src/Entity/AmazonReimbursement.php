@@ -145,6 +145,14 @@ class AmazonReimbursement
     private $updatedAt;
 
 
+    /**
+     *  @Groups({"export_order"})
+     */
+    public function getAmazonOrderIdProductId()
+    {
+        return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
+    }
+
 
     public function getLitteralPrice(): string
     {

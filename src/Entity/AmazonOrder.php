@@ -343,6 +343,14 @@ class AmazonOrder
         return $this->product ? $this->product->getId() :  null;
     }
 
+    /**
+     *  @Groups({"export_order"})
+     */
+    public function getAmazonOrderIdProductId()
+    {
+        return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
+    }
+
 
     private function checkIfImportAttribute($key)
     {
