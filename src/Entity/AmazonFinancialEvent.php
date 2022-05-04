@@ -33,21 +33,25 @@ class AmazonFinancialEvent
     /**
      * @ORM\ManyToOne(targetEntity=AmazonFinancialEventGroup::class, inversedBy="amazonFinancialEvents")
      * @ORM\JoinColumn(nullable=false)
+     * 
      */
     private $eventGroup;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"export_order"})
      */
     private $transactionType;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_order"})
      */
     private $amazonOrderId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_order"})
      */
     private $sellerOrderId;
 
@@ -63,31 +67,37 @@ class AmazonFinancialEvent
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_order"})
      */
     private $marketplaceName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_order"})
      */
     private $amountType;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_order"})
      */
     private $amountDescription;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"export_order"})
      */
     private $amount;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Groups({"export_order"})
      */
     private $amountCurrency;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"export_order"})
      */
     private $postedDate;
 
@@ -98,6 +108,7 @@ class AmazonFinancialEvent
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_order"})
      */
     private $sku;
 
@@ -107,6 +118,7 @@ class AmazonFinancialEvent
     private $product;
 
     /**
+     *  @Groups({"export_order"})
      * @ORM\Column(type="integer", nullable=true)
      */
     private $qtyPurchased;
@@ -119,6 +131,23 @@ class AmazonFinancialEvent
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+
+    /**
+     *  @Groups({"export_order"})
+     */
+    public function getGroupId()
+    {
+        return $this->eventGroup ? $this->eventGroup->getId() :  null;
+    }
+
+    /**
+     *  @Groups({"export_order"})
+     */
+    public function getProductId()
+    {
+        return $this->product ? $this->product->getId() :  null;
     }
 
 

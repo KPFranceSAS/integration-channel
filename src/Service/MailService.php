@@ -56,7 +56,7 @@ class MailService
 
     private function needTobeRoute($titre, $contenu)
     {
-        $stringForbiddens = ['REPORT AMAZON',  'cURL error', 'Client error:', 'stock files published'];
+        $stringForbiddens = ['REPORT AMAZON',  'cURL error', 'Client error:', 'stock files published', 'Server error:'];
         if (s($titre)->containsAny($stringForbiddens)) {
             return true;
         }

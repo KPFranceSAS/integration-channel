@@ -2,6 +2,7 @@
 
 namespace App\Service\Amazon\Report;
 
+use App\Entity\AmazonFinancialEventGroup;
 use App\Entity\AmazonReimbursement;
 use App\Entity\AmazonReturn;
 use App\Entity\Product;
@@ -35,9 +36,13 @@ class PublishPowerBi
     public function exportAll()
     {
         $this->exportProducts();
-        $this->exportOrders();
+
         $this->exportReimbursements();
         $this->exportReturns();
+        $this->exportFinancialGroups();
+        $this->exportFinancials();
+
+        $this->exportOrders();
     }
 
 
@@ -74,6 +79,12 @@ class PublishPowerBi
     }
 
 
+    public function exportFinancialGroups()
+    {
+        $this->exportData(AmazonFinancialEventGroup::class, 'export_order', 'financial_groups.json');
+    }
+
+
 
 
     public function exportOrders()
@@ -100,5 +111,31 @@ class PublishPowerBi
 
         $this->kpssportStorage->write('orders.json',  json_encode($orders), []);
         $this->logger->info("Export orders done ");
+    }
+
+
+    public function exportFinancials()
+    {
+        $this->logger->info("Export financials ");
+        $financials = [];
+        $batchSize = 200;
+        $i = 1;
+        $q = $this->manager->createQuery('select a from App\Entity\AmazonFinancialEvent a');
+        foreach ($q->toIterable() as $amz) {
+
+            $financial = $this->serializer->serialize($amz, 'json', [
+                DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
+                'groups' => 'export_order'
+            ]);
+            $financials[] = json_decode($financial);
+            ++$i;
+            if (($i % $batchSize) === 0) {
+                $this->logger->info("Exported  $i financials ");
+                $this->manager->clear(); // Detaches all objects from Doctrine!
+            }
+        }
+
+        $this->kpssportStorage->write('financials.json',  json_encode($financials), []);
+        $this->logger->info("Export financials done ");
     }
 }

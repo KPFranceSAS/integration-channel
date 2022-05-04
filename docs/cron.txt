@@ -1,14 +1,22 @@
-## BUILD REPORT ####
-30 */1 * * * php /home/prod/integration/bin/console app:amz-full-maj-report-updates -vvv --env=prod
+####### INTEGRATION #######
+
+#### BUILD REPORT ####
+30 */3 * * * php /home/prod/integration/bin/console app:amz-full-maj-report-updates -vvv --env=prod
 40 */1 * * * php /home/prod/integration/bin/console app:amz-check-invoiced -vvv --env=prod
+40 22 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
+40 11 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
+
 
 #### CHANNELAVISOR ####
 # Get orders and integrate orders
 5 * * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR -vvv --env=prod
-35 * * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR -vvv --env=prod
+#35 * * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR -vvv --env=prod
 
 # Integrate invoice and upload invoice
 15 5 * * * php /home/prod/integration/bin/console app:integrate-invoices-from CHANNELADVISOR -vvv --env=prod
+15 12 * * * php /home/prod/integration/bin/console app:integrate-invoices-from CHANNELADVISOR -vvv --env=prod
+15 18 * * * php /home/prod/integration/bin/console app:integrate-invoices-from CHANNELADVISOR -vvv --env=prod
+
 
 # Reintegrate orders in error
 5 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR 1 -vvv --env=prod
@@ -31,10 +39,38 @@
 
 # Send stoc levels
 15 * * * * php /home/prod/integration/bin/console app:update-stocks-to ALIEXPRESS --env=prod
-45 * * * * php /home/prod/integration/bin/console app:update-stocks-to ALIEXPRESS --env=prod
+#45 * * * * php /home/prod/integration/bin/console app:update-stocks-to ALIEXPRESS --env=prod
+
+#### FITBITEXPRESS ####
+# Get orders and integrate orders
+13 * * * * php /home/prod/integration/bin/console app:integrate-orders-from FITBITEXPRESS -vvv --env=prod
+43 * * * * php /home/prod/integration/bin/console app:integrate-orders-from FITBITEXPRESS -vvv --env=prod
+
+# Reintegrate orders
+15 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from FITBITEXPRESS 1 -vvv --env=prod
+45 11 * * * php /home/prod/integration/bin/console app:integrate-orders-from FITBITEXPRESS 1 -vvv --env=prod
+
+# Integrate invoice and send tracking
+25 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from FITBITEXPRESS -vvv --env=prod
+
+# Check Cancelation online
+30 * * * * php /home/prod/integration/bin/console app:fitbitexpress-cancel-orders -vvv --env=prod
+
+# Send stoc levels
+25 * * * * php /home/prod/integration/bin/console app:update-stocks-to FITBITEXPRESS --env=prod
+#55 * * * * php /home/prod/integration/bin/console app:update-stocks-to FITBITEXPRESS --env=prod
 
 #### OWLETCARE ####
 # Maj stock
 10 * * * * php /home/prod/integration/bin/console app:update-stocks-to OWLETCARE --env=prod
 40 * * * * php /home/prod/integration/bin/console app:update-stocks-to OWLETCARE --env=prod
+
+# Get orders and integrate orders
+48 * * * * php /home/prod/integration/bin/console app:integrate-orders-from OWLETCARE -vvv --env=prod
+
+# Integrate invoice and send tracking
+22 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from OWLETCARE -vvv --env=prod
+
+
+####### END INTEGRATION #######
 

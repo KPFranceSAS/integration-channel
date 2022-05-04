@@ -23,22 +23,26 @@ class AmazonFinancialEventGroup
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Groups({"export_order"})
      */
     private $financialEventId;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Groups({"export_order"})
      */
     private $processingStatus;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
      */
     private $fundTransfertStatus;
 
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $fundTransferDate;
 
@@ -47,6 +51,7 @@ class AmazonFinancialEventGroup
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
      */
     private $traceIdentfier;
 
@@ -54,11 +59,13 @@ class AmazonFinancialEventGroup
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $startDate;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $endDate;
 
@@ -75,37 +82,44 @@ class AmazonFinancialEventGroup
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $originalTotal;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $convertedTotal;
 
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $originalTotalCurrency;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $convertedTotalCurrency;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $beginningBalance;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $beginningBalanceCurrency;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
      */
     private $currencyCode;
 
@@ -116,6 +130,7 @@ class AmazonFinancialEventGroup
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
      */
     private $marketplace;
 
