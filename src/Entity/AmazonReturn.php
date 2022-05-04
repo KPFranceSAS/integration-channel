@@ -112,7 +112,7 @@ class AmazonReturn
      */
     public function getAmazonOrderIdProductId()
     {
-        return $this->product ? $this->orderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
+        return $this->product ? $this->orderId . '_' . $this->product->getId() :  $this->orderId . '_';
     }
 
     /**
