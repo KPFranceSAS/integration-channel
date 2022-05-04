@@ -522,6 +522,7 @@ class AmzApiFinancial
 
     protected function setupAmountProperties(FinancialEventGroup $financialEventGroup, AmazonFinancialEventGroup $amzFinancialEventGroup)
     {
+        $amzFinancialEventGroup->setProcessingStatus($financialEventGroup->getProcessingStatus());
         $amzFinancialEventGroup->setFundTransfertStatus($financialEventGroup->getFundTransferStatus());
         $amzFinancialEventGroup->setFundTransferDate($financialEventGroup->getFundTransferDate());
         $amzFinancialEventGroup->setTraceIdentfier($financialEventGroup->getTraceId());
