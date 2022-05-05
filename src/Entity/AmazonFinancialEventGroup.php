@@ -18,6 +18,7 @@ class AmazonFinancialEventGroup
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"export_order"})
      */
     private $id;
 

@@ -152,6 +152,14 @@ class AmazonFinancialEvent
 
 
     /**
+     *  @Groups({"export_order"})
+     */
+    public function getAmazonOrderIdProductId()
+    {
+        return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
+    }
+
+    /**
      * @ORM\PrePersist
      */
     public function setCreatedAtValue(): void
