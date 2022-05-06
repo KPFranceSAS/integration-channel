@@ -5,6 +5,7 @@ namespace App\Controller\Order;
 use App\Controller\Admin\AdminCrudController;
 use App\Controller\Admin\DashboardController;
 use App\Entity\WebOrder;
+use App\Form\ChangeStatusInvoiceType;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\Integrator\IntegratorAggregator;
 use App\Helper\Utils\DatetimeUtils;
@@ -16,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\BatchActionDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
@@ -68,6 +70,14 @@ class WebOrderCrudController extends AdminCrudController
             })
             ->addCssClass('btn')
             ->linkToCrudAction('retryIntegration');
+
+        $changeStatusToInvoiced = Action::new('changeStatusToInvoiced', 'Mark as invoiced', 'fas fa-redo')
+            ->displayIf(static function ($entity) {
+                return $entity->canChangeStatusToInvoiced();
+            })
+            ->addCssClass('btn')
+            ->linkToCrudAction('changeStatusToInvoiced');
+
 
         $seeOriginalOrder = Action::new('checkOrderOnline', 'See online', 'fa fa-eye')
             ->addCssClass('btn')
@@ -139,6 +149,8 @@ class WebOrderCrudController extends AdminCrudController
             ->add(Crud::PAGE_DETAIL, $seeOriginalOrder)
             ->add(Crud::PAGE_DETAIL, $seeTrackOrder)
             ->add(Crud::PAGE_DETAIL, $retryIntegration)
+            ->add(Crud::PAGE_DETAIL, $changeStatusToInvoiced)
+
             ->add(Crud::PAGE_INDEX, $viewInvoiceIndex)
             ->add(Crud::PAGE_INDEX, $exportIndex)
             ->add(Crud::PAGE_INDEX, $retryIntegrationIndex)
@@ -314,6 +326,29 @@ class WebOrderCrudController extends AdminCrudController
         }
         return $this->redirect($batchActionDto->getReferrerUrl());
     }
+
+
+    public function changeStatusToInvoiced(AdminContext $context, ManagerRegistry $managerRegistry)
+    {
+        $webOrder = $context->getEntity()->getInstance();
+        $form = $this->createForm(ChangeStatusInvoiceType::class, $webOrder);
+        $form->handleRequest($context->getRequest());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+            $webOrder->setErpDocument(WebOrder::DOCUMENT_INVOICE);
+            $webOrder->setStatus(WebOrder::STATE_INVOICED);
+            $webOrder->addLog('Marked as invoiced by ' . $user->getUserIdentifier() . ' : ' . $webOrder->comments, 'info', $user->getUserIdentifier());
+            $this->addFlash('success', "Web Order " . $webOrder->getExternalNumber() . " has been marked as invoiced");
+            $managerRegistry->getManager()->flush();
+            return $this->redirect($this->adminUrlGenerator->setController(WebOrderCrudController::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($webOrder->getId())
+                ->generateUrl());
+        }
+        return $this->renderForm('admin/crud/changeStatus.html.twig', ['form' => $form, 'entity' => $webOrder]);
+    }
+
+
 
 
 

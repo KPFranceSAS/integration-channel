@@ -158,7 +158,7 @@ class WebOrder
 
     public $orderBCContent = [];
 
-
+    public $comments;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -250,6 +250,13 @@ class WebOrder
     {
         return in_array($this->status,  [self::STATE_ERROR, self::STATE_ERROR_INVOICE]);
     }
+
+    public function canChangeStatusToInvoiced()
+    {
+        return in_array($this->status,  [self::STATE_SYNC_TO_ERP]);
+    }
+
+
 
 
     public function getStatusLitteral()
@@ -473,19 +480,14 @@ class WebOrder
     }
 
 
-    /**
-     * Undocumented function
-     *
-     * @param string $content
-     * @param string $level
-     * @return void
-     */
-    public function addLog($content, $level = 'info')
+
+    public function addLog($content, $level = 'info', $user = null)
     {
         $this->logs[] = [
             'date' => date('d-m-Y H:i:s'),
             'content' => $content,
-            'level' => $level
+            'level' => $level,
+            'user' => $user
         ];
     }
 

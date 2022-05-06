@@ -1,0 +1,17 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+
+
+{% block body_id 'ea-edit-' %}
+ {% block body_class 'ea-edit ea-edit-' %}
+    {% block content_title %}
+    Change status > {{entity}}
+{% endblock %}
+
+
+        {% block main %}
+            {% block form %}
+                {{ form(form) }}
+            {% endblock form %}
+        {% endblock %}
+        

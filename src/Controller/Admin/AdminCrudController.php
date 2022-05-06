@@ -20,12 +20,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\PaginatorFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityPaginator;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use function Symfony\Component\String\u;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AdminCrudController extends AbstractCrudController
 {
 
+
+    protected $adminUrlGenerator;
+
+    public function __construct(AdminUrlGenerator $adminUrlGenerator)
+    {
+        $this->adminUrlGenerator = $adminUrlGenerator;
+    }
 
 
     abstract public function getName(): string;
