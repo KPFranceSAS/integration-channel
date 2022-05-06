@@ -71,7 +71,7 @@ class WebOrderCrudController extends AdminCrudController
             ->addCssClass('btn')
             ->linkToCrudAction('retryIntegration');
 
-        $changeStatusToInvoiced = Action::new('changeStatusToInvoiced', 'Mark as invoiced', 'fas fa-redo')
+        $changeStatusToInvoiced = Action::new('changeStatusToInvoiced', 'Mark as invoiced', 'fas fa-check')
             ->displayIf(static function ($entity) {
                 return $entity->canChangeStatusToInvoiced();
             })
@@ -335,6 +335,7 @@ class WebOrderCrudController extends AdminCrudController
         $form->handleRequest($context->getRequest());
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $this->getUser();
+            $webOrder->cleanErrors();
             $webOrder->setErpDocument(WebOrder::DOCUMENT_INVOICE);
             $webOrder->setStatus(WebOrder::STATE_INVOICED);
             $webOrder->addLog('Marked as invoiced by ' . $user->getUserIdentifier() . ' : ' . $webOrder->comments, 'info', $user->getUserIdentifier());

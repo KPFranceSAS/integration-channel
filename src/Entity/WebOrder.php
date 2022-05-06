@@ -6,6 +6,7 @@ use App\Helper\Utils\DatetimeUtils;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -96,12 +97,14 @@ class WebOrder
     private $content;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $orderErp;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotBlank()
      */
     private $invoiceErp;
 
@@ -171,6 +174,7 @@ class WebOrder
     private $customerNumber;
 
     /**
+     * Assert\Url(relativeProtocol = true)
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $trackingUrl;
