@@ -41,12 +41,15 @@ class DhlGetTracking
 
     public function getTrackingExternalWeb($externalOrderNumber): ?string
     {
-
-        $client = new Client();
-        $response = $client->get('https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $externalOrderNumber, ['connect_timeout' => 1]);
-        $body = json_decode((string) $response->getBody(), true);
-        if ($body) {
-            return str_replace(" 20", "", $body['NumeroExpedicionTLG']);
+        try {
+            $client = new Client();
+            $response = $client->get('https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $externalOrderNumber, ['connect_timeout' => 1]);
+            $body = json_decode((string) $response->getBody(), true);
+            if ($body) {
+                return str_replace(" 20", "", $body['NumeroExpedicionTLG']);
+            }
+        } catch (Exception $e) {
+            $this->logger->alert('DHL is not accessible');
         }
 
         return null;
