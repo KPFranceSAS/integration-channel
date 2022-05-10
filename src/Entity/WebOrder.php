@@ -424,7 +424,7 @@ class WebOrder
     public static function createOneFromOwletcare($orderApi): WebOrder
     {
         $webOrder = new WebOrder();
-        $webOrder->setExternalNumber((string)$orderApi['order_number']);
+        $webOrder->setExternalNumber('OWL-' . $orderApi['order_number']);
         $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['processed_at']));
         $webOrder->setStatus(WebOrder::STATE_CREATED);
         $webOrder->setChannel(WebOrder::CHANNEL_OWLETCARE);

@@ -49,7 +49,7 @@ class OwletCareIntegrateOrder extends IntegratorParent
 
     protected function getOrderId($orderApi)
     {
-        return $orderApi['order_number'];
+        return 'OWL-' . $orderApi['order_number'];
     }
 
     public function getCompanyIntegration($orderApi)
@@ -87,7 +87,7 @@ class OwletCareIntegrateOrder extends IntegratorParent
             $orderBC->phoneNumber = $orderApi['billing_address']["phone"];
         }
 
-        $orderBC->externalDocumentNumber = (string)$orderApi['order_number'];
+        $orderBC->externalDocumentNumber = 'OWL-' . $orderApi['order_number'];
         $orderBC->email = $orderApi['email'];
 
         $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
