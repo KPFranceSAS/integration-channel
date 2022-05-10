@@ -6,14 +6,8 @@ use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\BusinessCentral\ProductTaxFinder;
-use App\Service\ChannelAdvisor\ChannelWebservice;
 use App\Helper\Integrator\IntegratorParent;
-use App\Service\MailService;
-use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use Psr\Log\LoggerInterface;
 use stdClass;
 
 
@@ -76,13 +70,14 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
     protected function checkToIntegrateToInvoice($order): bool
     {
         $company = $this->getCompanyIntegration($order);
+        $customer = $this->getCustomerBC($order);
         if ($this->isAlreadyRecordedDatabase($order->SiteOrderID)) {
             $this->getApi()->markOrderAsExported($order->ID);
             $this->logger->info('Marked on channel advisor as exported');
             $this->logger->info('Is Already Recorded Database');
             return false;
         }
-        if ($this->alreadyIntegratedErp($order->SiteOrderID, $company)) {
+        if ($this->alreadyIntegratedErp($order->SiteOrderID, $company, $customer)) {
             $this->getApi()->markOrderAsExported($order->ID);
             $this->logger->info('Marked on channel advisor as exported');
             $this->logger->info('Is Already Recorded on ERP');
@@ -212,7 +207,10 @@ class IntegrateOrdersChannelAdvisor extends IntegratorParent
     }
 
 
-
+    public function getCustomerBC($orderApi)
+    {
+        return $this->matchChannelAdvisorOrderToCustomer($orderApi);
+    }
 
 
 

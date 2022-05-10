@@ -7,8 +7,8 @@ use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\PostalAddress;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
-use App\Service\AliExpress\AliExpressStock;
 use App\Helper\Integrator\IntegratorParent;
+use App\Service\AliExpress\AliExpressStock;
 use DateTime;
 use Exception;
 use function Symfony\Component\String\u;
@@ -60,6 +60,11 @@ class AliExpressIntegrateOrder extends IntegratorParent
         return self::ALIEXPRESS_CUSTOMER_NUMBER;
     }
 
+
+    public function getCustomerBC($orderApi)
+    {
+        return $this->getClientNumber();
+    }
 
 
     public function getCompanyIntegration($orderApi)

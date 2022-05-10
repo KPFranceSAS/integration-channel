@@ -68,6 +68,8 @@ abstract class IntegratorParent implements IntegratorInterface
 
     abstract public function getCompanyIntegration($orderApi);
 
+    abstract public function getCustomerBC($orderApi);
+
     abstract protected function getOrderId($orderApi);
 
     public function processOrders($reIntegrate = false)
@@ -119,7 +121,10 @@ abstract class IntegratorParent implements IntegratorInterface
     {
         $idOrder = $this->getOrderId($order);
         $company =  $this->getCompanyIntegration($order);
-        $this->logLine(">>> Integration order marketplace " . $this->getChannel() . " $idOrder  in $company");
+        $customer =  $this->getCustomerBC($order);
+
+
+        $this->logLine(">>> Integration order marketplace " . $this->getChannel() . " $idOrder in the account $customer in BC instance $company");
         if ($this->checkToIntegrateToInvoice($order)) {
             $this->logger->info('To integrate ');
 
@@ -251,11 +256,12 @@ abstract class IntegratorParent implements IntegratorInterface
     {
         $idOrder = $this->getOrderId($order);
         $company = $this->getCompanyIntegration($order);
+        $customer = $this->getCustomerBC($order);
         if ($this->isAlreadyRecordedDatabase($idOrder)) {
             $this->logger->info('Is Already Recorded Database');
             return false;
         }
-        if ($this->alreadyIntegratedErp($idOrder, $company)) {
+        if ($this->alreadyIntegratedErp($idOrder, $company, $customer)) {
             $this->logger->info('Is Already Recorded on ERP');
             return false;
         }
@@ -275,26 +281,26 @@ abstract class IntegratorParent implements IntegratorInterface
     }
 
 
-    protected function alreadyIntegratedErp(string $idOrderApi, string $company): bool
+    protected function alreadyIntegratedErp(string $idOrderApi, string $company, string $customer): bool
     {
-        return $this->checkIfInvoice($idOrderApi, $company) || $this->checkIfOrder($idOrderApi, $company);
+        return $this->checkIfInvoice($idOrderApi, $company, $customer) || $this->checkIfOrder($idOrderApi, $company, $customer);
     }
 
 
 
-    protected function checkIfOrder(string $idOrderApi, string $company): bool
+    protected function checkIfOrder(string $idOrderApi, string $company, string $customer): bool
     {
-        $this->logger->info('Check order in BC ' . $idOrderApi);
-        $saleOrder = $this->getBusinessCentralConnector($company)->getSaleOrderByExternalNumber($idOrderApi);
+        $this->logger->info('Check order in BC ' . $idOrderApi . ' in the account ' . $customer . ' in the instance ' . $company);
+        $saleOrder = $this->getBusinessCentralConnector($company)->getSaleOrderByExternalNumberAndCustomer($idOrderApi, $customer);
         return $saleOrder != null;
     }
 
 
 
-    protected function checkIfInvoice(string $idOrderApi, string $company): bool
+    protected function checkIfInvoice(string $idOrderApi, string $company, string $customer): bool
     {
-        $this->logger->info('Check invoice in BC ' . $idOrderApi);
-        $saleOrder = $this->getBusinessCentralConnector($company)->getSaleInvoiceByExternalNumber($idOrderApi);
+        $this->logger->info('Check invoice in BC ' . $idOrderApi . ' in the account ' . $customer . ' in the instance ' . $company);
+        $saleOrder = $this->getBusinessCentralConnector($company)->getSaleInvoiceByExternalDocumentNumberCustomer($idOrderApi, $customer);
         return $saleOrder != null;
     }
 

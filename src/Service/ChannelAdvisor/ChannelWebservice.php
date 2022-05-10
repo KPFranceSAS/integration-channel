@@ -148,7 +148,7 @@ class ChannelWebservice
     {
         $params = [
             '$expand' => 'Items($expand=Adjustments,Promotions, BundleComponents),Fulfillments($expand=Items),Adjustments',
-            '$filter' => "PaymentStatus eq 'Cleared' and CheckoutStatus eq 'Completed' and CreatedDateUtc gt 2022-03-01"
+            '$filter' => "PaymentStatus eq 'Cleared' and CheckoutStatus eq 'Completed' and CreatedDateUtc gt 2022-04-01"
         ];
         if ($notExported) {
             $params['exported'] = 'false';

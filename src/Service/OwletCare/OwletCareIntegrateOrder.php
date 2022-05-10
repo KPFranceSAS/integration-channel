@@ -21,6 +21,13 @@ class OwletCareIntegrateOrder extends IntegratorParent
         return WebOrder::CHANNEL_OWLETCARE;
     }
 
+
+    public function getCustomerBC($orderApi)
+    {
+        return self::OWLETCARE_CUSTOMER_NUMBER;
+    }
+
+
     /**
      * process all invocies directory
      *
