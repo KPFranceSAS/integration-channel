@@ -6,10 +6,29 @@ use App\Repository\FbaReturnRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=FbaReturnRepository::class)
+ * @ORM\Entity()
+ * @ORM\HasLifecycleCallbacks()
  */
 class FbaReturn
 {
+
+    const LOCALIZATION_FBA = 'FBA';
+
+    const LOCALIZATION_BIARRITZ = 'BIARRITZ';
+
+    const LOCALIZATION_LAROCA = 'LAROCA';
+
+
+    const STATUS_CREATED = 0;
+
+    const STATUS_WAITING_CUSTOMER = 1;
+
+    const STATUS_RETURN_TO_FBA_NOTSELLABLE = 2;
+
+    const STATUS_RETURN_TO_SALE = 3;
+
+    const STATUS_RETURN_TO_BIARRITZ = 4;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -41,6 +60,88 @@ class FbaReturn
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $sellerOrderId;
+
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $adjustmentId;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $sku;
+
+    /**
+     * @ORM\Column(type="date_immutable")
+     */
+    private $postedDate;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $logs = [];
+
+    /**
+     * @ORM\ManyToOne(targetEntity=AmazonRemovalOrder::class, inversedBy="fbaReturns")
+     */
+    private $amazonRemoval;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $lpn;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Product::class)
+     */
+    private $product;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $marketplaceName;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $localization;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $amzProductStatus;
+
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function setCreatedAtValue(): void
+    {
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function setUpdatedAtValue(): void
+    {
+        $this->updatedAt = new \DateTimeImmutable();
+    }
+
+
+    public function addLog($content, $level = 'info', $user = null)
+    {
+        $this->logs[] = [
+            'date' => date('d-m-Y H:i:s'),
+            'content' => $content,
+            'level' => $level,
+            'user' => $user
+        ];
+    }
+
 
     public function getId(): ?int
     {
@@ -103,6 +204,126 @@ class FbaReturn
     public function setSellerOrderId(?string $sellerOrderId): self
     {
         $this->sellerOrderId = $sellerOrderId;
+
+        return $this;
+    }
+
+    public function getAdjustmentId(): ?string
+    {
+        return $this->adjustmentId;
+    }
+
+    public function setAdjustmentId(?string $adjustmentId): self
+    {
+        $this->adjustmentId = $adjustmentId;
+
+        return $this;
+    }
+
+    public function getSku(): ?string
+    {
+        return $this->sku;
+    }
+
+    public function setSku(string $sku): self
+    {
+        $this->sku = $sku;
+
+        return $this;
+    }
+
+    public function getPostedDate(): ?\DateTimeImmutable
+    {
+        return $this->postedDate;
+    }
+
+    public function setPostedDate(\DateTimeImmutable $postedDate): self
+    {
+        $this->postedDate = $postedDate;
+
+        return $this;
+    }
+
+    public function getLogs(): ?array
+    {
+        return $this->logs;
+    }
+
+    public function setLogs(?array $logs): self
+    {
+        $this->logs = $logs;
+
+        return $this;
+    }
+
+    public function getAmazonRemoval(): ?AmazonRemovalOrder
+    {
+        return $this->amazonRemoval;
+    }
+
+    public function setAmazonRemoval(?AmazonRemovalOrder $amazonRemoval): self
+    {
+        $this->amazonRemoval = $amazonRemoval;
+
+        return $this;
+    }
+
+    public function getLpn(): ?string
+    {
+        return $this->lpn;
+    }
+
+    public function setLpn(?string $lpn): self
+    {
+        $this->lpn = $lpn;
+
+        return $this;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): self
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    public function getMarketplaceName(): ?string
+    {
+        return $this->marketplaceName;
+    }
+
+    public function setMarketplaceName(?string $marketplaceName): self
+    {
+        $this->marketplaceName = $marketplaceName;
+
+        return $this;
+    }
+
+    public function getLocalization(): ?string
+    {
+        return $this->localization;
+    }
+
+    public function setLocalization(?string $localization): self
+    {
+        $this->localization = $localization;
+
+        return $this;
+    }
+
+    public function getAmzProductStatus(): ?string
+    {
+        return $this->amzProductStatus;
+    }
+
+    public function setAmzProductStatus(?string $amzProductStatus): self
+    {
+        $this->amzProductStatus = $amzProductStatus;
 
         return $this;
     }

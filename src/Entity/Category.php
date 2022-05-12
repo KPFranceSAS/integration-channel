@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class Brand
+class Category
 {
     /**
      * @ORM\Id
@@ -40,7 +40,7 @@ class Brand
     private $active = true;
 
     /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="brand")
+     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="category")
      */
     private $products;
 
@@ -65,7 +65,6 @@ class Brand
     {
         $this->updatedAt = new \DateTimeImmutable();
     }
-
 
     public function __toString()
     {
@@ -137,7 +136,7 @@ class Brand
     {
         if (!$this->products->contains($product)) {
             $this->products[] = $product;
-            $product->setBrand($this);
+            $product->setCategory($this);
         }
 
         return $this;
@@ -147,8 +146,8 @@ class Brand
     {
         if ($this->products->removeElement($product)) {
             // set the owning side to null (unless already changed)
-            if ($product->getBrand() === $this) {
-                $product->setBrand(null);
+            if ($product->getCategory() === $this) {
+                $product->setCategory(null);
             }
         }
 

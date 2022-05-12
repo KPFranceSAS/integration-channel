@@ -70,6 +70,11 @@ class Product
      */
     private $fnsku;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="products")
+     */
+    private $category;
+
 
     /**
      * @Groups({"export_product"})
@@ -86,6 +91,16 @@ class Product
     public function getBrandName()
     {
         return $this->brand ? $this->brand->getName() : '';
+    }
+
+
+    /**
+     * 
+     * @Groups({"export_product"})
+     */
+    public function getCategoryName()
+    {
+        return $this->category ? $this->category->getName() : '';
     }
 
 
@@ -204,6 +219,20 @@ class Product
     public function setBrand(?Brand $brand): self
     {
         $this->brand = $brand;
+
+        return $this;
+    }
+
+
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

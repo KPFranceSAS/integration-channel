@@ -219,6 +219,19 @@ Place the token, in your .env.local
 ## Documentation Shopify
 [Shopify](https://shopify.dev/api/admin-rest)
 
+### Get credentials for Shopify
+Here the [instructions](https://help.shopify.com/en/manual/apps/custom-apps) to create a custom app and get infos
+
+We need to provide the following informations :
+
+scopes list : those are the autorizations you will provide to my token to get datas and write datas.
+```read_analytics, read_assigned_fulfillment_orders, write_assigned_fulfillment_orders, write_customers, read_customers, write_draft_orders, read_draft_orders, write_files, read_files, write_fulfillments, read_fulfillments, read_gift_cards, write_inventory, read_inventory, read_locations, write_merchant_managed_fulfillment_orders, read_merchant_managed_fulfillment_orders, write_order_edits, read_order_edits, write_orders, read_orders, read_shopify_payments_accounts, read_shopify_payments_bank_accounts, read_shopify_payments_disputes, read_shopify_payments_payouts, read_products, write_products, read_discounts, write_discounts```\
+token\
+client API\
+secret API\
+version\
+url
+
 ## Documentation ChannelAdvisor
 [ChannelAdvisor](https://developer.channeladvisor.com/working-with-orders/channel-documents/)
 

@@ -39,13 +39,10 @@ class WebOrderCrudController extends AdminCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-        return $crud
-            ->overrideTemplate('crud/detail', 'admin/crud/order.html.twig')
-            ->setEntityLabelInSingular($this->getName())
-            ->setEntityLabelInPlural($this->getName() . 's')
-            ->setDateTimeFormat('yyyy-MM-dd HH:mm')
-            ->setDefaultSort(['purchaseDate' => 'DESC'])
-            ->showEntityActionsInlined();
+        $crud = parent::configureCrud($crud);
+        $crud->overrideTemplate('crud/detail', 'admin/crud/order.html.twig');
+
+        return $crud;
     }
 
 
@@ -61,7 +58,7 @@ class WebOrderCrudController extends AdminCrudController
             ->displayIf(static function ($entity) {
                 return $entity->haveInvoice();
             })
-            ->addCssClass('btn')
+            ->addCssClass('btn btn-success')
             ->linkToCrudAction('downloadInvoice');
 
         $retryIntegration = Action::new('retryIntegration', 'Retry', 'fas fa-redo')

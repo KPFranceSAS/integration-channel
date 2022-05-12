@@ -18,7 +18,7 @@ class DeliveryOrderCrudController extends WebOrderCrudController
 
     public function getName(): string
     {
-        return "Order on delivery";
+        return "On delivery order";
     }
 
 

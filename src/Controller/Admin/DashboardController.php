@@ -9,6 +9,10 @@ use App\Controller\Order\ErrorOrderCrudController;
 use App\Controller\Order\FitbitExpressOrderCrudController;
 use App\Controller\Order\OwletCareOrderCrudController;
 use App\Controller\Order\WebOrderCrudController;
+use App\Entity\Brand;
+use App\Entity\Category;
+use App\Entity\FbaReturn;
+use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Entity\User;
 use App\Entity\WebOrder;
@@ -52,8 +56,16 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToCrud('Errors', 'fas fa-exclamation-triangle', WebOrder::class)->setController(ErrorOrderCrudController::class),
                 MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)->setController(WebOrderCrudController::class),
             ]),
-            MenuItem::linkToCrud('SKU Mapping', 'fa fa-exchange', ProductCorrelation::class),
-            MenuItem::linkToCrud('Users', 'fa fa-user', User::class),
+            MenuItem::subMenu('Amazon & FBA', 'fab fa-amazon')->setSubItems([
+                MenuItem::linkToCrud('FBA Returns', 'fas fa-exchange-alt', FbaReturn::class),
+                MenuItem::linkToCrud('Product', 'fas fa-barcode', Product::class),
+                MenuItem::linkToCrud('Brand', 'far fa-registered', Brand::class),
+                MenuItem::linkToCrud('Category', 'fas fa-sitemap', Category::class),
+            ]),
+            MenuItem::subMenu('Configuration', 'fas fa-cogs')->setSubItems([
+                MenuItem::linkToCrud('SKU Mapping', 'fa fa-exchange', ProductCorrelation::class),
+                MenuItem::linkToCrud('Users', 'fa fa-user', User::class),
+            ])
         ];
     }
 

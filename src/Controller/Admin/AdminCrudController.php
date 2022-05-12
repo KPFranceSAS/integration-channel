@@ -22,6 +22,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Factory\PaginatorFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityPaginator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use function Symfony\Component\String\u;
+
+use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 
 abstract class AdminCrudController extends AbstractCrudController
@@ -36,15 +38,28 @@ abstract class AdminCrudController extends AbstractCrudController
     }
 
 
-    abstract public function getName(): string;
+    public function getName()
+    {
+        $reflectionClass = new ReflectionClass($this);
+        return str_replace('CrudController', '', $reflectionClass->getShortName());
+    }
+
+
+    public function getDefautOrder(): array
+    {
+        return ['createdAt' => "DESC"];
+    }
 
 
     public function configureCrud(Crud $crud): Crud
     {
+
+
         return $crud
             ->setEntityLabelInSingular($this->getName())
             ->setEntityLabelInPlural($this->getName() . 's')
-            ->setDateTimeFormat('yyyy-MM-dd HH:mm:ss')
+            ->setDateTimeFormat('yyyy-MM-dd HH:mm')
+            ->setDefaultSort($this->getDefautOrder())
             ->showEntityActionsInlined();
     }
 

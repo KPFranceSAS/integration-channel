@@ -127,9 +127,15 @@ class AmazonRemovalOrder
      */
     private $returns;
 
+    /**
+     * @ORM\OneToMany(targetEntity=FbaReturn::class, mappedBy="amazonRemoval")
+     */
+    private $fbaReturns;
+
     public function __construct()
     {
         $this->returns = new ArrayCollection();
+        $this->fbaReturns = new ArrayCollection();
     }
 
 
@@ -471,6 +477,36 @@ class AmazonRemovalOrder
             // set the owning side to null (unless already changed)
             if ($return->getAmazonRemovalOrder() === $this) {
                 $return->setAmazonRemovalOrder(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|FbaReturn[]
+     */
+    public function getFbaReturns(): Collection
+    {
+        return $this->fbaReturns;
+    }
+
+    public function addFbaReturn(FbaReturn $fbaReturn): self
+    {
+        if (!$this->fbaReturns->contains($fbaReturn)) {
+            $this->fbaReturns[] = $fbaReturn;
+            $fbaReturn->setAmazonRemoval($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFbaReturn(FbaReturn $fbaReturn): self
+    {
+        if ($this->fbaReturns->removeElement($fbaReturn)) {
+            // set the owning side to null (unless already changed)
+            if ($fbaReturn->getAmazonRemoval() === $this) {
+                $fbaReturn->setAmazonRemoval(null);
             }
         }
 

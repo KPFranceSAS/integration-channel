@@ -36,6 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $password;
 
+
     /**
      * @ORM\Column(type="datetime")
      */
@@ -54,6 +55,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
     }
+
+    public $plainPassword;
+
+    /**
+     * @ORM\Column(type="json", nullable=true)
+     */
+    private $channels = [];
 
     /**
      * @ORM\PreUpdate
@@ -108,7 +116,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public $plainPassword;
+
 
     /**
      * @see PasswordAuthenticatedUserInterface
@@ -177,6 +185,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getChannels(): ?array
+    {
+        return $this->channels;
+    }
+
+    public function setChannels(?array $channels): self
+    {
+        $this->channels = $channels;
 
         return $this;
     }

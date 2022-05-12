@@ -36,6 +36,6 @@ class OwletCareInvoice extends InvoiceParent
                 $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting tracking number ' . $tracking['Tracking number']);
             }
         }
-        return true;
+        return false;
     }
 }
