@@ -4,11 +4,16 @@ namespace App\Controller\Admin;
 
 use App\Controller\Admin\AdminCrudController;
 use App\Entity\User;
+use App\Helper\Integrator\IntegratorAggregator;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -20,21 +25,59 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserCrudController extends AdminCrudController
 {
+
+
+    protected $integratorAggregator;
+
+    public function __construct(AdminUrlGenerator $adminUrlGenerator, IntegratorAggregator $integratorAggregator)
+    {
+        $this->integratorAggregator = $integratorAggregator;
+        $this->adminUrlGenerator = $adminUrlGenerator;
+    }
+
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        return $crud->setEntityPermission('ROLE_ADMIN');
+    }
+
+
     public static function getEntityFqcn(): string
     {
         return User::class;
     }
 
-    public function getName(): string
+
+    public function configureActions(Actions $actions): Actions
     {
-        return 'User';
+        $actions = parent::configureActions($actions);
+        $actions->setPermission('export', 'ROLE_ADMIN');
+        $actions->setPermission(Action::NEW, 'ROLE_ADMIN');
+        return $actions;
     }
+
+
 
     public function configureFields(string $pageName): iterable
     {
+
+        $choices = [];
+        $channels = $this->integratorAggregator->getAllChannels();
+        foreach ($channels as $channel) {
+            $choices[$channel] = $channel;
+        }
         $fields = [
             Field::new('email', 'Email')->setFormType(EmailType::class),
         ];
+        $fields[] = ChoiceField::new('channels', 'Channel Alerts')->setChoices($choices)->allowMultipleChoices();
+
+        $choiceRules = [
+            'ROLE_ADMIN' => 'ROLE_ADMIN',
+            'ROLE_USER' => 'ROLE_USER',
+        ];
+        $fields[] = ChoiceField::new('roles', 'Roles')->setChoices($choiceRules)->allowMultipleChoices();
+
 
         if ($pageName != Crud::PAGE_INDEX) {
             $fields[] = Field::new('plainPassword', 'New password')->onlyOnForms()

@@ -64,7 +64,7 @@ class DashboardController extends AbstractDashboardController
             ]),
             MenuItem::subMenu('Configuration', 'fas fa-cogs')->setSubItems([
                 MenuItem::linkToCrud('SKU Mapping', 'fa fa-exchange', ProductCorrelation::class),
-                MenuItem::linkToCrud('Users', 'fa fa-user', User::class),
+                MenuItem::linkToCrud('Users', 'fa fa-user', User::class)->setPermission('ROLE_ADMIN'),
             ])
         ];
     }
