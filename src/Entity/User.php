@@ -106,6 +106,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->email;
     }
 
+
+    public function hasChannel(string $channel): bool
+    {
+
+        if ($this->channels && is_array($this->channels)) {
+            foreach ($this->channels as $channelDb) {
+                if ($channelDb == $channel) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
     public function getRoles(): ?array
     {
         return $this->roles;

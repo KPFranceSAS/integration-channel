@@ -128,7 +128,7 @@ abstract class InvoiceParent
             }
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmail('[Invoice Send ' . $this->getChannel() . ' ] Error', $e->getMessage());
+            $this->mailer->sendEmailChannel($this->getChannel(), 'Invoice Send - Error', $e->getMessage());
         }
     }
 

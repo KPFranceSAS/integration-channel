@@ -53,7 +53,7 @@ abstract class StockParent
             $this->sendStocks();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmail('[Send stock Integration ' . $this->getChannel() . '] Error', $e->getMessage());
+            $this->mailer->sendEmailChannel($this->getChannel(), 'Send stock Integration - Error', $e->getMessage());
         }
     }
 
@@ -160,7 +160,7 @@ abstract class StockParent
         }
 
         if (count($warehouseFiles) > 0) {
-            throw new \Exception('Error with number of warhouse in stock files published. Missing the warehouses ' . implode(', ', $warehouseFiles));
+            throw new \Exception('Error with number of warehouse in stock files published. Missing the warehouses ' . implode(', ', $warehouseFiles));
         }
 
 

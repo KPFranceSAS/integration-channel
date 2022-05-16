@@ -40,10 +40,10 @@ class AmzApiImportProduct extends AmzApiImport
 
 
             if (count($this->errorProducts) > 0) {
-                $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", implode('<br/>', $this->errorProducts), 'stephane.lanjard@kpsport.com');
+                $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", implode('<br/>', $this->errorProducts));
             }
         } catch (Exception $e) {
-            $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", $e->getMessage(), 'stephane.lanjard@kpsport.com');
+            $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", $e->getMessage());
         }
     }
 

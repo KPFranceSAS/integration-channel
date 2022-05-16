@@ -90,7 +90,7 @@ class Product
      */
     public function getBrandName()
     {
-        return $this->brand ? $this->brand->getName() : '';
+        return $this->brand ? $this->brand->getName() : 'NO BRAND';
     }
 
 
@@ -100,7 +100,7 @@ class Product
      */
     public function getCategoryName()
     {
-        return $this->category ? $this->category->getName() : '';
+        return $this->category ? $this->category->getName() : 'NO CATEGORY';
     }
 
 

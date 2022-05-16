@@ -93,7 +93,7 @@ abstract class IntegratorParent implements IntegratorInterface
             }
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmail('[Order Integration ' . $this->getChannel() . '] Error', $e->getMessage());
+            $this->mailer->sendEmailChannel($this->getChannel(), 'Order Integration - Error', $e->getMessage());
         }
     }
 
@@ -364,18 +364,21 @@ abstract class IntegratorParent implements IntegratorInterface
             "CARRER" => "C/",
             "CAMINITO" => "CMT",
             "CAMINO" => "CAM",
+            "CAMI" => "CAM",
             "CARRETERA" => "CTRA",
             "CERRADA" => "CER",
             "CIRCULO" => "CIR",
             "CIUDAD" => "CDAD",
             "DERECHA" => "DCHA",
-            "ESCALERA" => "ESC",
+            "EDIFICIO" => "EDIF",
             "ENTRADA" => "ENT",
+            "ESCALERA" => "ESC",
             "IZQUIERDA" => "IZDA",
             "NUMBER" => "No",
             "NUMERO" => "No",
             "NúMERO" => "No",
             "PASEO" => "PSO",
+            "PISO" => "PS",
             "PLACITA" => "PLA",
             "PLANTA" => "PLTA",
             "PLAZA" => "PZA",

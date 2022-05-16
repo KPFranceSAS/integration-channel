@@ -58,7 +58,7 @@ class SaveCancelCommand extends Command
         $this->manager->flush();
 
         if (count($this->errors) > 0) {
-            $this->mailService->sendEmail('[Order Cancelation ' . $this->getChannel() . '] Error', implode("<br/>", $this->errors));
+            $this->mailService->sendEmailChannel($this->getChannel(), 'Order Cancelation  Error', implode("<br/>", $this->errors));
         }
 
 
