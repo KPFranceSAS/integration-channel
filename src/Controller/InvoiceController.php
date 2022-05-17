@@ -4,7 +4,7 @@ namespace App\Controller;
 
 
 use App\Entity\WebOrder;
-use App\Helper\Api\ApiAggregator;
+use App\Service\Aggregator\ApiAggregator;
 use App\Helper\Utils\InvoiceDownload;
 use App\Service\BusinessCentral\GadgetIberiaConnector;
 use Doctrine\Persistence\ManagerRegistry;

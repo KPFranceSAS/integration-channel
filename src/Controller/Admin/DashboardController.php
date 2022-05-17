@@ -7,6 +7,8 @@ use App\Controller\Order\ChannelAdvisorOrderCrudController;
 use App\Controller\Order\DeliveryOrderCrudController;
 use App\Controller\Order\ErrorOrderCrudController;
 use App\Controller\Order\FitbitExpressOrderCrudController;
+use App\Controller\Order\FlashledOrderCrudController;
+use App\Controller\Order\MinibattOrderCrudController;
 use App\Controller\Order\OwletCareOrderCrudController;
 use App\Controller\Order\WebOrderCrudController;
 use App\Entity\Brand;
@@ -52,6 +54,9 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)->setController(AliexpressOrderCrudController::class),
                 MenuItem::linkToCrud('Fitbitexpress', 'fas fa-heartbeat', WebOrder::class)->setController(FitbitExpressOrderCrudController::class),
                 MenuItem::linkToCrud('Owletcare', 'fas fa-baby', WebOrder::class)->setController(OwletCareOrderCrudController::class),
+                MenuItem::linkToCrud('Flashled', 'far fa-lightbulb', WebOrder::class)->setController(FlashledOrderCrudController::class),
+                MenuItem::linkToCrud('Minibatt', 'fas fa-car-battery', WebOrder::class)->setController(MinibattOrderCrudController::class),
+                MenuItem::section(),
                 MenuItem::linkToCrud('On delivery', 'fas fa-truck-loading', WebOrder::class)->setController(DeliveryOrderCrudController::class),
                 MenuItem::linkToCrud('Errors', 'fas fa-exclamation-triangle', WebOrder::class)->setController(ErrorOrderCrudController::class),
                 MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)->setController(WebOrderCrudController::class),

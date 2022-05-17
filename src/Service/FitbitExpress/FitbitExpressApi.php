@@ -2,15 +2,22 @@
 
 namespace App\Service\FitbitExpress;
 
-use App\Service\AliExpress\AliExpressApi;
+use App\Entity\WebOrder;
+use App\Helper\Api\AliExpressApiParent;
 use Psr\Log\LoggerInterface;
 
 
-class FitbitExpressApi extends AliExpressApi
+class FitbitExpressApi extends AliExpressApiParent
 {
 
     public function __construct(LoggerInterface $logger, $fitbitExpressClientId, $fitbitExpressClientSecret, $fitbitExpressClientAccessToken)
     {
         parent::__construct($logger, $fitbitExpressClientId, $fitbitExpressClientSecret, $fitbitExpressClientAccessToken);
+    }
+
+
+    public function getChannel()
+    {
+        return WebOrder::CHANNEL_FITBITEXPRESS;
     }
 }

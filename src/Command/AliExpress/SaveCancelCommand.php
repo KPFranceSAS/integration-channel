@@ -3,6 +3,8 @@
 namespace App\Command\AliExpress;
 
 use App\Entity\WebOrder;
+use App\Helper\Api\AliExpressApiParent;
+use App\Service\Aggregator\ApiAggregator;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\AliExpress\AliExpressApi;
 use App\Service\BusinessCentral\GadgetIberiaConnector;
@@ -20,21 +22,27 @@ class SaveCancelCommand extends Command
     protected static $defaultDescription = 'Retrieve all Aliexpress orders cancelled online';
 
 
-    public function __construct(ManagerRegistry $manager, AliExpressApi $aliExpressApi, LoggerInterface $logger, MailService $mailService, GadgetIberiaConnector $gadgetIberiaConnector)
+    public function __construct(ManagerRegistry $manager, ApiAggregator $apiAggregator, LoggerInterface $logger, MailService $mailService, GadgetIberiaConnector $gadgetIberiaConnector)
     {
         parent::__construct();
-        $this->aliExpressApi = $aliExpressApi;
+        $this->apiAggregator = $apiAggregator;
         $this->logger = $logger;
         $this->gadgetIberiaConnector = $gadgetIberiaConnector;
         $this->manager = $manager->getManager();
         $this->mailService = $mailService;
     }
 
+
+    protected function getApi(): AliExpressApiParent
+    {
+        return $this->apiAggregator->getApi($this->getChannel());
+    }
+
     protected $manager;
 
     protected $gadgetIberiaConnector;
 
-    protected $aliExpressApi;
+    protected $apiAggregator;
 
     protected $logger;
 
@@ -74,7 +82,7 @@ class SaveCancelCommand extends Command
 
     protected function checkOrderStatus(WebOrder $webOrder)
     {
-        $orderAliexpress = $this->aliExpressApi->getOrder($webOrder->getExternalNumber());
+        $orderAliexpress = $this->getApi()->getOrder($webOrder->getExternalNumber());
         if ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "cancel_order_close_trade") {
             $reason =  'Order has been cancelled after acceptation  online on ' . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end);
             $this->cancelSaleOrder($webOrder, $reason);

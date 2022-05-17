@@ -5,13 +5,20 @@ namespace App\Service\ChannelAdvisor;
 
 use App\Entity\WebOrder;
 use App\Helper\Invoice\InvoiceParent;
+use App\Service\ChannelAdvisor\ChannelAdvisorApi;
 
 /**
  * Services that will get through the API the order from ChannelAdvisor
  * 
  */
-class SendInvoicesToChannelAdvisor extends InvoiceParent
+class ChannelAdvisorInvoice extends InvoiceParent
 {
+
+
+    protected function getChannelApi(): ChannelAdvisorApi
+    {
+        return $this->getApi();
+    }
 
 
     public function getChannel()
@@ -28,7 +35,7 @@ class SendInvoicesToChannelAdvisor extends InvoiceParent
         $this->addLogToOrder($order, 'Retrieved invoice content ' . $invoice['number']);
         $this->addLogToOrder($order, 'Start sending invoice to Channel Advisor');
         $orderApi = $order->getOrderContent();
-        $sendFile = $this->getApi()->sendInvoice($orderApi->ProfileID, $orderApi->ID, $invoice['totalAmountIncludingTax'], $invoice['totalTaxAmount'], $invoice['number'], $contentPdf);
+        $sendFile = $this->getChannelApi()->sendInvoice($orderApi->ProfileID, $orderApi->ID, $invoice['totalAmountIncludingTax'], $invoice['totalTaxAmount'], $invoice['number'], $contentPdf);
         if (!$sendFile) {
             throw new \Exception('Upload  was not done uploaded on ChannelAdvisor for ' . $invoice['number']);
         }

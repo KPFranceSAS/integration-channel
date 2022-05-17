@@ -9,16 +9,18 @@ use Shopify\Clients\Rest;
 use Shopify\Context;
 
 
-class ShopifyApi
+abstract class ShopifyApiParent implements ApiInterface
 {
 
-    private $client;
+    protected $client;
 
-    private $logger;
+    protected $logger;
 
-    private $shopifyShopDomain;
+    protected $shopifyShopDomain;
 
-    private $shopifyToken;
+    protected $shopifyToken;
+
+    abstract public function getChannel();
 
 
     public function __construct(LoggerInterface $logger, $shopifyToken, $shopifyClientId, $shopifyClientSecret, $shopifyShopDomain, $shopifyVersion, $shopifyScopes)

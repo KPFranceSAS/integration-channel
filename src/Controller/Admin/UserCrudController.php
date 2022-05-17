@@ -4,7 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Controller\Admin\AdminCrudController;
 use App\Entity\User;
-use App\Helper\Integrator\IntegratorAggregator;
+use App\Service\Aggregator\IntegratorAggregator;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;

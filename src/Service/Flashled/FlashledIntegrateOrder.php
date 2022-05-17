@@ -1,33 +1,33 @@
 <?php
 
-namespace App\Service\OwletCare;
+namespace App\Service\Flashled;
 
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\Integrator\ShopifyIntegrateOrder;
 
 
-class OwletCareIntegrateOrder extends ShopifyIntegrateOrder
+class FlashledIntegrateOrder extends ShopifyIntegrateOrder
 
 {
 
-    const OWLETCARE_CUSTOMER_NUMBER = "130803";
+    const FLASHLED_CUSTOMER_NUMBER = "130803";
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_OWLETCARE;
+        return WebOrder::CHANNEL_FLASHLED;
     }
 
 
     public function getCustomerBC($orderApi)
     {
-        return self::OWLETCARE_CUSTOMER_NUMBER;
+        return self::FLASHLED_CUSTOMER_NUMBER;
     }
 
 
     protected function getSuffix()
     {
-        return 'OWL-';
+        return 'FLS-';
     }
 
 

@@ -6,7 +6,37 @@
 parameters:
 
 services:
-    # default configuration for services in *this* file
+    _instanceof:
+        App\Helper\Stock\StockParent:
+            tags: ['app.stockupdater']
+        App\Helper\Invoice\InvoiceParent:
+            tags: ['app.invoice']
+        App\Helper\Api\ApiInterface:
+            tags: ['app.apiconnector']
+        App\Helper\Integrator\IntegratorParent:
+            tags: ['app.integrator']
+
+    App\:
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+
+    App\Service\Aggregator\IntegratorAggregator:
+        arguments:
+            - !tagged_iterator app.integrator
+    App\Service\Aggregator\ApiAggregator:
+        arguments:
+            - !tagged_iterator app.apiconnector
+    App\Service\Aggregator\InvoiceAggregator:
+        arguments:
+            - !tagged_iterator app.invoice
+    App\Service\Aggregator\StockAggregator:
+        arguments:
+            - !tagged_iterator app.stockupdater
+
+
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
@@ -49,14 +79,19 @@ services:
             $owletCareVersion : '%env(resolve:OWLET_CARE_VERSION)%'
             $owletCareScopes : '%env(resolve:OWLET_CARE_SCOPES)%'
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/'
-        exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
+            $minibattToken : '%env(resolve:MINIBATT_TOKEN)%'
+            $minibattClientId : '%env(resolve:MINIBATT_CLIENTID)%'
+            $minibattClientSecret : '%env(resolve:MINIBATT_CLIENTSECRET)%'
+            $minibattShopDomain : '%env(resolve:MINIBATT_SHOPDOMAINE)%'
+            $minibattVersion : '%env(resolve:MINIBATT_VERSION)%'
+            $minibattScopes : '%env(resolve:MINIBATT_SCOPES)%'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+            $flashledToken : '%env(resolve:FLASHLED_TOKEN)%'
+            $flashledClientId : '%env(resolve:FLASHLED_CLIENTID)%'
+            $flashledClientSecret : '%env(resolve:FLASHLED_CLIENTSECRET)%'
+            $flashledShopDomain : '%env(resolve:FLASHLED_SHOPDOMAINE)%'
+            $flashledVersion : '%env(resolve:FLASHLED_VERSION)%'
+            $flashledScopes : '%env(resolve:FLASHLED_SCOPES)%'
+
+          
+            

@@ -3,9 +3,9 @@
 namespace App\Service\FitbitExpress;
 
 use App\Entity\WebOrder;
-use App\Service\AliExpress\AliExpressStock;
+use App\Helper\Stock\AliExpressStockParent;
 
-class FitbitExpressStock  extends AliExpressStock
+class FitbitExpressStock  extends AliExpressStockParent
 {
 
     public function getChannel()

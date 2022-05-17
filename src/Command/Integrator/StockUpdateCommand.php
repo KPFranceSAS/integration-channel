@@ -2,7 +2,7 @@
 
 namespace App\Command\Integrator;
 
-use App\Helper\Stock\StockAggregator;
+use App\Service\Aggregator\StockAggregator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,7 +32,6 @@ class StockUpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
-
         $stockUtil = $this->stockAggregator->getStock($channelIntegration);
         $stockUtil->send();
         return Command::SUCCESS;

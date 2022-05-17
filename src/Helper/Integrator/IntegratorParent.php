@@ -4,11 +4,10 @@ namespace App\Helper\Integrator;
 
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
-use App\Helper\Api\ApiAggregator;
+use App\Service\Aggregator\ApiAggregator;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
-use App\Helper\Integrator\IntegratorInterface;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\BusinessCentral\ProductTaxFinder;
 use App\Service\MailService;
@@ -18,7 +17,7 @@ use function Symfony\Component\String\u;
 use Psr\Log\LoggerInterface;
 use stdClass;
 
-abstract class IntegratorParent implements IntegratorInterface
+abstract class IntegratorParent
 {
 
 
@@ -61,8 +60,6 @@ abstract class IntegratorParent implements IntegratorInterface
 
 
     abstract public  function transformToAnBcOrder($orderApi): SaleOrder;
-
-    abstract public function integrateAllOrders();
 
     abstract public function getChannel();
 
@@ -114,6 +111,18 @@ abstract class IntegratorParent implements IntegratorInterface
     }
 
 
+    public function integrateAllOrders()
+    {
+        $counter = 0;
+        $ordersApi = $this->getApi()->getAllOrdersToSend();
+
+        foreach ($ordersApi as $orderApi) {
+            if ($this->integrateOrder($orderApi)) {
+                $counter++;
+                $this->logger->info("Orders integrated : $counter ");
+            }
+        }
+    }
 
 
 

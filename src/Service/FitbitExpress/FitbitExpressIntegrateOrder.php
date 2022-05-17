@@ -3,9 +3,9 @@
 namespace App\Service\FitbitExpress;
 
 use App\Entity\WebOrder;
-use App\Service\AliExpress\AliExpressIntegrateOrder;
+use App\Helper\Integrator\AliExpressIntegratorParent;
 
-class FitbitExpressIntegrateOrder extends AliExpressIntegrateOrder
+class FitbitExpressIntegrateOrder extends AliExpressIntegratorParent
 {
 
     const FITBITEXPRESS_CUSTOMER_NUMBER = "003253";

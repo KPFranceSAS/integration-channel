@@ -2,12 +2,19 @@
 
 namespace App\Service\ChannelAdvisor;
 
+use App\Entity\WebOrder;
+use App\Helper\Api\ApiInterface;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 use stdClass;
 
-class ChannelWebservice
+class ChannelAdvisorApi implements ApiInterface
 {
+
+    public function getChannel()
+    {
+        return WebOrder::CHANNEL_CHANNELADVISOR;
+    }
 
 
     const AUTH_URL = 'https://api.channeladvisor.com/oauth2/token';
@@ -163,6 +170,7 @@ class ChannelWebservice
      */
     public function markOrderAsExported($orderId)
     {
+        return true;
         return $this->sendRequest('Orders(' . $orderId . ')/Export', [], 'POST');
     }
 
@@ -335,25 +343,37 @@ class ChannelWebservice
 
 
 
+
+    public function getAllOrdersToSend()
+    {
+        return $this->getAllNewOrders(true);
+    }
+
+
+
     /**
      * fetch new orders and return them in an array
      * @return array
      */
     public function getAllNewOrders($notExported = true)
     {
+        $i = 1;
         $orderRetrieve = [];
         $ordersApi = $this->getNewOrdersByBatch($notExported);
 
-        foreach ($ordersApi as $orderApi) {
+        foreach ($ordersApi->value as $orderApi) {
             $orderRetrieve[] = $orderApi;
         }
+        $this->logger->info("Get batch $i >> " . count($orderRetrieve) . ' orders');
 
         while (true) {
             if (property_exists($ordersApi, '@odata.nextLink')) {
                 $ordersApi = $this->getNextResults($ordersApi->{'@odata.nextLink'});
-                foreach ($ordersApi as $orderApi) {
+                foreach ($ordersApi->value as $orderApi) {
                     $orderRetrieve[] = $orderApi;
                 }
+                $i++;
+                $this->logger->info("Get batch $i >> " . count($orderRetrieve) . ' orders');
             } else {
                 break;
             }

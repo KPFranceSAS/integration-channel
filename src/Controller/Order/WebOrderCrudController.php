@@ -7,7 +7,7 @@ use App\Controller\Admin\DashboardController;
 use App\Entity\WebOrder;
 use App\Form\ChangeStatusInvoiceType;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Helper\Integrator\IntegratorAggregator;
+use App\Service\Aggregator\IntegratorAggregator;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use DateInterval;

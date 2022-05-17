@@ -2,18 +2,10 @@
 
 namespace App\Service\FitbitExpress;
 
-
 use App\Entity\WebOrder;
-use App\Service\AliExpress\AliExpressInvoice;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\Carriers\GetTracking;
-use App\Service\FitbitExpress\FitbitExpressApi;
-use App\Service\MailService;
-use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
+use App\Helper\Invoice\AliExpressInvoiceParent;
 
-
-class FitbitExpressInvoice extends AliExpressInvoice
+class FitbitExpressInvoice extends AliExpressInvoiceParent
 {
 
     public function getChannel()

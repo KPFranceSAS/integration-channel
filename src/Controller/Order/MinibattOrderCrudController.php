@@ -13,15 +13,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 
 
-class OwletCareOrderCrudController extends WebOrderCrudController
+class MinibattOrderCrudController extends WebOrderCrudController
 {
 
+
+    public function getName(): string
+    {
+        return "Minibatt Order";
+    }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = $this->get(EntityRepository::class)->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
         $qb->andWhere('entity.channel = :channel');
-        $qb->setParameter('channel', WebOrder::CHANNEL_OWLETCARE);
+        $qb->setParameter('channel', WebOrder::CHANNEL_MINIBATT);
         return $qb;
     }
 
@@ -37,7 +42,7 @@ class OwletCareOrderCrudController extends WebOrderCrudController
     public function getMarketplaces()
     {
         return [
-            'Owletcare' => 'Owletcare',
+            'Minibatt' => 'Minibatt',
         ];
     }
 

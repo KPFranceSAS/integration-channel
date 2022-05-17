@@ -4,8 +4,8 @@ namespace App\Helper\Stock;
 
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
-use App\Helper\Api\ApiAggregator;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Service\Aggregator\ApiAggregator;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;

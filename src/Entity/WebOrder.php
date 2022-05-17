@@ -15,67 +15,43 @@ use Symfony\Component\Validator\Constraints as Assert;
 class WebOrder
 {
     const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
-
     const CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
-
     const CHANNEL_FITBITEXPRESS = 'FITBITEXPRESS';
-
     const CHANNEL_OWLETCARE = 'OWLETCARE';
+    const CHANNEL_MINIBATT = 'MINIBATT';
+    const CHANNEL_FLASHLED = 'FLASHLED';
 
     const DOCUMENT_ORDER = 'ORDER';
-
     const DOCUMENT_INVOICE = 'INVOICE';
 
-
     const DEPOT_FBA_AMAZON = 'AMAZON';
-
     const DEPOT_CENTRAL = 'CENTRAL';
-
     const DEPOT_LAROCA = 'LAROCA';
-
     const DEPOT_ACTIVE_ANTS = 'ACTIVE';
-
     const DEPOT_MADRID = 'MADRID';
-
     const DEPOT_MIXED = 'MIXED';
 
     const TIMING_INTEGRATION = 24;
-
     const TIMING_SHIPPING = 30;
 
     const FULFILLED_BY_EXTERNAL = 'EXTERNALLY MANAGED';
-
     const FULFILLED_BY_SELLER = 'OWN MANAGED';
-
     const FULFILLED_MIXED = 'MIXED MANAGED';
 
     const STATE_ERROR_INVOICE = -2;
-
     const STATE_ERROR = -1;
-
     const STATE_CREATED = 0;
-
     const STATE_SYNC_TO_ERP = 1;
-
     const STATE_INVOICED = 5;
-
     const STATE_CANCELLED = 7;
 
-
     const STATE_ERROR_INVOICE_TEXT = 'Error send invoice';
-
     const STATE_ERROR_TEXT = 'Error integration';
-
     const STATE_CREATED_TEXT = 'Order integrated';
-
     const STATE_SYNC_TO_ERP_TEXT = 'Order integrated';
-
     const STATE_SYNC_TO_WAITING_DELIVERY_TEXT = 'Waiting for delivery';
-
     const STATE_INVOICED_TEXT = 'Invoice integrated';
-
     const STATE_UNDEFINED_TEXT = 'Undefined';
-
     const STATE_CANCELLED_TEXT = "Cancelled";
 
 
@@ -367,6 +343,12 @@ class WebOrder
             case  WebOrder::CHANNEL_OWLETCARE:
                 $order = $this->getOrderContent();
                 return 'https://owlet-spain.myshopify.com/admin/orders/' . $order['id'];
+            case  WebOrder::CHANNEL_MINIBATT:
+                $order = $this->getOrderContent();
+                return 'https://minibattstore.myshopify.com/admin/orders/' . $order['id'];
+            case  WebOrder::CHANNEL_FLASHLED:
+                $order = $this->getOrderContent();
+                return 'https://testflashled.myshopify.com/admin/orders/' . $order['id'];
         }
         throw new Exception('No url link of weborder for ' . $this->channel);
     }
@@ -416,6 +398,10 @@ class WebOrder
             return WebOrder::createOneFromChannelAdvisor($orderApi);
         } else if ($channel == WebOrder::CHANNEL_OWLETCARE) {
             return WebOrder::createOneFromOwletcare($orderApi);
+        } else if ($channel == WebOrder::CHANNEL_FLASHLED) {
+            return WebOrder::createOneFromFlashled($orderApi);
+        } else if ($channel == WebOrder::CHANNEL_MINIBATT) {
+            return WebOrder::createOneFromMinibatt($orderApi);
         }
         throw new Exception('No constructor of weborder for ' . $channel);
     }
@@ -423,16 +409,45 @@ class WebOrder
 
     public static function createOneFromOwletcare($orderApi): WebOrder
     {
-        $webOrder = new WebOrder();
+        $webOrder = WebOrder::createOrderFromShopify($orderApi);
         $webOrder->setExternalNumber('OWL-' . $orderApi['order_number']);
+        $webOrder->setChannel(WebOrder::CHANNEL_FLASHLED);
+        $webOrder->setSubchannel('Owletbaby.es');
+        $webOrder->addLog('Retrieved from Owletbaby.es');
+        return $webOrder;
+    }
+
+
+    public static function createOneFromMinibatt($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromShopify($orderApi);
+        $webOrder->setExternalNumber('MNB-' . $orderApi['order_number']);
+        $webOrder->setChannel(WebOrder::CHANNEL_MINIBATT);
+        $webOrder->setSubchannel('Minibatt.com');
+        $webOrder->addLog('Retrieved from Minibatt.com');
+        return $webOrder;
+    }
+
+
+    public static function createOneFromFlashled($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromShopify($orderApi);
+        $webOrder->setExternalNumber('FLS-' . $orderApi['order_number']);
+        $webOrder->setChannel(WebOrder::CHANNEL_FLASHLED);
+        $webOrder->setSubchannel('Flashled.es');
+        $webOrder->addLog('Retrieved from Flashled.es');
+        return $webOrder;
+    }
+
+
+    public static function createOrderFromShopify($orderApi): WebOrder
+    {
+        $webOrder = new WebOrder();
         $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['processed_at']));
         $webOrder->setStatus(WebOrder::STATE_CREATED);
-        $webOrder->setChannel(WebOrder::CHANNEL_OWLETCARE);
-        $webOrder->setSubchannel('Owletcare');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
-        $webOrder->addLog('Retrieved from owletcare.es');
         $webOrder->setContent($orderApi);
         return $webOrder;
     }
@@ -505,10 +520,9 @@ class WebOrder
 
     public function getOrderContent()
     {
-        if ($this->channel == self::CHANNEL_OWLETCARE) {
+        if (in_array($this->channel, [self::CHANNEL_OWLETCARE, self::CHANNEL_FLASHLED, self::CHANNEL_MINIBATT])) {
             return $this->getContent();
         }
-
         return json_decode(json_encode($this->getContent()));
     }
 

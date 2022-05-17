@@ -4,7 +4,7 @@ namespace App\Helper\Invoice;
 
 
 use App\Entity\WebOrder;
-use App\Helper\Api\ApiAggregator;
+use App\Service\Aggregator\ApiAggregator;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\Carriers\GetTracking;
 use App\Service\MailService;

@@ -5,7 +5,6 @@ namespace App\EventSubscriber;
 use App\Entity\WebOrder;
 use App\Service\Amazon\History\AmzHistoryAggregator;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
-use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
