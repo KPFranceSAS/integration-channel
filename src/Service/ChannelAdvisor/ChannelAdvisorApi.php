@@ -170,7 +170,6 @@ class ChannelAdvisorApi implements ApiInterface
      */
     public function markOrderAsExported($orderId)
     {
-        return true;
         return $this->sendRequest('Orders(' . $orderId . ')/Export', [], 'POST');
     }
 
