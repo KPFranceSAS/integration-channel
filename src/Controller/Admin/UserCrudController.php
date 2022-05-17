@@ -63,7 +63,7 @@ class UserCrudController extends AdminCrudController
     {
 
         $choices = [];
-        $channels = $this->integratorAggregator->getAllChannels();
+        $channels = $this->integratorAggregator->getChannels();
         foreach ($channels as $channel) {
             $choices[$channel] = $channel;
         }
