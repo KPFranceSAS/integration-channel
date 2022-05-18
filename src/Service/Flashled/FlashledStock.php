@@ -11,16 +11,4 @@ class FlashledStock extends ShopifyStockParent
     {
         return WebOrder::CHANNEL_FLASHLED;
     }
-
-
-    public function initializeStockLevels()
-    {
-        parent::initializeStockLevels();
-        $key = 'FL-FLASHLED-SOS' . '_' . WebOrder::DEPOT_LAROCA;
-        $this->stockLevels[$key] = 200;
-
-
-
-        return $this->stockLevels;
-    }
 }

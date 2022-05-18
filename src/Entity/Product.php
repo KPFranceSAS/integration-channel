@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -16,7 +15,7 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * 
+     *
      */
     private $id;
 
@@ -75,6 +74,47 @@ class Product
      */
     private $category;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaSellableStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUnsellableStock= 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaInboundStock= 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaOutboundStock= 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $businessCentralStock= 0;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $ratioStock= 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $soldStockNotIntegrated;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $returnStockNotIntegrated;
+
+
 
     /**
      * @Groups({"export_product"})
@@ -85,7 +125,7 @@ class Product
     }
 
     /**
-     * 
+     *
      * @Groups({"export_product"})
      */
     public function getBrandName()
@@ -95,7 +135,7 @@ class Product
 
 
     /**
-     * 
+     *
      * @Groups({"export_product"})
      */
     public function getCategoryName()
@@ -112,6 +152,7 @@ class Product
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this->calculateRatio();
     }
 
     /**
@@ -120,7 +161,23 @@ class Product
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
+        $this->calculateRatio();
     }
+
+    private function calculateRatio()
+    {
+        $stockFba = $this->fbaSellableStock + $this->fbaUnsellableStock;
+        $stockBc = $this->businessCentralStock - $this->soldStockNotIntegrated + $this->returnStockNotIntegrated;
+       
+        if ($stockFba!=0) {
+            $this->ratioStock = round((abs($stockBc - $stockFba) / $stockFba)/100, 4)  ;
+        } elseif ($stockBc!=0) {
+            $this->ratioStock = round((abs($stockFba - $stockBc) / $stockBc)/100, 4)  ;
+        } else {
+            $this->ratioStock = null;
+        }
+    }
+
 
     public function getId(): ?int
     {
@@ -245,6 +302,101 @@ class Product
     public function setFnsku(?string $fnsku): self
     {
         $this->fnsku = $fnsku;
+
+        return $this;
+    }
+
+    public function getFbaSellableStock(): ?int
+    {
+        return $this->fbaSellableStock;
+    }
+
+    public function setFbaSellableStock(?int $fbaSellableStock): self
+    {
+        $this->fbaSellableStock = $fbaSellableStock;
+
+        return $this;
+    }
+
+    public function getFbaUnsellableStock(): ?int
+    {
+        return $this->fbaUnsellableStock;
+    }
+
+    public function setFbaUnsellableStock(?int $fbaUnsellableStock): self
+    {
+        $this->fbaUnsellableStock = $fbaUnsellableStock;
+
+        return $this;
+    }
+
+    public function getFbaInboundStock(): ?int
+    {
+        return $this->fbaInboundStock;
+    }
+
+    public function setFbaInboundStock(?int $fbaInboundStock): self
+    {
+        $this->fbaInboundStock = $fbaInboundStock;
+
+        return $this;
+    }
+
+    public function getFbaOutboundStock(): ?int
+    {
+        return $this->fbaOutboundStock;
+    }
+
+    public function setFbaOutboundStock(?int $fbaOutboundStock): self
+    {
+        $this->fbaOutboundStock = $fbaOutboundStock;
+
+        return $this;
+    }
+
+    public function getBusinessCentralStock(): ?int
+    {
+        return $this->businessCentralStock;
+    }
+
+    public function setBusinessCentralStock(?int $businessCentralStock): self
+    {
+        $this->businessCentralStock = $businessCentralStock;
+
+        return $this;
+    }
+
+    public function getRatioStock(): ?float
+    {
+        return $this->ratioStock;
+    }
+
+    public function setRatioStock(?float $ratioStock): self
+    {
+        $this->ratioStock = $ratioStock;
+
+        return $this;
+    }
+
+    public function getSoldStockNotIntegrated(): ?int
+    {
+        return $this->soldStockNotIntegrated;
+    }
+
+    public function setSoldStockNotIntegrated(?int $soldStockNotIntegrated): self
+    {
+        $this->soldStockNotIntegrated = $soldStockNotIntegrated;
+        return $this;
+    }
+
+    public function getReturnStockNotIntegrated(): ?int
+    {
+        return $this->returnStockNotIntegrated;
+    }
+
+    public function setReturnStockNotIntegrated(?int $returnStockNotIntegrated): self
+    {
+        $this->returnStockNotIntegrated = $returnStockNotIntegrated;
 
         return $this;
     }

@@ -2,7 +2,6 @@
 
 namespace App\Helper\Invoice;
 
-
 use App\Entity\WebOrder;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
@@ -13,11 +12,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
 
-
 abstract class InvoiceParent
 {
-
-
     protected $logger;
 
     protected $manager;
@@ -104,8 +100,8 @@ abstract class InvoiceParent
 
 
     /**
-     * 
-     * 
+     *
+     *
      * @return void
      */
     public function processInvoices($reprocess = false)
@@ -224,8 +220,8 @@ abstract class InvoiceParent
 
 
     /**
-     * 
-     * 
+     *
+     *
      * @return void
      */
     protected function sendInvoices()
@@ -248,8 +244,8 @@ abstract class InvoiceParent
 
 
     /**
-     * 
-     * 
+     *
+     *
      * @return void
      */
     protected function resendInvoices()
@@ -279,7 +275,7 @@ abstract class InvoiceParent
     protected function addErrorToOrder(WebOrder $webOrder, string $message)
     {
         $webOrder->addError($message);
-        $this->addError($message);
+        $this->addError($webOrder.' > '.$message);
     }
 
 

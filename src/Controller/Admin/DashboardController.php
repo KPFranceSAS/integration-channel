@@ -2,6 +2,8 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\Fba\ProductCrudController;
+use App\Controller\Fba\StockCrudController;
 use App\Controller\Order\AliexpressOrderCrudController;
 use App\Controller\Order\ChannelAdvisorOrderCrudController;
 use App\Controller\Order\DeliveryOrderCrudController;
@@ -62,8 +64,9 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)->setController(WebOrderCrudController::class),
             ]),
             MenuItem::subMenu('Amazon & FBA', 'fab fa-amazon')->setSubItems([
+                MenuItem::linkToCrud('Inventory', 'fas fa-cube', Product::class)->setController(StockCrudController::class),
                 MenuItem::linkToCrud('FBA Returns', 'fas fa-exchange-alt', FbaReturn::class),
-                MenuItem::linkToCrud('Product', 'fas fa-barcode', Product::class),
+                MenuItem::linkToCrud('Product', 'fas fa-barcode', Product::class)->setController(ProductCrudController::class),
                 MenuItem::linkToCrud('Brand', 'far fa-registered', Brand::class),
                 MenuItem::linkToCrud('Category', 'fas fa-sitemap', Category::class),
             ]),

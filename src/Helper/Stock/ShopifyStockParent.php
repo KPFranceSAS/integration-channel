@@ -7,7 +7,6 @@ use App\Helper\Stock\StockParent;
 
 abstract class ShopifyStockParent extends StockParent
 {
-
     protected function getShopifyApi(): ShopifyApiParent
     {
         return $this->getApi();
@@ -22,6 +21,7 @@ abstract class ShopifyStockParent extends StockParent
         foreach ($inventoLevelies as $inventoLeveli) {
             $sku = $inventoLeveli['sku'];
             $stockLevel = $this->getStockProductWarehouse($sku);
+            $this->logger->info('Update modified ' . $sku  . ' >>> ' . $stockLevel);
             $this->getShopifyApi()->setInventoryLevel($mainLocation['id'], $inventoLeveli['inventory_item_id'], $stockLevel);
         }
     }

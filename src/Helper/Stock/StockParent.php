@@ -7,16 +7,13 @@ use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
+use App\Service\BusinessCentral\ProductStockFinder;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
-use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
-
 
 abstract class StockParent
 {
-
-
     protected $logger;
 
     protected $manager;
@@ -27,18 +24,15 @@ abstract class StockParent
 
     protected $businessCentralAggregator;
 
-    protected $awsStorage;
+    protected $productStockFinder;
 
-    protected $stockLevels;
-
-
-    public function __construct(FilesystemOperator $awsStorage, ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator,  ApiAggregator $apiAggregator)
+    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, ApiAggregator $apiAggregator, ProductStockFinder $productStockFinder)
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->businessCentralAggregator = $businessCentralAggregator;
-        $this->awsStorage = $awsStorage;
+        $this->productStockFinder = $productStockFinder;
         $this->apiAggregator = $apiAggregator;
     }
 
@@ -62,25 +56,12 @@ abstract class StockParent
         return $this->apiAggregator->getApi($this->getChannel());
     }
 
-    public function getStocksProductWarehouse(array $skus, $depot = WebOrder::DEPOT_LAROCA): array
-    {
-        $skuStocks = [];
-        foreach ($skus as $sku) {
-            $skuStocks[$sku] = $this->getStockProductWarehouse($sku, $depot);
-        }
-        return $skuStocks;
-    }
-
+    
     public function getStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA): int
     {
-        if (!$this->stockLevels) {
-            $this->initializeStockLevels();
-        }
         $skuFinal = $this->getProductCorrelationSku($sku);
-        $key = $skuFinal . '_' . $depot;
-        if (array_key_exists($key, $this->stockLevels)) {
-            $stock = $this->stockLevels[$key];
-            $this->logger->info('Stock available ' . $skuFinal . ' in ' . $depot . ' >>> ' . $stock);
+        $stock = $this->productStockFinder->getRealStockProductWarehouse($skuFinal, $depot);
+        if ($stock > 0) {
             if ($depot == WebOrder::DEPOT_LAROCA) {
                 if ($stock >= 5) {
                     return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
@@ -88,8 +69,6 @@ abstract class StockParent
             } elseif ($depot == WebOrder::DEPOT_MADRID) {
                 return $stock;
             }
-        } else {
-            $this->logger->error('Not found ' . $skuFinal . ' in ' . $depot);
         }
         return 0;
     }
@@ -107,63 +86,5 @@ abstract class StockParent
         $skuSanitized = strtoupper($sku);
         $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
         return $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
-    }
-
-
-
-    public function initializeStockLevels()
-    {
-        $this->logger->info('Get the file stock/StockMarketplaces.csv');
-        $this->stockLevels = [];
-        $contentFile = $this->awsStorage->readStream('stock/StockMarketplaces.csv');
-        $toRemove = fgetcsv($contentFile, null, ';');
-        $header = fgetcsv($contentFile, null, ';');
-
-
-        $lastModifedTime = $this->awsStorage->lastModified('stock/StockMarketplaces.csv');
-        $differenceCreationMinutes = round((time() - $lastModifedTime) / 60, 0);
-
-        $this->logger->info('Updated : ' . $differenceCreationMinutes . ' minutes');
-
-        if ($differenceCreationMinutes > 180) {
-            throw new \Exception('Update of the stock files published has not been done for  ' . $differenceCreationMinutes . ' minutes');
-        }
-
-        $warehouseFiles = [
-            WebOrder::DEPOT_CENTRAL => WebOrder::DEPOT_CENTRAL,
-            WebOrder::DEPOT_FBA_AMAZON => WebOrder::DEPOT_FBA_AMAZON,
-            WebOrder::DEPOT_LAROCA => WebOrder::DEPOT_LAROCA,
-            WebOrder::DEPOT_MADRID => WebOrder::DEPOT_MADRID,
-        ];
-
-
-        while (($values = fgetcsv($contentFile, null, ';')) !== false) {
-            if (count($values) == count($header)) {
-                $stock = array_combine($header, $values);
-                $nameWarehouse = $stock['LocationCode'];
-                $key = $stock['SKU'] . '_' . $nameWarehouse;
-                $this->stockLevels[$key] = (int)$stock['AvailableQty'];
-                if (array_key_exists($nameWarehouse, $warehouseFiles)) {
-                    unset($warehouseFiles[$nameWarehouse]);
-                }
-            }
-        }
-
-        $this->logger->info('Nb of lines in the files : ' . count($this->stockLevels));
-
-        if (count($this->stockLevels) == 0) {
-            throw new \Exception('Error of mapping for stock files published ' . json_encode($header));
-        }
-
-        if (count($this->stockLevels) < 5000) {
-            throw new \Exception('Error with number lines of stock files published ' . count($this->stockLevels));
-        }
-
-        if (count($warehouseFiles) > 0) {
-            throw new \Exception('Error with number of warehouse in stock files published. Missing the warehouses ' . implode(', ', $warehouseFiles));
-        }
-
-
-        return $this->stockLevels;
     }
 }

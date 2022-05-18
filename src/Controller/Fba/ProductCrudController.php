@@ -40,7 +40,6 @@ class ProductCrudController extends AdminCrudController
             AssociationField::new('brand'),
             AssociationField::new('category'),
             TextField::new('description', 'Product name'),
-            TextField::new('comments'),
             TextField::new('asin')->setDisabled(),
             TextField::new('fnsku')->setDisabled(),
         ];

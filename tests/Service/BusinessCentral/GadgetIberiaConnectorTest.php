@@ -145,4 +145,50 @@ class GadgetIberiaConnectorTest extends KernelTestCase
         $this->assertIsArray($orderFull);
         $this->assertCount(1,  $orderFull['salesOrderLines']);
     }
+
+
+
+
+
+    public function testIntegrationCanaria(): void
+    {
+        $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);
+        $product = $bcConnector->getItemByNumber("PX-P3D2044");
+        $lines = [
+            [
+                "lineType" => "Item",
+                "itemId" => $product["id"],
+                "unitPrice" => 219.0,
+                "quantity" => 2,
+                'discountAmount' => 0
+            ],
+        ];
+        $orderArray =  [
+            'orderDate' => date("Y-m-d"),
+            'customerNumber' => AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER,
+            'salesOrderLines' => $lines,
+            'pricesIncludeTax' => true,
+            "phoneNumber" => '0565458585',
+            "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
+            "externalDocumentNumber" => "test-" . date('YmdHis'),
+        ];
+        $order = $bcConnector->createSaleOrder($orderArray);
+        $this->assertIsArray($order);
+
+        $orderFull = $bcConnector->getFullSaleOrder($order['id']);
+        $this->assertIsArray($orderFull);
+        $this->assertCount(1,  $orderFull['salesOrderLines']);
+
+
+        $orderArrayCanarias = $orderArray;
+        $orderArrayCanarias['customerNumber'] =  '002457';
+        $orderCanarias = $bcConnector->createSaleOrder($orderArrayCanarias);
+        $this->assertIsArray($orderCanarias);
+
+        $orderFullCanarias = $bcConnector->getFullSaleOrder($orderCanarias['id']);
+        $this->assertIsArray($orderFullCanarias);
+        $this->assertCount(1,  $orderFullCanarias['salesOrderLines']);
+
+        $this->assertNotEquals($orderFullCanarias['totalTaxAmount'], $orderFull['totalTaxAmount']);
+    }
 }
