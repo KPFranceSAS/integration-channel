@@ -114,6 +114,11 @@ class Product
      */
     private $returnStockNotIntegrated;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $differenceStock;
+
 
 
     /**
@@ -168,13 +173,16 @@ class Product
     {
         $stockFba = $this->fbaSellableStock + $this->fbaUnsellableStock;
         $stockBc = $this->businessCentralStock - $this->soldStockNotIntegrated + $this->returnStockNotIntegrated;
-       
-        if ($stockFba!=0) {
-            $this->ratioStock = round((abs($stockBc - $stockFba) / $stockFba)/100, 4)  ;
-        } elseif ($stockBc!=0) {
-            $this->ratioStock = round((abs($stockFba - $stockBc) / $stockBc)/100, 4)  ;
+
+        $differenceStock = $stockFba - $stockBc;
+
+        $this->differenceStock = $differenceStock;
+        if ($stockBc!=0) {
+            $this->ratioStock = round($differenceStock/$stockBc, 2);
+        } elseif ($stockFba!=0) {
+            $this->ratioStock = round($differenceStock/$stockBc, 2);
         } else {
-            $this->ratioStock = null;
+            $this->ratioStock = 0;
         }
     }
 
@@ -397,6 +405,18 @@ class Product
     public function setReturnStockNotIntegrated(?int $returnStockNotIntegrated): self
     {
         $this->returnStockNotIntegrated = $returnStockNotIntegrated;
+
+        return $this;
+    }
+
+    public function getDifferenceStock(): ?int
+    {
+        return $this->differenceStock;
+    }
+
+    public function setDifferenceStock(?int $differenceStock): self
+    {
+        $this->differenceStock = $differenceStock;
 
         return $this;
     }

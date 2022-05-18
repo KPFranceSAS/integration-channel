@@ -19,12 +19,6 @@ use Psr\Log\LoggerInterface;
 
 class AmzApiImportStock extends AmzApiImport
 {
-    public function createReportAndImport(?DateTime $dateTimeStart = null)
-    {
-        $datasReport = $this->getLastReportContent();
-        $this->importDatas($datasReport);
-    }
-
     protected $productStockFinder;
 
     public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ExchangeRateCalculator $exchangeRate, BusinessCentralAggregator $businessCentralAggregator, ProductStockFinder $productStockFinder)
@@ -74,18 +68,14 @@ class AmzApiImportStock extends AmzApiImport
     }
 
 
-   
-
-
-  
-
     public function updateLevelFba($data)
     {
         $sku = $this->getProductCorrelationSku($data['seller-sku']);
         $typeFormatted = ucfirst(strtolower($data['Warehouse-Condition-code']));
         if (array_key_exists($sku, $this->products)) {
             $product = $this->products[$sku];
-            $product->{'setFba'.$typeFormatted.'Stock'}($data['Quantity Available']);
+            $stockFba=  $product->{'getFba'.$typeFormatted.'Stock'}() + $data['Quantity Available'];
+            $product->{'setFba'.$typeFormatted.'Stock'}($stockFba);
         } else {
             $this->logger->alert('Product unknow >> '.json_encode($data));
         }
@@ -130,9 +120,10 @@ class AmzApiImportStock extends AmzApiImport
                 ->set('p.fbaInboundStock', 0)
                 ->set('p.fbaOutboundStock', 0)
                 ->set('p.businessCentralStock', 0)
-                ->set('p.fbaOutboundStock', 0)
                 ->set('p.soldStockNotIntegrated', 0)
                 ->set('p.returnStockNotIntegrated', 0)
+                ->set('p.differenceStock', 0)
+                ->set('p.ratioStock', 0)
                 ->getQuery();
         $result = $query->execute();
     }

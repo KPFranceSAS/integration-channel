@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\PercentField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -57,7 +58,7 @@ class StockCrudController extends AdminCrudController
             IntegerField::new('soldStockNotIntegrated'),
             IntegerField::new('returnStockNotIntegrated'),
             IntegerField::new('businessCentralStock'),
-            PercentField::new('ratioStock')
+            NumberField::new('ratioStock', 'Stock Delta')
         ];
     }
 }
