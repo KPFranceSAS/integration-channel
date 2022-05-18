@@ -18,10 +18,17 @@ class BrandCrudController extends AdminCrudController
 
 
 
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        return $crud->setEntityPermission('ROLE_AMAZON');
+    }
+
+
     public function configureActions(Actions $actions): Actions
     {
         $actions = parent::configureActions($actions);
-        $actions->update(Crud::PAGE_INDEX, Action::DELETE,  function (Action $action) {
+        $actions->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
             return $action->displayIf(static function ($entity) {
                 return count($entity->getProducts()) == 0;
             });

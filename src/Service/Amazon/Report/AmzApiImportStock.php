@@ -95,7 +95,7 @@ class AmzApiImportStock extends AmzApiImport
 
     public function getSoldQtyProductNotIntegrated(Product $product)
     {
-        return $this->manager->createQueryBuilder()
+        $qty = $this->manager->createQueryBuilder()
                 ->select('SUM(amz.quantity) as qtyShipped')
                 ->from('App\Entity\AmazonOrder', 'amz')
                 ->where('amz.product = :product')
@@ -106,6 +106,7 @@ class AmzApiImportStock extends AmzApiImport
                 ->setParameter('itemStatus', 'Shipped')
                 ->getQuery()
                 ->getSingleScalarResult();
+        return $qty ?? 0;
     }
 
 

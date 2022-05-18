@@ -6,6 +6,7 @@ use App\Controller\Admin\AdminCrudController;
 use App\Entity\Product;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -22,6 +23,12 @@ class ProductCrudController extends AdminCrudController
         return 'Product';
     }
 
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        return $crud->setEntityPermission('ROLE_AMAZON');
+    }
 
 
     public function configureActions(Actions $actions): Actions

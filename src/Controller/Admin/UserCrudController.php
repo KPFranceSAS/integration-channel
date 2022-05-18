@@ -22,11 +22,8 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-
 class UserCrudController extends AdminCrudController
 {
-
-
     protected $integratorAggregator;
 
     public function __construct(AdminUrlGenerator $adminUrlGenerator, IntegratorAggregator $integratorAggregator)
@@ -61,7 +58,6 @@ class UserCrudController extends AdminCrudController
 
     public function configureFields(string $pageName): iterable
     {
-
         $choices = [];
         $channels = $this->integratorAggregator->getChannels();
         foreach ($channels as $channel) {
@@ -74,6 +70,7 @@ class UserCrudController extends AdminCrudController
 
         $choiceRules = [
             'ROLE_ADMIN' => 'ROLE_ADMIN',
+            'ROLE_AMAZON' => 'ROLE_AMAZON',
             'ROLE_USER' => 'ROLE_USER',
         ];
         $fields[] = ChoiceField::new('roles', 'Roles')->setChoices($choiceRules)->allowMultipleChoices();

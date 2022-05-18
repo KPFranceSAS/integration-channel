@@ -69,7 +69,7 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToCrud('Product', 'fas fa-barcode', Product::class)->setController(ProductCrudController::class),
                 MenuItem::linkToCrud('Brand', 'far fa-registered', Brand::class),
                 MenuItem::linkToCrud('Category', 'fas fa-sitemap', Category::class),
-            ]),
+            ])->setPermission('ROLE_AMAZON'),
             MenuItem::subMenu('Configuration', 'fas fa-cogs')->setSubItems([
                 MenuItem::linkToCrud('SKU Mapping', 'fa fa-exchange', ProductCorrelation::class),
                 MenuItem::linkToCrud('Users', 'fa fa-user', User::class)->setPermission('ROLE_ADMIN'),

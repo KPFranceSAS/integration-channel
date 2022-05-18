@@ -17,6 +17,13 @@ class FbaReturnCrudController extends AdminCrudController
     }
 
 
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        return $crud->setEntityPermission('ROLE_AMAZON');
+    }
+
     public function configureActions(Actions $actions): Actions
     {
         $actions = parent::configureActions($actions);
