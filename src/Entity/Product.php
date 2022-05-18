@@ -178,9 +178,9 @@ class Product
 
         $this->differenceStock = $differenceStock;
         if ($stockBc!=0) {
-            $this->ratioStock = round($differenceStock/$stockBc, 2);
+            $this->ratioStock = round($differenceStock/($stockBc*100), 4);
         } elseif ($stockFba!=0) {
-            $this->ratioStock = round($differenceStock/$stockBc, 2);
+            $this->ratioStock = round($differenceStock/($stockFba*100), 4);
         } else {
             $this->ratioStock = 0;
         }

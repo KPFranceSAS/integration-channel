@@ -58,7 +58,8 @@ class StockCrudController extends AdminCrudController
             IntegerField::new('soldStockNotIntegrated'),
             IntegerField::new('returnStockNotIntegrated'),
             IntegerField::new('businessCentralStock'),
-            NumberField::new('ratioStock', 'Stock Delta')
+            NumberField::new('differenceStock', 'Stock Delta'),
+            PercentField::new('ratioStock', 'Stock Delta %')
         ];
     }
 }

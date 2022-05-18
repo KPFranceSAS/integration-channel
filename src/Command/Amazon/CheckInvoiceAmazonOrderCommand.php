@@ -52,17 +52,6 @@ class CheckInvoiceAmazonOrderCommand extends Command
 
     private function checkAmzOrder(AmazonOrder $amazonOrder)
     {
-        // check if INtegration file
-        $orderAmz = $this->manager->getRepository(IntegrationFile::class)->findOneBy([
-            "externalOrderId" => $amazonOrder->getAmazonOrderId(),
-            "documentType" => IntegrationFile::TYPE_INVOICE
-        ]);
-        if ($orderAmz) {
-            $amazonOrder->setIntegrated(true);
-            $amazonOrder->setIntegrationNumber($orderAmz->getDocumentNumber());
-            return true;
-        }
-
 
         // check if WebOrder file
         $orderAmz = $this->manager->getRepository(WebOrder::class)->findOneBy([

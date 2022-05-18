@@ -19,6 +19,12 @@ use Psr\Log\LoggerInterface;
 
 class AmzApiImportStock extends AmzApiImport
 {
+    public function createReportAndImport(?DateTime $dateTimeStart = null)
+    {
+        $datasReport = $this->getLastReportContent();
+        $this->importDatas($datasReport);
+    }
+
     protected $productStockFinder;
 
     public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ExchangeRateCalculator $exchangeRate, BusinessCentralAggregator $businessCentralAggregator, ProductStockFinder $productStockFinder)
