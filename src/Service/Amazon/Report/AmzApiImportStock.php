@@ -19,11 +19,12 @@ use Psr\Log\LoggerInterface;
 
 class AmzApiImportStock extends AmzApiImport
 {
-    public function createReportAndImport(?DateTime $dateTimeStart = null)
+    /*public function createReportAndImport(?DateTime $dateTimeStart = null)
     {
         $datasReport = $this->getLastReportContent();
+        dump($datasReport);
         $this->importDatas($datasReport);
-    }
+    }*/
 
     protected $productStockFinder;
 
@@ -39,12 +40,14 @@ class AmzApiImportStock extends AmzApiImport
             $dateTimeStart = new DateTime('now');
             $dateTimeStart->sub(new DateInterval('P3D'));
         }
-        return $this->amzApi->createReport($dateTimeStart, AmzApi::TYPE_REPORT_INVENTORY_DATA);
+        return $this->amzApi->createReport($dateTimeStart, AmzApi::TYPE_REPORT_MANAGE_INVENTORY);
     }
 
     protected function getLastReportContent()
     {
-        return $this->amzApi->getContentLastReport(AmzApi::TYPE_REPORT_INVENTORY_DATA);
+        $dateTimeStart = new DateTime('now');
+        $dateTimeStart->sub(new DateInterval('PT1H'));
+        return $this->amzApi->getContentLastReport(AmzApi::TYPE_REPORT_MANAGE_INVENTORY, $dateTimeStart);
     }
 
 
@@ -76,12 +79,13 @@ class AmzApiImportStock extends AmzApiImport
 
     public function updateLevelFba($data)
     {
-        $sku = $this->getProductCorrelationSku($data['seller-sku']);
-        $typeFormatted = ucfirst(strtolower($data['Warehouse-Condition-code']));
+        $sku = $this->getProductCorrelationSku($data['sku']);
+       
         if (array_key_exists($sku, $this->products)) {
             $product = $this->products[$sku];
-            $stockFba=  $product->{'getFba'.$typeFormatted.'Stock'}() + $data['Quantity Available'];
-            $product->{'setFba'.$typeFormatted.'Stock'}($stockFba);
+            $product->addFbaSellableStock($data['afn-fulfillable-quantity']+$data['afn-reserved-quantity']);
+            $product->addFbaSellableStock($data['afn-unsellable-quantity']);
+            $product->addFbaInboundStock($data['afn-inbound-working-quantity']+$data['afn-inbound-shipped-quantity']+$data['afn-inbound-receiving-quantity']);
         } else {
             $this->logger->alert('Product unknow >> '.json_encode($data));
         }

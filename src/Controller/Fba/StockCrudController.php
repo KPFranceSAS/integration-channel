@@ -55,6 +55,7 @@ class StockCrudController extends AdminCrudController
             TextField::new('description', 'Product name'),
             IntegerField::new('fbaSellableStock'),
             IntegerField::new('fbaUnsellableStock'),
+            IntegerField::new('fbaInboundStock'),
             IntegerField::new('soldStockNotIntegrated'),
             IntegerField::new('returnStockNotIntegrated'),
             IntegerField::new('businessCentralStock'),

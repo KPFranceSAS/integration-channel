@@ -178,12 +178,27 @@ class Product
 
         $this->differenceStock = $differenceStock;
         if ($stockBc!=0) {
-            $this->ratioStock = round($differenceStock/($stockBc*100), 4);
+            $this->ratioStock = round($differenceStock/($stockBc), 4);
         } elseif ($stockFba!=0) {
-            $this->ratioStock = round($differenceStock/($stockFba*100), 4);
+            $this->ratioStock = round($differenceStock/($stockFba), 4);
         } else {
             $this->ratioStock = 0;
         }
+    }
+
+    public function addFbaSellableStock(int $stock)
+    {
+        $this->fbaSellableStock+=$stock;
+    }
+
+    public function addFbaUnsellableStock(int $stock)
+    {
+        $this->fbaUnsellableStock+=$stock;
+    }
+
+    public function addFbaInboundStock(int $stock)
+    {
+        $this->fbaInboundStock+=$stock;
     }
 
 
