@@ -176,11 +176,16 @@ class Product
 
         $differenceStock = $stockFba - $stockBc;
 
-        $this->differenceStock = $differenceStock;
+        $this->differenceStock = abs($differenceStock);
+
+        if ($this->differenceStock == 0) {
+            $this->ratioStock = 0;
+        }
+
         if ($stockBc!=0) {
-            $this->ratioStock = round($differenceStock/($stockBc), 4);
+            $this->ratioStock = abs(round($this->differenceStock/($stockBc), 4));
         } elseif ($stockFba!=0) {
-            $this->ratioStock = round($differenceStock/($stockFba), 4);
+            $this->ratioStock = abs(round($this->differenceStock/($stockFba), 4));
         } else {
             $this->ratioStock = 0;
         }

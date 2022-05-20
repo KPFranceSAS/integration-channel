@@ -84,7 +84,7 @@ class AmzApiImportStock extends AmzApiImport
         if (array_key_exists($sku, $this->products)) {
             $product = $this->products[$sku];
             $product->addFbaSellableStock($data['afn-fulfillable-quantity']+$data['afn-reserved-quantity']);
-            $product->addFbaSellableStock($data['afn-unsellable-quantity']);
+            $product->addFbaUnsellableStock($data['afn-unsellable-quantity']);
             $product->addFbaInboundStock($data['afn-inbound-working-quantity']+$data['afn-inbound-shipped-quantity']+$data['afn-inbound-receiving-quantity']);
         } else {
             $this->logger->alert('Product unknow >> '.json_encode($data));
