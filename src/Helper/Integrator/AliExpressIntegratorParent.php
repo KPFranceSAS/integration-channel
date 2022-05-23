@@ -9,6 +9,7 @@ use App\Helper\BusinessCentral\Model\PostalAddress;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
 use App\Helper\Integrator\IntegratorParent;
+use App\Helper\Utils\DatetimeUtils;
 use App\Service\AliExpress\AliExpressStock;
 use DateTime;
 use Exception;
@@ -32,9 +33,19 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
         foreach ($ordersApi as $orderApi) {
             try {
                 $orderFull = $this->getAliExpressApi()->getOrder($orderApi->order_id);
-                if ($this->integrateOrder($orderFull)) {
-                    $counter++;
-                    $this->logger->info("Orders integrated : $counter ");
+
+                $datePurchase = DatetimeUtils::createDateTimeFromAliExpressDate($orderFull->gmt_pay_success);
+                $now = new DateTime();
+                $interval = $now->diff($datePurchase, true);
+                $totalHours = $interval->format('%a') * 24 + $interval->format('%h');
+                $this->logger->info("Order has been purchased $totalHours hour ago");
+                if ($totalHours > 1) {
+                    if ($this->integrateOrder($orderFull)) {
+                        $counter++;
+                        $this->logger->info("Orders integrated : $counter ");
+                    }
+                } else {
+                    $this->logger->alert("Order has been purchased before $totalHours hour ago");
                 }
             } catch (Exception $exception) {
                 $this->addError('Problem retrieved Aliexpress #' . $orderApi->order_id . ' > ' . $exception->getMessage());
@@ -77,7 +88,6 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
 
     public function transformToAnBcOrder($orderApi): SaleOrder
     {
-
         $orderBC = new SaleOrder();
         $orderBC->customerNumber = $this->getClientNumber();
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->gmt_pay_success, 0, 10));
@@ -90,7 +100,6 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
         $valuesAddress = ['selling', 'shipping'];
 
         foreach ($valuesAddress as $val) {
-
             $adress =  $orderApi->receipt_address->detail_address;
             if (property_exists($orderApi->receipt_address, 'address2') && strlen($orderApi->receipt_address->address2) > 0) {
                 $adress .= ', ' . $orderApi->receipt_address->address2;
@@ -134,7 +143,7 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
 
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
         $livraisonFees = floatval($orderApi->logistics_amount->amount);
-        // ajout livraison 
+        // ajout livraison
         $company = $this->getCompanyIntegration($orderApi);
 
         if ($livraisonFees > 0) {
@@ -151,7 +160,7 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
 
         $promotionsSeller = $this->getTotalDiscountBySeller($orderApi->child_order_list->global_aeop_tp_child_order_dto);
 
-        // add discount 
+        // add discount
         if ($promotionsSeller > 0) {
             $account = $this->getBusinessCentralConnector($company)->getAccountByNumber('7000005');
             $saleLineDelivery = new SaleOrderLine();
@@ -191,7 +200,6 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
 
     public function checkLocationCode($orderApi)
     {
-
         $brands = [];
         foreach ($orderApi->child_order_list->global_aeop_tp_child_order_dto as $line) {
             $brand = $this->getAliExpressApi()->getBrandProduct($line->product_id);
@@ -251,7 +259,6 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
         $saleOrderLines = [];
         $company = $this->getCompanyIntegration($orderApi);
         foreach ($orderApi->child_order_list->global_aeop_tp_child_order_dto as $line) {
-
             $saleLine = new SaleOrderLine();
             $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
             $saleLine->itemId = $this->getProductCorrelationSku($line->sku_code, $company);

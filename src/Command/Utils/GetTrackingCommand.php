@@ -33,7 +33,6 @@ class GetTrackingCommand extends Command
         foreach ($test as $tes) {
             $tracking = $this->dhlGetTracking->getTrackingExternal($tes);
             $output->writeln($tes);
-            dump($tracking);
         }
 
 

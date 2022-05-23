@@ -26,9 +26,7 @@ class ConnectOwletCareCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
         $mainLocation = $this->owletCareApi->getMainLocation();
-        dump($mainLocation);
 
         $orders = $this->owletCareApi->getAllOrdersToSend();
         /*foreach ($orders as $order) {
