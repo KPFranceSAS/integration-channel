@@ -1,0 +1,22 @@
+{{ field.formattedValue }}
+<div class="popover__wrapper"><i class="fas fa-info-circle popover__title"></i>
+  <div class="popover__content">
+    <div class="popover__message">
+     <table class="table datagrid" >
+        <tr>
+          <td>FBA Sellable Qty</td>
+          <td>{{entity.instance.fbaSellableStock}}</td>
+        </tr>
+        <tr>
+          <td>FBA Unsellable Qty</td>
+          <td>{{entity.instance.fbaUnsellableStock}}</td>
+        </tr>
+        <tr>
+          <td>FBA Reserved Qty</td>
+          <td>{{entity.instance.fbaReservedStock}}</td>
+        </tr>
+     </table> 
+    </div>
+  </div>
+</div>
+

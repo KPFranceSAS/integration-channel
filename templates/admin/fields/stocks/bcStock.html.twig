@@ -1,0 +1,21 @@
+{{ field.formattedValue }}
+<div class="popover__wrapper"><i class="fas fa-info-circle popover__title"></i>
+  <div class="popover__content">
+    <div class="popover__message">
+     <table class="table datagrid" >
+        <tr>
+          <td>BC Amazon Stock</td>
+          <td>{{entity.instance.businessCentralStock}}</td>
+        </tr>
+        <tr>
+          <td>BC Amazon sales not integrated</td>
+          <td>{% if entity.instance.soldStockNotIntegrated > 0 %}-{% endif %}{{entity.instance.soldStockNotIntegrated}} </td>
+        </tr>
+        <tr>
+          <td>BC Amazon returns not integrated</td>
+          <td>{{entity.instance.returnStockNotIntegrated}}</td>
+        </tr>
+     </table> 
+    </div>
+  </div>
+</div>

@@ -5,7 +5,6 @@ namespace App\Controller\Admin;
 use App\Helper\Utils\StringUtils;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\CSV\Writer;
-use Doctrine\ORM\Tools\Pagination\CountWalker;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -13,13 +12,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
-
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Factory\PaginatorFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityPaginator;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use function Symfony\Component\String\u;
 
@@ -28,8 +23,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AdminCrudController extends AbstractCrudController
 {
-
-
     protected $adminUrlGenerator;
 
     public function __construct(AdminUrlGenerator $adminUrlGenerator)
@@ -53,8 +46,6 @@ abstract class AdminCrudController extends AbstractCrudController
 
     public function configureCrud(Crud $crud): Crud
     {
-
-
         return $crud
             ->setEntityLabelInSingular($this->getName())
             ->setEntityLabelInPlural($this->getName() . 's')
@@ -66,7 +57,6 @@ abstract class AdminCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-
         $exportIndex = Action::new('export', 'Export to csv')
             ->setIcon('fa fa-download')
             ->linkToCrudAction('export')
@@ -75,13 +65,13 @@ abstract class AdminCrudController extends AbstractCrudController
 
         return $actions
             ->add(Crud::PAGE_INDEX, $exportIndex)
-            ->update(Crud::PAGE_INDEX, Action::NEW,  function (Action $action) {
+            ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
                 return $action->setIcon('fa fa-plus')->setLabel("Add a new " . $this->getName());
             })
-            ->update(Crud::PAGE_INDEX, Action::EDIT,  function (Action $action) {
+            ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
                 return $action->setIcon('fa fa-pencil')->setLabel(false);
             })
-            ->update(Crud::PAGE_INDEX, Action::DELETE,  function (Action $action) {
+            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
                 return $action->setIcon('fa fa-trash')->setLabel(false);
             });
     }

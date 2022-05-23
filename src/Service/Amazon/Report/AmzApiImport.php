@@ -13,10 +13,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
 
-
 abstract class AmzApiImport
 {
-
     protected $mailer;
 
     protected $manager;
@@ -24,6 +22,10 @@ abstract class AmzApiImport
     protected $logger;
 
     protected $amzApi;
+
+    protected $exchangeRate;
+
+    protected $businessCentralAggregator;
 
     public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ExchangeRateCalculator $exchangeRate, BusinessCentralAggregator $businessCentralAggregator)
     {
@@ -53,7 +55,7 @@ abstract class AmzApiImport
                     $datasReport = $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
                     $this->importDatas($datasReport);
                     return;
-                } else if (in_array($reportState->getPayload()->getProcessingStatus(), [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL])) {
+                } elseif (in_array($reportState->getPayload()->getProcessingStatus(), [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL])) {
                     throw new Exception('Fatal error to get report ' . $this->getName());
                 } else {
                     $this->logger->info('Report processing not yet');

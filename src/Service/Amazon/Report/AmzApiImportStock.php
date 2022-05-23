@@ -2,6 +2,7 @@
 
 namespace App\Service\Amazon\Report;
 
+use AmazonPHP\SellingPartner\Marketplace;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
@@ -17,83 +18,115 @@ use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
 
-class AmzApiImportStock extends AmzApiImport
+class AmzApiImportStock
 {
-    /*public function createReportAndImport(?DateTime $dateTimeStart = null)
-    {
-        $datasReport = $this->getLastReportContent();
-        dump($datasReport);
-        $this->importDatas($datasReport);
-    }*/
+    protected $mailer;
+
+    protected $manager;
+
+    protected $logger;
+
+    protected $amzApi;
 
     protected $productStockFinder;
 
-    public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ExchangeRateCalculator $exchangeRate, BusinessCentralAggregator $businessCentralAggregator, ProductStockFinder $productStockFinder)
+    public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ProductStockFinder $productStockFinder)
     {
-        parent::__construct($logger, $amzApi, $manager, $mailer, $exchangeRate, $businessCentralAggregator);
+        $this->logger = $logger;
+        $this->amzApi = $amzApi;
+        $this->manager = $manager->getManager();
+        $this->mailer = $mailer;
         $this->productStockFinder =$productStockFinder;
     }
 
-    protected function createReport(?DateTime $dateTimeStart = null)
-    {
-        if (!$dateTimeStart) {
-            $dateTimeStart = new DateTime('now');
-            $dateTimeStart->sub(new DateInterval('P3D'));
-        }
-        return $this->amzApi->createReport($dateTimeStart, AmzApi::TYPE_REPORT_MANAGE_INVENTORY);
-    }
-
-    protected function getLastReportContent()
-    {
-        $dateTimeStart = new DateTime('now');
-        $dateTimeStart->sub(new DateInterval('PT1H'));
-        return $this->amzApi->getContentLastReport(AmzApi::TYPE_REPORT_MANAGE_INVENTORY, $dateTimeStart);
-    }
-
-
-
-    public function importDatas(array $datas)
-    {
-        $this->getAllProducts();
-        
-        foreach ($datas as $data) {
-            $this->updateLevelFba($data);
-        }
-        $this->manager->flush();
-    }
-
-
-    public function getAllProducts()
+    public function updateStocks()
     {
         $this->setZeroToStockLevel();
         $this->products= [];
         $products= $this->manager->getRepository(Product::class)->findAll();
+
         foreach ($products as $product) {
+            $this->products[$product->getSku()] = $product;
+
             $product->setBusinessCentralStock($this->productStockFinder->getRealStockProductWarehouse($product->getSku(), WebOrder::DEPOT_FBA_AMAZON));
+            $product->setLaRocaBusinessCentralStock($this->productStockFinder->getRealStockProductWarehouse($product->getSku(), WebOrder::DEPOT_LAROCA));
             $product->setSoldStockNotIntegrated($this->getSoldQtyProductNotIntegrated($product));
             $product->setReturnStockNotIntegrated($this->getReturnQtyProductNotIntegrated($product));
-            $this->products[$product->getSku()] = $product;
         }
-    }
+        
+
+        $datas = $this->getContentFromReports();
 
 
-    public function updateLevelFba($data)
-    {
-        $sku = $this->getProductCorrelationSku($data['sku']);
        
-        if (array_key_exists($sku, $this->products)) {
-            $product = $this->products[$sku];
-            $product->addFbaSellableStock($data['afn-fulfillable-quantity']+$data['afn-reserved-quantity']);
-            $product->addFbaUnsellableStock($data['afn-unsellable-quantity']);
-            $product->addFbaInboundStock($data['afn-inbound-working-quantity']+$data['afn-inbound-shipped-quantity']+$data['afn-inbound-receiving-quantity']);
-        } else {
-            $this->logger->alert('Product unknow >> '.json_encode($data));
-        }
-    }
-    
-    
 
-    public function getSoldQtyProductNotIntegrated(Product $product)
+        foreach ($datas as $marketplace => $dataMarketplace) {
+            foreach ($dataMarketplace as $data) {
+                $sku = $this->getProductCorrelationSku($data['sku']);
+       
+                if (array_key_exists($sku, $this->products)) {
+                    $product = $this->products[$sku];
+                    $product->addFbaSellableStock($data['afn-fulfillable-quantity']);
+                    $product->addFbaReservedStock($data['afn-reserved-quantity']);
+                    $product->addFbaUnsellableStock($data['afn-unsellable-quantity']);
+                    $product->addFbaRearchingStock($data['afn-researching-quantity']);
+                    $product->addFbaInboundWorkingStock($data['afn-inbound-working-quantity']);
+                    $product->addFbaInboundShippedStock($data['afn-inbound-shipped-quantity']);
+                    $product->addFbaInboundReceivingStock($data['afn-inbound-receiving-quantity']);
+                } else {
+                    $this->logger->alert('Product unknow >> '.json_encode($data));
+                }
+            }
+        }
+        $this->manager->flush();
+    }
+
+    const WAITING_TIME = 20;
+
+    protected function getContentFromReports()
+    {
+        $dateTimeStart = new DateTime('now');
+        $dateTimeStart->sub(new DateInterval('PT6H'));
+        $datas = [];
+
+        $marketplaces= [
+            Marketplace::ES()->id(),
+            Marketplace::GB()->id(),
+        ];
+        foreach ($marketplaces as $marketplace) {
+            $datasReport =  $this->getContentFromReportMarketplace($dateTimeStart, $marketplace);
+            $this->logger->info("Data marketplace $marketplace >>>>" .count($datasReport));
+            $datas[$marketplace]=$datasReport;
+        }
+
+        return $datas;
+    }
+
+
+    public function getContentFromReportMarketplace($dateTimeStart, $marketplace)
+    {
+        $report = $this->amzApi->createReport($dateTimeStart, AmzApi::TYPE_REPORT_MANAGE_INVENTORY, [$marketplace]);
+        for ($i = 0; $i < 30; $i++) {
+            $j = ($i + 1) * self::WAITING_TIME;
+            $this->logger->info("Wait  since $j seconds  reporting is done");
+            sleep(self::WAITING_TIME);
+            $reportState = $this->amzApi->getReport($report->getReportId());
+            if ($reportState->getPayload()->getProcessingStatus() == AmzApi::STATUS_REPORT_DONE) {
+                $this->logger->info('Report processing done');
+                return $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
+            } elseif (in_array($reportState->getPayload()->getProcessingStatus(), [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL])) {
+                return  $this->amzApi->getContentLastReport(AmzApi::TYPE_REPORT_MANAGE_INVENTORY, $dateTimeStart, [$marketplace]);
+                $this->logger->info('Get last');
+                continue;
+            } else {
+                $this->logger->info('Report processing not yet');
+            }
+        }
+        return [];
+    }
+  
+   
+    protected function getSoldQtyProductNotIntegrated(Product $product)
     {
         $qty = $this->manager->createQueryBuilder()
                 ->select('SUM(amz.quantity) as qtyShipped')
@@ -110,18 +143,12 @@ class AmzApiImportStock extends AmzApiImport
     }
 
 
-
-
-    public function getReturnQtyProductNotIntegrated(Product $product)
+    protected function getReturnQtyProductNotIntegrated(Product $product)
     {
         return 0;
     }
 
-
-
-
-
-    public function setZeroToStockLevel()
+    protected function setZeroToStockLevel()
     {
         $queryBuilder = $this->manager->createQueryBuilder();
         $query = $queryBuilder->update('App\Entity\Product', 'p')
@@ -145,9 +172,5 @@ class AmzApiImportStock extends AmzApiImport
         $skuSanitized = strtoupper($sku);
         $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
         return $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
-    }
-
-    protected function upsertData(array $importOrder)
-    {
     }
 }

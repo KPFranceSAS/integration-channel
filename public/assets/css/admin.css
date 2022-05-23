@@ -49,3 +49,29 @@
        display:none!important;
     }
 }
+
+.popover__wrapper {
+    position: relative;
+    margin-left:10px;
+    display: inline-block;
+  }
+  .popover__content {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    left: 0px;
+    background-color : var(--body-bg);
+    transform: translate(0, 10px);
+    padding: 1.5rem;
+    border: 1px solid var(--table-cell-border-color);
+    width: auto;
+    min-width:200px;
+  }
+
+  .popover__wrapper:hover .popover__content {
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -20px);
+    transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
+  }

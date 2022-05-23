@@ -94,6 +94,50 @@ class Product
      */
     private $fbaOutboundStock= 0;
 
+
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaReservedStock;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaInboundShippedStock;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaInboundWorkingStock;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaInboundReceivingStock;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaResearchingStock;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaTotalStock;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $laRocaBusinessCentralStock;
+
+
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $businessCentralTotalStock;
+
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
@@ -171,23 +215,22 @@ class Product
 
     private function calculateRatio()
     {
-        $stockFba = $this->fbaSellableStock + $this->fbaUnsellableStock;
-        $stockBc = $this->businessCentralStock - $this->soldStockNotIntegrated + $this->returnStockNotIntegrated;
-
-        $differenceStock = $stockFba - $stockBc;
-
-        $this->differenceStock = abs($differenceStock);
+        $this->fbaTotalStock = $this->fbaSellableStock + $this->fbaUnsellableStock + $this->fbaResearchingStock + $this->fbaReservedStock;
+        $this->businessCentralTotalStock = $this->businessCentralStock - $this->soldStockNotIntegrated + $this->returnStockNotIntegrated;
+        $this->fbaInboundStock = $this->fbaInboundReceivingStock + $this->fbaInboundShippedStock + $this->fbaInboundWorkingStock;
+        
+        $this->differenceStock = abs($this->fbaTotalStock - $this->businessCentralTotalStock);
 
         if ($this->differenceStock == 0) {
             $this->ratioStock = 0;
-        }
-
-        if ($stockBc!=0) {
-            $this->ratioStock = abs(round($this->differenceStock/($stockBc), 4));
-        } elseif ($stockFba!=0) {
-            $this->ratioStock = abs(round($this->differenceStock/($stockFba), 4));
         } else {
-            $this->ratioStock = 0;
+            if ($this->businessCentralTotalStock!=0) {
+                $this->ratioStock = abs(round($this->differenceStock/($this->businessCentralTotalStock), 4));
+            } elseif ($this->fbaTotalStock!=0) {
+                $this->ratioStock = abs(round($this->differenceStock/($this->fbaTotalStock), 4));
+            } else {
+                $this->ratioStock = 0;
+            }
         }
     }
 
@@ -196,14 +239,36 @@ class Product
         $this->fbaSellableStock+=$stock;
     }
 
+
+    public function addFbaReservedStock(int $stock)
+    {
+        $this->fbaReservedStock+=$stock;
+    }
+
+    public function addFbaRearchingStock(int $stock)
+    {
+        $this->fbaResearchingStock+=$stock;
+    }
+
+
     public function addFbaUnsellableStock(int $stock)
     {
         $this->fbaUnsellableStock+=$stock;
     }
 
-    public function addFbaInboundStock(int $stock)
+    public function addFbaInboundReceivingStock(int $stock)
     {
-        $this->fbaInboundStock+=$stock;
+        $this->fbaInboundReceivingStock+=$stock;
+    }
+
+    public function addFbaInboundWorkingStock(int $stock)
+    {
+        $this->fbaInboundWorkingStock+=$stock;
+    }
+
+    public function addFbaInboundShippedStock(int $stock)
+    {
+        $this->fbaInboundShippedStock+=$stock;
     }
 
 
@@ -437,6 +502,102 @@ class Product
     public function setDifferenceStock(?int $differenceStock): self
     {
         $this->differenceStock = $differenceStock;
+
+        return $this;
+    }
+
+    public function getFbaReservedStock(): ?int
+    {
+        return $this->fbaReservedStock;
+    }
+
+    public function setFbaReservedStock(?int $fbaReservedStock): self
+    {
+        $this->fbaReservedStock = $fbaReservedStock;
+
+        return $this;
+    }
+
+    public function getFbaInboundShippedStock(): ?int
+    {
+        return $this->fbaInboundShippedStock;
+    }
+
+    public function setFbaInboundShippedStock(?int $fbaInboundShippedStock): self
+    {
+        $this->fbaInboundShippedStock = $fbaInboundShippedStock;
+
+        return $this;
+    }
+
+    public function getFbaInboundWorkingStock(): ?int
+    {
+        return $this->fbaInboundWorkingStock;
+    }
+
+    public function setFbaInboundWorkingStock(?int $fbaInboundWorkingStock): self
+    {
+        $this->fbaInboundWorkingStock = $fbaInboundWorkingStock;
+
+        return $this;
+    }
+
+    public function getFbaInboundReceivingStock(): ?int
+    {
+        return $this->fbaInboundReceivingStock;
+    }
+
+    public function setFbaInboundReceivingStock(?int $fbaInboundReceivingStock): self
+    {
+        $this->fbaInboundReceivingStock = $fbaInboundReceivingStock;
+
+        return $this;
+    }
+
+    public function getFbaResearchingStock(): ?int
+    {
+        return $this->fbaResearchingStock;
+    }
+
+    public function setFbaResearchingStock(?int $fbaResearchingStock): self
+    {
+        $this->fbaResearchingStock = $fbaResearchingStock;
+
+        return $this;
+    }
+
+    public function getLaRocaBusinessCentralStock(): ?int
+    {
+        return $this->laRocaBusinessCentralStock;
+    }
+
+    public function setLaRocaBusinessCentralStock(?int $laRocaBusinessCentralStock): self
+    {
+        $this->laRocaBusinessCentralStock = $laRocaBusinessCentralStock;
+
+        return $this;
+    }
+
+    public function getFbaTotalStock(): ?int
+    {
+        return $this->fbaTotalStock;
+    }
+
+    public function setFbaTotalStock(?int $fbaTotalStock): self
+    {
+        $this->fbaTotalStock = $fbaTotalStock;
+
+        return $this;
+    }
+
+    public function getBusinessCentralTotalStock(): ?int
+    {
+        return $this->businessCentralTotalStock;
+    }
+
+    public function setBusinessCentralTotalStock(int $businessCentralTotalStock): self
+    {
+        $this->businessCentralTotalStock = $businessCentralTotalStock;
 
         return $this;
     }

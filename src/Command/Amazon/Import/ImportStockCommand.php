@@ -24,7 +24,7 @@ class ImportStockCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->amzApiImportStock->createReportAndImport();
+        $this->amzApiImportStock->updateStocks();
         return Command::SUCCESS;
     }
 }

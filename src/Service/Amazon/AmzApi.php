@@ -14,10 +14,8 @@ use DateTime;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Log\LoggerInterface;
 
-
 class AmzApi
 {
-
     const TYPE_REPORT_LAST_UPDATE_ORDERS = 'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL';
     const TYPE_REPORT_LAST_UPDATE_ARCHIVED_ORDERS = 'GET_FLAT_FILE_ARCHIVED_ORDERS_DATA_BY_ORDER_DATE';
     const TYPE_REPORT_LISTINGS_ALL_DATA = 'GET_MERCHANT_LISTINGS_ALL_DATA';
@@ -173,7 +171,7 @@ class AmzApi
 
 
 
-    public function getAllReports(array $type, array $status = [], DateTime $createdSince = null)
+    public function getAllReports(array $type, array $status = [], DateTime $createdSince = null, $marketplaces = null)
     {
         $reports = [];
         $status = count($status) > 0 ? $status : $this->getAllStatusReport();
@@ -184,7 +182,7 @@ class AmzApi
                 Regions::EUROPE,
                 $type,
                 $status,
-                null,
+                $marketplaces,
                 10,
                 $createdSince,
                 null,
@@ -199,9 +197,9 @@ class AmzApi
     }
 
 
-    public function getContentLastReport(string $type, DateTime $createdSince = null)
+    public function getContentLastReport(string $type, DateTime $createdSince = null, $marketplaces = null)
     {
-        $report = $this->getLastReport($type, [self::STATUS_REPORT_DONE], $createdSince);
+        $report = $this->getLastReport($type, [self::STATUS_REPORT_DONE], $createdSince, $marketplaces);
         return $report ? $this->getContentReport($report->getReportDocumentId()) : null;
     }
 
@@ -215,25 +213,42 @@ class AmzApi
         );
         $textEncrypted = file_get_contents($response->getPayload()->getUrl());
         $encryptedMethod = $response->getPayload()->getEncryptionDetails();
-        $decrypted_data = openssl_decrypt($textEncrypted, "aes-256-cbc", base64_decode($encryptedMethod->getKey()), OPENSSL_RAW_DATA,  base64_decode($encryptedMethod->getInitializationVector()));
+        $decrypted_data = openssl_decrypt($textEncrypted, "aes-256-cbc", base64_decode($encryptedMethod->getKey()), OPENSSL_RAW_DATA, base64_decode($encryptedMethod->getInitializationVector()));
         return $toArray ? $this->transformDocumentReportToArray($decrypted_data) : $decrypted_data;
     }
 
 
-    public function getLastReport(string $type, array $status = [self::STATUS_REPORT_DONE], DateTime $createdSince = null)
+    public function getLastReport(string $type, array $status = [self::STATUS_REPORT_DONE], DateTime $createdSince = null, $marketplaces = null)
     {
-        $reports = $this->getAllReports([$type], $status, $createdSince);
-        return end($reports);
+        $reports = $this->getAllReports([$type], $status, $createdSince, $marketplaces);
+
+        if ($marketplaces) {
+            $reportsMarketplace = [];
+            foreach ($reports as $report) {
+                $markeplaceids = $report->getMarketplaceIds();
+                if (count($markeplaceids)==1) {
+                    $reportsMarketplace []= $report;
+                }
+            }
+            return end($reportsMarketplace);
+        } else {
+            return end($reports);
+        }
     }
 
 
-    public function createReport(DateTime $dateTimeStart, $reportType)
+    public function createReport(DateTime $dateTimeStart, $reportType, $marketplaces = null)
     {
         $this->logger->info("Report creation $reportType from " . $dateTimeStart->format("Y-m-d"));
         $configurationReport = new CreateReportSpecification();
         $configurationReport->setReportType($reportType);
         $configurationReport->setDataStartTime($dateTimeStart);
-        $configurationReport->setMarketplaceIds($this->getAllMarketplaces());
+        if ($marketplaces) {
+            $configurationReport->setMarketplaceIds($marketplaces);
+        } else {
+            $configurationReport->setMarketplaceIds($this->getAllMarketplaces());
+        }
+        
         $reponse = $this->sdk->reports()->createReport(
             $this->getAccessToken(),
             Regions::EUROPE,
