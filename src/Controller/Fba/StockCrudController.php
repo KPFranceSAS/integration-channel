@@ -3,16 +3,20 @@
 namespace App\Controller\Fba;
 
 use App\Controller\Admin\AdminCrudController;
+use App\Entity\Brand;
 use App\Entity\Product;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\PercentField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 
 class StockCrudController extends AdminCrudController
 {
@@ -51,6 +55,7 @@ class StockCrudController extends AdminCrudController
     protected function getFieldsExport(): FieldCollection
     {
         $fields = [
+            TextField::new('brand', 'Brand'),
             TextField::new('sku'),
             TextField::new('description', 'Product name'),
             IntegerField::new('fbaTotalStock', 'FBA Warehouse Qty'),
@@ -67,12 +72,18 @@ class StockCrudController extends AdminCrudController
             IntegerField::new('businessCentralStock', 'BC Amazon Stock'),
             IntegerField::new('businessCentralTotalStock', 'BC Amazon total Stock'),
             IntegerField::new('differenceStock', 'Stock Delta'),
-            PercentField::new('ratioStock', 'Stock Delta %'),
+            PercentField::new('ratioStock', 'Stock Delta %')
         ];
 
         return FieldCollection::new($fields);
     }
 
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(EntityFilter::new('brand'));
+    }
 
 
     public function configureFields(string $pageName): iterable
@@ -83,8 +94,7 @@ class StockCrudController extends AdminCrudController
             TextField::new('description', 'Product name'),
             IntegerField::new('fbaTotalStock', 'FBA stock')->setTemplatePath('admin/fields/stocks/fbaStock.html.twig'),
             IntegerField::new('businessCentralTotalStock', 'BC Amazon Stock')->setTemplatePath('admin/fields/stocks/bcStock.html.twig'),
-            IntegerField::new('differenceStock', 'Stock Delta'),
-            PercentField::new('ratioStock', 'Stock Delta %'),
+            IntegerField::new('differenceStock', 'Stock Delta')->setTemplatePath('admin/fields/stocks/deltaStock.html.twig'),
             IntegerField::new('fbaInboundStock', 'FBA Inbound Qty')->setTemplatePath('admin/fields/stocks/inboundStock.html.twig'),
             IntegerField::new('laRocaBusinessCentralStock', 'BC la Roca stock'),
             

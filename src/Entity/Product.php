@@ -99,44 +99,44 @@ class Product
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $fbaReservedStock;
+    private $fbaReservedStock= 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $fbaInboundShippedStock;
+    private $fbaInboundShippedStock= 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $fbaInboundWorkingStock;
+    private $fbaInboundWorkingStock= 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $fbaInboundReceivingStock;
+    private $fbaInboundReceivingStock= 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $fbaResearchingStock;
+    private $fbaResearchingStock= 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $fbaTotalStock;
+    private $fbaTotalStock= 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $laRocaBusinessCentralStock;
+    private $laRocaBusinessCentralStock= 0;
 
 
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $businessCentralTotalStock;
+    private $businessCentralTotalStock= 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -151,17 +151,17 @@ class Product
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $soldStockNotIntegrated;
+    private $soldStockNotIntegrated= 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $returnStockNotIntegrated;
+    private $returnStockNotIntegrated= 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $differenceStock;
+    private $differenceStock= 0;
 
 
 
