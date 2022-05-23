@@ -45,7 +45,7 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('KPS tools');
+            ->setTitle('Paxira');
     }
 
     public function configureMenuItems(): iterable
