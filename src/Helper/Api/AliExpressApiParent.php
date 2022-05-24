@@ -4,6 +4,7 @@ namespace App\Helper\Api;
 
 use AliexpressLogisticsRedefiningListlogisticsserviceRequest;
 use AliexpressSolutionBatchProductInventoryUpdateRequest;
+use AliexpressSolutionBatchProductPriceUpdateRequest;
 use AliexpressSolutionOrderFulfillRequest;
 use AliexpressSolutionOrderGetRequest;
 use AliexpressSolutionOrderInfoGetRequest;
@@ -20,8 +21,6 @@ use TopClient;
 
 abstract class AliExpressApiParent implements ApiInterface
 {
-
-
     protected $clientId;
 
     protected $clientSecret;
@@ -152,6 +151,30 @@ abstract class AliExpressApiParent implements ApiInterface
 
 
     /**
+     * https://developers.aliexpress.com/en/doc.htm?docId=45140&docType=2
+     */
+    public function updatePrice($productId, $productSku, $price, $discountPrice=null)
+    {
+        $req = new AliexpressSolutionBatchProductPriceUpdateRequest();
+        $mutipleProductUpdateList = new SynchronizeProductRequestDto();
+        $mutipleProductUpdateList->product_id = $productId;
+        $multipleSkuUpdateList = new SynchronizeSkuRequestDto();
+        $multipleSkuUpdateList->sku_code = $productSku;
+        $multipleSkuUpdateList->price = $price;
+        if ($discountPrice) {
+            $multipleSkuUpdateList->discount_price = $discountPrice;
+        } else {
+            $multipleSkuUpdateList->discount_price = null;
+        }
+        $mutipleProductUpdateList->multiple_sku_update_list = $multipleSkuUpdateList;
+        $req->setMutipleProductUpdateList(json_encode($mutipleProductUpdateList));
+        $this->logger->info('Update price ' . $productId . ' / SKU ' . $productSku . 'regular price >> ' . $price . ' && discount price >>> '.$discountPrice);
+        return $this->client->execute($req, $this->clientAccessToken);
+    }
+
+
+
+    /**
      * https://developers.aliexpress.com/en/doc.htm?docId=42384&docType=2
      *
      */
@@ -192,7 +215,7 @@ abstract class AliExpressApiParent implements ApiInterface
         return $resp->result_list->aeop_logistics_service_result;
     }
 
-    protected  function checkIfAlreadySent($orderId)
+    protected function checkIfAlreadySent($orderId)
     {
         try {
             $this->logger->info('Check if already send');
@@ -239,7 +262,7 @@ abstract class AliExpressApiParent implements ApiInterface
      *  https://oauth.aliexpress.com/authorize?response_type=code&client_id=XXXXXXX&redirect_uri=https://aliexpress.gadgetiberia.es/es/module/aliexpress_official/auth?token=a1d930a3e4332d2c083978e8b5293b78&state=1212&view=web&sp=ae
      *  in the html request get the code of auth and use it in the command to regenerate the token. Token is valid for one year.
      */
-    public function  getNewAccessToken($code)
+    public function getNewAccessToken($code)
     {
         $url = 'https://oauth.aliexpress.com/token';
         $postfields = array(

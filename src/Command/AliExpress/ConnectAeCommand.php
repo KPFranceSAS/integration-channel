@@ -36,15 +36,16 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $order = $this->aliExpress->getOrder("3016506064585909");
-        var_dump($order);
-
-
-
         return Command::SUCCESS;
     }
 
+
+
+    private function updatePrice()
+    {
+        $result = $this->aliExpress->updatePrice("1005001794660227", "X-MUE4093GL", '34.99', '26.30');
+        var_dump($result);
+    }
 
 
     private function updateStockLevel()
@@ -76,7 +77,6 @@ class ConnectAeCommand extends Command
 
     private function transformeOrder()
     {
-
         $order = $this->aliExpress->getOrder("8143448047401326");
 
         $transforme =  $this->aliExpressIntegrateOrder->transformToAnBcOrder($order);

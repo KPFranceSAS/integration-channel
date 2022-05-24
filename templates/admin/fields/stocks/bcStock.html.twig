@@ -4,16 +4,16 @@
     <div class="popover__message">
      <table class="table datagrid" >
         <tr>
-          <td>BC Amazon Stock</td>
-          <td>{{entity.instance.businessCentralStock}}</td>
+          <td  class="tfoot-col-label">BC Real Amazon Stock</td>
+          <td data-label="BC Real Amazon Stock" class="text-left field-text">{{entity.instance.businessCentralStock}}</td>
         </tr>
         <tr>
-          <td>BC Amazon sales not integrated</td>
-          <td>{% if entity.instance.soldStockNotIntegrated > 0 %}-{% endif %}{{entity.instance.soldStockNotIntegrated}} </td>
+          <td  class="tfoot-col-label">BC Amazon sales not integrated</td>
+          <td data-label="BC Amazon sales not integrated" class="text-left field-text">{% if entity.instance.soldStockNotIntegrated > 0 %}-{% endif %}{{entity.instance.soldStockNotIntegrated}} </td>
         </tr>
         <tr>
-          <td>BC Amazon returns not integrated</td>
-          <td>{{entity.instance.returnStockNotIntegrated}}</td>
+          <td  class="tfoot-col-label">BC Amazon returns not integrated</td>
+          <td data-label="BC Amazon returns not integrated" class="text-left field-text">{{entity.instance.returnStockNotIntegrated}}</td>
         </tr>
      </table> 
     </div>
