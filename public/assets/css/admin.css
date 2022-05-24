@@ -92,3 +92,15 @@
     transform: translate(0, -20px);
     transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
 }
+
+
+
+.closebutton {
+    color:#fff;
+    margin:5px 5px 0 0;
+    font-size:14px
+}
+
+.ea-sidebar-width-compact .closebutton{
+    display:none;
+}
