@@ -45,13 +45,17 @@ class GadgetIberiaConnectorTest extends KernelTestCase
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
             "externalDocumentNumber" => "test-" . date('YmdHis'),
+            "shippingAgent" => "DHL PARCEL",
+            "shippingAgentService" => "DHL1"
         ];
         $order = $bcConnector->createSaleOrder($order);
         $this->assertIsArray($order);
 
         $orderFull = $bcConnector->getFullSaleOrder($order['id']);
         $this->assertIsArray($orderFull);
-        $this->assertCount(1,  $orderFull['salesOrderLines']);
+        $this->assertCount(1, $orderFull['salesOrderLines']);
+        $this->assertSame($orderFull['shippingAgent'], "DHL PARCEL");
+        $this->assertSame($orderFull['shippingAgentService'], "DHL1");
     }
 
 
@@ -92,12 +96,16 @@ class GadgetIberiaConnectorTest extends KernelTestCase
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
             "externalDocumentNumber" => "test-" . date('YmdHis'),
+            "shippingAgent" => "FBA",
+            "shippingAgentService" => "1"
         ];
         $order = $bcConnector->createSaleOrder($order);
         $this->assertIsArray($order);
         $orderFull = $bcConnector->getFullSaleOrder($order['id']);
         $this->assertIsArray($orderFull);
-        $this->assertCount(2,  $orderFull['salesOrderLines']);
+        $this->assertCount(2, $orderFull['salesOrderLines']);
+        $this->assertSame($orderFull['shippingAgent'], "FBA");
+        $this->assertSame($orderFull['shippingAgentService'], "1");
     }
 
 
@@ -138,12 +146,14 @@ class GadgetIberiaConnectorTest extends KernelTestCase
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
             "externalDocumentNumber" => "test-" . date('YmdHis'),
+            "shippingAgent" => "DHL PARCEL",
+            "shippingAgentService" => "DHL1"
         ];
         $order = $bcConnector->createSaleOrder($order);
         $this->assertIsArray($order);
         $orderFull = $bcConnector->getFullSaleOrder($order['id']);
         $this->assertIsArray($orderFull);
-        $this->assertCount(1,  $orderFull['salesOrderLines']);
+        $this->assertCount(1, $orderFull['salesOrderLines']);
     }
 
 
@@ -171,13 +181,15 @@ class GadgetIberiaConnectorTest extends KernelTestCase
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
             "externalDocumentNumber" => "test-" . date('YmdHis'),
+            "shippingAgent" => "DHL PARCEL",
+            "shippingAgentService" => "DHL1"
         ];
         $order = $bcConnector->createSaleOrder($orderArray);
         $this->assertIsArray($order);
 
         $orderFull = $bcConnector->getFullSaleOrder($order['id']);
         $this->assertIsArray($orderFull);
-        $this->assertCount(1,  $orderFull['salesOrderLines']);
+        $this->assertCount(1, $orderFull['salesOrderLines']);
 
 
         $orderArrayCanarias = $orderArray;
@@ -187,7 +199,7 @@ class GadgetIberiaConnectorTest extends KernelTestCase
 
         $orderFullCanarias = $bcConnector->getFullSaleOrder($orderCanarias['id']);
         $this->assertIsArray($orderFullCanarias);
-        $this->assertCount(1,  $orderFullCanarias['salesOrderLines']);
+        $this->assertCount(1, $orderFullCanarias['salesOrderLines']);
 
         $this->assertNotEquals($orderFullCanarias['totalTaxAmount'], $orderFull['totalTaxAmount']);
     }

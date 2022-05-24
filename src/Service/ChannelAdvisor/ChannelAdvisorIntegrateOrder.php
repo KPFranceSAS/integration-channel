@@ -11,14 +11,12 @@ use App\Service\ChannelAdvisor\ChannelAdvisorApi;
 use Exception;
 use stdClass;
 
-
 /**
  * Services that will get through the API the order from ChannelAdvisor
- * 
+ *
  */
 class ChannelAdvisorIntegrateOrder extends IntegratorParent
 {
-
     public function getChannel()
     {
         return WebOrder::CHANNEL_CHANNELADVISOR;
@@ -73,8 +71,8 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
 
 
     /**
-     * Check status of order 
-     * 
+     * Check status of order
+     *
      * @param stdClass $order
      * @return boolean
      */
@@ -133,6 +131,9 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             $orderBC->currencyCode =  $orderApi->Currency;
         }
 
+        $orderBC->shippingAgent = 'FBA';
+        $orderBC->shippingAgentService = '1';
+
         $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
         return $orderBC;
@@ -146,7 +147,6 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
         $company =  $this->getCompanyIntegration($orderApi);
 
         foreach ($orderApi->Items as $line) {
-
             $saleLine = new SaleOrderLine();
             $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
             $saleLine->itemId = $this->getProductCorrelationSku($line->Sku, $company);
@@ -170,9 +170,8 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             $saleOrderLines[] = $saleLine;
         }
 
-        // ajout livraison 
+        // ajout livraison
         if ($shippingPrice > 0) {
-
             $account = $this->getBusinessCentralConnector($company)->getAccountForExpedition();
             $saleLineDelivery = new SaleOrderLine();
             $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;

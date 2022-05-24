@@ -37,6 +37,10 @@ class SaleOrder
 
     public $shipmentMethodId;
 
+    public $shippingAgent = "DHL PARCEL";
+
+    public $shippingAgentService = "DHL1";
+
     public $partialShipping;
 
     public $requestedDeliveryDate;

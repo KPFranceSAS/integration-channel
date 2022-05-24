@@ -4,10 +4,10 @@ namespace App\Helper\Integrator;
 
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
-use App\Service\Aggregator\ApiAggregator;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\BusinessCentral\Model\SaleOrder;
 use App\Helper\BusinessCentral\Model\SaleOrderLine;
+use App\Service\Aggregator\ApiAggregator;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\BusinessCentral\ProductTaxFinder;
 use App\Service\MailService;
@@ -19,8 +19,6 @@ use stdClass;
 
 abstract class IntegratorParent
 {
-
-
     protected $logger;
 
     protected $productTaxFinder;
@@ -59,7 +57,7 @@ abstract class IntegratorParent
     }
 
 
-    abstract public  function transformToAnBcOrder($orderApi): SaleOrder;
+    abstract public function transformToAnBcOrder($orderApi): SaleOrder;
 
     abstract public function getChannel();
 
@@ -216,9 +214,9 @@ abstract class IntegratorParent
 
 
     /**
-     * Integrates order 
+     * Integrates order
      * Checks if already integrated in BusinessCentral (invoice or order)
-     * 
+     *
      */
     public function reIntegrateOrder(WebOrder $order)
     {

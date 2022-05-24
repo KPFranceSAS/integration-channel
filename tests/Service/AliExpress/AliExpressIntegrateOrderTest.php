@@ -25,8 +25,10 @@ class AliExpressIntegrateOrderTest extends KernelTestCase
         $this->assertIsArray($orderFinal);
         $orderFull = $bcConnector->getFullSaleOrder($orderFinal['id']);
         $this->assertIsArray($orderFull);
-        $this->assertCount(2,  $orderFull['salesOrderLines']);
+        $this->assertCount(2, $orderFull['salesOrderLines']);
         $this->assertEquals(42.49, $orderFull['totalAmountIncludingTax']);
+        $this->assertSame($orderFull['shippingAgent'], "DHL PARCEL");
+        $this->assertSame($orderFull['shippingAgentService'], "DHL1");
     }
 
 
@@ -48,7 +50,9 @@ class AliExpressIntegrateOrderTest extends KernelTestCase
         $this->assertIsArray($orderFinal);
         $orderFull = $bcConnector->getFullSaleOrder($orderFinal['id']);
         $this->assertIsArray($orderFull);
-        $this->assertCount(3,  $orderFull['salesOrderLines']);
+        $this->assertCount(3, $orderFull['salesOrderLines']);
         $this->assertEquals(42.49, $orderFull['totalAmountIncludingTax']);
+        $this->assertSame($orderFull['shippingAgent'], "DHL PARCEL");
+        $this->assertSame($orderFull['shippingAgentService'], "DHL1");
     }
 }
