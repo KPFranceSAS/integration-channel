@@ -38,7 +38,7 @@ class ImportFinancialCommand extends Command
             $startDate = DateTime::createFromFormat('Ymd', $input->getArgument('startDate'));
         } else {
             $startDate = new DateTime('now');
-            $startDate->sub(new DateInterval("P15D"));
+            $startDate->sub(new DateInterval("P30D"));
         }
 
 
