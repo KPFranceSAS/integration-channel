@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use App\Entity\AmazonFinancialEvent;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
- * 
+ *
  */
 class AmazonFinancialEventGroup
 {
@@ -145,8 +148,8 @@ class AmazonFinancialEventGroup
      */
     public function setCreatedAtValue(): void
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     /**
@@ -154,7 +157,7 @@ class AmazonFinancialEventGroup
      */
     public function setUpdatedAtValue(): void
     {
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -198,12 +201,12 @@ class AmazonFinancialEventGroup
         return $this;
     }
 
-    public function getFundTransferDate(): ?\DateTimeInterface
+    public function getFundTransferDate(): ?DateTimeInterface
     {
         return $this->fundTransferDate;
     }
 
-    public function setFundTransferDate(?\DateTimeInterface $fundTransferDate): self
+    public function setFundTransferDate(?DateTimeInterface $fundTransferDate): self
     {
         $this->fundTransferDate = $fundTransferDate;
 
@@ -222,48 +225,48 @@ class AmazonFinancialEventGroup
         return $this;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getStartDate(): ?DateTimeInterface
     {
         return $this->startDate;
     }
 
-    public function setStartDate(?\DateTimeInterface $startDate): self
+    public function setStartDate(?DateTimeInterface $startDate): self
     {
         $this->startDate = $startDate;
 
         return $this;
     }
 
-    public function getEndDate(): ?\DateTimeInterface
+    public function getEndDate(): ?DateTimeInterface
     {
         return $this->endDate;
     }
 
-    public function setEndDate(?\DateTimeInterface $endDate): self
+    public function setEndDate(?DateTimeInterface $endDate): self
     {
         $this->endDate = $endDate;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(?\DateTimeInterface $createdAt): self
+    public function setCreatedAt(?DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(?DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 

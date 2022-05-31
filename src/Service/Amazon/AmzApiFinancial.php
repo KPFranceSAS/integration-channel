@@ -27,10 +27,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
 
-
 class AmzApiFinancial
 {
-
     protected $mailer;
 
     protected $manager;
@@ -43,8 +41,13 @@ class AmzApiFinancial
 
     protected $dateNow;
 
-    public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ExchangeRateCalculator $exchangeRate)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        AmzApi $amzApi,
+        ManagerRegistry $manager,
+        MailService $mailer,
+        ExchangeRateCalculator $exchangeRate
+    ) {
         $this->logger = $logger;
         $this->amzApi = $amzApi;
         $this->manager = $manager->getManager();
@@ -60,7 +63,6 @@ class AmzApiFinancial
         $financialGroups = $this->amzApi->getAllFinancials($startDate, $startEnd);
         $this->logger->info('------------Manages with ' . count($financialGroups) . ' groups---------------');
         foreach ($financialGroups as $financialGroup) {
-
             $this->manageFinancialEventGroup($financialGroup);
         }
     }
@@ -94,7 +96,9 @@ class AmzApiFinancial
     {
         foreach ($amazonFinancialEventGroup->getAmazonFinancialEvents() as $amazonFinancialEvent) {
             if ($amazonFinancialEvent->getTransactionType() == "ShipmentEvent") {
-                $webOrder = $this->manager->getRepository(AmazonOrder::class)->findOneBy(['amazonOrderId' => $amazonFinancialEvent->getAmazonOrderId()]);
+                $webOrder = $this->manager
+                            ->getRepository(AmazonOrder::class)
+                            ->findOneBy(['amazonOrderId' => $amazonFinancialEvent->getAmazonOrderId()]);
                 if ($webOrder && $webOrder->getSalesChannel()) {
                     $amazonFinancialEventGroup->setMarketplace($webOrder->getSalesChannel());
                     return;
@@ -107,15 +111,19 @@ class AmzApiFinancial
 
     protected function checkIfWeImport(FinancialEventGroup $financialEventGroup): bool
     {
-        $financialEventGroupDb = $this->manager->getRepository(AmazonFinancialEventGroup::class)->findOneBy(['financialEventId' => $financialEventGroup->getFinancialEventGroupId()]);
+        $financialEventGroupDb = $this->manager
+                                    ->getRepository(AmazonFinancialEventGroup::class)
+                                    ->findOneBy([
+                                            'financialEventId' => $financialEventGroup->getFinancialEventGroupId()
+                                        ]);
 
         if (!$financialEventGroupDb) {
             $this->logger->info('Never imported');
             return true;
         }
-
-        if ($financialEventGroup->getProcessingStatus() == 'Open') {
-            $this->logger->info('Still opened');
+        
+        if ($financialEventGroupDb->getProcessingStatus() == 'Open') {
+            $this->logger->info('Still opened in DB');
             $this->removeAmazonFinancialEventGroup($financialEventGroupDb);
             return true;
         }
@@ -150,7 +158,7 @@ class AmzApiFinancial
 
         foreach ($this->getFinancialTypes() as $financialType) {
             $this->logger->info('---------------------------');
-            $this->logger->info('Nb Events ' . $financialType . ' >>> ' . count($financialEventFormates[$financialType]));
+            $this->logger->info('Nb Events ' . $financialType . '>>>' . count($financialEventFormates[$financialType]));
             $events = [];
             foreach ($financialEventFormates[$financialType] as $financialEvent) {
                 try {
@@ -277,7 +285,6 @@ class AmzApiFinancial
 
     protected function convertProductAdsPaymentEventList(ProductAdsPaymentEvent $financialEvent): array
     {
-
         $amzFinancialEvent = new AmazonFinancialEvent();
         $amzFinancialEvent->setTransactionType($financialEvent->getModelName());
         $amzFinancialEvent->setPostedDate($financialEvent->getPostedDate());
@@ -422,7 +429,7 @@ class AmzApiFinancial
     }
 
 
-    protected function createShipmentEvent(ShipmentEvent $shipmentEvent, ShipmentItem $shipmentItem, string  $typeEvent, ?Product $product): AmazonFinancialEvent
+    protected function createShipmentEvent(ShipmentEvent $shipmentEvent, ShipmentItem $shipmentItem, string $typeEvent, ?Product $product): AmazonFinancialEvent
     {
         $amzFinancialEvent = new AmazonFinancialEvent();
         $amzFinancialEvent->setTransactionType($typeEvent);
@@ -520,9 +527,12 @@ class AmzApiFinancial
 
 
 
-    protected function setupAmountProperties(FinancialEventGroup $financialEventGroup, AmazonFinancialEventGroup $amzFinancialEventGroup)
-    {
+    protected function setupAmountProperties(
+        FinancialEventGroup $financialEventGroup,
+        AmazonFinancialEventGroup $amzFinancialEventGroup
+    ) {
         $amzFinancialEventGroup->setProcessingStatus($financialEventGroup->getProcessingStatus());
+        $amzFinancialEventGroup->setEndDate($financialEventGroup->getFinancialEventGroupEnd());
         $amzFinancialEventGroup->setFundTransfertStatus($financialEventGroup->getFundTransferStatus());
         $amzFinancialEventGroup->setFundTransferDate($financialEventGroup->getFundTransferDate());
         $amzFinancialEventGroup->setTraceIdentfier($financialEventGroup->getTraceId());
@@ -534,10 +544,13 @@ class AmzApiFinancial
             if ($value) {
                 $valueFormate = $value->getCurrencyAmount();
 
-                $dateCalcul = $amzFinancialEventGroup->getEndDate() ? $amzFinancialEventGroup->getEndDate() : $amzFinancialEventGroup->getStartDate();
-                $valueFormateCurrency = round($this->calculator->getConvertedAmountDate($valueFormate, $value->getCurrencyCode(), $dateCalcul), 2);
+                $dateCalcul = $amzFinancialEventGroup->getEndDate()
+                        ? $amzFinancialEventGroup->getEndDate()
+                        : $amzFinancialEventGroup->getStartDate();
+                       
+                $valueFormateCurrency = $this->calculator->getConvertedAmountDate($valueFormate, $value->getCurrencyCode(), $dateCalcul);
                 $amzFinancialEventGroup->{'set' . $attribute . 'Currency'}($valueFormate);
-                $amzFinancialEventGroup->{'set' . $attribute}($valueFormateCurrency);
+                $amzFinancialEventGroup->{'set' . $attribute}(round($valueFormateCurrency, 2));
 
                 if (!$amzFinancialEventGroup->getCurrencyCode()) {
                     $amzFinancialEventGroup->setCurrencyCode($value->getCurrencyCode());

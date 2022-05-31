@@ -17,7 +17,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use function Symfony\Component\String\u;
-
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -91,8 +90,6 @@ abstract class AdminCrudController extends AbstractCrudController
 
         do {
             $firstResult = ($currentPage - 1) * $pageSize;
-
-            /** @var Query $query */
             $query = $queryBuilder
                 ->setFirstResult($firstResult)
                 ->setMaxResults($pageSize)
@@ -113,7 +110,7 @@ abstract class AdminCrudController extends AbstractCrudController
             foreach ($entitiesArray as $entityArray) {
                 $this->addDataToWriter($writer, $entityArray);
             }
-            $this->getDoctrine()->getManager()->clear();
+            $this->container->get('doctrine')->getManager()->clear();
         } while ($currentPage != 0);
 
         $writer->close();
@@ -142,7 +139,9 @@ abstract class AdminCrudController extends AbstractCrudController
 
         $cellHeaders = [];
         foreach ($fields as $field) {
-            $label = strlen($field->getLabel()) > 0 ? $field->getLabel() : StringUtils::humanizeString($field->getProperty());
+            $label = strlen($field->getLabel()) > 0
+                ? $field->getLabel()
+                : StringUtils::humanizeString($field->getProperty());
             $cellHeaders[] = WriterEntityFactory::createCell($label);
         }
         $singleRow = WriterEntityFactory::createRow($cellHeaders);
@@ -155,5 +154,18 @@ abstract class AdminCrudController extends AbstractCrudController
     protected function getFieldsExport(): FieldCollection
     {
         return FieldCollection::new($this->configureFields(Crud::PAGE_INDEX));
+    }
+
+
+
+
+    protected function generateChoiceList(array $choices): array
+    {
+        $choiceList = [];
+        foreach ($choices as $choice) {
+            $choiceList[$choice] = $choice;
+        }
+        ksort($choiceList);
+        return $choiceList;
     }
 }

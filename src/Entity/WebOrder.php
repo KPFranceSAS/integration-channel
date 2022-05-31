@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Helper\Utils\DatetimeUtils;
 use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -14,45 +16,45 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class WebOrder
 {
-    const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
-    const CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
-    const CHANNEL_FITBITEXPRESS = 'FITBITEXPRESS';
-    const CHANNEL_OWLETCARE = 'OWLETCARE';
-    const CHANNEL_MINIBATT = 'MINIBATT';
-    const CHANNEL_FLASHLED = 'FLASHLED';
+    public const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
+    public const  CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
+    public const  CHANNEL_FITBITEXPRESS = 'FITBITEXPRESS';
+    public const  CHANNEL_OWLETCARE = 'OWLETCARE';
+    public const  CHANNEL_MINIBATT = 'MINIBATT';
+    public const  CHANNEL_FLASHLED = 'FLASHLED';
 
-    const DOCUMENT_ORDER = 'ORDER';
-    const DOCUMENT_INVOICE = 'INVOICE';
+    public const  DOCUMENT_ORDER = 'ORDER';
+    public const  DOCUMENT_INVOICE = 'INVOICE';
 
-    const DEPOT_FBA_AMAZON = 'AMAZON';
-    const DEPOT_CENTRAL = 'CENTRAL';
-    const DEPOT_LAROCA = 'LAROCA';
-    const DEPOT_ACTIVE_ANTS = 'ACTIVE';
-    const DEPOT_MADRID = 'MADRID';
-    const DEPOT_MIXED = 'MIXED';
+    public const  DEPOT_FBA_AMAZON = 'AMAZON';
+    public const  DEPOT_CENTRAL = 'CENTRAL';
+    public const  DEPOT_LAROCA = 'LAROCA';
+    public const  DEPOT_ACTIVE_ANTS = 'ACTIVE';
+    public const  DEPOT_MADRID = 'MADRID';
+    public const  DEPOT_MIXED = 'MIXED';
 
-    const TIMING_INTEGRATION = 24;
-    const TIMING_SHIPPING = 30;
+    public const  TIMING_INTEGRATION = 24;
+    public const  TIMING_SHIPPING = 30;
 
-    const FULFILLED_BY_EXTERNAL = 'EXTERNALLY MANAGED';
-    const FULFILLED_BY_SELLER = 'OWN MANAGED';
-    const FULFILLED_MIXED = 'MIXED MANAGED';
+    public const  FULFILLED_BY_EXTERNAL = 'EXTERNALLY MANAGED';
+    public const  FULFILLED_BY_SELLER = 'OWN MANAGED';
+    public const  FULFILLED_MIXED = 'MIXED MANAGED';
 
-    const STATE_ERROR_INVOICE = -2;
-    const STATE_ERROR = -1;
-    const STATE_CREATED = 0;
-    const STATE_SYNC_TO_ERP = 1;
-    const STATE_INVOICED = 5;
-    const STATE_CANCELLED = 7;
+    public const  STATE_ERROR_INVOICE = -2;
+    public const  STATE_ERROR = -1;
+    public const  STATE_CREATED = 0;
+    public const  STATE_SYNC_TO_ERP = 1;
+    public const  STATE_INVOICED = 5;
+    public const  STATE_CANCELLED = 7;
 
-    const STATE_ERROR_INVOICE_TEXT = 'Error send invoice';
-    const STATE_ERROR_TEXT = 'Error integration';
-    const STATE_CREATED_TEXT = 'Order integrated';
-    const STATE_SYNC_TO_ERP_TEXT = 'Order integrated';
-    const STATE_SYNC_TO_WAITING_DELIVERY_TEXT = 'Waiting for delivery';
-    const STATE_INVOICED_TEXT = 'Invoice integrated';
-    const STATE_UNDEFINED_TEXT = 'Undefined';
-    const STATE_CANCELLED_TEXT = "Cancelled";
+    public const  STATE_ERROR_INVOICE_TEXT = 'Error send invoice';
+    public const  STATE_ERROR_TEXT = 'Error integration';
+    public const  STATE_CREATED_TEXT = 'Order integrated';
+    public const  STATE_SYNC_TO_ERP_TEXT = 'Order integrated';
+    public const  STATE_SYNC_TO_WAITING_DELIVERY_TEXT = 'Waiting for delivery';
+    public const  STATE_INVOICED_TEXT = 'Invoice integrated';
+    public const  STATE_UNDEFINED_TEXT = 'Undefined';
+    public const  STATE_CANCELLED_TEXT = "Cancelled";
 
 
     /**
@@ -170,8 +172,8 @@ class WebOrder
      */
     public function setCreatedAtValue(): void
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function getNbHoursSinceCreation()
@@ -228,12 +230,12 @@ class WebOrder
 
     public function needRetry()
     {
-        return in_array($this->status,  [self::STATE_ERROR, self::STATE_ERROR_INVOICE]);
+        return in_array($this->status, [self::STATE_ERROR, self::STATE_ERROR_INVOICE]);
     }
 
     public function canChangeStatusToInvoiced()
     {
-        return in_array($this->status,  [self::STATE_SYNC_TO_ERP]);
+        return in_array($this->status, [self::STATE_SYNC_TO_ERP]);
     }
 
 
@@ -243,13 +245,15 @@ class WebOrder
     {
         if ($this->status ==  self::STATE_ERROR) {
             return self::STATE_ERROR_TEXT;
-        } else if ($this->status ==  self::STATE_SYNC_TO_ERP) {
-            return $this->fulfilledBy == self::FULFILLED_BY_SELLER ? self::STATE_SYNC_TO_WAITING_DELIVERY_TEXT : self::STATE_SYNC_TO_ERP_TEXT;
-        } else if ($this->status ==  self::STATE_INVOICED) {
+        } elseif ($this->status ==  self::STATE_SYNC_TO_ERP) {
+            return $this->fulfilledBy == self::FULFILLED_BY_SELLER
+                ? self::STATE_SYNC_TO_WAITING_DELIVERY_TEXT
+                : self::STATE_SYNC_TO_ERP_TEXT;
+        } elseif ($this->status ==  self::STATE_INVOICED) {
             return self::STATE_INVOICED_TEXT;
-        } else if ($this->status ==  self::STATE_CANCELLED) {
+        } elseif ($this->status ==  self::STATE_CANCELLED) {
             return self::STATE_CANCELLED_TEXT;
-        } else if ($this->status ==  self::STATE_ERROR_INVOICE) {
+        } elseif ($this->status ==  self::STATE_ERROR_INVOICE) {
             return self::STATE_ERROR_INVOICE_TEXT;
         } else {
             return self::STATE_UNDEFINED_TEXT;
@@ -276,7 +280,11 @@ class WebOrder
 
     public function hasDelayTreatment()
     {
-        if ($this->channel == self::CHANNEL_CHANNELADVISOR && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL && $this->status != self::STATE_INVOICED) {
+        if (
+            $this->channel == self::CHANNEL_CHANNELADVISOR
+            && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL
+            && $this->status != self::STATE_INVOICED
+        ) {
             return DatetimeUtils::isOutOfDelay($this->createdAt, self::TIMING_INTEGRATION);
         } elseif ($this->fulfilledBy == self::FULFILLED_BY_SELLER && $this->status != self::STATE_INVOICED) {
             return DatetimeUtils::isOutOfDelayBusinessDays($this->purchaseDate, self::TIMING_SHIPPING);
@@ -291,17 +299,16 @@ class WebOrder
 
     public function getDelayProblemMessage()
     {
-        if ($this->channel == self::CHANNEL_CHANNELADVISOR && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL && $this->status != self::STATE_INVOICED) {
-            return 'Invoice integration should be done in ' . self::TIMING_INTEGRATION . ' hours  for ' . $this->__toString();
+        if (
+            $this->channel == self::CHANNEL_CHANNELADVISOR
+            && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL && $this->status != self::STATE_INVOICED
+        ) {
+            return 'Invoice should be done in ' . self::TIMING_INTEGRATION . ' hours  for ' . $this->__toString();
         } elseif ($this->fulfilledBy == self::FULFILLED_BY_SELLER && $this->status != self::STATE_INVOICED) {
             return 'Shipping should be processed in ' . self::TIMING_SHIPPING . ' hours  for ' . $this->__toString();
         }
         return 'No delay message for ' . $this->__toString();
     }
-
-
-
-
 
     public function __toString()
     {
@@ -325,7 +332,9 @@ class WebOrder
         $limitation = 35;
         $log = end($this->logs);
         if ($log) {
-            return strlen($log['content']) >  $limitation ?  substr($log['content'], 0,  $limitation) . '...' : $log['content'];
+            return strlen($log['content']) >  $limitation
+                ?  substr($log['content'], 0, $limitation) . '...'
+                : $log['content'];
         } else {
             return '';
         }
@@ -335,18 +344,18 @@ class WebOrder
     public function getUrl()
     {
         switch ($this->channel) {
-            case  WebOrder::CHANNEL_FITBITEXPRESS:
-            case  WebOrder::CHANNEL_ALIEXPRESS:
+            case WebOrder::CHANNEL_FITBITEXPRESS:
+            case WebOrder::CHANNEL_ALIEXPRESS:
                 return 'https://gsp.aliexpress.com/apps/order/detail?orderId=' . $this->externalNumber;
-            case  WebOrder::CHANNEL_CHANNELADVISOR:
+            case WebOrder::CHANNEL_CHANNELADVISOR:
                 return 'https://sellercentral.amazon.fr/orders-v3/order/' . $this->externalNumber;
-            case  WebOrder::CHANNEL_OWLETCARE:
+            case WebOrder::CHANNEL_OWLETCARE:
                 $order = $this->getOrderContent();
                 return 'https://owlet-spain.myshopify.com/admin/orders/' . $order['id'];
-            case  WebOrder::CHANNEL_MINIBATT:
+            case WebOrder::CHANNEL_MINIBATT:
                 $order = $this->getOrderContent();
                 return 'https://minibattstore.myshopify.com/admin/orders/' . $order['id'];
-            case  WebOrder::CHANNEL_FLASHLED:
+            case WebOrder::CHANNEL_FLASHLED:
                 $order = $this->getOrderContent();
                 return 'https://testflashled.myshopify.com/admin/orders/' . $order['id'];
         }
@@ -394,13 +403,13 @@ class WebOrder
             $webOrder = WebOrder::createOneFromAliExpress($orderApi);
             $webOrder->setChannel(WebOrder::CHANNEL_FITBITEXPRESS);
             return $webOrder;
-        } else if ($channel == WebOrder::CHANNEL_CHANNELADVISOR) {
+        } elseif ($channel == WebOrder::CHANNEL_CHANNELADVISOR) {
             return WebOrder::createOneFromChannelAdvisor($orderApi);
-        } else if ($channel == WebOrder::CHANNEL_OWLETCARE) {
+        } elseif ($channel == WebOrder::CHANNEL_OWLETCARE) {
             return WebOrder::createOneFromOwletcare($orderApi);
-        } else if ($channel == WebOrder::CHANNEL_FLASHLED) {
+        } elseif ($channel == WebOrder::CHANNEL_FLASHLED) {
             return WebOrder::createOneFromFlashled($orderApi);
-        } else if ($channel == WebOrder::CHANNEL_MINIBATT) {
+        } elseif ($channel == WebOrder::CHANNEL_MINIBATT) {
             return WebOrder::createOneFromMinibatt($orderApi);
         }
         throw new Exception('No constructor of weborder for ' . $channel);
@@ -535,7 +544,7 @@ class WebOrder
      */
     public function setUpdatedAtValue(): void
     {
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -615,24 +624,24 @@ class WebOrder
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setCreatedAt(DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(?DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 
@@ -723,12 +732,12 @@ class WebOrder
         return $this;
     }
 
-    public function getPurchaseDate(): ?\DateTimeInterface
+    public function getPurchaseDate(): ?DateTimeInterface
     {
         return $this->purchaseDate;
     }
 
-    public function setPurchaseDate(?\DateTimeInterface $purchaseDate): self
+    public function setPurchaseDate(?DateTimeInterface $purchaseDate): self
     {
         $this->purchaseDate = $purchaseDate;
         return $this;

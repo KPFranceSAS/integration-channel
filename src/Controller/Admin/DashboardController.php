@@ -13,6 +13,7 @@ use App\Controller\Order\FlashledOrderCrudController;
 use App\Controller\Order\MinibattOrderCrudController;
 use App\Controller\Order\OwletCareOrderCrudController;
 use App\Controller\Order\WebOrderCrudController;
+use App\Entity\AmazonFinancialEvent;
 use App\Entity\Brand;
 use App\Entity\Category;
 use App\Entity\FbaReturn;
@@ -37,8 +38,7 @@ class DashboardController extends AbstractDashboardController
      */
     public function index(): Response
     {
-        $manager = $this->getDoctrine()->getManager();
-
+        $manager = $this->container->get('doctrine')->getManager();
         return $this->render('admin/dashboard.html.twig');
     }
 
@@ -51,28 +51,45 @@ class DashboardController extends AbstractDashboardController
     public function configureMenuItems(): iterable
     {
         return [
-            MenuItem::subMenu('Orders', 'fa fa-shopping-cart')->setSubItems([
-                MenuItem::linkToCrud('Amazon', 'fab fa-amazon', WebOrder::class)->setController(ChannelAdvisorOrderCrudController::class),
-                MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)->setController(AliexpressOrderCrudController::class),
-                MenuItem::linkToCrud('Fitbitexpress', 'fas fa-heartbeat', WebOrder::class)->setController(FitbitExpressOrderCrudController::class),
-                MenuItem::linkToCrud('Owletcare', 'fas fa-baby', WebOrder::class)->setController(OwletCareOrderCrudController::class),
-                MenuItem::linkToCrud('Flashled', 'far fa-lightbulb', WebOrder::class)->setController(FlashledOrderCrudController::class),
-                MenuItem::linkToCrud('Minibatt', 'fas fa-car-battery', WebOrder::class)->setController(MinibattOrderCrudController::class),
-                MenuItem::section(),
-                MenuItem::linkToCrud('On delivery', 'fas fa-truck-loading', WebOrder::class)->setController(DeliveryOrderCrudController::class),
-                MenuItem::linkToCrud('Errors', 'fas fa-exclamation-triangle', WebOrder::class)->setController(ErrorOrderCrudController::class),
-                MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)->setController(WebOrderCrudController::class),
-            ]),
-            MenuItem::subMenu('Amazon & FBA', 'fab fa-amazon')->setSubItems([
-                MenuItem::linkToCrud('Inventory', 'fas fa-cube', Product::class)->setController(StockCrudController::class),
-                MenuItem::linkToCrud('FBA Returns', 'fas fa-exchange-alt', FbaReturn::class),
-                MenuItem::linkToCrud('Product', 'fas fa-barcode', Product::class)->setController(ProductCrudController::class),
-                MenuItem::linkToCrud('Brand', 'far fa-registered', Brand::class),
-                MenuItem::linkToCrud('Category', 'fas fa-sitemap', Category::class),
-            ])->setPermission('ROLE_AMAZON'),
-            MenuItem::subMenu('Configuration', 'fas fa-cogs')->setSubItems([
-                MenuItem::linkToCrud('SKU Mapping', 'fa fa-exchange', ProductCorrelation::class),
-                MenuItem::linkToCrud('Users', 'fa fa-user', User::class)->setPermission('ROLE_ADMIN'),
+            MenuItem::subMenu('Orders', 'fa fa-shopping-cart')
+                ->setSubItems([
+                    MenuItem::linkToCrud('Amazon', 'fab fa-amazon', WebOrder::class)
+                        ->setController(ChannelAdvisorOrderCrudController::class),
+                    MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)
+                        ->setController(AliexpressOrderCrudController::class),
+                    MenuItem::linkToCrud('Fitbitexpress', 'fas fa-heartbeat', WebOrder::class)
+                        ->setController(FitbitExpressOrderCrudController::class),
+                    MenuItem::linkToCrud('Owletcare', 'fas fa-baby', WebOrder::class)
+                        ->setController(OwletCareOrderCrudController::class),
+                    MenuItem::linkToCrud('Flashled', 'far fa-lightbulb', WebOrder::class)
+                        ->setController(FlashledOrderCrudController::class),
+                    MenuItem::linkToCrud('Minibatt', 'fas fa-car-battery', WebOrder::class)
+                        ->setController(MinibattOrderCrudController::class),
+                    MenuItem::section(),
+                    MenuItem::linkToCrud('On delivery', 'fas fa-truck-loading', WebOrder::class)
+                        ->setController(DeliveryOrderCrudController::class),
+                    MenuItem::linkToCrud('Errors', 'fas fa-exclamation-triangle', WebOrder::class)
+                        ->setController(ErrorOrderCrudController::class),
+                    MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)
+                        ->setController(WebOrderCrudController::class),
+                ]),
+            MenuItem::subMenu('Amazon & FBA', 'fab fa-amazon')
+                ->setSubItems([
+                    MenuItem::linkToCrud('Inventory', 'fas fa-cube', Product::class)
+                        ->setController(StockCrudController::class),
+                    MenuItem::linkToCrud('Fees', 'fas fa-money-bill-alt', AmazonFinancialEvent::class),
+                    MenuItem::linkToCrud('FBA Returns', 'fas fa-exchange-alt', FbaReturn::class),
+                    MenuItem::linkToCrud('Product', 'fas fa-barcode', Product::class)
+                        ->setController(ProductCrudController::class),
+                    MenuItem::linkToCrud('Brand', 'far fa-registered', Brand::class),
+                    MenuItem::linkToCrud('Category', 'fas fa-sitemap', Category::class),
+                ])
+                ->setPermission('ROLE_AMAZON'),
+            MenuItem::subMenu('Configuration', 'fas fa-cogs')
+                ->setSubItems([
+                    MenuItem::linkToCrud('SKU Mapping', 'fa fa-exchange', ProductCorrelation::class),
+                    MenuItem::linkToCrud('Users', 'fa fa-user', User::class)
+                ->setPermission('ROLE_ADMIN'),
             ])
         ];
     }
@@ -80,7 +97,8 @@ class DashboardController extends AbstractDashboardController
 
     public function configureAssets(): Assets
     {
-        return Assets::new()->addCssFile('assets/css/admin.css')
+        return Assets::new()
+            ->addCssFile('assets/css/admin.css')
             ->addJsFile('assets/js/admin.js');
     }
 

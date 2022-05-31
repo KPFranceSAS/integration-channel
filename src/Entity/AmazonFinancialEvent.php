@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -33,7 +36,6 @@ class AmazonFinancialEvent
     /**
      * @ORM\ManyToOne(targetEntity=AmazonFinancialEventGroup::class, inversedBy="amazonFinancialEvents")
      * @ORM\JoinColumn(nullable=false)
-     * 
      */
     private $eventGroup;
 
@@ -164,8 +166,8 @@ class AmazonFinancialEvent
      */
     public function setCreatedAtValue(): void
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     /**
@@ -173,33 +175,66 @@ class AmazonFinancialEvent
      */
     public function setUpdatedAtValue(): void
     {
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
     }
+
+
+    public function getProductSku(): ?string
+    {
+        return $this->product ? $this->product->getSku() :  $this->sku;
+    }
+
+
+    public function getProductName(): ?string
+    {
+        return $this->product ? $this->product->getDescription() :  $this->sku;
+    }
+
+
+    public function getProductBrand(): ?string
+    {
+        return $this->product ? $this->product->getBrandName() :  null;
+    }
+
+
+    public function getFinancialGroupEndDate(): ?DateTimeInterface
+    {
+        return $this->eventGroup->getEndDate();
+    }
+
+
+    public function getFinancialGroupStartDate(): ?DateTimeInterface
+    {
+        return $this->eventGroup->getStartDate();
+    }
+
 
 
     public function getLitteralPrice(): string
     {
-        return ($this->amountCurrency != $this->amount) ? $this->amountCurrency . ' GBP' : $this->amountCurrency . ' EUR';
+        return ($this->amountCurrency != $this->amount)
+            ? $this->amountCurrency . ' GBP'
+            : $this->amountCurrency . ' EUR';
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    public function setCreatedAt(DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 
@@ -338,12 +373,12 @@ class AmazonFinancialEvent
         return $this;
     }
 
-    public function getPostedDate(): ?\DateTimeInterface
+    public function getPostedDate(): ?DateTimeInterface
     {
         return $this->postedDate;
     }
 
-    public function setPostedDate(\DateTimeInterface $postedDate): self
+    public function setPostedDate(DateTimeInterface $postedDate): self
     {
         $this->postedDate = $postedDate;
 
