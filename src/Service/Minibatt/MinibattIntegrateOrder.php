@@ -6,12 +6,9 @@ use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\Integrator\ShopifyIntegrateOrder;
 
-
 class MinibattIntegrateOrder extends ShopifyIntegrateOrder
-
 {
-
-    const MINIBATT_CUSTOMER_NUMBER = "130803";
+    public const MINIBATT_CUSTOMER_NUMBER = "130957";
 
     public function getChannel()
     {

@@ -78,11 +78,14 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
      */
     protected function checkStatusToInvoice($orderApi): bool
     {
-        if (($orderApi->DistributionCenterTypeRollup == 'ExternallyManaged' && $orderApi->ShippingStatus == 'Shipped')) {
+        if (
+            $orderApi->DistributionCenterTypeRollup == 'ExternallyManaged'
+            && $orderApi->ShippingStatus == 'Shipped'
+        ) {
             $this->logger->info('Status OK');
             return true;
         } else {
-            $this->logger->info("X__Status Bad " . $orderApi->DistributionCenterTypeRollup . " " . $orderApi->ShippingStatus);
+            $this->logger->info("X__Bad " . $orderApi->DistributionCenterTypeRollup . " " . $orderApi->ShippingStatus);
             return false;
         }
     }

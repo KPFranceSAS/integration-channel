@@ -11,4 +11,16 @@ class FlashledStock extends ShopifyStockParent
     {
         return WebOrder::CHANNEL_FLASHLED;
     }
+
+
+
+
+    public function getStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA): int
+    {
+        if ($sku == 'FL-FLASHLED-SOS') {
+            return 999; // case preorder
+        } else {
+            return parent::getStockProductWarehouse($sku, $depot);
+        }
+    }
 }

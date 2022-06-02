@@ -6,12 +6,9 @@ use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\Integrator\ShopifyIntegrateOrder;
 
-
 class FlashledIntegrateOrder extends ShopifyIntegrateOrder
-
 {
-
-    const FLASHLED_CUSTOMER_NUMBER = "130803";
+    public const FLASHLED_CUSTOMER_NUMBER = "130956";
 
     public function getChannel()
     {

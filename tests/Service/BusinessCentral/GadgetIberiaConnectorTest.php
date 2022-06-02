@@ -59,6 +59,41 @@ class GadgetIberiaConnectorTest extends KernelTestCase
     }
 
 
+    public function testIntegrationBundleClassic(): void
+    {
+        $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);
+        $product = $bcConnector->getItemByNumber("SNS-PCK-HC1-B");
+        $lines = [
+            [
+                "lineType" => "Item",
+                "itemId" => $product["id"],
+                "unitPrice" => 219.0,
+                "quantity" => 2,
+                'discountAmount' => 0
+            ],
+        ];
+        $order =  [
+            'orderDate' => date("Y-m-d"),
+            'customerNumber' => AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER,
+            "locationCode" => "AMAZON",
+            'salesOrderLines' => $lines,
+            'pricesIncludeTax' => true,
+            "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
+            "externalDocumentNumber" => "testbundle-" . date('YmdHis'),
+            "shippingAgent" => "DHL PARCEL",
+            "shippingAgentService" => "DHL1"
+        ];
+        $order = $bcConnector->createSaleOrder($order);
+        $this->assertIsArray($order);
+
+        $orderFull = $bcConnector->getFullSaleOrder($order['id']);
+        $this->assertIsArray($orderFull);
+        $this->assertCount(1, $orderFull['salesOrderLines']);
+        $this->assertSame($orderFull['shippingAgent'], "DHL PARCEL");
+        $this->assertSame($orderFull['shippingAgentService'], "DHL1");
+    }
+
+
     public function testIntegrationCanonDigital(): void
     {
         $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);

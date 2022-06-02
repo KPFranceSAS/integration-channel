@@ -253,3 +253,5 @@ The main entry points used :
 [Account](https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v1.0/resources/dynamics_account)
 
 [PDF invoice](https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v1.0/api/dynamics_salesquote_pdfdocument)
+
+Error of customer not found > check the thick box on customer card  Disable search by name to make billing address editable
