@@ -55,4 +55,29 @@ class AliExpressIntegrateOrderTest extends KernelTestCase
         $this->assertSame($orderFull['shippingAgent'], "DHL PARCEL");
         $this->assertSame($orderFull['shippingAgentService'], "DHL1");
     }
+
+
+    public function testTransformationWithMadrid(): void
+    {
+        $aliExpressIntegrator = static::getContainer()->get(AliExpressIntegrateOrder::class);
+        $order = $aliExpressIntegrator->getApi()->getOrder('8150568256560603');
+        $order->receipt_address->country = 'ES';
+        $orderBc = $aliExpressIntegrator->transformToAnBcOrder($order);
+        $newWebOrder = new WebOrder();
+        $newWebOrder->setCompany(GadgetIberiaConnector::GADGET_IBERIA);
+        $aliExpressIntegrator->adjustSaleOrder($newWebOrder, $orderBc);
+        $this->assertCount(2, $orderBc->salesLines);
+        $this->assertEquals(399, $orderBc->salesLines[0]->unitPrice);
+
+        $bcConnector = $aliExpressIntegrator->getBusinessCentralConnector(GadgetIberiaConnector::GADGET_IBERIA);
+        $orderFinal = $bcConnector->createSaleOrder($orderBc->transformToArray());
+        $this->assertIsArray($orderFinal);
+        $orderFull = $bcConnector->getFullSaleOrder($orderFinal['id']);
+        $this->assertIsArray($orderFull);
+        $this->assertCount(2, $orderFull['salesOrderLines']);
+        $this->assertEquals(416.89, $orderFull['totalAmountIncludingTax']);
+        $this->assertSame($orderFull['shippingAgent'], "DHL PARCEL");
+        $this->assertSame($orderFull['shippingAgentService'], "DHL1");
+        $this->assertSame($orderFull['locationCode'], "MADRID");
+    }
 }

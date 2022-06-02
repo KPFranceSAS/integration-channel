@@ -44,7 +44,7 @@ class GadgetIberiaConnectorTest extends KernelTestCase
             'pricesIncludeTax' => true,
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
-            "externalDocumentNumber" => "test-" . date('YmdHis'),
+            "externalDocumentNumber" => "Integration-" . date('YmdHis'),
             "shippingAgent" => "DHL PARCEL",
             "shippingAgentService" => "DHL1"
         ];
@@ -130,7 +130,7 @@ class GadgetIberiaConnectorTest extends KernelTestCase
             'pricesIncludeTax' => true,
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
-            "externalDocumentNumber" => "test-" . date('YmdHis'),
+            "externalDocumentNumber" => "canondigital-" . date('YmdHis'),
             "shippingAgent" => "FBA",
             "shippingAgentService" => "1"
         ];
@@ -180,7 +180,7 @@ class GadgetIberiaConnectorTest extends KernelTestCase
             'pricesIncludeTax' => true,
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
-            "externalDocumentNumber" => "test-" . date('YmdHis'),
+            "externalDocumentNumber" => "nocanon-" . date('YmdHis'),
             "shippingAgent" => "DHL PARCEL",
             "shippingAgentService" => "DHL1"
         ];
@@ -215,7 +215,7 @@ class GadgetIberiaConnectorTest extends KernelTestCase
             'pricesIncludeTax' => true,
             "phoneNumber" => '0565458585',
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
-            "externalDocumentNumber" => "test-" . date('YmdHis'),
+            "externalDocumentNumber" => "canaria-" . date('YmdHis'),
             "shippingAgent" => "DHL PARCEL",
             "shippingAgentService" => "DHL1"
         ];

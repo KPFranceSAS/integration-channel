@@ -6,11 +6,8 @@ use App\Entity\WebOrder;
 use App\Helper\Api\AliExpressApiParent;
 use App\Helper\Stock\StockParent;
 
-
 abstract class AliExpressStockParent extends StockParent
 {
-
-
     public static function getBrandsFromMadrid()
     {
         return ['ECOFLOW', 'AUTELROBOTICS', 'DJI', 'PGYTECH', 'TRIDENT'];
