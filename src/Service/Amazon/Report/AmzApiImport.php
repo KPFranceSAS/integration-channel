@@ -27,8 +27,14 @@ abstract class AmzApiImport
 
     protected $businessCentralAggregator;
 
-    public function __construct(LoggerInterface $logger, AmzApi $amzApi, ManagerRegistry $manager, MailService $mailer, ExchangeRateCalculator $exchangeRate, BusinessCentralAggregator $businessCentralAggregator)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        AmzApi $amzApi,
+        ManagerRegistry $manager,
+        MailService $mailer,
+        ExchangeRateCalculator $exchangeRate,
+        BusinessCentralAggregator $businessCentralAggregator
+    ) {
         $this->logger = $logger;
         $this->amzApi = $amzApi;
         $this->manager = $manager->getManager();
@@ -37,11 +43,12 @@ abstract class AmzApiImport
         $this->businessCentralAggregator = $businessCentralAggregator;
     }
 
-    const WAITING_TIME = 20;
+    public const WAITING_TIME = 20;
 
     public function createReportAndImport(?DateTime $dateTimeStart = null)
     {
         try {
+            $badStatus = [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL];
             $this->logger->info('Report creation ' . $this->getName());
             $report = $this->createReport($dateTimeStart);
             $this->logger->info('Report processing ReportId = ' . $report->getReportId());
@@ -55,7 +62,7 @@ abstract class AmzApiImport
                     $datasReport = $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
                     $this->importDatas($datasReport);
                     return;
-                } elseif (in_array($reportState->getPayload()->getProcessingStatus(), [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL])) {
+                } elseif (in_array($reportState->getPayload()->getProcessingStatus(), $badStatus)) {
                     throw new Exception('Fatal error to get report ' . $this->getName());
                 } else {
                     $this->logger->info('Report processing not yet');
@@ -138,28 +145,26 @@ abstract class AmzApiImport
         $sku = $this->getProductCorrelationSku($amz->getSku());
         $fnsku = $amz->getFnsku();
 
-        $product = $this->manager->getRepository(Product::class)->findOneBy([
-            'fnsku' => $fnsku,
-            "sku" => $sku
-        ]);
+        $product = $this->manager
+                        ->getRepository(Product::class)
+                        ->findOneBy([
+                            'fnsku' => $fnsku,
+                            "sku" => $sku
+                        ]);
         if ($product) {
             $amz->setProduct($product);
         }
     }
 
 
-
-
-    /**
-     * Undocumented function
-     *
-     * @param string $sku
-     * @return string
-     */
     protected function getProductCorrelationSku(string $sku): string
     {
         $skuSanitized = strtoupper($sku);
-        $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
+        $productCorrelation = $this->manager
+                                    ->getRepository(ProductCorrelation::class)
+                                    ->findOneBy([
+                                        'skuUsed' => $skuSanitized
+                                    ]);
         return $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
     }
 }

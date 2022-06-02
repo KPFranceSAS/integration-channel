@@ -8,14 +8,17 @@ use Exception;
 
 class BusinessCentralAggregator
 {
-
     private $kpFranceConnector;
 
     private $gadgetIberiaConnector;
 
     private $kitPersonalizacionSportConnector;
 
-    public function __construct(KpFranceConnector $kpFranceConnector, GadgetIberiaConnector $gadgetIberiaConnector, KitPersonalizacionSportConnector $kitPersonalizacionSportConnector)
+    public function __construct(
+        KpFranceConnector $kpFranceConnector,
+        GadgetIberiaConnector $gadgetIberiaConnector,
+        KitPersonalizacionSportConnector $kitPersonalizacionSportConnector
+    )
     {
         $this->kpFranceConnector = $kpFranceConnector;
         $this->gadgetIberiaConnector = $gadgetIberiaConnector;
@@ -23,14 +26,13 @@ class BusinessCentralAggregator
     }
 
 
-    public  function getBusinessCentralConnector(string $companyName): BusinessCentralConnector
+    public function getBusinessCentralConnector(string $companyName): BusinessCentralConnector
     {
-
         if ($companyName == BusinessCentralConnector::KP_FRANCE) {
             return $this->kpFranceConnector;
-        } else if ($companyName == BusinessCentralConnector::GADGET_IBERIA) {
+        } elseif ($companyName == BusinessCentralConnector::GADGET_IBERIA) {
             return $this->gadgetIberiaConnector;
-        } else if ($companyName == BusinessCentralConnector::KIT_PERSONALIZACION_SPORT) {
+        } elseif ($companyName == BusinessCentralConnector::KIT_PERSONALIZACION_SPORT) {
             return $this->kitPersonalizacionSportConnector;
         }
 

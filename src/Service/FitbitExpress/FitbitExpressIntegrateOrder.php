@@ -8,7 +8,7 @@ use App\Helper\Integrator\AliExpressIntegratorParent;
 class FitbitExpressIntegrateOrder extends AliExpressIntegratorParent
 {
 
-    const FITBITEXPRESS_CUSTOMER_NUMBER = "003253";
+    public const FITBITEXPRESS_CUSTOMER_NUMBER = "003253";
 
 
     public function getChannel()

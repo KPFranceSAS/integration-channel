@@ -9,10 +9,8 @@ use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
-
 class AmzFbaReturn
 {
-
     protected $mailer;
 
     protected $manager;

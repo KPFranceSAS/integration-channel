@@ -7,8 +7,7 @@ use App\Helper\Utils\Aggregator;
 
 class ApiAggregator extends Aggregator
 {
-
-    public  function getApi(string $channel): ApiInterface
+    public function getApi(string $channel): ApiInterface
     {
         return $this->getService($channel);
     }

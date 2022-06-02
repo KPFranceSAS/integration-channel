@@ -10,7 +10,6 @@ use App\Service\Amazon\History\AmzHistoryEvent;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
-
 class AmzHistoryAggregator
 {
     protected $manager;
@@ -40,7 +39,9 @@ class AmzHistoryAggregator
 
     private function addAmazonOrderEvents($orderNumber)
     {
-        $amazonEvents = $this->manager->getRepository(AmazonOrder::class)->findBy(['amazonOrderId' => $orderNumber]);
+        $amazonEvents = $this->manager
+                         ->getRepository(AmazonOrder::class)
+                         ->findBy(['amazonOrderId' => $orderNumber]);
         foreach ($amazonEvents as $amazonEvent) {
             $amzHistoryEvent = AmzHistoryEvent::createOneFromAmazonOrder($amazonEvent);
             $this->addToEvents($amzHistoryEvent);
@@ -49,7 +50,9 @@ class AmzHistoryAggregator
 
     private function addAmazonFinancialEvents($orderNumber)
     {
-        $amazonEvents = $this->manager->getRepository(AmazonFinancialEvent::class)->findBy(['amazonOrderId' => $orderNumber]);
+        $amazonEvents = $this->manager
+                            ->getRepository(AmazonFinancialEvent::class)
+                            ->findBy(['amazonOrderId' => $orderNumber]);
         foreach ($amazonEvents as $amazonEvent) {
             $amzHistoryEvent = AmzHistoryEvent::createOneFromAmazonFinancialEvent($amazonEvent);
             $this->addToEvents($amzHistoryEvent);
@@ -59,7 +62,9 @@ class AmzHistoryAggregator
 
     private function addAmazonReturnEvents($orderNumber)
     {
-        $amazonEvents = $this->manager->getRepository(AmazonReturn::class)->findBy(['orderId' => $orderNumber]);
+        $amazonEvents = $this->manager
+                            ->getRepository(AmazonReturn::class)
+                            ->findBy(['orderId' => $orderNumber]);
         foreach ($amazonEvents as $amazonEvent) {
             $amzHistoryEvent = AmzHistoryEvent::createOneFromAmazonReturn($amazonEvent);
             $this->addToEvents($amzHistoryEvent);
@@ -69,7 +74,9 @@ class AmzHistoryAggregator
 
     private function addAmazonReimbursementEvents($orderNumber)
     {
-        $amazonEvents = $this->manager->getRepository(AmazonReimbursement::class)->findBy(['amazonOrderId' => $orderNumber]);
+        $amazonEvents = $this->manager
+                            ->getRepository(AmazonReimbursement::class)
+                            ->findBy(['amazonOrderId' => $orderNumber]);
         foreach ($amazonEvents as $amazonEvent) {
             $amzHistoryEvent = AmzHistoryEvent::createOneFromAmazonReimbursement($amazonEvent);
             $this->addToEvents($amzHistoryEvent);

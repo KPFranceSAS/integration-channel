@@ -12,7 +12,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
-
 class PublishPowerBi
 {
     public function __construct(LoggerInterface $logger, ManagerRegistry $manager, SerializerInterface $serializer, FilesystemOperator $kpssportStorage)
@@ -36,12 +35,10 @@ class PublishPowerBi
     public function exportAll()
     {
         $this->exportProducts();
-
         $this->exportReimbursements();
         $this->exportReturns();
         $this->exportFinancialGroups();
         $this->exportFinancials();
-
         $this->exportOrders();
     }
 
@@ -50,7 +47,7 @@ class PublishPowerBi
     {
         $this->logger->info("Export " . $className);
         $elements  = $this->manager->getRepository($className)->findAll();
-        $this->kpssportStorage->write($fileName,  $this->serializer->serialize($elements, 'json', [
+        $this->kpssportStorage->write($fileName, $this->serializer->serialize($elements, 'json', [
             DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
             'groups' => $groupSerialisation
         ]), []);
@@ -85,8 +82,6 @@ class PublishPowerBi
     }
 
 
-
-
     public function exportOrders()
     {
         $this->logger->info("Export orders ");
@@ -109,7 +104,7 @@ class PublishPowerBi
             }
         }
 
-        $this->kpssportStorage->write('orders.json',  json_encode($orders), []);
+        $this->kpssportStorage->write('orders.json', json_encode($orders), []);
         $this->logger->info("Export orders done ");
     }
 
@@ -122,7 +117,6 @@ class PublishPowerBi
         $i = 1;
         $q = $this->manager->createQuery('select a from App\Entity\AmazonFinancialEvent a');
         foreach ($q->toIterable() as $amz) {
-
             $financial = $this->serializer->serialize($amz, 'json', [
                 DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
                 'groups' => 'export_order'
@@ -135,7 +129,7 @@ class PublishPowerBi
             }
         }
 
-        $this->kpssportStorage->write('financials.json',  json_encode($financials), []);
+        $this->kpssportStorage->write('financials.json', json_encode($financials), []);
         $this->logger->info("Export financials done ");
     }
 }

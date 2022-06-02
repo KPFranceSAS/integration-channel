@@ -10,26 +10,24 @@ use DateInterval;
 use DateTime;
 use Exception;
 
-
 class AmzApiImportProduct extends AmzApiImport
 {
-
-
-
     public function createReportAndImport(?DateTime $dateTimeStart = null)
     {
-
         $this->errorProducts = [];
 
         try {
             $createdSince = new DateTime('now');
             $createdSince->sub(new DateInterval('PT2H'));
             $marketplaces = $this->amzApi->getAllMarketplaces();
-            $reports = $this->amzApi->getAllReports([AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED], [AmzApi::STATUS_REPORT_DONE], $createdSince);
+            $reports = $this->amzApi->getAllReports(
+                [AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED],
+                [AmzApi::STATUS_REPORT_DONE],
+                $createdSince
+            );
 
             foreach ($marketplaces as $marketplace) {
                 foreach ($reports as $report) {
-
                     if (in_array($marketplace, $report->getMarketplaceIds())) {
                         $datasReport = $this->amzApi->getContentReport($report->getReportDocumentId());
                         $this->importDatas($datasReport);
@@ -38,9 +36,9 @@ class AmzApiImportProduct extends AmzApiImport
                 }
             }
 
-
             if (count($this->errorProducts) > 0) {
-                $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", implode('<br/>', $this->errorProducts));
+                $message =  implode('<br/>', $this->errorProducts);
+                $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", $message);
             }
         } catch (Exception $e) {
             $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", $e->getMessage());
@@ -60,7 +58,6 @@ class AmzApiImportProduct extends AmzApiImport
 
     protected function upsertData(array $importOrder)
     {
-
         $product = $this->manager->getRepository(Product::class)->findOneBy([
             'fnsku' => $importOrder['fnsku']
         ]);

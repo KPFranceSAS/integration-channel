@@ -7,7 +7,7 @@ use App\Helper\Utils\Aggregator;
 
 class StockAggregator extends Aggregator
 {
-    public  function getStock(string $channel): StockParent
+    public function getStock(string $channel): StockParent
     {
         return $this->getService($channel);
     }

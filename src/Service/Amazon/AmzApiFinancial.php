@@ -206,7 +206,11 @@ class AmzApiFinancial
         $amzFinancialEvent->setTransactionType($financialEvent->getModelName());
         $amzFinancialEvent->setPostedDate($this->dateNow);
         $amzFinancialEvent->setAmountType($financialEvent->getDebtRecoveryType());
-        $convertedAmount = $this->calculator->getConvertedAmountDate($financialEvent->getRecoveryAmount()->getCurrencyAmount(), $financialEvent->getRecoveryAmount()->getCurrencyCode(), $amzFinancialEvent->getPostedDate());
+        $convertedAmount = $this->calculator->getConvertedAmountDate(
+            $financialEvent->getRecoveryAmount()->getCurrencyAmount(),
+            $financialEvent->getRecoveryAmount()->getCurrencyCode(),
+            $amzFinancialEvent->getPostedDate()
+        );
         $amzFinancialEvent->setAmount($convertedAmount);
         $amzFinancialEvent->setAmountCurrency($financialEvent->getRecoveryAmount()->getCurrencyAmount());
 
@@ -218,20 +222,28 @@ class AmzApiFinancial
     protected function convertCouponPaymentEventList(CouponPaymentEvent $financialEvent): array
     {
         $financialEvents = [];
-        if ($financialEvent->getFeeComponent() && $financialEvent->getFeeComponent()->getFeeAmount()->getCurrencyAmount() != 0) {
+        if (
+            $financialEvent->getFeeComponent()
+            && $financialEvent->getFeeComponent()->getFeeAmount()->getCurrencyAmount() != 0
+        ) {
             $amzFinancialEvent = new AmazonFinancialEvent();
             $amzFinancialEvent->setTransactionType($financialEvent->getModelName());
             $amzFinancialEvent->setPostedDate($financialEvent->getPostedDate());
-            $amzFinancialEvent->setAmountDescription(substr(html_entity_decode($financialEvent->getSellerCouponDescription()), 0, 255));
+            $description = substr(html_entity_decode($financialEvent->getSellerCouponDescription()), 0, 255);
+            $amzFinancialEvent->setAmountDescription($description);
             $this->addInfoFeeComponent($amzFinancialEvent, $financialEvent->getFeeComponent());
             $financialEvents[] = $amzFinancialEvent;
         }
 
-        if ($financialEvent->getChargeComponent() && $financialEvent->getChargeComponent()->getChargeAmount()->getCurrencyAmount() != 0) {
+        if (
+            $financialEvent->getChargeComponent()
+            && $financialEvent->getChargeComponent()->getChargeAmount()->getCurrencyAmount() != 0
+        ) {
             $amzFinancialEvent = new AmazonFinancialEvent();
             $amzFinancialEvent->setTransactionType($financialEvent->getModelName());
             $amzFinancialEvent->setPostedDate($financialEvent->getPostedDate());
-            $amzFinancialEvent->setAmountDescription(substr(html_entity_decode($financialEvent->getSellerCouponDescription()), 0, 255));
+            $description = substr(html_entity_decode($financialEvent->getSellerCouponDescription()), 0, 255);
+            $amzFinancialEvent->setAmountDescription($description);
             $this->addInfoChargeComponent($amzFinancialEvent, $financialEvent->getChargeComponent());
             $financialEvents[] = $amzFinancialEvent;
         }
@@ -241,23 +253,30 @@ class AmzApiFinancial
 
 
 
-    protected function convertRetrochargeEventList(RetrochargeEvent $financialEvent): array
-    {
+    protected function convertRetrochargeEventList(
+        RetrochargeEvent $financialEvent
+    ): array {
         $amzFinancialEvent = new AmazonFinancialEvent();
         $amzFinancialEvent->setTransactionType($financialEvent->getModelName());
         $amzFinancialEvent->setPostedDate($financialEvent->getPostedDate());
         $amzFinancialEvent->setAmountDescription($financialEvent->getMarketplaceName());
         $amzFinancialEvent->setAmountType($financialEvent->getRetrochargeEventType());
         $amzFinancialEvent->setAmazonOrderId($financialEvent->getAmazonOrderId());
-        $convertedAmount = $this->calculator->getConvertedAmountDate($financialEvent->getBaseTax()->getCurrencyAmount(), $financialEvent->getBaseTax()->getCurrencyCode(), $amzFinancialEvent->getPostedDate());
+        $convertedAmount = $this->calculator->getConvertedAmountDate(
+            $financialEvent->getBaseTax()->getCurrencyAmount(),
+            $financialEvent->getBaseTax()->getCurrencyCode(),
+            $amzFinancialEvent->getPostedDate()
+        );
         $amzFinancialEvent->setAmount($convertedAmount);
         $amzFinancialEvent->setAmountCurrency($financialEvent->getBaseTax()->getCurrencyAmount());
         return [$amzFinancialEvent];
     }
 
 
-    protected function convertShipmentEvent(ShipmentEvent $financialEvent, string $typeEvent): array
-    {
+    protected function convertShipmentEvent(
+        ShipmentEvent $financialEvent,
+        string $typeEvent
+    ): array {
         $financialEvents = [];
 
         $itemChargeCategories = [
@@ -274,7 +293,8 @@ class AmzApiFinancial
             $charges = $financialEvent->{'get' . $itemChargeCategory}();
             if ($charges) {
                 foreach ($charges as $shipmentItem) {
-                    $financialEvents = array_merge($financialEvents, $this->convertShipmentItem($financialEvent, $shipmentItem, $typeEvent));
+                    $suppArray = $this->convertShipmentItem($financialEvent, $shipmentItem, $typeEvent);
+                    $financialEvents = array_merge($financialEvents, $suppArray);
                 }
             }
         }
@@ -290,7 +310,11 @@ class AmzApiFinancial
         $amzFinancialEvent->setPostedDate($financialEvent->getPostedDate());
         $amzFinancialEvent->setAmazonOrderId($financialEvent->getInvoiceId());
         $amzFinancialEvent->setSellerOrderId($financialEvent->getInvoiceId());
-        $convertedAmount = $this->calculator->getConvertedAmountDate($financialEvent->getTransactionValue()->getCurrencyAmount(), $financialEvent->getTransactionValue()->getCurrencyCode(), $amzFinancialEvent->getPostedDate());
+        $convertedAmount = $this->calculator->getConvertedAmountDate(
+            $financialEvent->getTransactionValue()->getCurrencyAmount(),
+            $financialEvent->getTransactionValue()->getCurrencyCode(),
+            $amzFinancialEvent->getPostedDate()
+        );
         $amzFinancialEvent->setAmount($convertedAmount);
         $amzFinancialEvent->setAmountCurrency($financialEvent->getTransactionValue()->getCurrencyAmount());
 
@@ -309,7 +333,11 @@ class AmzApiFinancial
                 if ($adjustementCharge->getTotalAmount()->getCurrencyAmount() != 0) {
                     $amzFinancialEvent->setPostedDate($financialEvent->getPostedDate());
                     $amzFinancialEvent->setAmountDescription($financialEvent->getAdjustmentType());
-                    $convertedAmount = $this->calculator->getConvertedAmountDate($adjustementCharge->getTotalAmount()->getCurrencyAmount(), $adjustementCharge->getTotalAmount()->getCurrencyCode(), $amzFinancialEvent->getPostedDate());
+                    $convertedAmount = $this->calculator->getConvertedAmountDate(
+                        $adjustementCharge->getTotalAmount()->getCurrencyAmount(),
+                        $adjustementCharge->getTotalAmount()->getCurrencyCode(),
+                        $amzFinancialEvent->getPostedDate()
+                    );
                     $amzFinancialEvent->setAmount($convertedAmount);
                     $amzFinancialEvent->setAmountCurrency($adjustementCharge->getTotalAmount()->getCurrencyAmount());
                     $amzFinancialEvent->setSku($adjustementCharge->getSellerSku());
@@ -322,7 +350,11 @@ class AmzApiFinancial
             $amzFinancialEvent->setTransactionType($financialEvent->getModelName());
             $amzFinancialEvent->setPostedDate($financialEvent->getPostedDate());
             $amzFinancialEvent->setAmountDescription($financialEvent->getAdjustmentType());
-            $convertedAmount = $this->calculator->getConvertedAmountDate($financialEvent->getAdjustmentAmount()->getCurrencyAmount(), $financialEvent->getAdjustmentAmount()->getCurrencyCode(), $amzFinancialEvent->getPostedDate());
+            $convertedAmount = $this->calculator->getConvertedAmountDate(
+                $financialEvent->getAdjustmentAmount()->getCurrencyAmount(),
+                $financialEvent->getAdjustmentAmount()->getCurrencyCode(),
+                $amzFinancialEvent->getPostedDate()
+            );
             $amzFinancialEvent->setAmount($convertedAmount);
             $amzFinancialEvent->setAmountCurrency($financialEvent->getAdjustmentAmount()->getCurrencyAmount());
             $financialEvents[] = $amzFinancialEvent;
@@ -332,8 +364,9 @@ class AmzApiFinancial
     }
 
 
-    protected function convertNetworkComminglingTransactionEventList(NetworkComminglingTransactionEvent $financialEvent): array
-    {
+    protected function convertNetworkComminglingTransactionEventList(
+        NetworkComminglingTransactionEvent $financialEvent
+    ): array {
         $amzFinancialEvent = new AmazonFinancialEvent();
         $amzFinancialEvent->setTransactionType($financialEvent->getModelName());
         $amzFinancialEvent->setPostedDate($financialEvent->getPostedDate());
@@ -341,7 +374,11 @@ class AmzApiFinancial
         $amzFinancialEvent->setAmountType($financialEvent->getTransactionType());
         $amzFinancialEvent->setAmazonOrderId($financialEvent->getNetCoTransactionId());
         $amzFinancialEvent->setSellerOrderId($financialEvent->getMarketplaceId());
-        $convertedAmount = $this->calculator->getConvertedAmountDate($financialEvent->getTaxAmount()->getCurrencyAmount(), $financialEvent->getTaxAmount()->getCurrencyCode(), $amzFinancialEvent->getPostedDate());
+        $convertedAmount = $this->calculator->getConvertedAmountDate(
+            $financialEvent->getTaxAmount()->getCurrencyAmount(),
+            $financialEvent->getTaxAmount()->getCurrencyCode(),
+            $amzFinancialEvent->getPostedDate()
+        );
         $amzFinancialEvent->setAmount($convertedAmount);
         $amzFinancialEvent->setAmountCurrency($financialEvent->getTaxAmount()->getCurrencyAmount());
         $amzFinancialEvent->setSku($financialEvent->getAsin());
@@ -350,8 +387,9 @@ class AmzApiFinancial
         return [$amzFinancialEvent];
     }
 
-    protected function convertServiceFeeEventList(ServiceFeeEvent $financialEvent): array
-    {
+    protected function convertServiceFeeEventList(
+        ServiceFeeEvent $financialEvent
+    ): array {
         $financialEvents = [];
 
         foreach ($financialEvent->getFeeList() as $feeCharge) {
@@ -367,8 +405,11 @@ class AmzApiFinancial
     }
 
 
-    protected function convertShipmentItem(ShipmentEvent $shipmentEvent, ShipmentItem $shipmentItem, string $typeEvent): array
-    {
+    protected function convertShipmentItem(
+        ShipmentEvent $shipmentEvent,
+        ShipmentItem $shipmentItem,
+        string $typeEvent
+    ): array {
         $product = $this->getProductBySku($shipmentItem->getSellerSku());
 
         $financialEvents = [];
@@ -377,7 +418,12 @@ class AmzApiFinancial
             $charges = $shipmentItem->{'get' . $itemChargeCategory}();
             if ($charges) {
                 foreach ($charges as $itemCharge) {
-                    $amzFinancialEvent = $this->createShipmentEvent($shipmentEvent, $shipmentItem, $typeEvent, $product);
+                    $amzFinancialEvent = $this->createShipmentEvent(
+                        $shipmentEvent,
+                        $shipmentItem,
+                        $typeEvent,
+                        $product
+                    );
                     $amzFinancialEvent->setAmountType($itemChargeCategory);
                     if ($itemCharge->getModelName() == 'ChargeComponent') {
                         $this->addInfoChargeComponent($amzFinancialEvent, $itemCharge);
@@ -396,7 +442,12 @@ class AmzApiFinancial
         if ($chargesTva) {
             foreach ($chargesTva as $itemCharge) {
                 foreach ($itemCharge->getTaxesWithheld() as $taxeItem) {
-                    $amzFinancialEvent = $this->createShipmentEvent($shipmentEvent, $shipmentItem, $typeEvent, $product);
+                    $amzFinancialEvent = $this->createShipmentEvent(
+                        $shipmentEvent,
+                        $shipmentItem,
+                        $typeEvent,
+                        $product
+                    );
                     $amzFinancialEvent->setAmountType($itemCharge->getTaxCollectionModel());
                     $this->addInfoChargeComponent($amzFinancialEvent, $taxeItem);
                     if ($amzFinancialEvent->getAmount() != 0) {
@@ -412,14 +463,25 @@ class AmzApiFinancial
             $chargesPromotion = $shipmentItem->{'get' . $itemChargeCategory}();
             if ($chargesPromotion) {
                 foreach ($chargesPromotion as $chargePromotion) {
-                    $amzFinancialEvent = $this->createShipmentEvent($shipmentEvent, $shipmentItem, $typeEvent, $product);
+                    $amzFinancialEvent = $this->createShipmentEvent(
+                        $shipmentEvent,
+                        $shipmentItem,
+                        $typeEvent,
+                        $product
+                    );
                     $amzFinancialEvent->setAmountType($itemChargeCategory);
                     if ($chargePromotion->getPromotionAmount()->getCurrencyAmount() != 0) {
                         $amzFinancialEvent->setAmountDescription($chargePromotion->getPromotionType());
                         $amzFinancialEvent->setPromotionId($chargePromotion->getPromotionId());
-                        $convertedAmount = $this->calculator->getConvertedAmountDate($chargePromotion->getPromotionAmount()->getCurrencyAmount(), $chargePromotion->getPromotionAmount()->getCurrencyCode(), $amzFinancialEvent->getPostedDate());
+
+                        $currencyAmount = $chargePromotion->getPromotionAmount()->getCurrencyAmount();
+                        $convertedAmount = $this->calculator->getConvertedAmountDate(
+                            $currencyAmount,
+                            $chargePromotion->getPromotionAmount()->getCurrencyCode(),
+                            $amzFinancialEvent->getPostedDate()
+                        );
                         $amzFinancialEvent->setAmount($convertedAmount);
-                        $amzFinancialEvent->setAmountCurrency($chargePromotion->getPromotionAmount()->getCurrencyAmount());
+                        $amzFinancialEvent->setAmountCurrency($currencyAmount);
                         $financialEvents[] = $amzFinancialEvent;
                     }
                 }
@@ -429,8 +491,12 @@ class AmzApiFinancial
     }
 
 
-    protected function createShipmentEvent(ShipmentEvent $shipmentEvent, ShipmentItem $shipmentItem, string $typeEvent, ?Product $product): AmazonFinancialEvent
-    {
+    protected function createShipmentEvent(
+        ShipmentEvent $shipmentEvent,
+        ShipmentItem $shipmentItem,
+        string $typeEvent,
+        ?Product $product
+    ): AmazonFinancialEvent {
         $amzFinancialEvent = new AmazonFinancialEvent();
         $amzFinancialEvent->setTransactionType($typeEvent);
         $amzFinancialEvent->setPostedDate($shipmentEvent->getPostedDate());
@@ -446,19 +512,31 @@ class AmzApiFinancial
     }
 
 
-    protected function addInfoChargeComponent(AmazonFinancialEvent $amazonFinancialEvent, ChargeComponent $chargeComponent)
-    {
+    protected function addInfoChargeComponent(
+        AmazonFinancialEvent $amazonFinancialEvent,
+        ChargeComponent $chargeComponent
+    ) {
         $amazonFinancialEvent->setAmountDescription($chargeComponent->getChargeType());
-        $convertedAmount = $this->calculator->getConvertedAmountDate($chargeComponent->getChargeAmount()->getCurrencyAmount(), $chargeComponent->getChargeAmount()->getCurrencyCode(), $amazonFinancialEvent->getPostedDate());
+        $convertedAmount = $this->calculator->getConvertedAmountDate(
+            $chargeComponent->getChargeAmount()->getCurrencyAmount(),
+            $chargeComponent->getChargeAmount()->getCurrencyCode(),
+            $amazonFinancialEvent->getPostedDate()
+        );
         $amazonFinancialEvent->setAmount($convertedAmount);
         $amazonFinancialEvent->setAmountCurrency($chargeComponent->getChargeAmount()->getCurrencyAmount());
     }
 
 
-    protected function addInfoFeeComponent(AmazonFinancialEvent $amazonFinancialEvent, FeeComponent $feeComponent)
-    {
+    protected function addInfoFeeComponent(
+        AmazonFinancialEvent $amazonFinancialEvent,
+        FeeComponent $feeComponent
+    ) {
         $amazonFinancialEvent->setAmountDescription($feeComponent->getFeeType());
-        $convertedAmount = $this->calculator->getConvertedAmountDate($feeComponent->getFeeAmount()->getCurrencyAmount(), $feeComponent->getFeeAmount()->getCurrencyCode(), $amazonFinancialEvent->getPostedDate());
+        $convertedAmount = $this->calculator->getConvertedAmountDate(
+            $feeComponent->getFeeAmount()->getCurrencyAmount(),
+            $feeComponent->getFeeAmount()->getCurrencyCode(),
+            $amazonFinancialEvent->getPostedDate()
+        );
         $amazonFinancialEvent->setAmount($convertedAmount);
         $amazonFinancialEvent->setAmountCurrency($feeComponent->getFeeAmount()->getCurrencyAmount());
     }
@@ -469,7 +547,11 @@ class AmzApiFinancial
     {
         $skuSanitized = strtoupper($sku);
         if (strlen($skuSanitized) > 0) {
-            $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
+            $productCorrelation = $this->manager
+                                    ->getRepository(ProductCorrelation::class)
+                                    ->findOneBy([
+                                        'skuUsed' => $skuSanitized
+                                    ]);
             $sku = $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
 
             $product = $this->manager->getRepository(Product::class)->findOneBy([
@@ -483,7 +565,7 @@ class AmzApiFinancial
 
 
 
-    protected function getProductByAsin($asin)
+    protected function getProductByAsin(?string $asin)
     {
         $skuSanitized = strtoupper($asin);
         if (strlen($skuSanitized) > 0) {
@@ -513,8 +595,9 @@ class AmzApiFinancial
     }
 
 
-    protected function convertFinancialEventGroup(FinancialEventGroup $financialEventGroup): AmazonFinancialEventGroup
-    {
+    protected function convertFinancialEventGroup(
+        FinancialEventGroup $financialEventGroup
+    ): AmazonFinancialEventGroup {
         $amzFinancialEventGroup = new AmazonFinancialEventGroup();
         $amzFinancialEventGroup->setFinancialEventId($financialEventGroup->getFinancialEventGroupId());
         $amzFinancialEventGroup->setProcessingStatus($financialEventGroup->getProcessingStatus());
@@ -548,7 +631,11 @@ class AmzApiFinancial
                         ? $amzFinancialEventGroup->getEndDate()
                         : $amzFinancialEventGroup->getStartDate();
                        
-                $valueFormateCurrency = $this->calculator->getConvertedAmountDate($valueFormate, $value->getCurrencyCode(), $dateCalcul);
+                $valueFormateCurrency = $this->calculator->getConvertedAmountDate(
+                    $valueFormate,
+                    $value->getCurrencyCode(),
+                    $dateCalcul
+                );
                 $amzFinancialEventGroup->{'set' . $attribute . 'Currency'}($valueFormate);
                 $amzFinancialEventGroup->{'set' . $attribute}(round($valueFormateCurrency, 2));
 

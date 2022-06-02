@@ -81,7 +81,7 @@ class AmzApiImportStock
         $this->manager->flush();
     }
 
-    const WAITING_TIME = 20;
+    public const WAITING_TIME = 20;
 
     protected function getContentFromReports()
     {

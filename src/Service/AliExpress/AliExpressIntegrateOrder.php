@@ -7,8 +7,7 @@ use App\Helper\Integrator\AliExpressIntegratorParent;
 
 class AliExpressIntegrateOrder extends AliExpressIntegratorParent
 {
-
-    const ALIEXPRESS_CUSTOMER_NUMBER = "002355";
+    public const ALIEXPRESS_CUSTOMER_NUMBER = "002355";
 
 
     public function getChannel()

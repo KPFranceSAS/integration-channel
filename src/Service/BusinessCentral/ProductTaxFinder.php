@@ -3,13 +3,12 @@
 namespace App\Service\BusinessCentral;
 
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use Exception;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
-
 class ProductTaxFinder
 {
-
     protected $logger;
 
     protected $businessCentralAggregator;
@@ -19,8 +18,11 @@ class ProductTaxFinder
     protected $canonDigitals;
 
 
-    public function __construct(FilesystemOperator $awsStorage, LoggerInterface $logger, BusinessCentralAggregator $businessCentralAggregator)
-    {
+    public function __construct(
+        FilesystemOperator $awsStorage,
+        LoggerInterface $logger,
+        BusinessCentralAggregator $businessCentralAggregator
+    ) {
         $this->logger = $logger;
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->awsStorage = $awsStorage;
@@ -76,10 +78,8 @@ class ProductTaxFinder
             }
         }
         if (count($this->canonDigitals) == 0) {
-            throw new \Exception('Error of mapping for canon products files published ' . json_encode($header));
+            throw new Exception('Error of mapping for canon products files published ' . json_encode($header));
         }
-
-
 
         $this->logger->info('Nb of lines :' . count($this->canonDigitals));
         return $this->canonDigitals;

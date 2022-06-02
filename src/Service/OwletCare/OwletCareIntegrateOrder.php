@@ -11,7 +11,7 @@ class OwletCareIntegrateOrder extends ShopifyIntegrateOrder
 
 {
 
-    const OWLETCARE_CUSTOMER_NUMBER = "130803";
+    public const OWLETCARE_CUSTOMER_NUMBER = "130803";
 
     public function getChannel()
     {

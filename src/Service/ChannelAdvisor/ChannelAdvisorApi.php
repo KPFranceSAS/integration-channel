@@ -17,9 +17,9 @@ class ChannelAdvisorApi implements ApiInterface
     }
 
 
-    const AUTH_URL = 'https://api.channeladvisor.com/oauth2/token';
+    public const AUTH_URL = 'https://api.channeladvisor.com/oauth2/token';
 
-    const API_URL = 'https://api.channeladvisor.com/v1/';
+    public const API_URL = 'https://api.channeladvisor.com/v1/';
 
     /**
      *
@@ -49,7 +49,7 @@ class ChannelAdvisorApi implements ApiInterface
     /**
      * Delay to refresh token for channeladvisor
      */
-    const TIME_TO_REFRESH_TOKEN = 30;
+    public const TIME_TO_REFRESH_TOKEN = 30;
 
 
     /**

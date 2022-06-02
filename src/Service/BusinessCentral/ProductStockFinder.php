@@ -4,6 +4,7 @@ namespace App\Service\BusinessCentral;
 
 use App\Entity\WebOrder;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
@@ -68,7 +69,7 @@ class ProductStockFinder
         $this->logger->info('Updated : ' . $differenceCreationMinutes . ' minutes');
 
         if ($differenceCreationMinutes > 180) {
-            throw new \Exception('Update of the stock files published has not been done for  ' . $differenceCreationMinutes . ' minutes');
+            throw new Exception('Update of the stock files published has not been done for  ' . $differenceCreationMinutes . ' minutes');
         }
 
         $warehouseFiles = [
@@ -94,15 +95,15 @@ class ProductStockFinder
         $this->logger->info('Nb of lines in the files : ' . count($this->stockLevels));
 
         if (count($this->stockLevels) == 0) {
-            throw new \Exception('Error of mapping for stock files published ' . json_encode($header));
+            throw new Exception('Error of mapping for stock files published ' . json_encode($header));
         }
 
         if (count($this->stockLevels) < 5000) {
-            throw new \Exception('Error with number lines of stock files published ' . count($this->stockLevels));
+            throw new Exception('Error with number lines of stock files published ' . count($this->stockLevels));
         }
 
         if (count($warehouseFiles) > 0) {
-            throw new \Exception('Error with number of warehouse in stock files published. Missing the warehouses ' . implode(', ', $warehouseFiles));
+            throw new Exception('Error with number of warehouse in stock files published. Missing the warehouses ' . implode(', ', $warehouseFiles));
         }
 
 

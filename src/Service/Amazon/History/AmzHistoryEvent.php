@@ -9,14 +9,13 @@ use App\Entity\AmazonReturn;
 
 class AmzHistoryEvent
 {
+    public const TYPE_FINANCIAL = 'Financial';
 
-    const TYPE_FINANCIAL = 'Financial';
+    public const TYPE_ORDER = 'Order';
 
-    const TYPE_ORDER = 'Order';
+    public const TYPE_REIMBURSEMENT = 'Reimbursement';
 
-    const TYPE_REIMBURSEMENT = 'Reimbursement';
-
-    const TYPE_RETURN = 'Return';
+    public const TYPE_RETURN = 'Return';
 
 
     public $dateEvent;

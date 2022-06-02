@@ -7,10 +7,8 @@ use App\Service\Amazon\AmzApi;
 use App\Service\Amazon\Report\AmzApiImport;
 use DateTime;
 
-
 class AmzApiImportRemovalOrder extends AmzApiImport
 {
-
     protected function createReport(?DateTime $dateTimeStart = null)
     {
         $dateTimeStart = DateTime::createFromFormat('Y-m-d', '2019-11-01');

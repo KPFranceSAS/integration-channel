@@ -8,10 +8,8 @@ use App\Service\Amazon\Report\AmzApiImport;
 use DateInterval;
 use DateTime;
 
-
 class AmzApiImportReimbursement extends AmzApiImport
 {
-
     protected function createReport(?DateTime $dateTimeStart = null)
     {
         if (!$dateTimeStart) {

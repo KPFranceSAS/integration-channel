@@ -8,10 +8,8 @@ use App\Service\Amazon\Report\AmzApiImport;
 use DateInterval;
 use DateTime;
 
-
 class AmzApiImportOrder extends AmzApiImport
 {
-
     protected function createReport(?DateTime $dateTimeStart = null)
     {
         if (!$dateTimeStart) {
@@ -20,9 +18,6 @@ class AmzApiImportOrder extends AmzApiImport
         }
         return $this->amzApi->createReport($dateTimeStart, AmzApi::TYPE_REPORT_LAST_UPDATE_ORDERS);
     }
-
-
-
 
     protected function getLastReportContent()
     {

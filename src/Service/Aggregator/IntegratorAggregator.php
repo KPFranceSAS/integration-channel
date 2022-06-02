@@ -7,7 +7,7 @@ use App\Helper\Utils\Aggregator;
 
 class IntegratorAggregator extends Aggregator
 {
-    public  function getIntegrator(string $channel): IntegratorParent
+    public function getIntegrator(string $channel): IntegratorParent
     {
         return $this->getService($channel);
     }
