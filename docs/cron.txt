@@ -1,16 +1,20 @@
-####### INTEGRATION #######
+###### INTEGRATION #######
 
 #### BUILD REPORT ####
 30 */3 * * * php /home/prod/integration/bin/console app:amz-full-maj-report-updates -vvv --env=prod
-40 */1 * * * php /home/prod/integration/bin/console app:amz-check-invoiced -vvv --env=prod
-40 22 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
-40 11 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
+*/20 * * * * php /home/prod/integration/bin/console app:amz-check-invoiced -vvv --env=prod
+0 8 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
+0 13 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
+0 19 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
+0 2 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
+
+30 * * * * php /home/prod/integration/bin/console app:amz-import-stock -vvv --env=prod
 
 
 #### CHANNELAVISOR ####
 # Get orders and integrate orders
 5 * * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR -vvv --env=prod
-#35 * * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR -vvv --env=prod
+
 
 # Integrate invoice and upload invoice
 15 5 * * * php /home/prod/integration/bin/console app:integrate-invoices-from CHANNELADVISOR -vvv --env=prod
@@ -39,7 +43,6 @@
 
 # Send stoc levels
 15 * * * * php /home/prod/integration/bin/console app:update-stocks-to ALIEXPRESS --env=prod
-#45 * * * * php /home/prod/integration/bin/console app:update-stocks-to ALIEXPRESS --env=prod
 
 #### FITBITEXPRESS ####
 # Get orders and integrate orders
@@ -58,12 +61,10 @@
 
 # Send stoc levels
 25 * * * * php /home/prod/integration/bin/console app:update-stocks-to FITBITEXPRESS --env=prod
-#55 * * * * php /home/prod/integration/bin/console app:update-stocks-to FITBITEXPRESS --env=prod
 
 #### OWLETCARE ####
 # Maj stock
 10 * * * * php /home/prod/integration/bin/console app:update-stocks-to OWLETCARE --env=prod
-40 * * * * php /home/prod/integration/bin/console app:update-stocks-to OWLETCARE --env=prod
 
 # Get orders and integrate orders
 48 * * * * php /home/prod/integration/bin/console app:integrate-orders-from OWLETCARE -vvv --env=prod
@@ -71,6 +72,23 @@
 # Integrate invoice and send tracking
 22 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from OWLETCARE -vvv --env=prod
 
+#### FLASHLED ####
+# Maj stock
+12 * * * * php /home/prod/integration/bin/console app:update-stocks-to FLASHLED --env=prod
+# Get orders and integrate orders
+50 * * * * php /home/prod/integration/bin/console app:integrate-orders-from FLASHLED -vvv --env=prod
+# Integrate invoice and send tracking
+23 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from FLASHLED -vvv --env=prod
+
+
+
+#### MINIBATT ####
+# Maj stock
+14 * * * * php /home/prod/integration/bin/console app:update-stocks-to MINIBATT --env=prod
+# Get orders and integrate orders
+49 * * * * php /home/prod/integration/bin/console app:integrate-orders-from MINIBATT -vvv --env=prod
+# Integrate invoice and send tracking
+23 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from MINIBATT -vvv --env=prod
+
 
 ####### END INTEGRATION #######
-
