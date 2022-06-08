@@ -7,6 +7,7 @@ use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\Amazon\AmzApi;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\MailService;
 use DateInterval;
 use DateTime;
@@ -16,16 +17,28 @@ use Psr\Log\LoggerInterface;
 
 class AmzApiImportProduct
 {
+    private $logger;
+
+    private $amzApi;
+
+    private $manager;
+
+    private $mailer;
+    
+    private $businessCentralAggregator;
+
     public function __construct(
         LoggerInterface $logger,
         AmzApi $amzApi,
         ManagerRegistry $manager,
-        MailService $mailer
+        MailService $mailer,
+        BusinessCentralAggregator $businessCentralAggregator
     ) {
         $this->logger = $logger;
         $this->amzApi = $amzApi;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
+        $this->businessCentralAggregator = $businessCentralAggregator;
     }
 
     public const WAITING_TIME = 20;
