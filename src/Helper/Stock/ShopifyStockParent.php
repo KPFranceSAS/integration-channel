@@ -20,9 +20,17 @@ abstract class ShopifyStockParent extends StockParent
         $inventoLevelies = $this->getShopifyApi()->getAllInventoryLevelsFromProduct();
         foreach ($inventoLevelies as $inventoLeveli) {
             $sku = $inventoLeveli['sku'];
-            $stockLevel = $this->getStockProductWarehouse($sku);
-            $this->logger->info('Update modified ' . $sku  . ' >>> ' . $stockLevel);
-            $this->getShopifyApi()->setInventoryLevel($mainLocation['id'], $inventoLeveli['inventory_item_id'], $stockLevel);
+            if ($this->isNotBundle($sku)) {
+                $stockLevel = $this->getStockProductWarehouse($sku);
+                $this->logger->info('Update modified ' . $sku  . ' >>> ' . $stockLevel);
+                $this->getShopifyApi()->setInventoryLevel(
+                    $mainLocation['id'],
+                    $inventoLeveli['inventory_item_id'],
+                    $stockLevel
+                );
+            } else {
+                $this->logger->info('Bundle ' . $sku  . ' no modification');
+            }
         }
     }
 }

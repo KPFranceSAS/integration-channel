@@ -10,6 +10,7 @@ use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\BusinessCentral\ProductStockFinder;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
+use function Symfony\Component\String\u;
 use Psr\Log\LoggerInterface;
 
 abstract class StockParent
@@ -84,7 +85,15 @@ abstract class StockParent
     protected function getProductCorrelationSku(string $sku): string
     {
         $skuSanitized = strtoupper($sku);
-        $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
+        $productCorrelation = $this->manager
+                                ->getRepository(ProductCorrelation::class)
+                                ->findOneBy(['skuUsed' => $skuSanitized]);
         return $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
+    }
+
+    
+    protected function isNotBundle(string $sku): bool
+    {
+        return u($sku)->containsAny('-PCK-') ? false : true;
     }
 }

@@ -14,7 +14,10 @@ class ProductTaxFinderTest extends KernelTestCase
         $productTaxFinder = static::getContainer()->get(ProductTaxFinder::class);
         $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);
         $product = $bcConnector->getItemByNumber("X-MZB08KWEU");
-        $canonDigital = $productTaxFinder->getCanonDigitalForItem($product['id'], BusinessCentralConnector::GADGET_IBERIA);
+        $canonDigital = $productTaxFinder->getCanonDigitalForItem(
+            $product['id'],
+            BusinessCentralConnector::GADGET_IBERIA
+        );
         $this->assertGreaterThan(0, $canonDigital, 'Canon digital defined');
     }
 
@@ -24,7 +27,10 @@ class ProductTaxFinderTest extends KernelTestCase
         $productTaxFinder = static::getContainer()->get(ProductTaxFinder::class);
         $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);
         $product = $bcConnector->getItemByNumber("PX-P3D2044");
-        $canonDigital = $productTaxFinder->getCanonDigitalForItem($product['id'], BusinessCentralConnector::GADGET_IBERIA);
+        $canonDigital = $productTaxFinder->getCanonDigitalForItem(
+            $product['id'],
+            BusinessCentralConnector::GADGET_IBERIA
+        );
         $this->assertEquals(0, $canonDigital, 'Canon digital not defined');
     }
 }

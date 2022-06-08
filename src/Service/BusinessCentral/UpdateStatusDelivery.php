@@ -2,7 +2,7 @@
 
 namespace App\Service\BusinessCentral;
 
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Service\BusinessCentral\BusinessCentralAggregator;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;

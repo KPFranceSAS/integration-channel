@@ -18,8 +18,7 @@ class BusinessCentralAggregator
         KpFranceConnector $kpFranceConnector,
         GadgetIberiaConnector $gadgetIberiaConnector,
         KitPersonalizacionSportConnector $kitPersonalizacionSportConnector
-    )
-    {
+    ) {
         $this->kpFranceConnector = $kpFranceConnector;
         $this->gadgetIberiaConnector = $gadgetIberiaConnector;
         $this->kitPersonalizacionSportConnector = $kitPersonalizacionSportConnector;
