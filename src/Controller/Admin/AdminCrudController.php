@@ -102,8 +102,6 @@ abstract class AdminCrudController extends AbstractCrudController
         $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
         $pageSize = 500;
         $currentPage = 1;
-
-        $->clear();
         
         do {
             $firstResult = ($currentPage - 1) * $pageSize;
