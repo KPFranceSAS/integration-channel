@@ -2,59 +2,110 @@
 
 namespace App\Service\Amazon\Report;
 
+use AmazonPHP\SellingPartner\Marketplace;
 use App\Entity\Product;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\Amazon\AmzApi;
-use App\Service\Amazon\Report\AmzApiImport;
+use App\Service\MailService;
 use DateInterval;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
+use Psr\Log\LoggerInterface;
 
-class AmzApiImportProduct extends AmzApiImport
+class AmzApiImportProduct
 {
-    public function createReportAndImport(?DateTime $dateTimeStart = null)
+    public function __construct(
+        LoggerInterface $logger,
+        AmzApi $amzApi,
+        ManagerRegistry $manager,
+        MailService $mailer
+    ) {
+        $this->logger = $logger;
+        $this->amzApi = $amzApi;
+        $this->manager = $manager->getManager();
+        $this->mailer = $mailer;
+    }
+
+    public const WAITING_TIME = 20;
+
+
+    public function updateProducts()
     {
-        $this->errorProducts = [];
-
         try {
-            $createdSince = new DateTime('now');
-            $createdSince->sub(new DateInterval('PT2H'));
-            $marketplaces = $this->amzApi->getAllMarketplaces();
-            $reports = $this->amzApi->getAllReports(
-                [AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED],
-                [AmzApi::STATUS_REPORT_DONE],
-                $createdSince
-            );
-
-            foreach ($marketplaces as $marketplace) {
-                foreach ($reports as $report) {
-                    if (in_array($marketplace, $report->getMarketplaceIds())) {
-                        $datasReport = $this->amzApi->getContentReport($report->getReportDocumentId());
-                        $this->importDatas($datasReport);
-                        break;
-                    }
+            $this->errorProducts = [];
+            $datas = $this->getContentFromReports();
+            foreach ($datas as $marketplace => $dataMarketplace) {
+                foreach ($dataMarketplace as $data) {
+                    $this->upsertData($data);
                 }
             }
 
             if (count($this->errorProducts) > 0) {
                 $message =  implode('<br/>', $this->errorProducts);
-                $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", $message);
+                $this->mailer->sendEmail("[REPORT AMAZON Product ]", $message);
             }
         } catch (Exception $e) {
-            $this->mailer->sendEmail("[REPORT AMAZON " . $this->getName() . "]", $e->getMessage());
+            $this->mailer->sendEmail("[REPORT AMAZON Product ]", $e->getMessage());
         }
     }
 
 
 
-    protected function createReport(?DateTime $dateTimeStart = null)
+
+    protected function getContentFromReports()
     {
+        $dateTimeStart = new DateTime('now');
+        $dateTimeStart->sub(new DateInterval('PT6H'));
+        $datas = [];
+
+        $marketplaces = [
+            Marketplace::ES()->id(),
+            Marketplace::GB()->id(),
+        ];
+        foreach ($marketplaces as $marketplace) {
+            $datasReport =  $this->getContentFromReportMarketplace($dateTimeStart, $marketplace);
+            $this->logger->info("Data marketplace $marketplace >>>>" . count($datasReport));
+            $datas[$marketplace] = $datasReport;
+        }
+
+        return $datas;
     }
 
-    protected function getLastReportContent()
+
+    public function getContentFromReportMarketplace($dateTimeStart, $marketplace)
     {
-        return $this->amzApi->getContentLastReport(AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED);
+        $report = $this->amzApi->createReport(
+            $dateTimeStart,
+            AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED,
+            [$marketplace]
+        );
+        for ($i = 0; $i < 30; $i++) {
+            $j = ($i + 1) * self::WAITING_TIME;
+            $this->logger->info("Wait  since $j seconds  reporting is done");
+            sleep(self::WAITING_TIME);
+            $errors = [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL];
+            $reportState = $this->amzApi->getReport($report->getReportId());
+            if ($reportState->getPayload()->getProcessingStatus() == AmzApi::STATUS_REPORT_DONE) {
+                $this->logger->info('Report processing done');
+                return $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
+            } elseif (in_array($reportState->getPayload()->getProcessingStatus(), $errors)) {
+                return  $this->amzApi->getContentLastReport(
+                    AmzApi::TYPE_REPORT_MANAGE_INVENTORY,
+                    $dateTimeStart,
+                    [$marketplace]
+                );
+                $this->logger->info('Get last');
+                continue;
+            } else {
+                $this->logger->info('Report processing not yet');
+            }
+        }
+        return [];
     }
+
+
+
 
     protected function upsertData(array $importOrder)
     {
@@ -86,9 +137,20 @@ class AmzApiImportProduct extends AmzApiImport
                 $product->setFnsku($importOrder['fnsku']);
                 $product->setSku($sku);
                 $this->manager->persist($product);
+                $this->manager->flush();
             } else {
                 $this->errorProducts[] = 'Product ' . $sku . ' not found in Business central';
             }
         }
+    }
+
+
+    protected function getProductCorrelationSku(string $sku): string
+    {
+        $skuSanitized = strtoupper($sku);
+        $productCorrelation = $this->manager
+                                ->getRepository(ProductCorrelation::class)
+                                ->findOneBy(['skuUsed' => $skuSanitized]);
+        return $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
     }
 }

@@ -11,7 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ImportProductCommand extends Command
 {
-    protected static $defaultName = 'app:amz-import-products-inventory';
+    protected static $defaultName = 'app:amz-import-products-from-inventory';
     protected static $defaultDescription = 'Import products inventory';
 
     public function __construct(AmzApiImportProduct $amzApiImportProduct)
@@ -25,7 +25,7 @@ class ImportProductCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->amzApiImportProduct->createReportAndImport();
+        $this->amzApiImportProduct->updateProducts();
         return Command::SUCCESS;
     }
 }

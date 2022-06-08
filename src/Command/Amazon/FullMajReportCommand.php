@@ -2,7 +2,6 @@
 
 namespace App\Command\Amazon;
 
-
 use App\Service\Amazon\Report\AmzApiImportOrder;
 use App\Service\Amazon\Report\AmzApiImportProduct;
 use App\Service\Amazon\Report\AmzApiImportReimbursement;
@@ -51,7 +50,7 @@ class FullMajReportCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->amzApiImportProduct->createReportAndImport();
+        $this->amzApiImportProduct->updateProducts();
         $this->amzApiImportRemovalOrder->createReportAndImport();
         $this->amzApiImportOrder->createReportAndImport();
         $this->amzApiImportReturn->createReportAndImport();
