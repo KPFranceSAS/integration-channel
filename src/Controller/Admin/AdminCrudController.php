@@ -107,55 +107,36 @@ abstract class AdminCrudController extends AbstractCrudController
         $emConfig = $manager->getConnection()->getConfiguration();
         $emConfig->setSQLLogger(null);
 
-        $query = $queryBuilder
-                 ->setFirstResult(0)
-                 ->setMaxResults(null)
-                 ->getQuery();
-
-        foreach ($query->toIterable() as $element) {
-            $entityDto = $context->getEntity()->newWithInstance($element);
-
-            $fieldFactory->processFields($entityDto, $fields);
-            $this->addDataToWriter($writer, $entityDto);
-            $manager->detach($element);
-            ++$currentPage;
-            if (($currentPage % $pageSize) === 0) {
-                $manager->clear();
-            }
-        }
-
-
-        /*
+        
         do {
-           $firstResult = ($currentPage - 1) * $pageSize;
-           $query = $queryBuilder
+            $firstResult = ($currentPage - 1) * $pageSize;
+            $query = $queryBuilder
                ->setFirstResult($firstResult)
                ->setMaxResults($pageSize)
                ->getQuery();
 
-           $paginator = new Paginator($query);
-           $logger->info('$firstResult :' . $firstResult);
-           if (($firstResult + $pageSize) < $paginator->count()) {
-               $currentPage++;
-           } else {
-               $currentPage = 0;
-           }
+            $paginator = new Paginator($query);
+            $logger->info('$firstResult :' . $firstResult);
+            if (($firstResult + $pageSize) < $paginator->count()) {
+                $currentPage++;
+            } else {
+                $currentPage = 0;
+            }
+            $entities = $entityFactory->createCollection($context->getEntity(), $paginator->getIterator());
+            $entityFactory->processFieldsForAll($entities, $fields);
 
-
-
-
-
-           $entities = $entityFactory->createCollection($context->getEntity(), $paginator->getIterator());
-           $entityFactory->processFieldsForAll($entities, $fields);
-
-           $entitiesArray = $entities->getIterator();
-           foreach ($entitiesArray as $entityArray) {
-               $this->addDataToWriter($writer, $entityArray);
-               $manager->detach($entityArray->getInstance());
-           }
-           $manager->clear();
+            $entitiesArray = $entities->getIterator();
+            foreach ($entitiesArray as $entityArray) {
+                $this->addDataToWriter($writer, $entityArray);
+                $manager->detach($entityArray->getInstance());
+            }
+            $manager->clear();
+            $iterator = $paginator->getIterator();
+            unset($entitiesArray);
+            unset($iterator);
+            unset($entities);
         } while ($currentPage != 0);
-       */
+       
         $writer->close();
         $logger->info('Finish ');
 
@@ -165,9 +146,6 @@ abstract class AdminCrudController extends AbstractCrudController
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
             $fileName
         );
-
-        
-
         return $response;
     }
 
