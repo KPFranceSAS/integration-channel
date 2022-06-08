@@ -85,11 +85,86 @@ abstract class AdminCrudController extends AbstractCrudController
     }
 
 
+
     public function export(
         FilterFactory $filterFactory,
         AdminContext $context,
         EntityFactory $entityFactory,
-        FieldFactory $fieldFactory,
+        ParameterBagInterface $params,
+        LoggerInterface $logger
+    ) {
+        $directory = $params->get('kernel.project_dir') . '/var/export/';
+        $fileName = u('Export_' . $this->getName() . '_' . date('Ymd_His'))->snake() . '.csv';
+        $fields = $this->getFieldsExport();
+        $writer = $this->createWriter($fields, $directory . $fileName);
+
+        $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
+        $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
+        $pageSize = 1000;
+        $currentPage = 1;
+        $query = $queryBuilder
+            ->setFirstResult(0)
+            ->setMaxResults(null)
+            ->getQuery();
+
+        $batchs = [];
+        foreach ($query->toIterable() as $element) {
+            $batchs[] = $element;
+            $currentPage++;
+            if (($currentPage % $pageSize) === 0) {
+                $logger->info("Exported  $currentPage ");
+                $entities = $entityFactory->createCollection($context->getEntity(), $batchs);
+                $entityFactory->processFieldsForAll($entities, $fields);
+
+                foreach ($entities->getIterator() as $entityArray) {
+                    $this->addDataToWriter($writer, $entityArray);
+                }
+                foreach ($batchs as $batch) {
+                    $this->container->get('doctrine')->getManager()->detach($batch);
+                }
+                unset($batchs);
+                unset($entities);
+                $batchs = [];
+                $this->container->get('doctrine')->getManager()->clear();
+            }
+        }
+
+        $logger->info("Exported  $currentPage ");
+        $entities = $entityFactory->createCollection($context->getEntity(), $batchs);
+        $entityFactory->processFieldsForAll($entities, $fields);
+
+        foreach ($entities->getIterator() as $entityArray) {
+            $this->addDataToWriter($writer, $entityArray);
+        }
+        foreach ($batchs as $batch) {
+            $this->container->get('doctrine')->getManager()->detach($batch);
+        }
+        unset($batchs);
+        unset($entities);
+        $this->container->get('doctrine')->getManager()->clear();
+        $writer->close();
+        $logger->info('Finish ');
+
+        $response = new BinaryFileResponse($directory . $fileName);
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $fileName
+        );
+        return $response;
+    }
+
+
+
+    protected function processesBatch(array $batch, Writer $writer)
+    {
+    }
+
+
+    /*public function export(
+        FilterFactory $filterFactory,
+        AdminContext $context,
+        EntityFactory $entityFactory,
         ParameterBagInterface $params,
         LoggerInterface $logger
     ) {
@@ -102,7 +177,7 @@ abstract class AdminCrudController extends AbstractCrudController
         $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
         $pageSize = 500;
         $currentPage = 1;
-        
+
         do {
             $firstResult = ($currentPage - 1) * $pageSize;
             $query = $queryBuilder
@@ -124,10 +199,10 @@ abstract class AdminCrudController extends AbstractCrudController
             foreach ($entitiesArray as $entityArray) {
                 $this->addDataToWriter($writer, $entityArray);
             }
-            
+
             $this->container->get('doctrine')->getManager()->clear();
         } while ($currentPage != 0);
-       
+
         $writer->close();
         $logger->info('Finish ');
 
@@ -138,7 +213,7 @@ abstract class AdminCrudController extends AbstractCrudController
             $fileName
         );
         return $response;
-    }
+    }*/
 
 
     protected function addDataToWriter(Writer $writer, EntityDto $entity)
