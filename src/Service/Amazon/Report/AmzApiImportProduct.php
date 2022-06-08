@@ -4,6 +4,7 @@ namespace App\Service\Amazon\Report;
 
 use AmazonPHP\SellingPartner\Marketplace;
 use App\Entity\Product;
+use App\Entity\ProductCorrelation;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\Amazon\AmzApi;
 use App\Service\MailService;
