@@ -15,10 +15,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use function Symfony\Component\String\u;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 abstract class AdminCrudController extends AbstractCrudController
 {
@@ -79,75 +82,75 @@ abstract class AdminCrudController extends AbstractCrudController
     public function export(FilterFactory $filterFactory, AdminContext $context, EntityFactory $entityFactory)
     {
         $fields = $this->getFieldsExport();
-        $h = fopen('php://output', 'r');
-        $writer = $this->createWriter($fields);
+        $entityRepository = $this->container->get(EntityRepository::class);
 
-        $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
-        $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
+        $response = new StreamedResponse(function () use ($fields, $filterFactory, $context, $entityFactory, $entityRepository) {
+            $csv = fopen('php://output', 'w+');
 
-        $pageSize = 200;
-        $currentPage = 1;
-
-        do {
-            $firstResult = ($currentPage - 1) * $pageSize;
-            $query = $queryBuilder
-                ->setFirstResult($firstResult)
-                ->setMaxResults($pageSize)
-                ->getQuery();
-
-            $paginator = new Paginator($query);
-
-            if (($firstResult + $pageSize) < $paginator->count()) {
-                $currentPage++;
-            } else {
-                $currentPage = 0;
+            $cellHeaders = [];
+            foreach ($fields as $field) {
+                $label = strlen($field->getLabel()) > 0
+                        ? $field->getLabel()
+                        : StringUtils::humanizeString($field->getProperty());
+                $cellHeaders[] = $label;
             }
+            fputcsv($csv, $cellHeaders);
 
-            $entities = $entityFactory->createCollection($context->getEntity(), $paginator->getIterator());
-            $entityFactory->processFieldsForAll($entities, $fields);
+            $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
+            $queryBuilder = $entityRepository->createQueryBuilder(
+                $context->getSearch(),
+                $context->getEntity(),
+                $fields,
+                $filters
+            );
 
-            $entitiesArray = $entities->getIterator();
-            foreach ($entitiesArray as $entityArray) {
-                $this->addDataToWriter($writer, $entityArray);
-            }
-            $this->container->get('doctrine')->getManager()->clear();
-        } while ($currentPage != 0);
+            $pageSize = 200;
+            $currentPage = 1;
 
-        $writer->close();
-        return new Response(stream_get_contents($h));
-    }
+            do {
+                $firstResult = ($currentPage - 1) * $pageSize;
+                $query = $queryBuilder
+                    ->setFirstResult($firstResult)
+                    ->setMaxResults($pageSize)
+                    ->getQuery();
 
+                $paginator = new Paginator($query);
 
-    protected function addDataToWriter(Writer $writer, EntityDto $entity)
-    {
-        $fieldsEntity = $entity->getFields();
-        $cellDatas = [];
-        foreach ($fieldsEntity as $fieldEntity) {
-            $cellDatas[] = WriterEntityFactory::createCell($fieldEntity->getFormattedValue());
-        }
-        $singleRowData = WriterEntityFactory::createRow($cellDatas);
-        $writer->addRow($singleRowData);
-    }
+                if (($firstResult + $pageSize) < $paginator->count()) {
+                    $currentPage++;
+                } else {
+                    $currentPage = 0;
+                }
 
+                $entities = $entityFactory->createCollection($context->getEntity(), $paginator->getIterator());
+                $entityFactory->processFieldsForAll($entities, $fields);
 
+                $entitiesArray = $entities->getIterator();
+                foreach ($entitiesArray as $entityArray) {
+                    $fieldsEntity = $entityArray->getFields();
+                    $cellDatas = [];
+                    foreach ($fieldsEntity as $fieldEntity) {
+                        $cellDatas[] = $fieldEntity->getFormattedValue();
+                    }
+                    fputcsv($csv, $cellDatas);
+                    $this->container->get('doctrine')->getManager()->detach($entityArray);
+                }
+                $this->container->get('doctrine')->getManager()->clear();
+            } while ($currentPage != 0);
+                
 
-    protected function createWriter(FieldCollection $fields): Writer
-    {
-        $writer = WriterEntityFactory::createCSVWriter();
+            fclose($csv);
+        });
         $fileName = u('Export ' . $this->getName() . ' ' . date('Ymd His'))->snake() . '.csv';
-        $writer->openToBrowser($fileName);
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+        $response->headers->set('Cache-Control', 'no-store');
 
-        $cellHeaders = [];
-        foreach ($fields as $field) {
-            $label = strlen($field->getLabel()) > 0
-                ? $field->getLabel()
-                : StringUtils::humanizeString($field->getProperty());
-            $cellHeaders[] = WriterEntityFactory::createCell($label);
-        }
-        $singleRow = WriterEntityFactory::createRow($cellHeaders);
-        $writer->addRow($singleRow);
-        return $writer;
+        return $response;
     }
+
+
+   
 
 
 

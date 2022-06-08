@@ -17,9 +17,6 @@
     "aws/aws-sdk-php": {
         "version": "3.184.6"
     },
-    "box/spout": {
-        "version": "v3.3.0"
-    },
     "brick/math": {
         "version": "0.9.3"
     },
