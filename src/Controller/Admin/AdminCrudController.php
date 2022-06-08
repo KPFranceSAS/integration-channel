@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Factory\FieldFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use function Symfony\Component\String\u;
@@ -88,6 +89,7 @@ abstract class AdminCrudController extends AbstractCrudController
         FilterFactory $filterFactory,
         AdminContext $context,
         EntityFactory $entityFactory,
+        FieldFactory $fieldFactory,
         ParameterBagInterface $params,
         LoggerInterface $logger
     ) {
@@ -104,31 +106,56 @@ abstract class AdminCrudController extends AbstractCrudController
         $manager = $this->container->get('doctrine')->getManager();
         $emConfig = $manager->getConnection()->getConfiguration();
         $emConfig->setSQLLogger(null);
+
+        $query = $queryBuilder
+                 ->setFirstResult(0)
+                 ->setMaxResults(null)
+                 ->getQuery();
+
+        foreach ($query->toIterable() as $element) {
+            $entityDto = $context->getEntity()->newWithInstance($element);
+
+            $fieldFactory->processFields($entityDto, $fields);
+            $this->addDataToWriter($writer, $entityDto);
+            $manager->detach($element);
+            ++$currentPage;
+            if (($currentPage % $pageSize) === 0) {
+                $manager->clear();
+            }
+        }
+
+
+        /*
         do {
-            $firstResult = ($currentPage - 1) * $pageSize;
-            $query = $queryBuilder
-                ->setFirstResult($firstResult)
-                ->setMaxResults($pageSize)
-                ->getQuery();
+           $firstResult = ($currentPage - 1) * $pageSize;
+           $query = $queryBuilder
+               ->setFirstResult($firstResult)
+               ->setMaxResults($pageSize)
+               ->getQuery();
 
-            $paginator = new Paginator($query);
-            $logger->info('$firstResult :' . $firstResult);
-            if (($firstResult + $pageSize) < $paginator->count()) {
-                $currentPage++;
-            } else {
-                $currentPage = 0;
-            }
+           $paginator = new Paginator($query);
+           $logger->info('$firstResult :' . $firstResult);
+           if (($firstResult + $pageSize) < $paginator->count()) {
+               $currentPage++;
+           } else {
+               $currentPage = 0;
+           }
 
-            $entities = $entityFactory->createCollection($context->getEntity(), $paginator->getIterator());
-            $entityFactory->processFieldsForAll($entities, $fields);
 
-            $entitiesArray = $entities->getIterator();
-            foreach ($entitiesArray as $entityArray) {
-                $this->addDataToWriter($writer, $entityArray);
-                $manager->detach($entityArray);
-            }
-            $manager->clear(WebOrder::class);
+
+
+
+           $entities = $entityFactory->createCollection($context->getEntity(), $paginator->getIterator());
+           $entityFactory->processFieldsForAll($entities, $fields);
+
+           $entitiesArray = $entities->getIterator();
+           foreach ($entitiesArray as $entityArray) {
+               $this->addDataToWriter($writer, $entityArray);
+               $manager->detach($entityArray->getInstance());
+           }
+           $manager->clear();
         } while ($currentPage != 0);
+       */
         $writer->close();
         $logger->info('Finish ');
 
