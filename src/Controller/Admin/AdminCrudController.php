@@ -94,7 +94,7 @@ abstract class AdminCrudController extends AbstractCrudController
         LoggerInterface $logger
     ) {
         $directory = $params->get('kernel.project_dir') . '/var/export/';
-        $fileName = u('Export ' . $this->getName() . ' ' . date('Ymd His'))->snake() . '.csv';
+        $fileName = u('Export_' . $this->getName() . '_' . date('Ymd_His'))->snake() . '.csv';
         $fields = $this->getFieldsExport();
         $writer = $this->createWriter($fields, $directory . $fileName);
 
@@ -103,10 +103,7 @@ abstract class AdminCrudController extends AbstractCrudController
         $pageSize = 500;
         $currentPage = 1;
 
-        $manager = $this->container->get('doctrine')->getManager();
-        $emConfig = $manager->getConnection()->getConfiguration();
-        $emConfig->setSQLLogger(null);
-
+        $->clear();
         
         do {
             $firstResult = ($currentPage - 1) * $pageSize;
@@ -128,13 +125,9 @@ abstract class AdminCrudController extends AbstractCrudController
             $entitiesArray = $entities->getIterator();
             foreach ($entitiesArray as $entityArray) {
                 $this->addDataToWriter($writer, $entityArray);
-                $manager->detach($entityArray->getInstance());
             }
-            $manager->clear();
-            $iterator = $paginator->getIterator();
-            unset($entitiesArray);
-            unset($iterator);
-            unset($entities);
+            
+            $this->container->get('doctrine')->getManager()->clear();
         } while ($currentPage != 0);
        
         $writer->close();
