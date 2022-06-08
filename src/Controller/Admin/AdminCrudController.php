@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\WebOrder;
 use App\Helper\Utils\StringUtils;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\CSV\Writer;
@@ -15,12 +16,16 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use function Symfony\Component\String\u;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
+
+use Psr\Log\LoggerInterface;
 use ReflectionClass;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 abstract class AdminCrudController extends AbstractCrudController
@@ -79,78 +84,95 @@ abstract class AdminCrudController extends AbstractCrudController
     }
 
 
-    public function export(FilterFactory $filterFactory, AdminContext $context, EntityFactory $entityFactory)
-    {
-        $fields = $this->getFieldsExport();
-        $entityRepository = $this->container->get(EntityRepository::class);
-
-        $response = new StreamedResponse(function () use ($fields, $filterFactory, $context, $entityFactory, $entityRepository) {
-            $csv = fopen('php://output', 'w+');
-
-            $cellHeaders = [];
-            foreach ($fields as $field) {
-                $label = strlen($field->getLabel()) > 0
-                        ? $field->getLabel()
-                        : StringUtils::humanizeString($field->getProperty());
-                $cellHeaders[] = $label;
-            }
-            fputcsv($csv, $cellHeaders);
-
-            $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
-            $queryBuilder = $entityRepository->createQueryBuilder(
-                $context->getSearch(),
-                $context->getEntity(),
-                $fields,
-                $filters
-            );
-
-            $pageSize = 200;
-            $currentPage = 1;
-
-            do {
-                $firstResult = ($currentPage - 1) * $pageSize;
-                $query = $queryBuilder
-                    ->setFirstResult($firstResult)
-                    ->setMaxResults($pageSize)
-                    ->getQuery();
-
-                $paginator = new Paginator($query);
-
-                if (($firstResult + $pageSize) < $paginator->count()) {
-                    $currentPage++;
-                } else {
-                    $currentPage = 0;
-                }
-
-                $entities = $entityFactory->createCollection($context->getEntity(), $paginator->getIterator());
-                $entityFactory->processFieldsForAll($entities, $fields);
-
-                $entitiesArray = $entities->getIterator();
-                foreach ($entitiesArray as $entityArray) {
-                    $fieldsEntity = $entityArray->getFields();
-                    $cellDatas = [];
-                    foreach ($fieldsEntity as $fieldEntity) {
-                        $cellDatas[] = $fieldEntity->getFormattedValue();
-                    }
-                    fputcsv($csv, $cellDatas);
-                    $this->container->get('doctrine')->getManager()->detach($entityArray);
-                }
-                $this->container->get('doctrine')->getManager()->clear();
-            } while ($currentPage != 0);
-                
-
-            fclose($csv);
-        });
+    public function export(
+        FilterFactory $filterFactory,
+        AdminContext $context,
+        EntityFactory $entityFactory,
+        ParameterBagInterface $params,
+        LoggerInterface $logger
+    ) {
+        $directory = $params->get('kernel.project_dir') . '/var/export/';
         $fileName = u('Export ' . $this->getName() . ' ' . date('Ymd His'))->snake() . '.csv';
-        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
-        $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
-        $response->headers->set('Cache-Control', 'no-store');
+        $fields = $this->getFieldsExport();
+        $writer = $this->createWriter($fields, $directory . $fileName);
+
+        $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
+        $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
+        $pageSize = 500;
+        $currentPage = 1;
+
+        $manager = $this->container->get('doctrine')->getManager();
+        $emConfig = $manager->getConnection()->getConfiguration();
+        $emConfig->setSQLLogger(null);
+        do {
+            $firstResult = ($currentPage - 1) * $pageSize;
+            $query = $queryBuilder
+                ->setFirstResult($firstResult)
+                ->setMaxResults($pageSize)
+                ->getQuery();
+
+            $paginator = new Paginator($query);
+            $logger->info('$firstResult :' . $firstResult);
+            if (($firstResult + $pageSize) < $paginator->count()) {
+                $currentPage++;
+            } else {
+                $currentPage = 0;
+            }
+
+            $entities = $entityFactory->createCollection($context->getEntity(), $paginator->getIterator());
+            $entityFactory->processFieldsForAll($entities, $fields);
+
+            $entitiesArray = $entities->getIterator();
+            foreach ($entitiesArray as $entityArray) {
+                $this->addDataToWriter($writer, $entityArray);
+                $manager->detach($entityArray);
+            }
+            $manager->clear(WebOrder::class);
+        } while ($currentPage != 0);
+        $writer->close();
+        $logger->info('Finish ');
+
+        $response = new BinaryFileResponse($directory . $fileName);
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $fileName
+        );
+
+        
 
         return $response;
     }
 
 
-   
+    protected function addDataToWriter(Writer $writer, EntityDto $entity)
+    {
+        $fieldsEntity = $entity->getFields();
+        $cellDatas = [];
+        foreach ($fieldsEntity as $fieldEntity) {
+            $cellDatas[] = WriterEntityFactory::createCell($fieldEntity->getFormattedValue());
+        }
+        $singleRowData = WriterEntityFactory::createRow($cellDatas);
+        $writer->addRow($singleRowData);
+    }
+
+
+
+    protected function createWriter(FieldCollection $fields, string $filePath): Writer
+    {
+        $writer = WriterEntityFactory::createCSVWriter();
+        $writer->openToFile($filePath);
+        $cellHeaders = [];
+        foreach ($fields as $field) {
+            $label = strlen($field->getLabel()) > 0
+                ? $field->getLabel()
+                : StringUtils::humanizeString($field->getProperty());
+            $cellHeaders[] = WriterEntityFactory::createCell($label);
+        }
+        $singleRow = WriterEntityFactory::createRow($cellHeaders);
+        $writer->addRow($singleRow);
+        return $writer;
+    }
 
 
 

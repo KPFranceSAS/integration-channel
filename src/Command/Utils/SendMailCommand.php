@@ -34,7 +34,11 @@ class SendMailCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->mailService->sendEmail($input->getArgument('title'), $input->getArgument('content'), $input->getArgument('emailAddress'));
+        $this->mailService->sendEmail(
+            $input->getArgument('title'),
+            $input->getArgument('content'),
+            $input->getArgument('emailAddress')
+        );
         return Command::SUCCESS;
     }
 }

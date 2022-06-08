@@ -7,8 +7,8 @@ use App\Controller\Admin\DashboardController;
 use App\Entity\WebOrder;
 use App\Form\ChangeStatusInvoiceType;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Service\Aggregator\IntegratorAggregator;
 use App\Helper\Utils\DatetimeUtils;
+use App\Service\Aggregator\IntegratorAggregator;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use DateInterval;
 use DateTime;
@@ -167,7 +167,6 @@ class WebOrderCrudController extends AdminCrudController
 
     protected function getFilterDelayDelivery()
     {
-
         $dateTime = DatetimeUtils::getDateOutOfDelayBusinessDaysFrom(30);
 
         return [
@@ -189,7 +188,6 @@ class WebOrderCrudController extends AdminCrudController
 
     protected function getFilterDelayNoDelivery()
     {
-
         $dateTime = DatetimeUtils::getDateOutOfDelay(24);
 
         return [
@@ -304,8 +302,11 @@ class WebOrderCrudController extends AdminCrudController
 
 
 
-    public function retryAllIntegrations(BatchActionDto $batchActionDto,  IntegratorAggregator $integratorAggregator, ManagerRegistry $managerRegistry)
-    {
+    public function retryAllIntegrations(
+        BatchActionDto $batchActionDto,
+        IntegratorAggregator $integratorAggregator,
+        ManagerRegistry $managerRegistry
+    ) {
         $entityManager = $managerRegistry->getManagerForClass($batchActionDto->getEntityFqcn());
         foreach ($batchActionDto->getEntityIds() as $id) {
             $webOrder = $entityManager->find($batchActionDto->getEntityFqcn(), $id);
@@ -325,8 +326,10 @@ class WebOrderCrudController extends AdminCrudController
     }
 
 
-    public function changeStatusToInvoiced(AdminContext $context, ManagerRegistry $managerRegistry)
-    {
+    public function changeStatusToInvoiced(
+        AdminContext $context,
+        ManagerRegistry $managerRegistry
+    ) {
         $webOrder = $context->getEntity()->getInstance();
         $form = $this->createForm(ChangeStatusInvoiceType::class, $webOrder);
         $form->handleRequest($context->getRequest());
@@ -350,8 +353,10 @@ class WebOrderCrudController extends AdminCrudController
 
 
 
-    public function retryIntegration(AdminContext $context, IntegratorAggregator $integratorAggregator)
-    {
+    public function retryIntegration(
+        AdminContext $context,
+        IntegratorAggregator $integratorAggregator
+    ) {
         $webOrder = $context->getEntity()->getInstance();
         $integrator = $integratorAggregator->getIntegrator($webOrder->getChannel());
         $integrator->reIntegrateOrder($webOrder);
@@ -366,11 +371,10 @@ class WebOrderCrudController extends AdminCrudController
 
     public function configureFields(string $pageName): iterable
     {
-
         $fields = [
-            TextField::new('externalNumber',  "External N°"),
+            TextField::new('externalNumber', "External N°"),
             TextField::new('channel', "Channel"),
-            TextField::new('subchannel',  "Marketplace"),
+            TextField::new('subchannel', "Marketplace"),
             TextField::new('company', "Company"),
             TextField::new('customerNumber', "Customer"),
             TextField::new('documentInErp', "Document N°"),
