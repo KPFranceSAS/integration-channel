@@ -105,7 +105,7 @@ class AmzApiImportProduct
                 return $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
             } elseif (in_array($reportState->getPayload()->getProcessingStatus(), $errors)) {
                 return  $this->amzApi->getContentLastReport(
-                    AmzApi::TYPE_REPORT_MANAGE_INVENTORY,
+                    AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED,
                     $dateTimeStart,
                     [$marketplace]
                 );
