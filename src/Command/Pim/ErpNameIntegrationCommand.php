@@ -2,6 +2,7 @@
 
 namespace App\Command\Pim;
 
+use Akeneo\Pim\ApiClient\Exception\UnprocessableEntityHttpException;
 use App\Service\BusinessCentral\KpFranceConnector;
 use App\Service\Pim\AkeneoConnector;
 use Symfony\Component\Console\Command\Command;
@@ -54,7 +55,18 @@ class ErpNameIntegrationCommand extends Command
 
                 if (count($updateValue['values']) > 0) {
                     $output->writeln('Update Product ' . $product['identifier']);
-                    $this->akeneoConnector->updateProduct($product['identifier'], $updateValue);
+
+
+                    try {
+                        $this->akeneoConnector->updateProduct($product['identifier'], $updateValue);
+                    } catch (UnprocessableEntityHttpException $e) {
+                        foreach ($e->getResponseErrors() as $error) {
+                            // do your stuff with the error
+                            $output->writeln("<error>" . $error['property']
+                                                . ':' . $error['message']
+                                                . ">>>" . json_encode($updateValue) . "</error>");
+                        }
+                    }
                 } else {
                     $output->writeln('Nothing Product ' . $product['identifier']);
                 }
