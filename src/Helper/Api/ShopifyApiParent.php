@@ -8,10 +8,8 @@ use Shopify\Auth\FileSessionStorage;
 use Shopify\Clients\Rest;
 use Shopify\Context;
 
-
 abstract class ShopifyApiParent implements ApiInterface
 {
-
     protected $client;
 
     protected $logger;
@@ -23,12 +21,26 @@ abstract class ShopifyApiParent implements ApiInterface
     abstract public function getChannel();
 
 
-    public function __construct(LoggerInterface $logger, $shopifyToken, $shopifyClientId, $shopifyClientSecret, $shopifyShopDomain, $shopifyVersion, $shopifyScopes)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        $shopifyToken,
+        $shopifyClientId,
+        $shopifyClientSecret,
+        $shopifyShopDomain,
+        $shopifyVersion,
+        $shopifyScopes
+    ) {
         $this->shopifyToken = $shopifyToken;
         $this->shopifyShopDomain = $shopifyShopDomain;
 
-        Context::initialize($shopifyClientId, $shopifyClientSecret, $shopifyScopes, $shopifyShopDomain, new FileSessionStorage('/tmp/php_sessions'), $shopifyVersion);
+        Context::initialize(
+            $shopifyClientId,
+            $shopifyClientSecret,
+            $shopifyScopes,
+            $shopifyShopDomain,
+            new FileSessionStorage('/tmp/php_sessions'),
+            $shopifyVersion
+        );
 
         $this->client = new Rest($this->shopifyShopDomain, $this->shopifyToken);
         $this->logger = $logger;
@@ -59,6 +71,18 @@ abstract class ShopifyApiParent implements ApiInterface
             ]
         );
     }
+
+
+    public function getOrder(string $orderNumber)
+    {
+        return $this->getPaginatedElements(
+            'orders',
+            [
+                "number" => $orderNumber,
+            ]
+        );
+    }
+    
 
 
     public function getAllProducts()
@@ -152,8 +176,13 @@ abstract class ShopifyApiParent implements ApiInterface
     }
 
 
-    public function markAsFulfilled(int $orderId, int $locationId, array $itemLineId, string $trackingNumber = null, string $trackingUrl = null)
-    {
+    public function markAsFulfilled(
+        int $orderId,
+        int $locationId,
+        array $itemLineId,
+        string $trackingNumber = null,
+        string $trackingUrl = null
+    ) {
         $params = [
             "location_id" =>  $locationId,
             "line_items" => $itemLineId

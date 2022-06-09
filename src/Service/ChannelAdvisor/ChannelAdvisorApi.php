@@ -4,13 +4,13 @@ namespace App\Service\ChannelAdvisor;
 
 use App\Entity\WebOrder;
 use App\Helper\Api\ApiInterface;
+use DateTime;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 use stdClass;
 
 class ChannelAdvisorApi implements ApiInterface
 {
-
     public function getChannel()
     {
         return WebOrder::CHANNEL_CHANNELADVISOR;
@@ -21,47 +21,18 @@ class ChannelAdvisorApi implements ApiInterface
 
     public const API_URL = 'https://api.channeladvisor.com/v1/';
 
-    /**
-     *
-     * @var string 
-     */
     protected $refreshToken;
 
-    /**
-     *
-     * @var string 
-     */
     protected $applicationId;
 
-    /**
-     *
-     * @var string 
-     */
     protected $sharedSecret;
 
-    /**
-     *
-     * @var string 
-     */
     protected $accessToken;
 
-
-    /**
-     * Delay to refresh token for channeladvisor
-     */
     public const TIME_TO_REFRESH_TOKEN = 30;
 
-
-    /**
-     *
-     * @var \DateTime 
-     */
     protected $dateInitialisationToken;
 
-    /**
-     *
-     * @var LoggerInterface
-     */
     protected $logger;
 
 
@@ -81,7 +52,10 @@ class ChannelAdvisorApi implements ApiInterface
         $client = new Client();
         $response = $client->request('POST', self::AUTH_URL, [
             'auth' => [$this->applicationId, $this->sharedSecret],
-            'form_params' => ['grant_type' => 'refresh_token', 'refresh_token' => $this->refreshToken]
+            'form_params' => [
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $this->refreshToken
+            ]
         ]);
         $body = json_decode($response->getBody());
         $this->accessToken = $body->access_token;
@@ -107,7 +81,7 @@ class ChannelAdvisorApi implements ApiInterface
      */
     private function checkIfTokenTooOld()
     {
-        $dateNow = new \DateTime();
+        $dateNow = new DateTime();
         $diffMin = abs($dateNow->getTimestamp() - $this->dateInitialisationToken->getTimestamp()) / 60;
         return $diffMin > self::TIME_TO_REFRESH_TOKEN;
     }
@@ -115,7 +89,7 @@ class ChannelAdvisorApi implements ApiInterface
 
 
     /**
-     * 
+     *
      * @param array $params
      * @return stdClass
      */
@@ -125,21 +99,15 @@ class ChannelAdvisorApi implements ApiInterface
     }
 
 
-
-    /**
-     * 
-     * @param array $params
-     * @return \stdClass
-     */
-    public function getOrder($orderId, $params = []): stdClass
+    public function getOrder(string $orderId)
     {
-        return $this->sendRequest('Orders(' . $orderId . ')', $params);
+        return $this->sendRequest('Orders(' . $orderId . ')');
     }
 
 
 
     /**
-     * 
+     *
      * @param string $link
      * @return stdClass
      */
@@ -163,33 +131,18 @@ class ChannelAdvisorApi implements ApiInterface
         return $this->getOrders($params);
     }
 
-    /**
-     * Send request to mark an order as exported
-     * @param int $orderId
-     * @return stdClass
-     */
+
     public function markOrderAsExported($orderId)
     {
         return $this->sendRequest('Orders(' . $orderId . ')/Export', [], 'POST');
     }
 
-    /**
-     * Send request to mark an order as non exported
-     * @param int $orderId
-     * @return stdClass
-     */
     public function markOrderAsNonExported($orderId)
     {
         return $this->sendRequest('Orders(' . $orderId . ')/Export', [], 'DELETE');
     }
 
 
-    /**
-     * Send a request to notify that a product was shipped
-     * @param integer $orderId
-     * @param stdClass $toSend
-     * @return stdClass
-     */
     public function notifyShipping($orderId, $toSend)
     {
         return $this->sendRequest('Orders(' . $orderId . ')/Ship', [], 'POST', $toSend);
@@ -197,17 +150,6 @@ class ChannelAdvisorApi implements ApiInterface
 
 
 
-    /**
-     * Undocumented function
-     *
-     * @param int $profileId
-     * @param int $orderId
-     * @param string $totalAmount
-     * @param string $totalVATAAmount
-     * @param string $invoiceNumber
-     * @param string $dataFile
-     * @return void
-     */
     public function sendInvoice($profileId, $orderId, $totalAmount, $totalVATAAmount, $invoiceNumber, $dataFile)
     {
         $params = [
@@ -221,20 +163,16 @@ class ChannelAdvisorApi implements ApiInterface
         return $this->sendDocuments($params, $dataFile);
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param int $profileId
-     * @param int $orderId
-     * @param int$adjustmentID
-     * @param string $totalAmount
-     * @param string $totalVATAAmount
-     * @param string $invoiceNumber
-     * @param string $dataFile
-     * @return void
-     */
-    public function sendCredit($profileId, $orderId, $adjustmentID, $totalAmount, $totalVATAAmount, $invoiceNumber, $dataFile)
-    {
+
+    public function sendCredit(
+        $profileId,
+        $orderId,
+        $adjustmentID,
+        $totalAmount,
+        $totalVATAAmount,
+        $invoiceNumber,
+        $dataFile
+    ) {
         $params = [
             'ProfileID' => $profileId,
             'OrderID' => $orderId,
@@ -248,13 +186,6 @@ class ChannelAdvisorApi implements ApiInterface
     }
 
 
-    /**
-     * Undocumented function
-     *
-     * @param [type] $queryParams
-     * @param [type] $dataFile
-     * @return void
-     */
     private function sendDocuments($queryParams, $dataFile)
     {
         $this->refreshAccessToken();
@@ -270,19 +201,10 @@ class ChannelAdvisorApi implements ApiInterface
     }
 
 
-
-
-    /**
-     * Send a request to force channeladvisor to porcces a refund 
-     * @param integer $orderLineId
-     * @param stdClass $toSend
-     * @return stdClass
-     */
     public function sendRefund($orderLineId, $toSend)
     {
         return $this->sendRequest('OrderItems(' . $orderLineId . ')/Adjust', [], 'POST', $toSend);
     }
-
 
 
     public function sendRequest($endPoint, $queryParams = [], $method = 'GET', $form = null)
@@ -300,9 +222,6 @@ class ChannelAdvisorApi implements ApiInterface
     }
 
 
-    /**
-     * fetch new order and asve in the database in order to be integrated in sage.
-     */
     public function getOrderByNumber($number, $profileId)
     {
         $params = [
@@ -318,25 +237,17 @@ class ChannelAdvisorApi implements ApiInterface
     }
 
 
-
-    /**
-     * get info from orders to fit channeladvisor one.
-     */
     public function getFullOrder($channelId)
     {
         $params = [
             '$expand' => 'Items($expand=Adjustments,Promotions, BundleComponents),Fulfillments($expand=Items),Adjustments'
         ];
-        return $this->getOrder($channelId, $params);
+        return $this->sendRequest('Orders(' . $channelId . ')', $params);
     }
 
 
-    /**
-     * get info from orders to fit channeladvisor one.
-     */
     public function getAllDocumentsOrder($orderId)
     {
-
         return $this->sendRequest('Orders(' . $orderId . ')/ChannelDocuments');
     }
 
@@ -350,11 +261,7 @@ class ChannelAdvisorApi implements ApiInterface
 
 
 
-    /**
-     * fetch new orders and return them in an array
-     * @return array
-     */
-    public function getAllNewOrders($notExported = true)
+    public function getAllNewOrders($notExported = true): array
     {
         $i = 1;
         $orderRetrieve = [];

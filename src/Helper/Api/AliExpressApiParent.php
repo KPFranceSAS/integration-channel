@@ -59,7 +59,7 @@ abstract class AliExpressApiParent implements ApiInterface
         return $this->getAllOrders($param0);
     }
 
-    const PAGINATION = 50;
+    public const PAGINATION = 50;
 
     /**
      * https://developers.aliexpress.com/en/doc.htm?docId=42270&docType=2
@@ -153,7 +153,7 @@ abstract class AliExpressApiParent implements ApiInterface
     /**
      * https://developers.aliexpress.com/en/doc.htm?docId=45140&docType=2
      */
-    public function updatePrice($productId, $productSku, $price, $discountPrice=null)
+    public function updatePrice($productId, $productSku, $price, $discountPrice = null)
     {
         $req = new AliexpressSolutionBatchProductPriceUpdateRequest();
         $mutipleProductUpdateList = new SynchronizeProductRequestDto();
@@ -168,7 +168,7 @@ abstract class AliExpressApiParent implements ApiInterface
         }
         $mutipleProductUpdateList->multiple_sku_update_list = $multipleSkuUpdateList;
         $req->setMutipleProductUpdateList(json_encode($mutipleProductUpdateList));
-        $this->logger->info('Update price ' . $productId . ' / SKU ' . $productSku . 'regular price >> ' . $price . ' && discount price >>> '.$discountPrice);
+        $this->logger->info('Update price ' . $productId . ' / SKU ' . $productSku . 'regular price >> ' . $price . ' && discount price >>> ' . $discountPrice);
         return $this->client->execute($req, $this->clientAccessToken);
     }
 
@@ -242,7 +242,9 @@ abstract class AliExpressApiParent implements ApiInterface
             $req->setLogisticsNo($trackingNumber);
             try {
                 $result = $this->client->execute($req, $this->clientAccessToken);
-                $positive = property_exists($result, 'result') && property_exists($result->result, 'result_success') && $result->result->result_success == true;
+                $positive = property_exists($result, 'result')
+                            && property_exists($result->result, 'result_success')
+                            && $result->result->result_success == true;
                 return $positive;
             } catch (\Exception $e) {
                 $this->logger->info('Exception ' . $e->getMessage());
@@ -260,7 +262,8 @@ abstract class AliExpressApiParent implements ApiInterface
      * go on your brower with the master account of aliexpress
      * And replace client_id value by $this->clientId
      *  https://oauth.aliexpress.com/authorize?response_type=code&client_id=XXXXXXX&redirect_uri=https://aliexpress.gadgetiberia.es/es/module/aliexpress_official/auth?token=a1d930a3e4332d2c083978e8b5293b78&state=1212&view=web&sp=ae
-     *  in the html request get the code of auth and use it in the command to regenerate the token. Token is valid for one year.
+     *  in the html request get the code of auth
+     *  and use it in the command to regenerate the token. Token is valid for one year.
      */
     public function getNewAccessToken($code)
     {

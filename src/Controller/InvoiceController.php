@@ -2,10 +2,9 @@
 
 namespace App\Controller;
 
-
 use App\Entity\WebOrder;
-use App\Service\Aggregator\ApiAggregator;
 use App\Helper\Utils\InvoiceDownload;
+use App\Service\Aggregator\ApiAggregator;
 use App\Service\BusinessCentral\GadgetIberiaConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-
 class InvoiceController extends AbstractController
 {
     /**
@@ -24,18 +22,39 @@ class InvoiceController extends AbstractController
      */
     public function getInvoice(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector, ApiAggregator $apiAggregator): Response
     {
-
         $invoice = new InvoiceDownload();
         $form = $this->createFormBuilder($invoice)
-            ->add('externalNumber', TextType::class, ['label' => 'ID del pedido', 'help' => 'Por favor, introduzca su número de pedido de Aliexpress', 'required' => true])
-            ->add('dateInvoice', DateType::class, ['label' => 'Fecha del pedido', 'help' => 'Por favor, introduzca la fecha de pedido de Aliexpress', 'widget' => 'single_text', 'required' => true])
-            ->add('submit', SubmitType::class, ['label' => 'Descargo mi factura'])
+            ->add(
+                'externalNumber',
+                TextType::class,
+                [
+                    'label' => 'ID del pedido',
+                    'help' => 'Por favor, introduzca su número de pedido de Aliexpress',
+                    'required' => true
+                ]
+            )
+            ->add(
+                'dateInvoice',
+                DateType::class,
+                [
+                    'label' => 'Fecha del pedido',
+                    'help' => 'Por favor, introduzca la fecha de pedido de Aliexpress',
+                    'widget' => 'single_text',
+                    'required' => true
+                ]
+            )
+            ->add(
+                'submit',
+                SubmitType::class,
+                [
+                    'label' => 'Descargo mi factura'
+                ]
+            )
             ->getForm();
 
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-
             $qb = $doctrine->getManager()->createQueryBuilder();
             $qb->select('w')
                 ->from(WebOrder::class, 'w')
@@ -44,20 +63,20 @@ class InvoiceController extends AbstractController
                 ->andWhere('w.purchaseDate >= :date_start')
                 ->andWhere('w.purchaseDate <= :date_end')
                 ->setParameter('date_start', $invoice->getDateStartString())
-                ->setParameter('date_end',   $invoice->getDateEndString())
-                ->setParameter('channel',  [WebOrder::CHANNEL_ALIEXPRESS, WebOrder::CHANNEL_FITBITEXPRESS])
-                ->setParameter('externalNumber',  $invoice->externalNumber);
+                ->setParameter('date_end', $invoice->getDateEndString())
+                ->setParameter('channel', [WebOrder::CHANNEL_ALIEXPRESS, WebOrder::CHANNEL_FITBITEXPRESS])
+                ->setParameter('externalNumber', $invoice->externalNumber);
 
 
             $webOrders = $qb->getQuery()->getResult();
             $webOrder = count($webOrders) > 0 ? reset($webOrders) : null;
             if ($webOrder) {
                 if ($webOrder->getStatus() == WebOrder::STATE_INVOICED) {
-                    $orderAli = $apiAggregator->getApi($webOrder->getChannel())->getOrder($webOrder->getExternalNumber());
+                    $orderAli = $apiAggregator->getApi($webOrder->getChannel())
+                                            ->getOrder($webOrder->getExternalNumber());
                     if (!$orderAli) {
                         $this->addFlash('danger', 'Actualmente no podemos conectar con Aliexpress.');
                     } else {
-
                         if ($orderAli->order_status == "FINISH" && $orderAli->order_end_reason == "buyer_accept_goods") {
                             $invoice = $gadgetIberiaConnector->getSaleInvoiceByNumber($webOrder->getInvoiceErp());
                             $contentInvoice  = $gadgetIberiaConnector->getContentInvoicePdf($invoice['id']);
