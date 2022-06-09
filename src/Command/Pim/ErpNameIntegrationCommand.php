@@ -71,7 +71,7 @@ class ErpNameIntegrationCommand extends Command
                     $output->writeln('Nothing Product ' . $product['identifier']);
                 }
             } else {
-                $output-> writeln('Product not found in BC');
+                $output-> writeln('Product not found in BC ' . $product['identifier']);
             }
         }
         return Command::SUCCESS;
