@@ -4,17 +4,24 @@ namespace App\Service\Pim;
 
 use Akeneo\Pim\ApiClient\AkeneoPimClientBuilder;
 
-
 class AkeneoConnector
 {
-
-
     private $client;
 
-    public function __construct(string $akeneoUrl, string $akeneoClientId, string $akeneoClientSecret, string $akeneoUsername, string $akeneoPassword)
-    {
+    public function __construct(
+        string $akeneoUrl,
+        string $akeneoClientId,
+        string $akeneoClientSecret,
+        string $akeneoUsername,
+        string $akeneoPassword
+    ) {
         $clientBuilder = new AkeneoPimClientBuilder($akeneoUrl);
-        $this->client = $clientBuilder->buildAuthenticatedByPassword($akeneoClientId, $akeneoClientSecret, $akeneoUsername, $akeneoPassword);
+        $this->client = $clientBuilder->buildAuthenticatedByPassword(
+            $akeneoClientId,
+            $akeneoClientSecret,
+            $akeneoUsername,
+            $akeneoPassword
+        );
     }
 
 

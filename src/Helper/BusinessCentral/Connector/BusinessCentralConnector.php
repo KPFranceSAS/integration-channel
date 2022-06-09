@@ -25,6 +25,10 @@ abstract class BusinessCentralConnector
 
     public const EP_CUSTOMERS = "customers";
 
+    public const EP_PAYMENT_METHODS = "paymentMethods";
+
+    public const EP_PAYMENT_TERMS = "paymentTerms";
+
     public const EP_SALES_ORDERS = "salesOrders";
 
     public const EP_STATUS_ORDERS = "statusOrders";
@@ -37,7 +41,7 @@ abstract class BusinessCentralConnector
 
     public const EP_COMPANIES = "companies";
 
-    public const EP_STOCK_PRODUCTS = "stockProductos";
+    public const EP_STOCK_PRODUCTS = "itemStocks";
 
     public const EP_SALES_ORDERS_LINE = "salesOrderLines";
 
@@ -352,7 +356,9 @@ abstract class BusinessCentralConnector
         return $this->doGetRequest(self::EP_SALES_ORDERS, $query)['value'];
     }
 
-
+    /**
+    * Shipment methods
+    */
     public function getAllShipmentMethods()
     {
         return $this->doGetRequest(self::EP_SHIPMENT_METHODS);
@@ -362,6 +368,31 @@ abstract class BusinessCentralConnector
     public function getShipmentMethodByCode(string $code)
     {
         return $this->getElementsByArray(self::EP_SHIPMENT_METHODS, "code eq '$code' ");
+    }
+
+    /**
+    * Payment methods
+    */
+    public function getAllPaymentMethods()
+    {
+        return $this->doGetRequest(self::EP_PAYMENT_METHODS);
+    }
+
+
+    public function getPaymentMethodByCode(string $code)
+    {
+        return $this->getElementsByArray(self::EP_PAYMENT_METHODS, "code eq '$code' ");
+    }
+
+
+    public function getAllPaymentTerms()
+    {
+        return $this->doGetRequest(self::EP_PAYMENT_TERMS);
+    }
+
+    public function getPaymentTermByCode(string $code)
+    {
+        return $this->getElementsByArray(self::EP_PAYMENT_TERMS, "code eq '$code' ");
     }
 
 

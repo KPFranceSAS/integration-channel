@@ -6,10 +6,10 @@ use App\Helper\BusinessCentral\Model\PostalAddress;
 
 class SaleOrder
 {
-    const STATUS_OPEN = "Open";
-    const STATUS_RELEASED = "Released";
-    const STATUS_PENDING_APPROVAL = "Pending_Approval";
-    const STATUS_PENDING_PREPAYMENT = "Pending_Prepayment";
+    public const STATUS_OPEN = "Open";
+    public const STATUS_RELEASED = "Released";
+    public const STATUS_PENDING_APPROVAL = "Pending_Approval";
+    public const STATUS_PENDING_PREPAYMENT = "Pending_Prepayment";
 
     public $shippingPostalAddress;
 
@@ -34,6 +34,8 @@ class SaleOrder
     public $pricesIncludeTax = true;
 
     public $paymentTermsId;
+
+    public $paymentMethodCode;
 
     public $shipmentMethodId;
 

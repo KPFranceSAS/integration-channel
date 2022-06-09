@@ -2,7 +2,6 @@
 
 namespace App\Command\Pim;
 
-
 use App\Service\BusinessCentral\KpFranceConnector;
 use App\Service\Pim\AkeneoConnector;
 use Symfony\Component\Console\Command\Command;
@@ -32,21 +31,35 @@ class ErpNameIntegrationCommand extends Command
     {
         $products = $this->akeneoConnector->getAllProducts();
         foreach ($products as $product) {
-            if (!array_key_exists("erp_name", $product['values'])) {
-                $articleBc = $this->businessCentralConnector->getItemByNumber($product['identifier']);
+            $articleBc = $this->businessCentralConnector->getItemByNumber($product['identifier']);
+
+
+            if ($articleBc) {
                 $updateValue = [
-                    "values" => [
-                        'erp_name' => [
-                            [
-                                "locale" => null,
-                                "scope" => null,
-                                "data" => strtoupper($articleBc['displayName'])
-                            ],
-                        ]
-                    ]
+                    "values" => []
                 ];
-                $output->writeln('Product ' . $product['identifier']);
-                $this->akeneoConnector->updateProduct($product['identifier'], $updateValue);
+                if (!array_key_exists("erp_name", $product['values'])) {
+                    $updateValue ['values']['erp_name'] = [
+                                [
+                                    "locale" => null,
+                                    "scope" => null,
+                                    "data" => strtoupper($articleBc['displayName'])
+                                ],
+                        ];
+                }
+
+                if (!array_key_exists("upc", $product['values']) && array_key_exists("ean", $product['values'])) {
+                    $updateValue ['values']['upc'] = $product['values']['ean'];
+                }
+
+                if (count($updateValue['values']) > 0) {
+                    $output->writeln('Update Product ' . $product['identifier']);
+                    $this->akeneoConnector->updateProduct($product['identifier'], $updateValue);
+                } else {
+                    $output->writeln('Nothing Product ' . $product['identifier']);
+                }
+            } else {
+                $output-> writeln('Product not found in BC');
             }
         }
         return Command::SUCCESS;

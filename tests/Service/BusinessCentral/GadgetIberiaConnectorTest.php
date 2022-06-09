@@ -46,7 +46,8 @@ class GadgetIberiaConnectorTest extends KernelTestCase
             "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
             "externalDocumentNumber" => "Integration-" . date('YmdHis'),
             "shippingAgent" => "DHL PARCEL",
-            "shippingAgentService" => "DHL1"
+            "shippingAgentService" => "DHL1",
+            "paymentMethodCode" => "PAYPAL"
         ];
         $order = $bcConnector->createSaleOrder($order);
         $this->assertIsArray($order);
@@ -56,6 +57,7 @@ class GadgetIberiaConnectorTest extends KernelTestCase
         $this->assertCount(1, $orderFull['salesOrderLines']);
         $this->assertSame($orderFull['shippingAgent'], "DHL PARCEL");
         $this->assertSame($orderFull['shippingAgentService'], "DHL1");
+        $this->assertSame($orderFull['paymentMethodCode'], "PAYPAL");
     }
 
 
