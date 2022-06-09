@@ -17,6 +17,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FieldFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use function Symfony\Component\String\u;
 
@@ -33,9 +34,12 @@ abstract class AdminCrudController extends AbstractCrudController
 {
     protected $adminUrlGenerator;
 
-    public function __construct(AdminUrlGenerator $adminUrlGenerator)
+    protected $entityRepository;
+
+    public function __construct(AdminUrlGenerator $adminUrlGenerator, EntityRepository $entityRepository)
     {
         $this->adminUrlGenerator = $adminUrlGenerator;
+        $this->entityRepository = $entityRepository;
     }
 
 

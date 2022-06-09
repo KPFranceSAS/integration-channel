@@ -19,17 +19,29 @@ abstract class BusinessCentralConnector
 
 
 
-    public const EP_ITEMS = "items";
+   
 
+    
+
+    public const EP_ACCOUNT = "accounts";
+
+    public const EP_COMPANIES = "companies";
+    
     public const EP_SHIPMENT_METHODS = "shipmentMethods";
-
-    public const EP_CUSTOMERS = "customers";
-
+    
     public const EP_PAYMENT_METHODS = "paymentMethods";
 
     public const EP_PAYMENT_TERMS = "paymentTerms";
 
+    public const EP_CUSTOMERS = "customers";
+
+    public const EP_ITEMS = "items";
+
+    public const EP_STOCK_PRODUCTS = "itemStocks";
+
     public const EP_SALES_ORDERS = "salesOrders";
+
+    public const EP_SALES_ORDERS_LINE = "salesOrderLines";
 
     public const EP_STATUS_ORDERS = "statusOrders";
 
@@ -37,17 +49,17 @@ abstract class BusinessCentralConnector
 
     public const EP_SALES_INVOICES_LINES = "salesInvoiceLines";
 
-    public const EP_ACCOUNT = "accounts";
+    public const EP_SALES_CREDITS_LINE = "salesCreditMemoLines";
 
-    public const EP_COMPANIES = "companies";
+    public const EP_SALES_CREDITS = "salesCreditMemos";
 
-    public const EP_STOCK_PRODUCTS = "itemStocks";
-
-    public const EP_SALES_ORDERS_LINE = "salesOrderLines";
+    
 
     protected $logger;
 
     protected $debugger;
+
+    protected $client;
 
     protected $companyId;
 
@@ -71,22 +83,7 @@ abstract class BusinessCentralConnector
                 'Authorization' => "Basic " . base64_encode("$loginBC:$passwordBC"),
             ],
         ]);
-        $this->debugger = $appEnv != 'prod';
-    }
-
-
-    public function getCompanyName()
-    {
-        return $this->getCompanyIntegration();
-    }
-
-
-    public function getCompanyId(): string
-    {
-        if (!$this->companyId) {
-            $this->selectCompany($this->getCompanyIntegration());
-        }
-        return $this->companyId;
+        $this->debugger = $appEnv == 'dev';
     }
 
 
@@ -94,40 +91,6 @@ abstract class BusinessCentralConnector
 
     abstract protected function getAccountNumberForExpedition();
 
-
-
-    public function selectCompany(string $name): string
-    {
-        $companies = $this->getCompanies();
-        foreach ($companies as $company) {
-            if (strtoupper($company['name']) == $name) {
-                $this->companyId = $company['id'];
-                return $company['id'];
-            }
-        }
-        throw new Exception($name . ' not found');
-    }
-
-
-    public function getAccountForExpedition()
-    {
-        return $this->getAccountByNumber($this->getAccountNumberForExpedition());
-    }
-
-
-    public function getCompanies()
-    {
-        $response =  $this->doGetRequest(self::EP_COMPANIES);
-        return $response['value'];
-    }
-
-
-
-
-    public function deleteSaleOrder($idOrder)
-    {
-        return $this->doDeleteRequest(self::EP_SALES_ORDERS . "($idOrder)");
-    }
 
 
     public function doDeleteRequest(string $endPoint)
@@ -185,7 +148,6 @@ abstract class BusinessCentralConnector
     }
 
 
-
     public function downloadStream(string $endPoint): string
     {
         $response = $this->client->request(
@@ -198,6 +160,33 @@ abstract class BusinessCentralConnector
         return $response->getBody()->getContents();
     }
 
+
+    public function getElementsByArray(
+        string $type,
+        ?string $filters,
+        bool $all = false,
+        array $paramSupps = []
+    ) {
+        $query = [];
+        if ($filters) {
+            $query = [
+                '$filter' => $filters
+            ];
+        }
+        foreach ($paramSupps as $keyParam => $valParam) {
+            $query[$keyParam] = $valParam;
+        }
+        $items =  $this->doGetRequest($type, $query)['value'];
+        if ($all) {
+            return $items;
+        } else {
+            if (count($items) > 0) {
+                return reset($items);
+            } else {
+                return null;
+            }
+        }
+    }
 
 
     public function getElementByNumber(
@@ -235,34 +224,56 @@ abstract class BusinessCentralConnector
     }
 
 
-    public function createSaleOrder(array $order)
+
+    /**
+     * Company
+     */
+    public function getCompanyName()
     {
-        return $this->doPostRequest(
-            self::EP_SALES_ORDERS,
-            $order
-        );
+        return $this->getCompanyIntegration();
     }
 
 
-    public function createSaleOrderLine(string $orderId, array $orderLine)
+    public function getCompanyId(): string
     {
-        return $this->doPostRequest(
-            self::EP_SALES_ORDERS . "($orderId)/" . self::EP_SALES_ORDERS_LINE,
-            $orderLine
-        );
+        if (!$this->companyId) {
+            $this->selectCompany($this->getCompanyIntegration());
+        }
+        return $this->companyId;
+    }
+
+    public function selectCompany(string $name): string
+    {
+        $companies = $this->getCompanies();
+        foreach ($companies as $company) {
+            if (strtoupper($company['name']) == $name) {
+                $this->companyId = $company['id'];
+                return $company['id'];
+            }
+        }
+        throw new Exception($name . ' not found');
     }
 
 
-    public function getStatusOrderByNumber(string $number)
+    public function getCompanies()
     {
-        return  $this->getElementByNumber(
-            self::EP_STATUS_ORDERS,
-            $number,
-            'number',
-            ['$expand' => 'statusOrderLines']
-        );
+        $response =  $this->doGetRequest(self::EP_COMPANIES);
+        return $response['value'];
     }
 
+
+    /**
+     * Item
+     */
+    public function getItemByNumber(string $sku)
+    {
+        return $this->getElementByNumber(self::EP_ITEMS, $sku);
+    }
+
+    public function getItem(string $id)
+    {
+        return $this->getElementById(self::EP_ITEMS, $id);
+    }
 
     public function getStockPerProduct(string $sku)
     {
@@ -281,6 +292,26 @@ abstract class BusinessCentralConnector
             '',
             true,
             ['$expand' => 'stockProductosLines($filter = ' . "itemNo eq '$sku' and locationFilter eq '$location' )"]
+        );
+    }
+
+    /**
+     * Sale order
+     */
+
+    public function createSaleOrder(array $order)
+    {
+        return $this->doPostRequest(
+            self::EP_SALES_ORDERS,
+            $order
+        );
+    }
+
+    public function createSaleOrderLine(string $orderId, array $orderLine)
+    {
+        return $this->doPostRequest(
+            self::EP_SALES_ORDERS . "($orderId)/" . self::EP_SALES_ORDERS_LINE,
+            $orderLine
         );
     }
 
@@ -303,6 +334,18 @@ abstract class BusinessCentralConnector
             ['$expand' => 'salesOrderLines,customer']
         );
     }
+
+
+    public function getStatusOrderByNumber(string $number)
+    {
+        return  $this->getElementByNumber(
+            self::EP_STATUS_ORDERS,
+            $number,
+            'number',
+            ['$expand' => 'statusOrderLines']
+        );
+    }
+
 
     public function getSaleOrder(string $id)
     {
@@ -337,7 +380,6 @@ abstract class BusinessCentralConnector
         $query = [
             '$filter' => "externalDocumentNumber eq '$number' and customerNumber eq '$customer' "
         ];
-
         $items =  $this->doGetRequest(self::EP_SALES_ORDERS, $query)['value'];
         if (count($items) > 0) {
             return reset($items);
@@ -352,8 +394,13 @@ abstract class BusinessCentralConnector
         $query = [
             '$filter' => "customerNumber eq '$customer' "
         ];
-
         return $this->doGetRequest(self::EP_SALES_ORDERS, $query)['value'];
+    }
+
+
+    public function deleteSaleOrder($idOrder)
+    {
+        return $this->doDeleteRequest(self::EP_SALES_ORDERS . "($idOrder)");
     }
 
     /**
@@ -385,6 +432,9 @@ abstract class BusinessCentralConnector
     }
 
 
+    /**
+    * Payment terms
+    */
     public function getAllPaymentTerms()
     {
         return $this->doGetRequest(self::EP_PAYMENT_TERMS);
@@ -396,7 +446,9 @@ abstract class BusinessCentralConnector
     }
 
 
-
+    /**
+    * Customers
+    */
     public function getAllCustomers()
     {
         return $this->doGetRequest(self::EP_CUSTOMERS);
@@ -406,18 +458,6 @@ abstract class BusinessCentralConnector
     public function getCustomer(string $id)
     {
         return $this->getElementById(self::EP_CUSTOMERS, $id);
-    }
-
-
-    public function getItem(string $id)
-    {
-        return $this->getElementById(self::EP_ITEMS, $id);
-    }
-
-
-    public function getAccountByNumber(string $number)
-    {
-        return $this->getElementByNumber(self::EP_ACCOUNT, $number);
     }
 
 
@@ -431,12 +471,23 @@ abstract class BusinessCentralConnector
         );
     }
 
-
-    public function getItemByNumber(string $sku)
+    /**
+    * Account
+    */
+    public function getAccountByNumber(string $number)
     {
-        return $this->getElementByNumber(self::EP_ITEMS, $sku);
+        return $this->getElementByNumber(self::EP_ACCOUNT, $number);
     }
 
+    public function getAccountForExpedition()
+    {
+        return $this->getAccountByNumber($this->getAccountNumberForExpedition());
+    }
+
+
+    /**
+    * Sale invoice
+    */
     public function getSaleInvoice(string $id)
     {
         return $this->getElementById(self::EP_SALES_INVOICES, $id);
@@ -481,6 +532,13 @@ abstract class BusinessCentralConnector
         );
     }
 
+    public function getContentInvoicePdf(string $id): string
+    {
+        $value = $this->doGetRequest(self::EP_SALES_INVOICES . "($id)/pdfDocument")["value"];
+        $firstValue = reset($value);
+        return $this->downloadStream($firstValue['content@odata.mediaReadLink']);
+    }
+
 
     public function getSaleInvoiceByExternalDocumentNumberCustomer(
         string $number,
@@ -493,44 +551,5 @@ abstract class BusinessCentralConnector
             false,
             ['$expand' => 'salesInvoiceLines,customer']
         );
-    }
-
-
-
-    public function getElementsByArray(
-        string $type,
-        ?string $filters,
-        bool $all = false,
-        array $paramSupps = []
-    ) {
-        $query = [];
-        if ($filters) {
-            $query = [
-                '$filter' => $filters
-            ];
-        }
-        foreach ($paramSupps as $keyParam => $valParam) {
-            $query[$keyParam] = $valParam;
-        }
-        $items =  $this->doGetRequest($type, $query)['value'];
-        if ($all) {
-            return $items;
-        } else {
-            if (count($items) > 0) {
-                return reset($items);
-            } else {
-                return null;
-            }
-        }
-    }
-
-
-
-
-    public function getContentInvoicePdf(string $id): string
-    {
-        $value = $this->doGetRequest(self::EP_SALES_INVOICES . "($id)/pdfDocument")["value"];
-        $firstValue = reset($value);
-        return $this->downloadStream($firstValue['content@odata.mediaReadLink']);
     }
 }

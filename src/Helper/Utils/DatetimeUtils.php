@@ -12,7 +12,10 @@ use Umulmrum\Holiday\Provider\Spain\Spain;
 class DatetimeUtils
 {
 
-    public static function transformFromIso8601(string $value): DateTime
+    /**
+     * @return \DateTime|\DateTimeImmutable
+     */
+    public static function transformFromIso8601(string $value): \DateTimeInterface
     {
         $date = explode('T', $value);
         return DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
@@ -20,7 +23,10 @@ class DatetimeUtils
 
 
 
-    public static function createDateTimeFromAliExpressDate(string $date): DateTime
+    /**
+     * @return \DateTime|\DateTimeImmutable
+     */
+    public static function createDateTimeFromAliExpressDate(string $date): \DateTimeInterface
     {
         $dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $date);
         $dateTime->add(new DateInterval('PT9H'));
@@ -41,7 +47,7 @@ class DatetimeUtils
 
     public static function isOutOfDelayBusinessDays(DateTimeInterface $date, int $nbHours, ?DateTimeInterface $toverify = null, $withHolidays = true): bool
     {
-        $toverify =  $toverify ? $toverify :  new DateTime();
+        $toverify =  $toverify !== null ? $toverify :  new DateTime();
         $calculator = new CalculatorDelay();
         $calculator->setStartDate($date);
         if ($withHolidays) {
@@ -100,7 +106,7 @@ class DatetimeUtils
 
     public static function getDateOutOfDelayBusinessDaysFrom(int $nbHours, ?DateTimeInterface $toverify = null, $withBusineesDays = true): DateTimeInterface
     {
-        $date =  $toverify ? $toverify :  new DateTime();
+        $date =  $toverify !== null ? $toverify :  new DateTime();
 
         $calculator = new CalculatorDelay();
         $calculator->setStartDate($date);

@@ -2,21 +2,18 @@
 
 namespace App\Service\Carriers;
 
-
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
-
-
 class GetTracking
 {
-
-
     protected $logger;
 
     protected $awsStorage;
 
     protected $trackings;
+
+    protected $dhlGetTracking;
 
 
     public function __construct(FilesystemOperator $awsStorage, LoggerInterface $logger, DhlGetTracking $dhlGetTracking)

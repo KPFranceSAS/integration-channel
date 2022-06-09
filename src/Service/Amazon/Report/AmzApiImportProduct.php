@@ -24,6 +24,8 @@ class AmzApiImportProduct
     private $manager;
 
     private $mailer;
+
+    protected $errorProducts;
     
     private $businessCentralAggregator;
 

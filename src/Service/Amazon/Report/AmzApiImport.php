@@ -21,6 +21,8 @@ abstract class AmzApiImport
 
     protected $logger;
 
+    protected $errors;
+
     protected $amzApi;
 
     protected $exchangeRate;

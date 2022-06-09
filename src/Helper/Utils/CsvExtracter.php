@@ -24,7 +24,7 @@ class CsvExtracter
         $datas = [];
         $header = fgetcsv($contentFile, null, $separator);
         while (($values = fgetcsv($contentFile, null, $separator)) !== false) {
-            if (count($values) == count($header)) {
+            if (count($values) === count($header)) {
                 $dataLines = array_combine($header, $values);
                 $datas[] = $dataLines;
             }

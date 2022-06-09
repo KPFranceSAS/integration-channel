@@ -4,8 +4,8 @@ namespace App\Command\AliExpress;
 
 use App\Entity\WebOrder;
 use App\Helper\Api\AliExpressApiParent;
-use App\Service\Aggregator\ApiAggregator;
 use App\Helper\Utils\DatetimeUtils;
+use App\Service\Aggregator\ApiAggregator;
 use App\Service\AliExpress\AliExpressApi;
 use App\Service\BusinessCentral\GadgetIberiaConnector;
 use App\Service\MailService;
@@ -22,8 +22,13 @@ class SaveCancelCommand extends Command
     protected static $defaultDescription = 'Retrieve all Aliexpress orders cancelled online';
 
 
-    public function __construct(ManagerRegistry $manager, ApiAggregator $apiAggregator, LoggerInterface $logger, MailService $mailService, GadgetIberiaConnector $gadgetIberiaConnector)
-    {
+    public function __construct(
+        ManagerRegistry $manager,
+        ApiAggregator $apiAggregator,
+        LoggerInterface $logger,
+        MailService $mailService,
+        GadgetIberiaConnector $gadgetIberiaConnector
+    ) {
         parent::__construct();
         $this->apiAggregator = $apiAggregator;
         $this->logger = $logger;
@@ -46,19 +51,32 @@ class SaveCancelCommand extends Command
 
     protected $logger;
 
+    protected $mailService;
+
     protected $errors = [];
 
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        $webOrders = $this->manager->getRepository(WebOrder::class)->findBy(['status' => WebOrder::STATE_SYNC_TO_ERP, 'channel' =>  $this->getChannel()]);
+        $webOrders = $this->manager->getRepository(WebOrder::class)
+                ->findBy(
+                    [
+                        'status' => WebOrder::STATE_SYNC_TO_ERP,
+                        'channel' =>  $this->getChannel()
+                    ]
+                );
         foreach ($webOrders as $webOrder) {
             $this->checkOrderStatus($webOrder);
         }
 
-        $webOrdersCancel = $this->manager->getRepository(WebOrder::class)->findBy(['status' => WebOrder::STATE_ERROR, 'channel' => $this->getChannel()]);
+        $webOrdersCancel = $this->manager->getRepository(WebOrder::class)
+                ->findBy(
+                    [
+                        'status' => WebOrder::STATE_ERROR,
+                        'channel' => $this->getChannel()
+                    ]
+                );
         foreach ($webOrdersCancel as $webOrderCancel) {
             $this->checkOrderStatus($webOrderCancel);
         }
@@ -83,11 +101,19 @@ class SaveCancelCommand extends Command
     protected function checkOrderStatus(WebOrder $webOrder)
     {
         $orderAliexpress = $this->getApi()->getOrder($webOrder->getExternalNumber());
-        if ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "cancel_order_close_trade") {
-            $reason =  'Order has been cancelled after acceptation  online on ' . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end);
+        if (
+            $orderAliexpress->order_status == 'FINISH'
+            && $orderAliexpress->order_end_reason == "cancel_order_close_trade"
+        ) {
+            $reason =  'Order has been cancelled after acceptation  online on '
+            . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end);
             $this->cancelSaleOrder($webOrder, $reason);
-        } elseif ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "seller_send_goods_timeout") {
-            $reason =  'Order has been cancelled online because delay of expedition is out of delay on ' . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end);
+        } elseif (
+            $orderAliexpress->order_status == 'FINISH'
+            && $orderAliexpress->order_end_reason == "seller_send_goods_timeout"
+        ) {
+            $reason =  'Order has been cancelled online because delay of expedition is out of delay on '
+            . DatetimeUtils::createStringTimeFromAliExpressDate($orderAliexpress->gmt_trade_end);
             $this->cancelSaleOrder($webOrder, $reason);
         }
     }
@@ -106,7 +132,8 @@ class SaveCancelCommand extends Command
                 $result = $this->gadgetIberiaConnector->deleteSaleOrder($saleOrder['id']);
                 $this->addLog($webOrder, 'Sale order ' . $webOrder->getOrderErp() . ' have been deleted');
             } catch (Exception $e) {
-                $this->errors[] = 'Deleting the sale order ' . $webOrder->getOrderErp() . ' did not succeeded ' . $e->getMessage();
+                $this->errors[] = 'Deleting the sale order ' . $webOrder->getOrderErp()
+                                    . ' did not succeeded ' . $e->getMessage();
             }
         } else {
             $this->addLog($webOrder, 'Sale order ' . $webOrder->getOrderErp() . ' have already been deleted');
@@ -115,7 +142,8 @@ class SaveCancelCommand extends Command
 
         $saleInvoice = $this->gadgetIberiaConnector->getSaleInvoiceByOrderNumber($webOrder->getOrderErp());
         if ($saleInvoice) {
-            $invoiceCreationProblem = 'Invoice ' . $saleInvoice['number'] . ' has been created. Check with warehouse the state of the shipment';
+            $invoiceCreationProblem = 'Invoice ' . $saleInvoice['number']
+                                        . ' has been created. Check with warehouse the state of the shipment';
             $this->errors[] = $invoiceCreationProblem;
             $this->addLog($webOrder, $invoiceCreationProblem);
         } else {

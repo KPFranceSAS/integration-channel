@@ -266,6 +266,9 @@
     "phpspec/prophecy": {
         "version": "1.13.0"
     },
+    "phpstan/phpstan": {
+        "version": "1.7.12"
+    },
     "phpunit/php-code-coverage": {
         "version": "9.2.6"
     },
@@ -333,6 +336,9 @@
     },
     "ramsey/uuid": {
         "version": "4.2.3"
+    },
+    "rector/rector": {
+        "version": "0.13.5"
     },
     "sebastian/cli-parser": {
         "version": "1.0.1"

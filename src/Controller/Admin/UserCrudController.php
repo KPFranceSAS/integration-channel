@@ -26,6 +26,8 @@ class UserCrudController extends AdminCrudController
 {
     protected $integratorAggregator;
 
+    protected $passwordEncoder;
+
     public function __construct(AdminUrlGenerator $adminUrlGenerator, IntegratorAggregator $integratorAggregator)
     {
         $this->integratorAggregator = $integratorAggregator;

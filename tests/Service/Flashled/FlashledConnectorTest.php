@@ -76,30 +76,14 @@ class FlashledConnectorTest extends KernelTestCase
         $order =  [
             'orderDate' => date("Y-m-d"),
             'customerNumber' => FlashledIntegrateOrder::FLASHLED_CUSTOMER_NUMBER,
-
-            "billToName" => "Vipul Parmar",
-            "sellingPostalAddress" => [
-                "street" => "Puerta K, Altea Hills Grupo 3, Residencia los Olivos",
-                "postalCode" => "66840",
-                "city" => "Calle Berlin",
-                "countryLetterCode" => "FR",
-            ],
-            "locationCode" => "AMAZON",
-            "shipToName" => "Vipul Parmar",
-            "shippingPostalAddress" => [
-                "street" => "Puerta K, Altea Hills Grupo 3, Residencia los Olivos",
-                "postalCode" => "66840",
-                "city" => "Calle Berlin",
-                "countryLetterCode" => "ES",
-            ],
+            "locationCode" => "LAROCA",
             'salesOrderLines' => $lines,
             'pricesIncludeTax' => true,
-            "phoneNumber" => '0565458585',
-            "email" => "wsv5fqfhhlm92wr@marketplace.amazon.co.uk",
             "externalDocumentNumber" => "FLASHLED-BUDNLE-" . date('YmdHis'),
             "shippingAgent" => "DHL PARCEL",
             "shippingAgentService" => "DHL1"
         ];
+
         $order = $bcConnector->createSaleOrder($order);
         $this->assertIsArray($order);
 

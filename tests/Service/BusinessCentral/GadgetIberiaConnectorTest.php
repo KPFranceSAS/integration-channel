@@ -146,6 +146,15 @@ class GadgetIberiaConnectorTest extends KernelTestCase
     }
 
 
+
+
+    public function testGetCustomer(): void
+    {
+        $kitConn = static::getContainer()->get(GadgetIberiaConnector::class);
+        $customer = $kitConn->getCustomerByNumber(AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER);
+        $this->assertIsArray($customer);
+    }
+
     public function testIntegrationNoCanonDigital(): void
     {
         $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);

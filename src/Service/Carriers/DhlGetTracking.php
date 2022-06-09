@@ -7,13 +7,8 @@ use GuzzleHttp\Client;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
-
-
-
 class DhlGetTracking
 {
-
-
     protected $logger;
 
     protected $dhlStorage;
@@ -35,7 +30,9 @@ class DhlGetTracking
         if (!$this->trackings) {
             $this->initializeTrackings();
         }
-        return (array_key_exists($externalOrderNumber, $this->trackings)) ? $this->trackings[$externalOrderNumber] : null;
+        return (array_key_exists($externalOrderNumber, $this->trackings))
+            ? $this->trackings[$externalOrderNumber]
+            : null;
     }
 
 
@@ -43,7 +40,10 @@ class DhlGetTracking
     {
         try {
             $client = new Client();
-            $response = $client->get('https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $externalOrderNumber, ['connect_timeout' => 1]);
+            $response = $client->get(
+                'https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $externalOrderNumber,
+                ['connect_timeout' => 1]
+            );
             $body = json_decode((string) $response->getBody(), true);
             if ($body) {
                 return str_replace(" 20", "", $body['NumeroExpedicionTLG']);
@@ -75,7 +75,6 @@ class DhlGetTracking
 
     private function extraContentFromFiles($files)
     {
-
         foreach ($files as $file) {
             $lines = $this->extraContentFromFile($file);
             foreach ($lines as $line) {
@@ -132,24 +131,24 @@ class DhlGetTracking
 
 
 
-    /*
-    Description fichier
-    Campo	        Lon. Des. Has.
-    Customer Code	6	1	6	0		Client Code 
-    Product type	3	7	9			DHL Product type  (By default 800=Europlus)
-    Origin depot	3	10	12			Shipment Origin Depot       (Example 28 =Madrid)
-    Cust-Reference	35	13	47			Reference or Key used by the customer on the shipment
-    DHL Tracking Number	15	48	62			DHL Tracking Number (For Europlus Orig(2)+ShipmNbr(7)+Corr(1) left adjusted)
-    Record Type	2	63	64	 		01 =  Delivery  02 = Incidents  03=Text lines
-    Status code	2	65	66			Delivery code or Incident code (see tables below)
-    Date	8	67	74	0		YYYYMMDD Status date
-    Time	6	75	80	0		Delivery time or Incident time (HHMMSS)
-    Identicket	10	81	90			Identicket (Only for Big Stores)
-    Remarks Text	50	91	140			Text lines (Up to 3 text possible lines by incident code) record type=03
-    Generation Point	3	141	143			
-    Event	3	144	146			
-    Reason	3	147	149			
-        */
+    /**
+    * Description fichier
+    * Campo	        Lon. Des. Has.
+    * Customer Code	6	1	6	0		Client Code
+    * Product type	3	7	9			DHL Product type  (By default 800=Europlus)
+    * Origin depot	3	10	12			Shipment Origin Depot       (Example 28 =Madrid)
+    * Cust-Reference	35	13	47			Reference or Key used by the customer on the shipment
+    * DHL Tracking Number	15	48	62			DHL Tracking Number (For Europlus Orig(2)+ShipmNbr(7)+Corr(1) left adjusted)
+    * Record Type	2	63	64	 		01 =  Delivery  02 = Incidents  03=Text lines
+    * Status code	2	65	66			Delivery code or Incident code (see tables below)
+    * Date	8	67	74	0		YYYYMMDD Status date
+    * Time	6	75	80	0		Delivery time or Incident time (HHMMSS)
+    * Identicket	10	81	90			Identicket (Only for Big Stores)
+    * Remarks Text	50	91	140			Text lines (Up to 3 text possible lines by incident code) record type=03
+    * Generation Point	3	141	143
+    * Event	3	144	146
+    * Reason	3	147	149
+     */
     private function transformLineInArray($line)
     {
         $lineArray = [
@@ -216,7 +215,6 @@ class DhlGetTracking
             "RC" => "RELOADED (Afternoon delivery)",
             "RO" => "STOLEN",
             "RT" => "RETURNED TO SENDER",
-            "PD" => "PENDING CUSTOMS DOCUMENTS",
             "SD" => "DOCUMENTS SOLICITATED",
             "ID" => "IDENTICKET NUMBER FOR HYPERMARKETS  (NO INCIDENT)"
         ];

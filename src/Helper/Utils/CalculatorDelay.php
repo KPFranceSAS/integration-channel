@@ -36,7 +36,7 @@ class CalculatorDelay
      *
      * @return $this
      */
-    public function setStartDate(\DateTime $startDate)
+    public function setStartDate(\DateTimeInterface $startDate)
     {
         // Use clone so parameter is not passed as a reference.
         // If not, it can brake caller method by changing $startDate parameter while changing it here.
@@ -166,7 +166,7 @@ class CalculatorDelay
      *
      * @return bool
      */
-    public function isBusinessDay(\DateTime $date)
+    public function isBusinessDay(\DateTimeInterface $date)
     {
         if ($this->isFreeWeekDayDay($date)) {
             return false;
@@ -175,12 +175,7 @@ class CalculatorDelay
         if ($this->isHoliday($date)) {
             return false;
         }
-
-        if ($this->isFreeDay($date)) {
-            return false;
-        }
-
-        return true;
+        return !$this->isFreeDay($date);
     }
 
     /**
@@ -188,15 +183,10 @@ class CalculatorDelay
      *
      * @return bool
      */
-    public function isFreeWeekDayDay(\DateTime $date)
+    public function isFreeWeekDayDay(\DateTimeInterface $date)
     {
         $currentWeekDay = (int)$date->format(self::WEEK_DAY_FORMAT);
-
-        if (in_array($currentWeekDay, $this->getFreeWeekDays())) {
-            return true;
-        }
-
-        return false;
+        return in_array($currentWeekDay, $this->getFreeWeekDays());
     }
 
     /**
@@ -204,11 +194,11 @@ class CalculatorDelay
      *
      * @return bool
      */
-    public function isHoliday(\DateTime $date)
+    public function isHoliday(\DateTimeInterface $date)
     {
         $holidayFormatValue = $date->format(self::HOLIDAY_FORMAT);
         foreach ($this->getHolidays() as $holiday) {
-            if ($holidayFormatValue == $holiday->format(self::HOLIDAY_FORMAT)) {
+            if ($holidayFormatValue === $holiday->format(self::HOLIDAY_FORMAT)) {
                 return true;
             }
         }
@@ -221,11 +211,11 @@ class CalculatorDelay
      *
      * @return bool
      */
-    public function isFreeDay(\DateTime $date)
+    public function isFreeDay(\DateTimeInterface $date)
     {
         $freeDayFormatValue = $date->format(self::FREE_DAY_FORMAT);
         foreach ($this->getFreeDays() as $freeDay) {
-            if ($freeDayFormatValue == $freeDay->format(self::FREE_DAY_FORMAT)) {
+            if ($freeDayFormatValue === $freeDay->format(self::FREE_DAY_FORMAT)) {
                 return true;
             }
         }

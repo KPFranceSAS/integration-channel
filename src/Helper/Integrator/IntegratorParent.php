@@ -25,6 +25,8 @@ abstract class IntegratorParent
 
     protected $manager;
 
+    protected $errors;
+
     protected $mailer;
 
     protected $businessCentralAggregator;

@@ -15,6 +15,7 @@ class UpdateStatusDelivery
 
     protected $awsStorage;
 
+    protected $manager;
 
     public function __construct(
         FilesystemOperator $awsStorage,

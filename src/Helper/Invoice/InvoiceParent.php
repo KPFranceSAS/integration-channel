@@ -26,6 +26,8 @@ abstract class InvoiceParent
 
     protected $apiAggregator;
 
+    protected $errors;
+
 
     public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, GetTracking $tracker, ApiAggregator $apiAggregator)
     {

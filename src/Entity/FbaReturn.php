@@ -11,23 +11,22 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class FbaReturn
 {
+    public const LOCALIZATION_FBA = 'FBA';
 
-    const LOCALIZATION_FBA = 'FBA';
+    public const LOCALIZATION_BIARRITZ = 'BIARRITZ';
 
-    const LOCALIZATION_BIARRITZ = 'BIARRITZ';
-
-    const LOCALIZATION_LAROCA = 'LAROCA';
+    public const LOCALIZATION_LAROCA = 'LAROCA';
 
 
-    const STATUS_CREATED = 0;
+    public const STATUS_CREATED = 0;
 
-    const STATUS_WAITING_CUSTOMER = 1;
+    public const STATUS_WAITING_CUSTOMER = 1;
 
-    const STATUS_RETURN_TO_FBA_NOTSELLABLE = 2;
+    public const STATUS_RETURN_TO_FBA_NOTSELLABLE = 2;
 
-    const STATUS_RETURN_TO_SALE = 3;
+    public const STATUS_RETURN_TO_SALE = 3;
 
-    const STATUS_RETURN_TO_BIARRITZ = 4;
+    public const STATUS_RETURN_TO_BIARRITZ = 4;
 
     /**
      * @ORM\Id
@@ -111,6 +110,21 @@ class FbaReturn
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $amzProductStatus;
+
+    /**
+     * @ORM\OneToOne(targetEntity=AmazonReturn::class, cascade={"persist", "remove"})
+     */
+    private $amazonReturn;
+
+    /**
+     * @ORM\OneToOne(targetEntity=AmazonReimbursement::class, cascade={"persist", "remove"})
+     */
+    private $amazonReimbursement;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=AmazonOrder::class)
+     */
+    private $amazonOrder;
 
 
     /**
@@ -324,6 +338,42 @@ class FbaReturn
     public function setAmzProductStatus(?string $amzProductStatus): self
     {
         $this->amzProductStatus = $amzProductStatus;
+
+        return $this;
+    }
+
+    public function getAmazonReturn(): ?AmazonReturn
+    {
+        return $this->amazonReturn;
+    }
+
+    public function setAmazonReturn(?AmazonReturn $amazonReturn): self
+    {
+        $this->amazonReturn = $amazonReturn;
+
+        return $this;
+    }
+
+    public function getAmazonReimbursement(): ?AmazonReimbursement
+    {
+        return $this->amazonReimbursement;
+    }
+
+    public function setAmazonReimbursement(?AmazonReimbursement $amazonReimbursement): self
+    {
+        $this->amazonReimbursement = $amazonReimbursement;
+
+        return $this;
+    }
+
+    public function getAmazonOrder(): ?AmazonOrder
+    {
+        return $this->amazonOrder;
+    }
+
+    public function setAmazonOrder(?AmazonOrder $amazonOrder): self
+    {
+        $this->amazonOrder = $amazonOrder;
 
         return $this;
     }

@@ -27,6 +27,8 @@ class AmzApiImportStock
 
     protected $productStockFinder;
 
+    protected $products;
+
     public function __construct(
         LoggerInterface $logger,
         AmzApi $amzApi,

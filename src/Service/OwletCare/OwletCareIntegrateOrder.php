@@ -6,11 +6,8 @@ use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\Integrator\ShopifyIntegrateOrder;
 
-
 class OwletCareIntegrateOrder extends ShopifyIntegrateOrder
-
 {
-
     public const OWLETCARE_CUSTOMER_NUMBER = "130803";
 
     public function getChannel()

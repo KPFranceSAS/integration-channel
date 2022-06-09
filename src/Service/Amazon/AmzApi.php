@@ -9,7 +9,6 @@ use AmazonPHP\SellingPartner\Regions;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use AmazonPHP\SellingPartner\STSClient;
 use Buzz\Client\Curl;
-use DateInterval;
 use DateTime;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Log\LoggerInterface;
@@ -51,6 +50,8 @@ class AmzApi
     private $amzArn;
 
     private $amzRefreshToken;
+
+    private $dateInitialisationToken;
 
     private $sdk;
 

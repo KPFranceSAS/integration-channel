@@ -296,17 +296,6 @@ class AmazonReturn
         return $this;
     }
 
-    public function getCustomerComments(): ?string
-    {
-        return $this->customerComments;
-    }
-
-    public function setCustomerComments(?string $customerComments): self
-    {
-        $this->customerComments = $customerComments;
-
-        return $this;
-    }
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
