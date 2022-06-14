@@ -38,6 +38,7 @@ class AmzApiImportStock
     ) {
         $this->logger = $logger;
         $this->amzApi = $amzApi;
+        /** @var \Doctrine\ORM\EntityManagerInterface */
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->productStockFinder = $productStockFinder;
@@ -128,8 +129,6 @@ class AmzApiImportStock
                     $dateTimeStart,
                     [$marketplace]
                 );
-                $this->logger->info('Get last');
-                continue;
             } else {
                 $this->logger->info('Report processing not yet');
             }

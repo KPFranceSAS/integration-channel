@@ -39,7 +39,7 @@ abstract class ShopifyApiParent implements ApiInterface
             $shopifyScopes,
             $shopifyShopDomain,
             new FileSessionStorage('/tmp/php_sessions'),
-            $shopifyVersion
+            $shopifyVersion,
         );
 
         $this->client = new Rest($this->shopifyShopDomain, $this->shopifyToken);
@@ -64,6 +64,7 @@ abstract class ShopifyApiParent implements ApiInterface
     {
         return $this->getPaginatedElements(
             'orders',
+            [],
             [
                 "status" => $status,
                 "financial_status" => $financialStatus,
@@ -77,6 +78,7 @@ abstract class ShopifyApiParent implements ApiInterface
     {
         return $this->getPaginatedElements(
             'orders',
+            [],
             [
                 "number" => $orderNumber,
             ]
@@ -93,7 +95,7 @@ abstract class ShopifyApiParent implements ApiInterface
 
     public function getAllInventoryLevels($location)
     {
-        return $this->getPaginatedElements('inventory_levels', ['location_ids' => $location]);
+        return $this->getPaginatedElements('inventory_levels', [], ['location_ids' => $location]);
     }
 
 

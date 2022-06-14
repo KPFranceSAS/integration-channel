@@ -42,7 +42,7 @@ class AmzApiImportProduct
         $this->mailer = $mailer;
         $this->businessCentralAggregator = $businessCentralAggregator;
     }
-
+ 
     public const WAITING_TIME = 20;
 
 
@@ -111,8 +111,6 @@ class AmzApiImportProduct
                     $dateTimeStart,
                     [$marketplace]
                 );
-                $this->logger->info('Get last');
-                continue;
             } else {
                 $this->logger->info('Report processing not yet');
             }

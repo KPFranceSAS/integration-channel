@@ -17,6 +17,7 @@ class PublishPowerBi
     public function __construct(LoggerInterface $logger, ManagerRegistry $manager, SerializerInterface $serializer, FilesystemOperator $kpssportStorage)
     {
         $this->kpssportStorage = $kpssportStorage;
+        /** @var \Doctrine\ORM\EntityManagerInterface */
         $this->manager = $manager->getManager();
         $this->serializer = $serializer;
         $this->logger = $logger;

@@ -441,7 +441,7 @@ class WebOrder
     public static function createOneFromFlashled($orderApi): WebOrder
     {
         $webOrder = WebOrder::createOrderFromShopify($orderApi);
-        $webOrder->setExternalNumber('FLS-' . $orderApi['order_number']);
+        $webOrder->setExternalNumber('FLS-' . $orderApi['order_number']."-".date('YmdHis'));
         $webOrder->setChannel(WebOrder::CHANNEL_FLASHLED);
         $webOrder->setSubchannel('Flashled.es');
         $webOrder->addLog('Retrieved from Flashled.es');

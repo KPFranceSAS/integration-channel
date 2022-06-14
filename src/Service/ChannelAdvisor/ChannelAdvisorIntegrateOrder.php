@@ -204,6 +204,7 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             "12010023" =>   BusinessCentralConnector::KP_FRANCE,
             "12009934" =>   BusinessCentralConnector::KP_FRANCE,
             "12010026" =>   BusinessCentralConnector::KP_FRANCE,
+            "12044694" =>   BusinessCentralConnector::GADGET_IBERIA
         ];
         if (array_key_exists($profileId, $mapCustomer)) {
             return $mapCustomer[$profileId];
@@ -218,11 +219,12 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
     {
         $profileId = $orderApi->ProfileID;
         $mapCustomer = [
-            "12010024" =>   "000223", // Customer Amazon UK
-            "12010025" =>   "000163", // Customer Amazon IT
-            "12010023" =>   "000193", // Customer Amazon DE
-            "12009934" =>   "000222", // Customer Amazon FR
-            "12010026" =>   "000230", // Customer Amazon ES
+            "12010024" =>   "000223", // Customer Amazon UK KP France
+            "12010025" =>   "000163", // Customer Amazon IT KP France
+            "12010023" =>   "000193", // Customer Amazon DE KP France
+            "12009934" =>   "000222", // Customer Amazon FR KP France
+            "12010026" =>   "000230", // Customer Amazon ES KP France
+            "12044694" =>   "002418", // Customer Amazon ES GI
         ];
         if (array_key_exists($profileId, $mapCustomer)) {
             return $mapCustomer[$profileId];

@@ -121,11 +121,6 @@ class FbaReturn
      */
     private $amazonReimbursement;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AmazonOrder::class)
-     */
-    private $amazonOrder;
-
 
     /**
      * @ORM\PrePersist
@@ -362,18 +357,6 @@ class FbaReturn
     public function setAmazonReimbursement(?AmazonReimbursement $amazonReimbursement): self
     {
         $this->amazonReimbursement = $amazonReimbursement;
-
-        return $this;
-    }
-
-    public function getAmazonOrder(): ?AmazonOrder
-    {
-        return $this->amazonOrder;
-    }
-
-    public function setAmazonOrder(?AmazonOrder $amazonOrder): self
-    {
-        $this->amazonOrder = $amazonOrder;
 
         return $this;
     }
