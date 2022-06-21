@@ -45,6 +45,10 @@ class AmzApiImportStock
 
     public function updateStocks()
     {
+
+        $datas = $this->getContentFromReports();
+
+
         $this->setZeroToStockLevel();
         $this->products = [];
         $products = $this->manager->getRepository(Product::class)->findAll();
@@ -63,32 +67,35 @@ class AmzApiImportStock
             $product->setReturnStockNotIntegrated($this->getReturnQtyProductNotIntegrated($product));
         }
 
+        $importSku = [];
 
-        $datas = $this->getContentFromReports();
 
-
-        foreach ($datas as $marketplace => $dataMarketplace) {
-            foreach ($dataMarketplace as $data) {
+        foreach ($datas as $dataMarketplace) {
+            $codeMarketplace = $dataMarketplace['code'];
+            foreach ($dataMarketplace["data"] as $data) {
                 $sku = $this->getProductCorrelationSku($data['sku']);
-
-                if (array_key_exists($sku, $this->products)) {
-                    $product = $this->products[$sku];
-                    $product->addFbaSellableStock($data['afn-fulfillable-quantity'], $marketplace);
-                    $product->addFbaReservedStock($data['afn-reserved-quantity'], $marketplace);
-                    $product->addFbaUnsellableStock($data['afn-unsellable-quantity'], $marketplace);
-                    $product->addFbaRearchingStock($data['afn-researching-quantity'], $marketplace);
-                    $product->addFbaInboundWorkingStock($data['afn-inbound-working-quantity'], $marketplace);
-                    $product->addFbaInboundShippedStock($data['afn-inbound-shipped-quantity'], $marketplace);
-                    $product->addFbaInboundReceivingStock($data['afn-inbound-receiving-quantity'], $marketplace);
-                } else {
-                    $this->logger->alert('Product unknow >> ' . json_encode($data));
+                $slug = $sku . '-' . $codeMarketplace;
+                if (!in_array($slug, $importSku)) {
+                    if (array_key_exists($sku, $this->products)) {
+                        $product = $this->products[$sku];
+                        $product->addFbaSellableStock($data['afn-fulfillable-quantity'], $codeMarketplace);
+                        $product->addFbaReservedStock($data['afn-reserved-quantity'], $codeMarketplace);
+                        $product->addFbaUnsellableStock($data['afn-unsellable-quantity'], $codeMarketplace);
+                        $product->addFbaRearchingStock($data['afn-researching-quantity'], $codeMarketplace);
+                        $product->addFbaInboundWorkingStock($data['afn-inbound-working-quantity'], $codeMarketplace);
+                        $product->addFbaInboundShippedStock($data['afn-inbound-shipped-quantity'], $codeMarketplace);
+                        $product->addFbaInboundReceivingStock($data['afn-inbound-receiving-quantity'], $codeMarketplace);
+                    } else {
+                        $this->logger->alert('Product unknow >> ' . json_encode($data));
+                    }
+                    $importSku[] = $slug;
                 }
             }
         }
         $this->manager->flush();
     }
 
-    public const WAITING_TIME = 20;
+    public const WAITING_TIME = 10;
 
     protected function getContentFromReports()
     {
@@ -97,13 +104,16 @@ class AmzApiImportStock
         $datas = [];
 
         $marketplaces = [
-            'eu' => Marketplace::ES()->id(),
-            'uk' => Marketplace::GB()->id(),
+            ['marketplace' => Marketplace::ES()->id(), 'code' => 'eu'],
+            ['marketplace' => Marketplace::FR()->id(), 'code' => 'eu'],
+            ['marketplace' => Marketplace::DE()->id(), 'code' => 'eu'],
+            ['marketplace' => Marketplace::IT()->id(), 'code' => 'eu'],
+            ['marketplace' => Marketplace::GB()->id(), 'code' => 'uk'],
         ];
-        foreach ($marketplaces as $codeMarketplace => $marketplace) {
-            $datasReport =  $this->getContentFromReportMarketplace($dateTimeStart, $marketplace);
-            $this->logger->info("Data marketplace $marketplace >>>>" . count($datasReport));
-            $datas[$codeMarketplace] = $datasReport;
+        foreach ($marketplaces as $marketplace) {
+            $datasReport =  $this->getContentFromReportMarketplace($dateTimeStart, $marketplace['marketplace']);
+            $this->logger->info("Data marketplace >>>>" . count($datasReport));
+            $datas[$marketplace['marketplace']] = ['data' => $datasReport, 'code' => $marketplace['code']];
         }
 
         return $datas;
