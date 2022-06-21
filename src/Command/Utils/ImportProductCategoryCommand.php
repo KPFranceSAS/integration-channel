@@ -47,11 +47,15 @@ class ImportProductCategoryCommand extends Command
 
                 if (array_key_exists('Category', $product)) {
                     $categoryDb = $this->manager->getRepository(Category::class)->findOneBy(["name" => $product['Category']]);
-                    $productDb->setDescription($product['ERP Name']);
+
                     if ($categoryDb) {
                         $productDb->setCategory($categoryDb);
                     } else {
                         $output->writeln('category not found ' . $product['Category']);
+                        $category = new Category();
+                        $category->setName($product['Category']);
+                        $this->manager->persist($category);
+                        $productDb->setCategory($category);
                     }
                 }
 
@@ -62,6 +66,10 @@ class ImportProductCategoryCommand extends Command
                     } else {
                         $productDb->setMinQtyFbaEu(null);
                     }
+                }
+
+                if (array_key_exists('ERP Name', $product)) {
+                    $productDb->setDescription($product['ERP Name']);
                 }
 
 
@@ -75,7 +83,7 @@ class ImportProductCategoryCommand extends Command
                 }
 
 
-                $this->manager->persist($productDb);
+
                 $this->manager->flush();
             } else {
                 $output->writeln('Product not found ' . $product['Sku']);
