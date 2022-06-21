@@ -53,6 +53,11 @@ abstract class BusinessCentralConnector
 
     public const EP_SALES_CREDITS = "salesCreditMemos";
 
+    public const EP_PURCHASES_INVOICES_LINE = "purchaseInvoiceLines";
+
+    public const EP_PURCHASES_INVOICES = "purchaseInvoices";
+
+    public const EP_PURCHASES_ORDERS = "purchaseOrders";
     
 
     protected $logger;
@@ -550,6 +555,19 @@ abstract class BusinessCentralConnector
             $filters,
             false,
             ['$expand' => 'salesInvoiceLines,customer']
+        );
+    }
+
+    /**
+     * purchase Orders
+     *
+     */
+    public function getPurchaseInvoicesByItemNumber(string $number)
+    {
+        return $this->getElementsByArray(
+            self::EP_PURCHASES_ORDERS,
+            null,
+            true
         );
     }
 }

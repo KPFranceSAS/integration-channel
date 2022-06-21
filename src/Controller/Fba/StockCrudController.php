@@ -5,6 +5,8 @@ namespace App\Controller\Fba;
 use App\Controller\Admin\AdminCrudController;
 use App\Entity\Brand;
 use App\Entity\Product;
+use App\Filter\NeedToAlertEuFilter;
+use App\Filter\NeedToAlertFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -15,8 +17,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\PercentField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ComparisonFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 
 class StockCrudController extends AdminCrudController
 {
@@ -41,6 +47,7 @@ class StockCrudController extends AdminCrudController
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setPaginatorPageSize(500);
         return $crud->setEntityPermission('ROLE_AMAZON');
     }
 
@@ -66,6 +73,24 @@ class StockCrudController extends AdminCrudController
             IntegerField::new('fbaInboundWorkingStock', 'FBA Inbound Working Qty'),
             IntegerField::new('fbaInboundShippedStock', 'FBA Inbound Shipped Qty'),
             IntegerField::new('fbaInboundReceivingStock', 'FBA Inbound Receiving Qty'),
+
+            IntegerField::new('fbaEuTotalStock', 'FBA EU Warehouse Qty'),
+            IntegerField::new('fbaEuSellableStock', 'FBA EU Sellable Qty'),
+            IntegerField::new('fbaEuUnsellableStock', 'FBA EU Unsellable Qty'),
+            IntegerField::new('fbaEuReservedStock', 'FBA EU Reserved Qty'),
+            IntegerField::new('fbaEuInboundStock', 'FBA EU Inbound Qty'),
+            IntegerField::new('fbaEuInboundWorkingStock', 'FBA EU Inbound Working Qty'),
+            IntegerField::new('fbaEuInboundShippedStock', 'FBA EU Inbound Shipped Qty'),
+            IntegerField::new('fbaEuInboundReceivingStock', 'FBA EU Inbound Receiving Qty'),
+            IntegerField::new('fbaEuTotalStock', 'FBA EU Warehouse Qty'),
+
+            IntegerField::new('fbaUkSellableStock', 'FBA UK Sellable Qty'),
+            IntegerField::new('fbaUkUnsellableStock', 'FBA UK Unsellable Qty'),
+            IntegerField::new('fbaUkReservedStock', 'FBA UK Reserved Qty'),
+            IntegerField::new('fbaUkInboundStock', 'FBA UK Inbound Qty'),
+            IntegerField::new('fbaUkInboundWorkingStock', 'FBA UK Inbound Working Qty'),
+            IntegerField::new('fbaUkInboundShippedStock', 'FBA UK Inbound Shipped Qty'),
+            IntegerField::new('fbaUkInboundReceivingStock', 'FBA UK Inbound Receiving Qty'),
             IntegerField::new('laRocaBusinessCentralStock', 'BC la Roca stock'),
             IntegerField::new('soldStockNotIntegrated', 'BC Amazon sales not integrated'),
             IntegerField::new('returnStockNotIntegrated', 'BC Amazon returns not integrated'),
@@ -82,7 +107,17 @@ class StockCrudController extends AdminCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add(EntityFilter::new('brand'));
+            ->add(EntityFilter::new('brand'))
+            ->add(EntityFilter::new('category'))
+            ->add(TextFilter::new('sku'))
+            ->add(NumericFilter::new('fbaEuTotalStock', 'FBA Eu stock'))
+            ->add(NumericFilter::new('fbaUkTotalStock', 'FBA Uk stock'))
+            ->add(NumericFilter::new('fbaTotalStock', 'FBA stock'))
+            ->add(NumericFilter::new('businessCentralTotalStock', 'BC Amazon Stock'))
+            ->add(NumericFilter::new('differenceStock', 'Stock Delta'))
+            ->add(NeedToAlertFilter::new('stockAlertEu', 'Need to sent stock EU')->setMarketplace('Eu'))
+            ->add(NeedToAlertFilter::new('stockAlertUk', 'Need to sent stock Uk')->setMarketplace('Uk'))
+            ->add(NumericFilter::new('laRocaBusinessCentralStock', 'BC la Roca stock'));
     }
 
 
@@ -90,14 +125,16 @@ class StockCrudController extends AdminCrudController
     {
         return [
             TextField::new('brand', 'Brand'),
+            TextField::new('category', 'Category'),
             TextField::new('sku'),
             TextField::new('description', 'Product name'),
+            IntegerField::new('fbaEuTotalStock', 'FBA Eu stock')->setTemplatePath('admin/fields/stocks/fbaEuStock.html.twig'),
+            IntegerField::new('fbaUkTotalStock', 'FBA Uk stock')->setTemplatePath('admin/fields/stocks/fbaUkStock.html.twig'),
             IntegerField::new('fbaTotalStock', 'FBA stock')->setTemplatePath('admin/fields/stocks/fbaStock.html.twig'),
             IntegerField::new('businessCentralTotalStock', 'BC Amazon Stock')->setTemplatePath('admin/fields/stocks/bcStock.html.twig'),
             IntegerField::new('differenceStock', 'Stock Delta')->setTemplatePath('admin/fields/stocks/deltaStock.html.twig'),
             IntegerField::new('fbaInboundStock', 'FBA Inbound Qty')->setTemplatePath('admin/fields/stocks/inboundStock.html.twig'),
             IntegerField::new('laRocaBusinessCentralStock', 'BC la Roca stock'),
-            
         ];
     }
 }

@@ -12,7 +12,6 @@ use App\Service\MailService;
 use DateInterval;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
-use Exception;
 use Psr\Log\LoggerInterface;
 
 class AmzApiImportStock
@@ -63,7 +62,7 @@ class AmzApiImportStock
             $product->setSoldStockNotIntegrated($this->getSoldQtyProductNotIntegrated($product));
             $product->setReturnStockNotIntegrated($this->getReturnQtyProductNotIntegrated($product));
         }
-        
+
 
         $datas = $this->getContentFromReports();
 
@@ -71,16 +70,16 @@ class AmzApiImportStock
         foreach ($datas as $marketplace => $dataMarketplace) {
             foreach ($dataMarketplace as $data) {
                 $sku = $this->getProductCorrelationSku($data['sku']);
-       
+
                 if (array_key_exists($sku, $this->products)) {
                     $product = $this->products[$sku];
-                    $product->addFbaSellableStock($data['afn-fulfillable-quantity']);
-                    $product->addFbaReservedStock($data['afn-reserved-quantity']);
-                    $product->addFbaUnsellableStock($data['afn-unsellable-quantity']);
-                    $product->addFbaRearchingStock($data['afn-researching-quantity']);
-                    $product->addFbaInboundWorkingStock($data['afn-inbound-working-quantity']);
-                    $product->addFbaInboundShippedStock($data['afn-inbound-shipped-quantity']);
-                    $product->addFbaInboundReceivingStock($data['afn-inbound-receiving-quantity']);
+                    $product->addFbaSellableStock($data['afn-fulfillable-quantity'], $marketplace);
+                    $product->addFbaReservedStock($data['afn-reserved-quantity'], $marketplace);
+                    $product->addFbaUnsellableStock($data['afn-unsellable-quantity'], $marketplace);
+                    $product->addFbaRearchingStock($data['afn-researching-quantity'], $marketplace);
+                    $product->addFbaInboundWorkingStock($data['afn-inbound-working-quantity'], $marketplace);
+                    $product->addFbaInboundShippedStock($data['afn-inbound-shipped-quantity'], $marketplace);
+                    $product->addFbaInboundReceivingStock($data['afn-inbound-receiving-quantity'], $marketplace);
                 } else {
                     $this->logger->alert('Product unknow >> ' . json_encode($data));
                 }
@@ -98,13 +97,13 @@ class AmzApiImportStock
         $datas = [];
 
         $marketplaces = [
-            Marketplace::ES()->id(),
-            Marketplace::GB()->id(),
+            'eu' => Marketplace::ES()->id(),
+            'uk' => Marketplace::GB()->id(),
         ];
-        foreach ($marketplaces as $marketplace) {
+        foreach ($marketplaces as $codeMarketplace => $marketplace) {
             $datasReport =  $this->getContentFromReportMarketplace($dateTimeStart, $marketplace);
             $this->logger->info("Data marketplace $marketplace >>>>" . count($datasReport));
-            $datas[$marketplace] = $datasReport;
+            $datas[$codeMarketplace] = $datasReport;
         }
 
         return $datas;
@@ -135,21 +134,21 @@ class AmzApiImportStock
         }
         return [];
     }
-  
-   
+
+
     protected function getSoldQtyProductNotIntegrated(Product $product)
     {
         $qty = $this->manager->createQueryBuilder()
-                ->select('SUM(amz.quantity) as qtyShipped')
-                ->from('App\Entity\AmazonOrder', 'amz')
-                ->where('amz.product = :product')
-                ->andWhere('amz.itemStatus = :itemStatus')
-                ->andWhere('amz.integrated = 0')
-                ->andWhere('amz.isReturn = 0')
-                ->setParameter('product', $product)
-                ->setParameter('itemStatus', 'Shipped')
-                ->getQuery()
-                ->getSingleScalarResult();
+            ->select('SUM(amz.quantity) as qtyShipped')
+            ->from('App\Entity\AmazonOrder', 'amz')
+            ->where('amz.product = :product')
+            ->andWhere('amz.itemStatus = :itemStatus')
+            ->andWhere('amz.integrated = 0')
+            ->andWhere('amz.isReturn = 0')
+            ->setParameter('product', $product)
+            ->setParameter('itemStatus', 'Shipped')
+            ->getQuery()
+            ->getSingleScalarResult();
         return $qty ?? 0;
     }
 
@@ -163,37 +162,73 @@ class AmzApiImportStock
     {
         $queryBuilder = $this->manager->createQueryBuilder();
         $query = $queryBuilder->update('App\Entity\Product', 'p')
-                ->set('p.fbaSellableStock', 0)
-                ->set('p.fbaUnsellableStock', 0)
-                ->set('p.fbaUnsellableStock', 0)
-                ->set('p.fbaInboundStock', 0)
-                ->set('p.fbaOutboundStock', 0)
-                ->set('p.fbaReservedStock', 0)
-                ->set('p.fbaInboundShippedStock', 0)
-                ->set('p.fbaInboundWorkingStock', 0)
-                ->set('p.fbaInboundReceivingStock', 0)
-                ->set('p.fbaResearchingStock', 0)
-              
-                ->set('p.fbaTotalStock', 0)
-                ->set('p.businessCentralStock', 0)
-                ->set('p.businessCentralTotalStock', 0)
-                ->set('p.laRocaBusinessCentralStock', 0)
-                ->set('p.soldStockNotIntegrated', 0)
-                ->set('p.returnStockNotIntegrated', 0)
-                ->set('p.differenceStock', 0)
-                ->set('p.ratioStock', 0)
-                ->getQuery()
-                ->execute();
+            ->set('p.fbaSellableStock', 0)
+            ->set('p.fbaUnsellableStock', 0)
+            ->set('p.fbaUnsellableStock', 0)
+            ->set('p.fbaInboundStock', 0)
+            ->set('p.fbaOutboundStock', 0)
+            ->set('p.fbaReservedStock', 0)
+            ->set('p.fbaInboundShippedStock', 0)
+            ->set('p.fbaInboundWorkingStock', 0)
+            ->set('p.fbaInboundReceivingStock', 0)
+            ->set('p.fbaResearchingStock', 0)
+            ->set('p.fbaTotalStock', 0)
+            ->set('p.fbaSellableStock', 0)
+            ->set('p.fbaUnsellableStock', 0)
+            ->set('p.fbaUnsellableStock', 0)
+            ->set('p.fbaInboundStock', 0)
+            ->set('p.fbaOutboundStock', 0)
+            ->set('p.fbaReservedStock', 0)
+            ->set('p.fbaInboundShippedStock', 0)
+            ->set('p.fbaInboundWorkingStock', 0)
+            ->set('p.fbaInboundReceivingStock', 0)
+            ->set('p.fbaResearchingStock', 0)
+            ->set('p.fbaTotalStock', 0)
+
+            ->set('p.fbaUkSellableStock', 0)
+            ->set('p.fbaUkUnsellableStock', 0)
+            ->set('p.fbaUkUnsellableStock', 0)
+            ->set('p.fbaUkInboundStock', 0)
+            ->set('p.fbaUkOutboundStock', 0)
+            ->set('p.fbaUkReservedStock', 0)
+            ->set('p.fbaUkInboundShippedStock', 0)
+            ->set('p.fbaUkInboundWorkingStock', 0)
+            ->set('p.fbaUkInboundReceivingStock', 0)
+            ->set('p.fbaUkResearchingStock', 0)
+            ->set('p.fbaUkTotalStock', 0)
+
+            ->set('p.fbaEuSellableStock', 0)
+            ->set('p.fbaEuUnsellableStock', 0)
+            ->set('p.fbaEuUnsellableStock', 0)
+            ->set('p.fbaEuInboundStock', 0)
+            ->set('p.fbaEuOutboundStock', 0)
+            ->set('p.fbaEuReservedStock', 0)
+            ->set('p.fbaEuInboundShippedStock', 0)
+            ->set('p.fbaEuInboundWorkingStock', 0)
+            ->set('p.fbaEuInboundReceivingStock', 0)
+            ->set('p.fbaEuResearchingStock', 0)
+            ->set('p.fbaEuTotalStock', 0)
+
+            ->set('p.businessCentralStock', 0)
+            ->set('p.businessCentralTotalStock', 0)
+            ->set('p.laRocaBusinessCentralStock', 0)
+            ->set('p.laRocaPurchaseBusinessCentralStock', 0)
+            ->set('p.soldStockNotIntegrated', 0)
+            ->set('p.returnStockNotIntegrated', 0)
+            ->set('p.differenceStock', 0)
+            ->set('p.ratioStock', 0)
+            ->getQuery()
+            ->execute();
     }
 
-    
+
 
     protected function getProductCorrelationSku(string $sku): string
     {
         $skuSanitized = strtoupper($sku);
         $productCorrelation = $this->manager
-                                ->getRepository(ProductCorrelation::class)
-                                ->findOneBy(['skuUsed' => $skuSanitized]);
+            ->getRepository(ProductCorrelation::class)
+            ->findOneBy(['skuUsed' => $skuSanitized]);
         return $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
     }
 }

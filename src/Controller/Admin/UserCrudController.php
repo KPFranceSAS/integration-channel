@@ -73,6 +73,7 @@ class UserCrudController extends AdminCrudController
         $choiceRules = [
             'ROLE_ADMIN' => 'ROLE_ADMIN',
             'ROLE_AMAZON' => 'ROLE_AMAZON',
+            'ROLE_AMAZON_ALERT' => 'ROLE_AMAZON_ALERT',
             'ROLE_USER' => 'ROLE_USER',
         ];
         $fields[] = ChoiceField::new('roles', 'Roles')->setChoices($choiceRules)->allowMultipleChoices();

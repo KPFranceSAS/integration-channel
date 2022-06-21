@@ -44,13 +44,37 @@ class ImportProductCategoryCommand extends Command
         foreach ($products as $product) {
             $productDb = $this->getProductCorrelationSku($product["Sku"]);
             if ($productDb) {
-                $categoryDb = $this->manager->getRepository(Category::class)->findOneBy(["name" => $product['Category']]);
-                $productDb->setDescription($product['ERP Name']);
-                if ($categoryDb) {
-                    $productDb->setCategory($categoryDb);
-                } else {
-                    $output->writeln('category not found ' . $product['Category']);
+
+                if (array_key_exists('Category', $product)) {
+                    $categoryDb = $this->manager->getRepository(Category::class)->findOneBy(["name" => $product['Category']]);
+                    $productDb->setDescription($product['ERP Name']);
+                    if ($categoryDb) {
+                        $productDb->setCategory($categoryDb);
+                    } else {
+                        $output->writeln('category not found ' . $product['Category']);
+                    }
                 }
+
+                if (array_key_exists('Min Stock EU', $product)) {
+                    $value = (int)$product['Min Stock EU'];
+                    if ($value > 0) {
+                        $productDb->setMinQtyFbaEu($value);
+                    } else {
+                        $productDb->setMinQtyFbaEu(null);
+                    }
+                }
+
+
+                if (array_key_exists('Min Stock UK', $product)) {
+                    $value = (int)$product['Min Stock UK'];
+                    if ($value > 0) {
+                        $productDb->setMinQtyFbaUk($value);
+                    } else {
+                        $productDb->setMinQtyFbaUk(null);
+                    }
+                }
+
+
                 $this->manager->persist($productDb);
                 $this->manager->flush();
             } else {
@@ -59,15 +83,6 @@ class ImportProductCategoryCommand extends Command
         }
         $output->writeln('Finish imports ' . count($products));
         return Command::SUCCESS;
-    }
-
-
-    protected function getProductCorrelation($sku)
-    {
-        $productDb = $this->manager->getRepository(Product::class)->findOneBy(["sku" => $sku]);
-        if (!$productDb) {
-            $productDb = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(["skuM" => $sku]);
-        }
     }
 
 

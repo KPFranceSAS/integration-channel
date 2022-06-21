@@ -55,7 +55,7 @@ class BrandIntegrationCommand extends Command
 
 
 
-    private function getBrand(string $brandName): Brand
+    private function getBrand(string $brandName): ?Brand
     {
         $nameSanitized =  strtoupper($brandName);
         if (strlen($nameSanitized) == 0) {

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -44,6 +45,7 @@ class Product
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_product"})
+     * @Assert\NotNull()
      */
     private $description;
 
@@ -60,6 +62,7 @@ class Product
 
     /**
      * @ORM\ManyToOne(targetEntity=Brand::class, inversedBy="products")
+     * @Assert\NotNull()
      */
     private $brand;
 
@@ -82,86 +85,212 @@ class Product
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $fbaUnsellableStock= 0;
+    private $fbaUnsellableStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $fbaInboundStock= 0;
+    private $fbaInboundStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $fbaOutboundStock= 0;
-
-
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $fbaReservedStock= 0;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $fbaInboundShippedStock= 0;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $fbaInboundWorkingStock= 0;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $fbaInboundReceivingStock= 0;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $fbaResearchingStock= 0;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $fbaTotalStock= 0;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
-    private $laRocaBusinessCentralStock= 0;
+    private $fbaOutboundStock = 0;
 
 
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $businessCentralTotalStock= 0;
+    private $fbaReservedStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $businessCentralStock= 0;
+    private $fbaInboundShippedStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaInboundWorkingStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaInboundReceivingStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaResearchingStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaTotalStock = 0;
+
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaEuSellableStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaEuUnsellableStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaEuInboundStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaEuOutboundStock = 0;
+
+
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaEuReservedStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaEuInboundShippedStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaEuInboundWorkingStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaEuInboundReceivingStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaEuResearchingStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaEuTotalStock = 0;
+
+
+
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUkSellableStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUkUnsellableStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUkInboundStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUkOutboundStock = 0;
+
+
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUkReservedStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUkInboundShippedStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUkInboundWorkingStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUkInboundReceivingStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUkResearchingStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $fbaUkTotalStock = 0;
+
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $laRocaBusinessCentralStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $laRocaPurchaseBusinessCentralStock = 0;
+
+
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $businessCentralTotalStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $businessCentralStock = 0;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $ratioStock= 0;
+    private $ratioStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $soldStockNotIntegrated= 0;
+    private $soldStockNotIntegrated = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $returnStockNotIntegrated= 0;
+    private $returnStockNotIntegrated = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $differenceStock= 0;
+    private $differenceStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\GreaterThan(value = 0)
+     */
+    private $minQtyFbaEu;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\GreaterThan(value = 0)
+     */
+    private $minQtyFbaUk;
 
 
 
@@ -193,6 +322,27 @@ class Product
     }
 
 
+    public function needTobeAlertEu(): bool
+    {
+        return $this->needTobeAlert('Eu');
+    }
+
+
+    public function needTobeAlertUk(): bool
+    {
+        return $this->needTobeAlert('Uk');
+    }
+
+
+    public function needTobeAlert($zone): bool
+    {
+        if ($this->{'minQtyFba' . $zone} && $this->laRocaBusinessCentralStock > 0) {
+            $stock = $this->{'fba' . $zone . 'TotalStock'} + $this->{'fba' . $zone . 'InboundStock'};
+            return ($stock <= $this->{'minQtyFba' . $zone});
+        }
+        return false;
+    }
+
 
     /**
      * @ORM\PrePersist
@@ -216,59 +366,71 @@ class Product
     private function calculateRatio()
     {
         $this->fbaTotalStock = $this->fbaSellableStock + $this->fbaUnsellableStock + $this->fbaResearchingStock + $this->fbaReservedStock;
+        $this->fbaEuTotalStock = $this->fbaEuSellableStock + $this->fbaEuUnsellableStock + $this->fbaEuResearchingStock + $this->fbaEuReservedStock;
+        $this->fbaUkTotalStock = $this->fbaUkSellableStock + $this->fbaUkUnsellableStock + $this->fbaUkResearchingStock + $this->fbaUkReservedStock;
+
         $this->businessCentralTotalStock = $this->businessCentralStock - $this->soldStockNotIntegrated + $this->returnStockNotIntegrated;
         $this->fbaInboundStock = $this->fbaInboundReceivingStock + $this->fbaInboundShippedStock + $this->fbaInboundWorkingStock;
-        
+        $this->fbaEuInboundStock = $this->fbaEuInboundReceivingStock + $this->fbaEuInboundShippedStock + $this->fbaEuInboundWorkingStock;
+        $this->fbaUkInboundStock = $this->fbaUkInboundReceivingStock + $this->fbaUkInboundShippedStock + $this->fbaUkInboundWorkingStock;
+
         $this->differenceStock = abs($this->fbaTotalStock - $this->businessCentralTotalStock);
 
         if ($this->differenceStock == 0) {
             $this->ratioStock = 0;
         } else {
-            if ($this->businessCentralTotalStock!=0) {
-                $this->ratioStock = abs(round($this->differenceStock/($this->businessCentralTotalStock), 4));
-            } elseif ($this->fbaTotalStock!=0) {
-                $this->ratioStock = abs(round($this->differenceStock/($this->fbaTotalStock), 4));
+            if ($this->businessCentralTotalStock != 0) {
+                $this->ratioStock = abs(round($this->differenceStock / ($this->businessCentralTotalStock), 4));
+            } elseif ($this->fbaTotalStock != 0) {
+                $this->ratioStock = abs(round($this->differenceStock / ($this->fbaTotalStock), 4));
             } else {
                 $this->ratioStock = 0;
             }
         }
     }
 
-    public function addFbaSellableStock(int $stock)
+    public function addFbaSellableStock(int $stock, string $marketplace)
     {
-        $this->fbaSellableStock+=$stock;
+        $this->fbaSellableStock += $stock;
+        $this->{'fba' . ucfirst($marketplace) . 'SellableStock'} += $stock;
     }
 
 
-    public function addFbaReservedStock(int $stock)
+    public function addFbaReservedStock(int $stock, string $marketplace)
     {
-        $this->fbaReservedStock+=$stock;
+        $this->fbaReservedStock += $stock;
+        $this->{'fba' . ucfirst($marketplace) . 'ReservedStock'} += $stock;
     }
 
-    public function addFbaRearchingStock(int $stock)
+    public function addFbaRearchingStock(int $stock, string $marketplace)
     {
-        $this->fbaResearchingStock+=$stock;
+        $this->fbaResearchingStock += $stock;
+        $this->{'fba' . ucfirst($marketplace) . 'ResearchingStock'} += $stock;
     }
 
 
-    public function addFbaUnsellableStock(int $stock)
+    public function addFbaUnsellableStock(int $stock, string $marketplace)
     {
-        $this->fbaUnsellableStock+=$stock;
+        $this->fbaUnsellableStock += $stock;
+        $this->{'fba' . ucfirst($marketplace) . 'UnsellableStock'} += $stock;
     }
 
-    public function addFbaInboundReceivingStock(int $stock)
+    public function addFbaInboundReceivingStock(int $stock, string $marketplace)
     {
-        $this->fbaInboundReceivingStock+=$stock;
+        $this->fbaInboundReceivingStock += $stock;
+        $this->{'fba' . ucfirst($marketplace) . 'InboundReceivingStock'} += $stock;
     }
 
-    public function addFbaInboundWorkingStock(int $stock)
+    public function addFbaInboundWorkingStock(int $stock, string $marketplace)
     {
-        $this->fbaInboundWorkingStock+=$stock;
+        $this->fbaInboundWorkingStock += $stock;
+        $this->{'fba' . ucfirst($marketplace) . 'InboundWorkingStock'} += $stock;
     }
 
-    public function addFbaInboundShippedStock(int $stock)
+    public function addFbaInboundShippedStock(int $stock, string $marketplace)
     {
-        $this->fbaInboundShippedStock+=$stock;
+        $this->fbaInboundShippedStock += $stock;
+        $this->{'fba' . ucfirst($marketplace) . 'InboundShippedStock'} += $stock;
     }
 
 
@@ -598,6 +760,282 @@ class Product
     public function setBusinessCentralTotalStock(int $businessCentralTotalStock): self
     {
         $this->businessCentralTotalStock = $businessCentralTotalStock;
+
+        return $this;
+    }
+
+    public function getMinQtyFbaEu(): ?int
+    {
+        return $this->minQtyFbaEu;
+    }
+
+    public function setMinQtyFbaEu(?int $minQtyFbaEu): self
+    {
+        $this->minQtyFbaEu = $minQtyFbaEu;
+
+        return $this;
+    }
+
+    public function getMinQtyFbaUk(): ?int
+    {
+        return $this->minQtyFbaUk;
+    }
+
+    public function setMinQtyFbaUk(?int $minQtyFbaUk): self
+    {
+        $this->minQtyFbaUk = $minQtyFbaUk;
+
+        return $this;
+    }
+
+    public function getFbaEuSellableStock(): ?int
+    {
+        return $this->fbaEuSellableStock;
+    }
+
+    public function setFbaEuSellableStock(?int $fbaEuSellableStock): self
+    {
+        $this->fbaEuSellableStock = $fbaEuSellableStock;
+
+        return $this;
+    }
+
+    public function getFbaEuUnsellableStock(): ?int
+    {
+        return $this->fbaEuUnsellableStock;
+    }
+
+    public function setFbaEuUnsellableStock(?int $fbaEuUnsellableStock): self
+    {
+        $this->fbaEuUnsellableStock = $fbaEuUnsellableStock;
+
+        return $this;
+    }
+
+    public function getFbaEuInboundStock(): ?int
+    {
+        return $this->fbaEuInboundStock;
+    }
+
+    public function setFbaEuInboundStock(?int $fbaEuInboundStock): self
+    {
+        $this->fbaEuInboundStock = $fbaEuInboundStock;
+
+        return $this;
+    }
+
+    public function getFbaEuOutboundStock(): ?int
+    {
+        return $this->fbaEuOutboundStock;
+    }
+
+    public function setFbaEuOutboundStock(?int $fbaEuOutboundStock): self
+    {
+        $this->fbaEuOutboundStock = $fbaEuOutboundStock;
+
+        return $this;
+    }
+
+    public function getFbaEuReservedStock(): ?int
+    {
+        return $this->fbaEuReservedStock;
+    }
+
+    public function setFbaEuReservedStock(?int $fbaEuReservedStock): self
+    {
+        $this->fbaEuReservedStock = $fbaEuReservedStock;
+
+        return $this;
+    }
+
+    public function getFbaEuInboundShippedStock(): ?int
+    {
+        return $this->fbaEuInboundShippedStock;
+    }
+
+    public function setFbaEuInboundShippedStock(?int $fbaEuInboundShippedStock): self
+    {
+        $this->fbaEuInboundShippedStock = $fbaEuInboundShippedStock;
+
+        return $this;
+    }
+
+    public function getFbaEuInboundWorkingStock(): ?int
+    {
+        return $this->fbaEuInboundWorkingStock;
+    }
+
+    public function setFbaEuInboundWorkingStock(?int $fbaEuInboundWorkingStock): self
+    {
+        $this->fbaEuInboundWorkingStock = $fbaEuInboundWorkingStock;
+
+        return $this;
+    }
+
+    public function getFbaEuInboundReceivingStock(): ?int
+    {
+        return $this->fbaEuInboundReceivingStock;
+    }
+
+    public function setFbaEuInboundReceivingStock(?int $fbaEuInboundReceivingStock): self
+    {
+        $this->fbaEuInboundReceivingStock = $fbaEuInboundReceivingStock;
+
+        return $this;
+    }
+
+    public function getFbaEuResearchingStock(): ?int
+    {
+        return $this->fbaEuResearchingStock;
+    }
+
+    public function setFbaEuResearchingStock(?int $fbaEuResearchingStock): self
+    {
+        $this->fbaEuResearchingStock = $fbaEuResearchingStock;
+
+        return $this;
+    }
+
+    public function getFbaEuTotalStock(): ?int
+    {
+        return $this->fbaEuTotalStock;
+    }
+
+    public function setFbaEuTotalStock(?int $fbaEuTotalStock): self
+    {
+        $this->fbaEuTotalStock = $fbaEuTotalStock;
+
+        return $this;
+    }
+
+    public function getFbaUkSellableStock(): ?int
+    {
+        return $this->fbaUkSellableStock;
+    }
+
+    public function setFbaUkSellableStock(?int $fbaUkSellableStock): self
+    {
+        $this->fbaUkSellableStock = $fbaUkSellableStock;
+
+        return $this;
+    }
+
+    public function getFbaUkUnsellableStock(): ?int
+    {
+        return $this->fbaUkUnsellableStock;
+    }
+
+    public function setFbaUkUnsellableStock(?int $fbaUkUnsellableStock): self
+    {
+        $this->fbaUkUnsellableStock = $fbaUkUnsellableStock;
+
+        return $this;
+    }
+
+    public function getFbaUkInboundStock(): ?int
+    {
+        return $this->fbaUkInboundStock;
+    }
+
+    public function setFbaUkInboundStock(?int $fbaUkInboundStock): self
+    {
+        $this->fbaUkInboundStock = $fbaUkInboundStock;
+
+        return $this;
+    }
+
+    public function getFbaUkOutboundStock(): ?int
+    {
+        return $this->fbaUkOutboundStock;
+    }
+
+    public function setFbaUkOutboundStock(?int $fbaUkOutboundStock): self
+    {
+        $this->fbaUkOutboundStock = $fbaUkOutboundStock;
+
+        return $this;
+    }
+
+    public function getFbaUkReservedStock(): ?int
+    {
+        return $this->fbaUkReservedStock;
+    }
+
+    public function setFbaUkReservedStock(?int $fbaUkReservedStock): self
+    {
+        $this->fbaUkReservedStock = $fbaUkReservedStock;
+
+        return $this;
+    }
+
+    public function getFbaUkInboundShippedStock(): ?int
+    {
+        return $this->fbaUkInboundShippedStock;
+    }
+
+    public function setFbaUkInboundShippedStock(?int $fbaUkInboundShippedStock): self
+    {
+        $this->fbaUkInboundShippedStock = $fbaUkInboundShippedStock;
+
+        return $this;
+    }
+
+    public function getFbaUkInboundWorkingStock(): ?int
+    {
+        return $this->fbaUkInboundWorkingStock;
+    }
+
+    public function setFbaUkInboundWorkingStock(?int $fbaUkInboundWorkingStock): self
+    {
+        $this->fbaUkInboundWorkingStock = $fbaUkInboundWorkingStock;
+
+        return $this;
+    }
+
+    public function getFbaUkInboundReceivingStock(): ?int
+    {
+        return $this->fbaUkInboundReceivingStock;
+    }
+
+    public function setFbaUkInboundReceivingStock(?int $fbaUkInboundReceivingStock): self
+    {
+        $this->fbaUkInboundReceivingStock = $fbaUkInboundReceivingStock;
+
+        return $this;
+    }
+
+    public function getFbaUkResearchingStock(): ?int
+    {
+        return $this->fbaUkResearchingStock;
+    }
+
+    public function setFbaUkResearchingStock(?int $fbaUkResearchingStock): self
+    {
+        $this->fbaUkResearchingStock = $fbaUkResearchingStock;
+
+        return $this;
+    }
+
+    public function getFbaUkTotalStock(): ?int
+    {
+        return $this->fbaUkTotalStock;
+    }
+
+    public function setFbaUkTotalStock(?int $fbaUkTotalStock): self
+    {
+        $this->fbaUkTotalStock = $fbaUkTotalStock;
+
+        return $this;
+    }
+
+    public function getLaRocaPurchaseBusinessCentralStock(): ?int
+    {
+        return $this->laRocaPurchaseBusinessCentralStock;
+    }
+
+    public function setLaRocaPurchaseBusinessCentralStock(?int $laRocaPurchaseBusinessCentralStock): self
+    {
+        $this->laRocaPurchaseBusinessCentralStock = $laRocaPurchaseBusinessCentralStock;
 
         return $this;
     }

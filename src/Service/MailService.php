@@ -46,7 +46,7 @@ class MailService
         $this->logger->info("Sending email $titre to " . json_encode($emails) . "  > $contenu ");
 
         if ($this->needTobeRoute($titre, $contenu)) {
-            $emails = 'stephane.lanjard@kpsport.com';
+            $emails = 'devops@kpsport.com';
             $this->logger->info("Reroute email $titre to $emails");
         }
 
@@ -93,7 +93,15 @@ class MailService
 
     private function needTobeRoute($titre, $contenu)
     {
-        $stringForbiddens = ['REPORT AMAZON',  'cURL error', 'Client error:', 'stock files published', 'Server error:', 'Unable to authenticate using a private key'];
+        $stringForbiddens = [
+            'REPORT AMAZON',
+            "Syntax error",
+            'cURL error',
+            'Client error:',
+            'stock files published',
+            'Server error:',
+            'Unable to authenticate using a private key'
+        ];
         if (s($titre)->containsAny($stringForbiddens)) {
             return true;
         }

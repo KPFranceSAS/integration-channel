@@ -61,7 +61,6 @@ class ErpNameIntegrationCommand extends Command
                         $this->akeneoConnector->updateProduct($product['identifier'], $updateValue);
                     } catch (UnprocessableEntityHttpException $e) {
                         foreach ($e->getResponseErrors() as $error) {
-                            // do your stuff with the error
                             $output->writeln("<error>" . $error['property']
                                                 . ':' . $error['message']
                                                 . ">>>" . json_encode($updateValue) . "</error>");

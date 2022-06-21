@@ -1,0 +1,35 @@
+<p>
+There is some replenishments to create for FBA
+</p>
+
+<p>
+</p>
+<table>
+    <thead>
+        <tr>
+            <th>Zone</th>
+            <th>Sku</th>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Fba Alert</th>
+            <th>Fba Inbound</th>
+            <th>Fba Stock</th>
+            <th>Stock LA Roca</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for export in exports %}
+        <tr>
+            <td>{{export.zone}}</td>
+            <td>{{export.sku}}</td>
+            <td>{{export.productName}}</td>
+            <td>{{export.brand}}</td>
+            <td>{{export.minFbaQty}}</td>
+            <td>{{export.qtyFbaInbound}}</td>
+            <td>{{export.qtyFbaTotal}}</td>
+            <td>{{export.qtyStockLaRoca}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+
+</table>

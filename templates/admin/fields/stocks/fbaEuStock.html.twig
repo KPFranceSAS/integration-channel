@@ -1,0 +1,55 @@
+<div class="popover__ext">{{ field.formattedValue }}</div>
+<div class="popover__wrapper"><i class="fas fa-info-circle popover__title"></i>
+  <div class="popover__content">
+    <div class="popover__message">
+    <table class="table datagrid" >
+        <tr>
+          <td class="tfoot-col-label">FBA Sellable Qty (EU)</td>
+          <td data-label="FBA Sellable Qty (EU)" class="text-left field-text">{{entity.instance.fbaEuSellableStock}}</td>
+        </tr>
+        <tr>
+          <td class="tfoot-col-label">FBA Unsellable Qty (EU)</td>
+          <td data-label="FBA Unsellable Qty (EU)" class="text-left field-text">{{entity.instance.fbaEuUnsellableStock}}</td>
+        </tr>
+        <tr>
+          <td class="tfoot-col-label">FBA Reserved Qty (EU)</td>
+          <td data-label="FBA Reserved Qty (EU)" class="text-left field-text">{{entity.instance.fbaEuReservedStock}}</td>
+        </tr>
+        <tr>
+          <td class="tfoot-col-label">FBA Researching Qty (EU)</td>
+          <td data-label="FBA Researching Qty  (EU)" class="text-left field-text">{{entity.instance.fbaEuResearchingStock}}</td>
+        </tr>
+     </table> 
+
+    </div>
+  </div>
+</div>
+ {% if entity.instance.needTobeAlertEu() %}
+<div class="popover__wrapper"><i class="fas fa-exclamation-triangle text-danger popover__title"></i>
+
+  <div class="popover__content">
+      <div class="popover__message">
+            <table class="table datagrid" >
+              <tr>
+                <td class="tfoot-col-label">FBA Eu Total Stock</td>
+                <td data-label="FBA Eu Total Stock" class="text-left field-text">{{entity.instance.fbaEuTotalStock}}</td>
+              </tr>
+              <tr>
+                <td class="tfoot-col-label">FBA Eu Inbound Qty</td>
+                <td data-label="FBA Eu Inbound Qty" class="text-left field-text">{{entity.instance.fbaEuInboundWorkingStock}}</td>
+              </tr>
+              <tr>
+                <td class="tfoot-col-label">La Roca Stock</td>
+                <td data-label="La Roca Stock" class="text-left field-text">{{entity.instance.laRocaBusinessCentralStock}}</td>
+              </tr>
+              <tr>
+                <td class="tfoot-col-label">Min Fba Eu stock</td>
+                <td data-label="Min Fba Eu stock" class="text-left field-text">{{entity.instance.minQtyFbaEu}}</td>
+              </tr>
+          </table> 
+      </div>
+    </div>
+  </div>
+
+{% endif %}
+
