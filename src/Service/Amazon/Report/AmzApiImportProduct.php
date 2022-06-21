@@ -26,7 +26,7 @@ class AmzApiImportProduct
     private $mailer;
 
     protected $errorProducts;
-    
+
     private $businessCentralAggregator;
 
     public function __construct(
@@ -42,7 +42,7 @@ class AmzApiImportProduct
         $this->mailer = $mailer;
         $this->businessCentralAggregator = $businessCentralAggregator;
     }
- 
+
     public const WAITING_TIME = 20;
 
 
@@ -77,6 +77,9 @@ class AmzApiImportProduct
 
         $marketplaces = [
             Marketplace::ES()->id(),
+            Marketplace::FR()->id(),
+            Marketplace::DE()->id(),
+            Marketplace::IT()->id(),
             Marketplace::GB()->id(),
         ];
         foreach ($marketplaces as $marketplace) {
@@ -163,8 +166,8 @@ class AmzApiImportProduct
     {
         $skuSanitized = strtoupper($sku);
         $productCorrelation = $this->manager
-                                ->getRepository(ProductCorrelation::class)
-                                ->findOneBy(['skuUsed' => $skuSanitized]);
+            ->getRepository(ProductCorrelation::class)
+            ->findOneBy(['skuUsed' => $skuSanitized]);
         return $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
     }
 }
