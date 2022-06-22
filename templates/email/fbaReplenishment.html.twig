@@ -1,33 +1,31 @@
 <p>
-There is some replenishments to create for FBA
+STOCK ALERT - FBA replenishment order is recommended for the following sku (Check “Recommended Quantity” column)
 </p>
 
-<p>
-</p>
-<table>
+<table width="100%" cellpadding="0" cellspacing="0" style="min-width:100%;  border-collapse: collapse; border-style: solid; border-color: # aeabab;" border="1px">
     <thead>
         <tr>
-            <th>Zone</th>
-            <th>Sku</th>
-            <th>Name</th>
-            <th>Brand</th>
-            <th>Fba Alert</th>
-            <th>Fba Inbound</th>
-            <th>Fba Stock</th>
-            <th>Stock LA Roca</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Zone</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Sku</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Name</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Brand</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Recommended Qty</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Fba Inbound</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Fba Stock</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">La Roca Stock</th>
         </tr>
     </thead>
     <tbody>
     {% for export in exports %}
         <tr>
-            <td>{{export.zone}}</td>
-            <td>{{export.sku}}</td>
-            <td>{{export.productName}}</td>
-            <td>{{export.brand}}</td>
-            <td>{{export.minFbaQty}}</td>
-            <td>{{export.qtyFbaInbound}}</td>
-            <td>{{export.qtyFbaTotal}}</td>
-            <td>{{export.qtyStockLaRoca}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.zone|upper}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.sku}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.productName|lower|capitalize}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.brand|upper}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.minFbaQty}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.qtyFbaInbound}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.qtyFbaTotal}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.qtyStockLaRoca}}</td>
         </tr>
     {% endfor %}
     </tbody>

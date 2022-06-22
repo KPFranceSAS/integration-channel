@@ -3,6 +3,7 @@
 namespace App\Controller\Fba;
 
 use App\Controller\Admin\AdminCrudController;
+use App\Controller\Admin\DashboardController;
 use App\Entity\Brand;
 use App\Entity\Product;
 use App\Filter\NeedToAlertEuFilter;
@@ -23,12 +24,13 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ComparisonFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 
 class StockCrudController extends AdminCrudController
 {
     public function getDefautOrder(): array
     {
-        return ['differenceStock' => "DESC"];
+        return ['fbaTotalStock' => "DESC"];
     }
 
 
@@ -55,6 +57,41 @@ class StockCrudController extends AdminCrudController
     public function configureActions(Actions $actions): Actions
     {
         $actions = parent::configureActions($actions);
+
+        $url = $this->container->get(AdminUrlGenerator::class)
+            ->setDashboard(DashboardController::class)
+            ->setController(get_class($this))
+            ->set('filters', [
+                "stockAlertEu" => 1,
+            ])
+            ->setAction(Action::INDEX)
+            ->generateUrl();
+
+        $replenishmentEu = Action::new('replenishmentEu', 'EU replenishment')
+            ->setIcon('fas fa-truck-loading')
+            ->linkToUrl($url)
+            ->setCssClass('btn btn-primary')
+            ->createAsGlobalAction();
+
+        $actions->add(Crud::PAGE_INDEX, $replenishmentEu);
+
+        $url = $this->container->get(AdminUrlGenerator::class)
+            ->setDashboard(DashboardController::class)
+            ->setController(get_class($this))
+            ->set('filters', [
+                "stockAlertUk" => 1,
+            ])
+            ->setAction(Action::INDEX)
+            ->generateUrl();
+
+        $replenishmentUk = Action::new('replenishmentUk', 'Uk replenishment')
+            ->setIcon('fas fa-truck-loading')
+            ->linkToUrl($url)
+            ->setCssClass('btn btn-primary')
+            ->createAsGlobalAction();
+
+        $actions->add(Crud::PAGE_INDEX, $replenishmentUk);
+
         return $actions->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE, Action::DETAIL, ACTION::EDIT);
     }
 
