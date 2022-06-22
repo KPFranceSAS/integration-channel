@@ -40,9 +40,4 @@ class OwletCareOrderCrudController extends WebOrderCrudController
             'Owletcare' => 'Owletcare',
         ];
     }
-
-    protected function getFilterDelay()
-    {
-        return $this->getFilterDelayDelivery();
-    }
 }

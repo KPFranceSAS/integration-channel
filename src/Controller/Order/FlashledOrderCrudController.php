@@ -41,9 +41,4 @@ class FlashledOrderCrudController extends WebOrderCrudController
             'Flashled' => 'Flashled',
         ];
     }
-
-    protected function getFilterDelay()
-    {
-        return $this->getFilterDelayDelivery();
-    }
 }

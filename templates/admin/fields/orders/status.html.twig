@@ -10,6 +10,18 @@
 	{% set classColor = 'secondary' %}
 {% endif %}
 
-<div class="badge badge-{{classColor}}">
-	{{entity.instance.getStatusLitteral}}
+<div class="" style="{% if entity.instance.hasDelayTreatment %}min-width:140px{% endif %}">
+	<span class="badge badge-{{classColor}}">
+		{{entity.instance.getStatusLitteral}}
+	</span>
+	{% if entity.instance.hasDelayTreatment %}
+	<span class="popover__wrapper">
+		<i class="fas fa-exclamation-triangle text-danger popover__title"></i>
+		<div class="popover__content">
+			<div class="popover__message">
+				{{entity.instance.getDelayProblemMessage}}
+			</div>
+		</div>
+	</span>
+	{% endif %}
 </div>

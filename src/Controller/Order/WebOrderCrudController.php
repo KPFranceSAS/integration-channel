@@ -5,6 +5,7 @@ namespace App\Controller\Order;
 use App\Controller\Admin\AdminCrudController;
 use App\Controller\Admin\DashboardController;
 use App\Entity\WebOrder;
+use App\Filter\LateOrderFilter;
 use App\Form\ChangeStatusInvoiceType;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\Utils\DatetimeUtils;
@@ -117,24 +118,23 @@ class WebOrderCrudController extends AdminCrudController
             ->createAsGlobalAction();
 
 
-        $filterDelay = $this->getFilterDelay();
 
-        if (count($filterDelay) > 0) {
-            $url = $this->container->get(AdminUrlGenerator::class)
-                ->setDashboard(DashboardController::class)
-                ->setController(get_class($this))
-                ->set('filters', $filterDelay)
-                ->setAction(Action::INDEX)
-                ->generateUrl();
+        $url = $this->container->get(AdminUrlGenerator::class)
+            ->setDashboard(DashboardController::class)
+            ->setController(get_class($this))
+            ->set('filters', [
+                'isLate' => 1
+            ])
+            ->setAction(Action::INDEX)
+            ->generateUrl();
 
-            $lateIndex = Action::new('late', 'Check late orders')
-                ->setIcon('fas fa-hourglass-end')
-                ->linkToUrl($url)
-                ->setCssClass('btn btn-danger')
-                ->createAsGlobalAction();
+        $lateIndex = Action::new('late', 'Check late orders')
+            ->setIcon('fas fa-hourglass-end')
+            ->linkToUrl($url)
+            ->setCssClass('btn btn-danger')
+            ->createAsGlobalAction();
 
-            $actions->add(Crud::PAGE_INDEX, $lateIndex);
-        }
+        $actions->add(Crud::PAGE_INDEX, $lateIndex);
 
 
         $actions
@@ -153,55 +153,6 @@ class WebOrderCrudController extends AdminCrudController
 
         return $actions;
     }
-
-
-    protected function getFilterDelay()
-    {
-        return [];
-    }
-
-
-    protected function getFilterDelayDelivery()
-    {
-        $dateTime = DatetimeUtils::getDateOutOfDelayBusinessDaysFrom(30);
-
-        return [
-            "status" => [
-                "comparison" => "=",
-                "value" => [
-                    WebOrder::STATE_SYNC_TO_ERP
-                ]
-            ],
-            "purchaseDate" => [
-                "comparison" => "<",
-                "value" => $dateTime->format('Y-m-d') . 'T' . $dateTime->format('H:i'),
-                "value2" => "",
-            ]
-
-        ];
-    }
-
-
-    protected function getFilterDelayNoDelivery()
-    {
-        $dateTime = DatetimeUtils::getDateOutOfDelay(24);
-
-        return [
-            "status" => [
-                "comparison" => "=",
-                "value" => [
-                    WebOrder::STATE_SYNC_TO_ERP
-                ]
-            ],
-            "createdAt" => [
-                "comparison" => "<",
-                "value" => $dateTime->format('Y-m-d') . 'T' . $dateTime->format('H:i'),
-                "value2" => "",
-            ]
-
-        ];
-    }
-
 
 
 
@@ -234,6 +185,7 @@ class WebOrderCrudController extends AdminCrudController
             ->add(DateTimeFilter::new('purchaseDate', "Purchase date"))
             ->add(DateTimeFilter::new('createdAt', "Created at"))
             ->add(DateTimeFilter::new('updatedAt', "Last updated"))
+            ->add(LateOrderFilter::new('isLate', 'Is late'))
             ->add(ChoiceFilter::new('channel', "Channel")->canSelectMultiple(true)->setChoices($this->getChannels()))
             ->add(ChoiceFilter::new('subchannel', "Marketplace")->canSelectMultiple(true)->setChoices($this->getMarketplaces()))
             ->add(ChoiceFilter::new('company', "Company")->canSelectMultiple(true)->setChoices($this->getCompanies()))
@@ -376,7 +328,7 @@ class WebOrderCrudController extends AdminCrudController
             TextField::new('documentInErp', "Document N°"),
             TextField::new('fulfilledBy', "Fulfillement"),
             TextField::new('warehouse', "Warehouse"),
-            TextField::new('getStatusLitteral', "Status")->setTemplatePath('admin/fields/status.html.twig'),
+            TextField::new('getStatusLitteral', "Status")->setTemplatePath('admin/fields/orders/status.html.twig'),
             DateTimeField::new('purchaseDate', "Purchase date"),
             DateTimeField::new('createdAt', "Created at"),
             DateTimeField::new('updatedAt', "Last update"),
@@ -390,14 +342,14 @@ class WebOrderCrudController extends AdminCrudController
                     TextField::new('erpDocument', "Document type"),
                     TextField::new('orderErp', "Order N°"),
                     TextField::new('invoiceErp', "Invoice N°"),
-                    ArrayField::new('errors')->setTemplatePath('admin/fields/errors.html.twig')->onlyOnDetail(),
+                    ArrayField::new('errors')->setTemplatePath('admin/fields/orders/errors.html.twig')->onlyOnDetail(),
                     ArrayField::new('orderLinesContent', 'Order lines')->setTemplatePath('admin/fields/marketplaces/orderContent.html.twig')->onlyOnDetail(),
                     ArrayField::new('headerShippingContent', 'Shipping Address')->setTemplatePath('admin/fields/marketplaces/shippingContent.html.twig')->onlyOnDetail(),
                     ArrayField::new('headerBillingContent', 'Billing Address')->setTemplatePath('admin/fields/marketplaces/billingContent.html.twig')->onlyOnDetail(),
                     ArrayField::new('headerShippingBCContent', 'Shipping Address')->setTemplatePath('admin/fields/businessCentral/shippingContent.html.twig')->onlyOnDetail(),
                     ArrayField::new('headerBillingBCContent', 'Billing Address')->setTemplatePath('admin/fields/businessCentral/billingContent.html.twig')->onlyOnDetail(),
                     ArrayField::new('orderLinesBCContent', 'Order lines')->setTemplatePath('admin/fields/businessCentral/orderContent.html.twig')->onlyOnDetail(),
-                    ArrayField::new('logs')->setTemplatePath('admin/fields/logs.html.twig')->onlyOnDetail(),
+                    ArrayField::new('logs')->setTemplatePath('admin/fields/orders/logs.html.twig')->onlyOnDetail(),
                 ]
             );
         }

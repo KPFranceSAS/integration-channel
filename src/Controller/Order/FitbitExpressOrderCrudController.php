@@ -42,9 +42,4 @@ class FitbitExpressOrderCrudController extends WebOrderCrudController
             'AliExpress' => 'AliExpress',
         ];
     }
-
-    protected function getFilterDelay()
-    {
-        return $this->getFilterDelayDelivery();
-    }
 }

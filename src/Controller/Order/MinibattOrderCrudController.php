@@ -41,9 +41,4 @@ class MinibattOrderCrudController extends WebOrderCrudController
             'Minibatt' => 'Minibatt',
         ];
     }
-
-    protected function getFilterDelay()
-    {
-        return $this->getFilterDelayDelivery();
-    }
 }

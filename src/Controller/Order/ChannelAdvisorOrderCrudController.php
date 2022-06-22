@@ -49,11 +49,4 @@ class ChannelAdvisorOrderCrudController extends WebOrderCrudController
             'Amazon FR' => 'Amazon Seller Central - FR',
         ];
     }
-
-
-
-    protected function getFilterDelay()
-    {
-        return $this->getFilterDelayNoDelivery();
-    }
 }

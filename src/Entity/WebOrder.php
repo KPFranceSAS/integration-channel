@@ -51,7 +51,7 @@ class WebOrder
     public const  STATE_ERROR_TEXT = 'Error integration';
     public const  STATE_CREATED_TEXT = 'Order integrated';
     public const  STATE_SYNC_TO_ERP_TEXT = 'Order integrated';
-    public const  STATE_SYNC_TO_WAITING_DELIVERY_TEXT = 'Waiting for delivery';
+    public const  STATE_SYNC_TO_WAITING_DELIVERY_TEXT = 'Wait for shipping';
     public const  STATE_INVOICED_TEXT = 'Invoice integrated';
     public const  STATE_UNDEFINED_TEXT = 'Undefined';
     public const  STATE_CANCELLED_TEXT = "Cancelled";
