@@ -3,6 +3,7 @@
 namespace App\Service\BusinessCentral;
 
 use App\Entity\WebOrder;
+use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use League\Flysystem\FilesystemOperator;
@@ -13,21 +14,24 @@ class ProductStockFinder
     protected $logger;
 
     protected $manager;
-    
+
     protected $awsStorage;
+
+    protected $mailService;
 
     protected $stockLevels;
 
 
-    public function __construct(FilesystemOperator $awsStorage, ManagerRegistry $manager, LoggerInterface $logger)
+    public function __construct(FilesystemOperator $awsStorage, ManagerRegistry $manager, LoggerInterface $logger, MailService $mailService)
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->awsStorage = $awsStorage;
+        $this->mailService = $mailService;
     }
 
-   
-  
+
+
     public function getRealStocksProductWarehouse(array $skus, $depot = WebOrder::DEPOT_LAROCA): array
     {
         $skuStocks = [];
@@ -69,7 +73,8 @@ class ProductStockFinder
         $this->logger->info('Updated : ' . $differenceCreationMinutes . ' minutes');
 
         if ($differenceCreationMinutes > 180) {
-            throw new Exception('Update of the stock files published has not been done for  ' . $differenceCreationMinutes . ' minutes');
+            $this->mailService->sendEmail('Stock Unpublished', 'Update of the stock files published has not been done for  ' . $differenceCreationMinutes . ' minutes');
+            //throw new Exception('Update of the stock files published has not been done for  ' . $differenceCreationMinutes . ' minutes');
         }
 
         $warehouseFiles = [
