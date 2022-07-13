@@ -93,5 +93,12 @@ services:
             $flashledVersion : '%env(resolve:FLASHLED_VERSION)%'
             $flashledScopes : '%env(resolve:FLASHLED_SCOPES)%'
 
+            $fitbitCorporateToken : '%env(resolve:FITBITCORPORATE_TOKEN)%'
+            $fitbitCorporateClientId : '%env(resolve:FITBITCORPORATE_CLIENTID)%'
+            $fitbitCorporateClientSecret : '%env(resolve:FITBITCORPORATE_CLIENTSECRET)%'
+            $fitbitCorporateShopDomain : '%env(resolve:FITBITCORPORATE_SHOPDOMAINE)%'
+            $fitbitCorporateVersion : '%env(resolve:FITBITCORPORATE_VERSION)%'
+            $fitbitCorporateScopes : '%env(resolve:FITBITCORPORATE_SCOPES)%'
+
           
             

@@ -19,16 +19,16 @@ abstract class BusinessCentralConnector
 
 
 
-   
 
-    
+
+
 
     public const EP_ACCOUNT = "accounts";
 
     public const EP_COMPANIES = "companies";
-    
+
     public const EP_SHIPMENT_METHODS = "shipmentMethods";
-    
+
     public const EP_PAYMENT_METHODS = "paymentMethods";
 
     public const EP_PAYMENT_TERMS = "paymentTerms";
@@ -58,7 +58,7 @@ abstract class BusinessCentralConnector
     public const EP_PURCHASES_INVOICES = "purchaseInvoices";
 
     public const EP_PURCHASES_ORDERS = "purchaseOrders";
-    
+
 
     protected $logger;
 
@@ -88,7 +88,7 @@ abstract class BusinessCentralConnector
                 'Authorization' => "Basic " . base64_encode("$loginBC:$passwordBC"),
             ],
         ]);
-        $this->debugger = $appEnv == 'dev';
+        $this->debugger = ($appEnv == 'dev' || $appEnv == 'test');
     }
 
 
@@ -126,6 +126,31 @@ abstract class BusinessCentralConnector
                 'query' =>  $query,
                 'json' => $json,
                 'headers' => ['Content-Type' => 'application/json'],
+                'debug' => $this->debugger
+            ]
+        );
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+
+
+    public function doPatchRequest(string $endPoint, string $etag, array $json, array $query = [])
+    {
+        if ($this->debugger) {
+            $this->logger->info(json_encode($json));
+        }
+
+        $response = $this->client->request(
+            'PATCH',
+            self::EP_COMPANIES . '(' . $this->getCompanyId() . ')/' . $endPoint,
+            [
+                'query' =>  $query,
+                'json' => $json,
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                    'If-Match' => $etag,
+                ],
                 'debug' => $this->debugger
             ]
         );
@@ -312,6 +337,22 @@ abstract class BusinessCentralConnector
         );
     }
 
+
+
+    /**
+     * Sale order
+     */
+
+    public function updateSaleOrder(string $id, string $etag, array $order)
+    {
+        return $this->doPatchRequest(
+            self::EP_SALES_ORDERS . '(' . $id . ')',
+            $etag,
+            $order
+        );
+    }
+
+
     public function createSaleOrderLine(string $orderId, array $orderLine)
     {
         return $this->doPostRequest(
@@ -409,8 +450,8 @@ abstract class BusinessCentralConnector
     }
 
     /**
-    * Shipment methods
-    */
+     * Shipment methods
+     */
     public function getAllShipmentMethods()
     {
         return $this->doGetRequest(self::EP_SHIPMENT_METHODS);
@@ -423,8 +464,8 @@ abstract class BusinessCentralConnector
     }
 
     /**
-    * Payment methods
-    */
+     * Payment methods
+     */
     public function getAllPaymentMethods()
     {
         return $this->doGetRequest(self::EP_PAYMENT_METHODS);
@@ -438,8 +479,8 @@ abstract class BusinessCentralConnector
 
 
     /**
-    * Payment terms
-    */
+     * Payment terms
+     */
     public function getAllPaymentTerms()
     {
         return $this->doGetRequest(self::EP_PAYMENT_TERMS);
@@ -452,8 +493,8 @@ abstract class BusinessCentralConnector
 
 
     /**
-    * Customers
-    */
+     * Customers
+     */
     public function getAllCustomers()
     {
         return $this->doGetRequest(self::EP_CUSTOMERS);
@@ -477,8 +518,8 @@ abstract class BusinessCentralConnector
     }
 
     /**
-    * Account
-    */
+     * Account
+     */
     public function getAccountByNumber(string $number)
     {
         return $this->getElementByNumber(self::EP_ACCOUNT, $number);
@@ -491,8 +532,8 @@ abstract class BusinessCentralConnector
 
 
     /**
-    * Sale invoice
-    */
+     * Sale invoice
+     */
     public function getSaleInvoice(string $id)
     {
         return $this->getElementById(self::EP_SALES_INVOICES, $id);

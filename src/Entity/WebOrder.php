@@ -22,7 +22,7 @@ class WebOrder
     public const  CHANNEL_OWLETCARE = 'OWLETCARE';
     public const  CHANNEL_MINIBATT = 'MINIBATT';
     public const  CHANNEL_FLASHLED = 'FLASHLED';
-
+    public const  CHANNEL_FITBITCORPORATE = 'FITBITCORPORATE';
     public const  DOCUMENT_ORDER = 'ORDER';
     public const  DOCUMENT_INVOICE = 'INVOICE';
 
@@ -358,6 +358,9 @@ class WebOrder
             case WebOrder::CHANNEL_FLASHLED:
                 $order = $this->getOrderContent();
                 return 'https://testflashled.myshopify.com/admin/orders/' . $order['id'];
+            case WebOrder::CHANNEL_FITBITCORPORATE:
+                $order = $this->getOrderContent();
+                return 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'];
         }
         throw new Exception('No url link of weborder for ' . $this->channel);
     }
@@ -397,21 +400,27 @@ class WebOrder
 
     public static function createOneFrom($orderApi, $channel): WebOrder
     {
-        if ($channel == WebOrder::CHANNEL_ALIEXPRESS) {
-            return WebOrder::createOneFromAliExpress($orderApi);
-        } elseif ($channel == WebOrder::CHANNEL_FITBITEXPRESS) {
-            $webOrder = WebOrder::createOneFromAliExpress($orderApi);
-            $webOrder->setChannel(WebOrder::CHANNEL_FITBITEXPRESS);
-            return $webOrder;
-        } elseif ($channel == WebOrder::CHANNEL_CHANNELADVISOR) {
-            return WebOrder::createOneFromChannelAdvisor($orderApi);
-        } elseif ($channel == WebOrder::CHANNEL_OWLETCARE) {
-            return WebOrder::createOneFromOwletcare($orderApi);
-        } elseif ($channel == WebOrder::CHANNEL_FLASHLED) {
-            return WebOrder::createOneFromFlashled($orderApi);
-        } elseif ($channel == WebOrder::CHANNEL_MINIBATT) {
-            return WebOrder::createOneFromMinibatt($orderApi);
+        switch ($channel) {
+            case  WebOrder::CHANNEL_ALIEXPRESS:
+                return WebOrder::createOneFromAliExpress($orderApi);
+            case   WebOrder::CHANNEL_ALIEXPRESS:
+                return WebOrder::createOneFromAliExpress($orderApi);
+            case   WebOrder::CHANNEL_FITBITEXPRESS:
+                $webOrder = WebOrder::createOneFromAliExpress($orderApi);
+                $webOrder->setChannel(WebOrder::CHANNEL_FITBITEXPRESS);
+                return $webOrder;
+            case   WebOrder::CHANNEL_CHANNELADVISOR:
+                return WebOrder::createOneFromChannelAdvisor($orderApi);
+            case   WebOrder::CHANNEL_OWLETCARE:
+                return WebOrder::createOneFromOwletcare($orderApi);
+            case   WebOrder::CHANNEL_FLASHLED:
+                return WebOrder::createOneFromFlashled($orderApi);
+            case   WebOrder::CHANNEL_MINIBATT:
+                return WebOrder::createOneFromMinibatt($orderApi);
+            case   WebOrder::CHANNEL_FITBITCORPORATE:
+                return WebOrder::createOneFromFitbitCorporate($orderApi);
         }
+
         throw new Exception('No constructor of weborder for ' . $channel);
     }
 
@@ -434,6 +443,17 @@ class WebOrder
         $webOrder->setChannel(WebOrder::CHANNEL_MINIBATT);
         $webOrder->setSubchannel('Minibatt.com');
         $webOrder->addLog('Retrieved from Minibatt.com');
+        return $webOrder;
+    }
+
+
+    public static function createOneFromFitbitCorporate($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromShopify($orderApi);
+        $webOrder->setExternalNumber('FBT-' . $orderApi['order_number']);
+        $webOrder->setChannel(WebOrder::CHANNEL_FITBITCORPORATE);
+        $webOrder->setSubchannel('Google.kps.direct');
+        $webOrder->addLog('Retrieved from Google.kps.direct');
         return $webOrder;
     }
 
@@ -529,7 +549,12 @@ class WebOrder
 
     public function getOrderContent()
     {
-        if (in_array($this->channel, [self::CHANNEL_OWLETCARE, self::CHANNEL_FLASHLED, self::CHANNEL_MINIBATT])) {
+        if (in_array($this->channel, [
+            self::CHANNEL_OWLETCARE,
+            self::CHANNEL_FLASHLED,
+            self::CHANNEL_MINIBATT,
+            self::CHANNEL_FITBITCORPORATE,
+        ])) {
             return $this->getContent();
         }
         return json_decode(json_encode($this->getContent()));

@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class GadgetIberiaConnectorTest extends KernelTestCase
 {
+
     public function testIntegrationClassic(): void
     {
         $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);
@@ -248,5 +249,48 @@ class GadgetIberiaConnectorTest extends KernelTestCase
         $this->assertCount(1, $orderFullCanarias['salesOrderLines']);
 
         $this->assertNotEquals($orderFullCanarias['totalTaxAmount'], $orderFull['totalTaxAmount']);
+    }
+
+
+
+    public function testUpdateClassic(): void
+    {
+        $bcConnector = static::getContainer()->get(GadgetIberiaConnector::class);
+        $product = $bcConnector->getItemByNumber("PX-P3D2044");
+        $lines = [
+            [
+                "lineType" => "Item",
+                "itemId" => $product["id"],
+                "unitPrice" => 219.0,
+                "quantity" => 2,
+                'discountAmount' => 0
+            ],
+        ];
+
+        $date = date('YmdHis');
+
+        $order =  [
+            'orderDate' => date("Y-m-d"),
+            'customerNumber' => AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER,
+            'salesOrderLines' => $lines,
+            'pricesIncludeTax' => true,
+            "externalDocumentNumber" => "INTEGRATION-" . date('YmdHis'),
+        ];
+        $order = $bcConnector->createSaleOrder($order);
+        $this->assertIsArray($order);
+
+        $orderFull = $bcConnector->getFullSaleOrder($order['id']);
+        $this->assertIsArray($orderFull);
+        $this->assertSame($orderFull['externalDocumentNumber'], "INTEGRATION-" . $date);
+        $bcConnector->updateSaleOrder($order['id'], $orderFull['@odata.etag'], ["externalDocumentNumber" => "MODIFIED-" . $date]);
+        $orderFull = $bcConnector->getFullSaleOrder($order['id']);
+        $this->assertIsArray($orderFull);
+        $this->assertSame($orderFull['externalDocumentNumber'], "MODIFIED-" . $date);
+    }
+
+
+    protected function cleanEtag($etag)
+    {
+        return str_replace(['"', 'W/\"'], '', $etag);
     }
 }

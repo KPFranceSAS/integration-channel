@@ -55,7 +55,7 @@ class ChannelAdvisorApi implements ApiInterface
         ]);
         $body = json_decode($response->getBody());
         $this->accessToken = $body->access_token;
-        $this->dateInitialisationToken = new \DateTime();
+        $this->dateInitialisationToken = new DateTime();
     }
 
 
@@ -67,7 +67,7 @@ class ChannelAdvisorApi implements ApiInterface
     }
 
 
-    private function checkIfTokenTooOld() : bool
+    private function checkIfTokenTooOld(): bool
     {
         $dateNow = new DateTime();
         $diffMin = abs($dateNow->getTimestamp() - $this->dateInitialisationToken->getTimestamp()) / 60;

@@ -122,9 +122,9 @@ abstract class InvoiceParent
 
 
             if (count($this->errors) > 0) {
-                throw new \Exception(implode('<br/><br/>', $this->errors));
+                throw new Exception(implode('<br/><br/>', $this->errors));
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->critical($e->getMessage());
             $this->mailer->sendEmailChannel($this->getChannel(), 'Invoice Send - Error', $e->getMessage());
         }
@@ -277,7 +277,7 @@ abstract class InvoiceParent
     protected function addErrorToOrder(WebOrder $webOrder, string $message)
     {
         $webOrder->addError($message);
-        $this->addError($webOrder.' > '.$message);
+        $this->addError($webOrder . ' > ' . $message);
     }
 
 

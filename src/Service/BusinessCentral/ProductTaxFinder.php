@@ -10,13 +10,9 @@ use Psr\Log\LoggerInterface;
 class ProductTaxFinder
 {
     protected $logger;
-
     protected $businessCentralAggregator;
-
     protected $awsStorage;
-
     protected $canonDigitals;
-
 
     public function __construct(
         FilesystemOperator $awsStorage,
@@ -27,8 +23,6 @@ class ProductTaxFinder
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->awsStorage = $awsStorage;
     }
-
-
 
 
     public function getCanonDigitalForItem(string $itemId, string $company): float
@@ -58,11 +52,6 @@ class ProductTaxFinder
     {
         return $this->businessCentralAggregator->getBusinessCentralConnector($companyName);
     }
-
-
-
-
-
 
 
     public function initializeCanonDigitals()

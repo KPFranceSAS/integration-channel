@@ -38,7 +38,7 @@ class MailService
      *
      * @param string $titre tht title of the email
      * @param string $contenu the content of the email
-     * @param string|Adress|array $emails the recipients
+     * @param string|Address|array $emails the recipients
      * @return void
      */
     public function sendEmail($titre, $contenu, $emails = 'marketplace-alerts@kpsport.com')
