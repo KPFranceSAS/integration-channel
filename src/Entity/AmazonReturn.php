@@ -138,7 +138,7 @@ class AmazonReturn
     */
     public function getReturnDateFormatCalendar()
     {
-        return $this->returnDate->format('d-m-Y');
+        return $this->returnDate->format('j/n/Y');
     }
 
 

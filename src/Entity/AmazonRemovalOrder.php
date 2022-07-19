@@ -163,7 +163,7 @@ class AmazonRemovalOrder
     */
     public function getRequestDateFormatCalendar()
     {
-        return $this->requestDate->format('d-m-Y');
+        return $this->requestDate->format('j/n/Y');
     }
 
    

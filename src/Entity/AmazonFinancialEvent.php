@@ -145,7 +145,7 @@ class AmazonFinancialEvent
     */
     public function getPostedDateFormatCalendar()
     {
-        return $this->postedDate->format('d-m-Y');
+        return $this->postedDate->format('j/n/Y');
     }
 
     public function getId(): ?int

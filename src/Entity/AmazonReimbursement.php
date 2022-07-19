@@ -167,7 +167,7 @@ class AmazonReimbursement
     */
     public function getApprovalDateFormatCalendar()
     {
-        return $this->approvalDate->format('d-m-Y');
+        return $this->approvalDate->format('j/n/Y');
     }
 
 

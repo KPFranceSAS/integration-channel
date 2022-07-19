@@ -154,7 +154,7 @@ class AmazonFinancialEventGroup
     */
     public function getStartDateFormatCalendar()
     {
-        return $this->startDate ? $this->startDate->format('d-m-Y') :  null;
+        return $this->startDate ? $this->startDate->format('j/n/Y') :  null;
     }
 
 
@@ -173,7 +173,7 @@ class AmazonFinancialEventGroup
     */
     public function getEndDateFormatCalendar()
     {
-        return $this->endDate ? $this->endDate->format('d-m-Y') :  null;
+        return $this->endDate ? $this->endDate->format('j/n/Y') :  null;
     }
 
     public function __construct()

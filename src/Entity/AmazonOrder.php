@@ -366,7 +366,7 @@ class AmazonOrder
     */
     public function getPurchaseDateFormatCalendar()
     {
-        return $this->purchaseDate->format('d-m-Y');
+        return $this->purchaseDate->format('j/n/Y');
     }
 
 
