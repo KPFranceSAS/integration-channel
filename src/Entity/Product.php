@@ -361,19 +361,34 @@ class Product
         return $this->category ? $this->category->getName() : 'NO CATEGORY';
     }
 
+
+
+
     /**
      *
      * @Groups({"export_product"})
      */
-    public function needTobeAlertEu(): bool
+    public function getNeedTobeAlertEu(): bool
     {
-        return $this->needTobeAlert('Eu');
+        return $this->needTobeAlertEu();
     }
 
     /**
      *
      * @Groups({"export_product"})
      */
+    public function getNeedTobeAlertUk(): bool
+    {
+        return $this->needTobeAlertUk();
+    }
+
+
+
+    public function needTobeAlertEu(): bool
+    {
+        return $this->needTobeAlert('Eu');
+    }
+
     public function needTobeAlertUk(): bool
     {
         return $this->needTobeAlert('Uk');
