@@ -124,6 +124,24 @@ class AmazonReturn
     }
 
 
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getReturnDateFormatYmd()
+    {
+        return $this->returnDate->format('Y-m-d');
+    }
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getReturnDateFormatCalendar()
+    {
+        return $this->returnDate->format('d-m-Y');
+    }
+
+
     public function importData(array $reimbursementAmz)
     {
         foreach ($reimbursementAmz as $key => $value) {

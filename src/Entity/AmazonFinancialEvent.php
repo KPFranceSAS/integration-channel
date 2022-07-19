@@ -130,6 +130,24 @@ class AmazonFinancialEvent
      */
     private $promotionId;
 
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getPostedDateFormatYmd()
+    {
+        return $this->postedDate->format('Y-m-d');
+    }
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getPostedDateFormatCalendar()
+    {
+        return $this->postedDate->format('d-m-Y');
+    }
+
     public function getId(): ?int
     {
         return $this->id;

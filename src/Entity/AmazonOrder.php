@@ -352,6 +352,25 @@ class AmazonOrder
     }
 
 
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getPurchaseDateFormatYmd()
+    {
+        return $this->purchaseDate->format('Y-m-d');
+    }
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getPurchaseDateFormatCalendar()
+    {
+        return $this->purchaseDate->format('d-m-Y');
+    }
+
+
+
     private function checkIfImportAttribute($key)
     {
         $attribute = $this->camelize($key);

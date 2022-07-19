@@ -153,6 +153,23 @@ class AmazonReimbursement
         return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
     }
 
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getApprovalDateFormatYmd()
+    {
+        return $this->approvalDate->format('Y-m-d');
+    }
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getApprovalDateFormatCalendar()
+    {
+        return $this->approvalDate->format('d-m-Y');
+    }
+
 
     public function getLitteralPrice(): string
     {

@@ -138,6 +138,44 @@ class AmazonFinancialEventGroup
      */
     private $marketplace;
 
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getStartDateFormatYmd()
+    {
+        return $this->startDate ? $this->startDate->format('Y-m-d') :  null;
+    }
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getStartDateFormatCalendar()
+    {
+        return $this->startDate ? $this->startDate->format('d-m-Y') :  null;
+    }
+
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getEndDateFormatYmd()
+    {
+        return $this->endDate ? $this->endDate->format('Y-m-d') :  null;
+    }
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getEndDateFormatCalendar()
+    {
+        return $this->endDate ? $this->endDate->format('d-m-Y') :  null;
+    }
+
     public function __construct()
     {
         $this->amazonFinancialEvents = new ArrayCollection();

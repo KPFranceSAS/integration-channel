@@ -24,76 +24,91 @@ class AmazonRemovalOrder
 
     /**
      * @ORM\Column(type="datetime")
+     *  @Groups({"export_order"})
      */
     private $requestDate;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *  @Groups({"export_order"})
      */
     private $orderId;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
      */
     private $orderType;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
      */
     private $serviceSpeed;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
      */
     private $orderStatus;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $lastUpdatedDate;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
      */
     private $sku;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
      */
     private $fnsku;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
      */
     private $disposition;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $requestedQuantity;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $cancelledQuantity;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $disposedQuantity;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $shippedQuantity;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $inProcessQuantity;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_order"})
      */
     private $removalFee;
 
@@ -104,6 +119,7 @@ class AmazonRemovalOrder
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+    *  @Groups({"export_order"})
      */
     private $currency;
 
@@ -132,6 +148,26 @@ class AmazonRemovalOrder
      */
     private $fbaReturns;
 
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getRequestDateFormatYmd()
+    {
+        return $this->requestDate->format('Y-m-d');
+    }
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getRequestDateFormatCalendar()
+    {
+        return $this->requestDate->format('d-m-Y');
+    }
+
+   
+
     public function __construct()
     {
         $this->returns = new ArrayCollection();
@@ -141,7 +177,6 @@ class AmazonRemovalOrder
 
     public function importData(ExchangeRateCalculator $calculator, array $orderAmz)
     {
-
         foreach ($orderAmz as $key => $value) {
             $attribute = $this->checkIfImportAttribute($key);
             if ($attribute) {
