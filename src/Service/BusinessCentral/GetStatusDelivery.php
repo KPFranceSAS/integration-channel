@@ -4,7 +4,6 @@ namespace App\Service\BusinessCentral;
 
 use App\Service\BusinessCentral\BusinessCentralAggregator;
 use Doctrine\Persistence\ManagerRegistry;
-use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
 class GetStatusDelivery

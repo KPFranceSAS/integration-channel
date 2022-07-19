@@ -79,21 +79,25 @@ class Product
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaSellableStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUnsellableStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaInboundStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaOutboundStock = 0;
 
@@ -101,52 +105,62 @@ class Product
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaReservedStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaInboundShippedStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaInboundWorkingStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaInboundReceivingStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaResearchingStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaTotalStock = 0;
 
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaEuSellableStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaEuUnsellableStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaEuInboundStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaEuOutboundStock = 0;
 
@@ -154,31 +168,37 @@ class Product
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaEuReservedStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaEuInboundShippedStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaEuInboundWorkingStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaEuInboundReceivingStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaEuResearchingStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaEuTotalStock = 0;
 
@@ -187,21 +207,25 @@ class Product
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUkSellableStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUkUnsellableStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUkInboundStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUkOutboundStock = 0;
 
@@ -209,42 +233,50 @@ class Product
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUkReservedStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUkInboundShippedStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUkInboundWorkingStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUkInboundReceivingStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUkResearchingStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $fbaUkTotalStock = 0;
 
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $laRocaBusinessCentralStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $laRocaPurchaseBusinessCentralStock = 0;
 
@@ -252,43 +284,51 @@ class Product
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $businessCentralTotalStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $businessCentralStock = 0;
 
     /**
      * @ORM\Column(type="float", nullable=true)
+     * @Groups({"export_product"})
      */
     private $ratioStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $soldStockNotIntegrated = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $returnStockNotIntegrated = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"export_product"})
      */
     private $differenceStock = 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\GreaterThan(value = 0)
+     * @Groups({"export_product"})
      */
     private $minQtyFbaEu;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\GreaterThan(value = 0)
+     * @Groups({"export_product"})
      */
     private $minQtyFbaUk;
 
@@ -321,13 +361,19 @@ class Product
         return $this->category ? $this->category->getName() : 'NO CATEGORY';
     }
 
-
+    /**
+     *
+     * @Groups({"export_product"})
+     */
     public function needTobeAlertEu(): bool
     {
         return $this->needTobeAlert('Eu');
     }
 
-
+    /**
+     *
+     * @Groups({"export_product"})
+     */
     public function needTobeAlertUk(): bool
     {
         return $this->needTobeAlert('Uk');
