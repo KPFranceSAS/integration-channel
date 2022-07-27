@@ -9,7 +9,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Money;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class ProductCrudController extends AdminCrudController
@@ -51,6 +54,7 @@ class ProductCrudController extends AdminCrudController
             TextField::new('description', 'Product name'),
             TextField::new('asin')->setDisabled(),
             TextField::new('fnsku')->setDisabled(),
+            NumberField::new('unitCost', 'Unit cost €')->setDisabled(),
             IntegerField::new('minQtyFbaEu', 'Min FBA Eu'),
             IntegerField::new('minQtyFbaUk', 'Min FBA Uk'),
         ];

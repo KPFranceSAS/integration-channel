@@ -25,7 +25,7 @@ class ImportProductCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->amzApiImportProduct->updateProducts();
+        $this->amzApiImportProduct->addUnitCosts();
         return Command::SUCCESS;
     }
 }

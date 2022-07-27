@@ -58,7 +58,8 @@ class AmzApiImportProduct
 
 
 
-    public function getNewProductsFromAmazon(){
+    public function getNewProductsFromAmazon()
+    {
         $this->errorProducts = [];
         $datas = $this->getContentFromReports();
         foreach ($datas as $marketplace => $dataMarketplace) {
@@ -177,7 +178,6 @@ class AmzApiImportProduct
                 $product = new Product();
                 $product->setAsin($importOrder['asin']);
                 $product->setDescription($itemBc["displayName"]);
-                $product->setUnitCost($itemBc['unitCost']);
                 $product->setFnsku($importOrder['fnsku']);
                 $product->setSku($sku);
                 $this->manager->persist($product);

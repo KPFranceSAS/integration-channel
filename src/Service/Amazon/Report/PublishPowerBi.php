@@ -5,6 +5,7 @@ namespace App\Service\Amazon\Report;
 use App\Entity\AmazonFinancialEventGroup;
 use App\Entity\AmazonReimbursement;
 use App\Entity\AmazonReturn;
+use App\Entity\FbaReturn;
 use App\Entity\Product;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
@@ -36,6 +37,7 @@ class PublishPowerBi
     public function exportAll()
     {
         $this->exportProducts();
+        $this->exportFbas();
         $this->exportReimbursements();
         $this->exportReturns();
         $this->exportFinancialGroups();
@@ -70,6 +72,11 @@ class PublishPowerBi
         $this->exportData(AmazonReturn::class, 'export_order', 'returns.json');
     }
 
+
+    public function exportFbas()
+    {
+        $this->exportData(FbaReturn::class, 'export_order', 'fbareturns.json');
+    }
 
     public function exportReimbursements()
     {
