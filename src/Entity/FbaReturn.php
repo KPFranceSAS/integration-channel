@@ -233,6 +233,33 @@ class FbaReturn
         return $this->product ? $this->product->getSku() :  $this->sku ;
     }
 
+    /**
+     *  @Groups({"export_order"})
+     */
+    public function getProductId()
+    {
+        return $this->product ? $this->product->getId() :  null;
+    }
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getPostedDateFormatYmd()
+    {
+        return $this->postedDate->format('Y-m-d');
+    }
+
+
+    /**
+    *  @Groups({"export_order"})
+    */
+    public function getPostedDateFormatCalendar()
+    {
+        return $this->postedDate->format('j/n/Y');
+    }
+
+
 
     public function hasNotBeenReturnedToFba()
     {
