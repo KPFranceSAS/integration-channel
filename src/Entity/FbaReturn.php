@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use App\Repository\FbaReturnRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity()
@@ -12,6 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
 class FbaReturn
 {
     public const LOCALIZATION_FBA = 'FBA';
+
+    public const LOCALIZATION_CLIENT = 'CLIENT';
+
+    public const LOCALIZATION_FBA_REFURBISHED = 'FBA_REFURBISHED';
 
     public const LOCALIZATION_BIARRITZ = 'BIARRITZ';
 
@@ -27,6 +31,60 @@ class FbaReturn
     public const STATUS_RETURN_TO_SALE = 3;
 
     public const STATUS_RETURN_TO_BIARRITZ = 4;
+
+    public const STATUS_RETURN_TO_LAROCA = 5;
+
+    public const STATUS_SENT_TO_LAROCA = 6;
+
+    public const STATUS_REIMBURSED_BY_FBA = 7;
+
+    /**
+    * @Groups({"export_product"})
+    */
+    public function getLocalizationLitteral()
+    {
+        switch ($this->localization) {
+            case self::LOCALIZATION_FBA:
+                return 'FBA Sellable';
+            case self::LOCALIZATION_FBA_REFURBISHED:
+                return 'FBA Unsellable';
+            case self::LOCALIZATION_BIARRITZ:
+                return 'Biarritz';
+            case self::LOCALIZATION_LAROCA:
+                return 'La Roca';
+            case self::LOCALIZATION_CLIENT:
+                return 'Buyer';
+            default:
+                return 'Unknow #'.$this->localization;
+        }
+    }
+
+    /**
+     * @Groups({"export_product"})
+     */
+    public function getStatusLitteral()
+    {
+        switch ($this->status) {
+            case self::STATUS_CREATED:
+                return 'Created';
+            case self::STATUS_WAITING_CUSTOMER:
+                return 'Waiting for return';
+            case self::STATUS_RETURN_TO_FBA_NOTSELLABLE:
+                return 'Returned to FBA Unsellable';
+            case self::STATUS_RETURN_TO_SALE:
+                return 'Reintegrated to sale';
+            case self::STATUS_REIMBURSED_BY_FBA:
+                return 'Reimbursed by fba';
+            case self::STATUS_RETURN_TO_BIARRITZ:
+                return 'Return in Biarritz';
+            case self::STATUS_RETURN_TO_LAROCA:
+                return 'Receipted in La Roca';
+            case self::STATUS_SENT_TO_LAROCA:
+                return 'Sent to La Roca';
+            default:
+                return 'UNknow #'.$this->status;
+        }
+    }
 
     /**
      * @ORM\Id
@@ -47,11 +105,13 @@ class FbaReturn
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"export_product"})
      */
     private $status;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_product"})
      */
     private $amazonOrderId;
 
@@ -68,11 +128,13 @@ class FbaReturn
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"export_product"})
      */
     private $sku;
 
     /**
      * @ORM\Column(type="date_immutable")
+     *  @Groups({"export_product"})
      */
     private $postedDate;
 
@@ -88,6 +150,7 @@ class FbaReturn
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_product"})
      */
     private $lpn;
 
@@ -98,16 +161,19 @@ class FbaReturn
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_product"})
      */
     private $marketplaceName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_product"})
      */
     private $localization;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_product"})
      */
     private $amzProductStatus;
 
@@ -120,6 +186,57 @@ class FbaReturn
      * @ORM\OneToOne(targetEntity=AmazonReimbursement::class, cascade={"persist", "remove"})
      */
     private $amazonReimbursement;
+
+    /**
+     * @ORM\Column(type="boolean")
+     *  @Groups({"export_product"})
+     */
+    private $close;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_product"})
+     */
+    private $businessCentralDocument;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_product"})
+     */
+    private $refundPrincipal;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_product"})
+     */
+    private $refundCommission;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_product"})
+     */
+    private $commissionOnRefund;
+
+
+    /**
+     *  @Groups({"export_order"})
+     */
+    public function getAmazonOrderIdProductId()
+    {
+        return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
+    }
+
+
+    public function getSkuProduct()
+    {
+        return $this->product ? $this->product->getSku() :  $this->sku ;
+    }
+
+
+    public function hasNotBeenReturnedToFba()
+    {
+        return !$this->amazonReimbursement && !$this->amazonReturn;
+    }
 
 
     /**
@@ -138,6 +255,11 @@ class FbaReturn
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function __toString()
+    {
+        return $this->amazonOrderId.' '.$this->sku;
     }
 
 
@@ -357,6 +479,66 @@ class FbaReturn
     public function setAmazonReimbursement(?AmazonReimbursement $amazonReimbursement): self
     {
         $this->amazonReimbursement = $amazonReimbursement;
+
+        return $this;
+    }
+
+    public function getClose(): ?bool
+    {
+        return $this->close;
+    }
+
+    public function setClose(bool $close): self
+    {
+        $this->close = $close;
+
+        return $this;
+    }
+
+    public function getBusinessCentralDocument(): ?string
+    {
+        return $this->businessCentralDocument;
+    }
+
+    public function setBusinessCentralDocument(?string $businessCentralDocument): self
+    {
+        $this->businessCentralDocument = $businessCentralDocument;
+
+        return $this;
+    }
+
+    public function getRefundPrincipal(): ?float
+    {
+        return $this->refundPrincipal;
+    }
+
+    public function setRefundPrincipal(?float $refundPrincipal): self
+    {
+        $this->refundPrincipal = $refundPrincipal;
+
+        return $this;
+    }
+
+    public function getRefundCommission(): ?float
+    {
+        return $this->refundCommission;
+    }
+
+    public function setRefundCommission(?float $refundCommission): self
+    {
+        $this->refundCommission = $refundCommission;
+
+        return $this;
+    }
+
+    public function getCommissionOnRefund(): ?float
+    {
+        return $this->commissionOnRefund;
+    }
+
+    public function setCommissionOnRefund(?float $commissionOnRefund): self
+    {
+        $this->commissionOnRefund = $commissionOnRefund;
 
         return $this;
     }

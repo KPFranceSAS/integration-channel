@@ -15,7 +15,7 @@ class DatetimeUtils
     /**
      * @return \DateTime|\DateTimeImmutable
      */
-    public static function transformFromIso8601(string $value): \DateTimeInterface
+    public static function transformFromIso8601(string $value): DateTimeInterface
     {
         $date = explode('T', $value);
         return DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
@@ -23,10 +23,7 @@ class DatetimeUtils
 
 
 
-    /**
-     * @return \DateTime|\DateTimeImmutable
-     */
-    public static function createDateTimeFromAliExpressDate(string $date): \DateTimeInterface
+    public static function createDateTimeFromAliExpressDate(string $date): DateTimeInterface
     {
         $dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $date);
         $dateTime->add(new DateInterval('PT9H'));
@@ -39,9 +36,6 @@ class DatetimeUtils
         $dateTime = self::createDateTimeFromAliExpressDate($date);
         return $dateTime ? $dateTime->format($format) : $date;
     }
-
-
-
 
 
 
@@ -84,6 +78,12 @@ class DatetimeUtils
     }
 
 
+    public static function isOutOfDelayDays(DateTimeInterface $date, int $nbDays, ?DateTimeInterface $toverify = null): bool
+    {
+        return self::isOutOfDelayBusinessDays($date, $nbDays*24, $toverify, false);
+    }
+
+
     public static function getHolidaysFrom(DateTimeInterface $date)
     {
         $holidayDateTime = [];
@@ -95,7 +95,7 @@ class DatetimeUtils
         $years[] = (int)$year2;
 
         $holidayCalculator = new HolidayCalculator();
-        $holidays = $holidayCalculator->calculate(Spain::class,  $years);
+        $holidays = $holidayCalculator->calculate(Spain::class, $years);
         foreach ($holidays as $holiday) {
             $holidayDateTime[] = $holiday->getDate();
         }

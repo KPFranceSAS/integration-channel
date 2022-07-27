@@ -49,24 +49,50 @@ class AmzApiImportProduct
     public function updateProducts()
     {
         try {
-            $this->errorProducts = [];
-            $datas = $this->getContentFromReports();
-            foreach ($datas as $marketplace => $dataMarketplace) {
-                foreach ($dataMarketplace as $data) {
-                    $this->upsertData($data);
-                }
-            }
-
-            if (count($this->errorProducts) > 0) {
-                $message =  implode('<br/>', $this->errorProducts);
-                $this->mailer->sendEmail("[REPORT AMAZON Product ]", $message);
-            }
+            $this->getNewProductsFromAmazon();
+            $this->addUnitCosts();
         } catch (Exception $e) {
             $this->mailer->sendEmail("[REPORT AMAZON Product ]", $e->getMessage());
         }
     }
 
 
+
+    public function getNewProductsFromAmazon(){
+        $this->errorProducts = [];
+        $datas = $this->getContentFromReports();
+        foreach ($datas as $marketplace => $dataMarketplace) {
+            foreach ($dataMarketplace as $data) {
+                $this->upsertData($data);
+            }
+        }
+
+        if (count($this->errorProducts) > 0) {
+            $message =  implode('<br/>', $this->errorProducts);
+            $this->mailer->sendEmail("[REPORT AMAZON Product ]", $message);
+        }
+    }
+
+
+    public function addUnitCosts()
+    {
+        $connector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
+        $items = $this->manager->getRepository(Product::class)->findAll();
+            
+        foreach ($items as $item) {
+            $itemBc = $connector->getItemByNumber($item->getSku());
+            if ($itemBc) {
+                $this->logger->info('Product price for '.$item->getSku().' is '.$itemBc['unitCost']);
+                $item->setUnitCost($itemBc['unitCost']);
+            } else {
+                $this->logger->alert('Product price for '.$item->getSku().'not found');
+            }
+        }
+
+
+        $this->manager->flush();
+    }
+    
 
 
     protected function getContentFromReports()
@@ -151,6 +177,7 @@ class AmzApiImportProduct
                 $product = new Product();
                 $product->setAsin($importOrder['asin']);
                 $product->setDescription($itemBc["displayName"]);
+                $product->setUnitCost($itemBc['unitCost']);
                 $product->setFnsku($importOrder['fnsku']);
                 $product->setSku($sku);
                 $this->manager->persist($product);

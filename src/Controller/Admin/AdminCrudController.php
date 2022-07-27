@@ -62,6 +62,7 @@ abstract class AdminCrudController extends AbstractCrudController
             ->setEntityLabelInSingular($this->getName())
             ->setEntityLabelInPlural($this->getName() . 's')
             ->setDateTimeFormat('yyyy-MM-dd HH:mm')
+            ->setDateFormat('yyyy-MM-dd')
             ->setDefaultSort($this->getDefautOrder())
             ->showEntityActionsInlined();
     }

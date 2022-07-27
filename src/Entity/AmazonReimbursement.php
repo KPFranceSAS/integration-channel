@@ -153,6 +153,12 @@ class AmazonReimbursement
         return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
     }
 
+
+    public function __toString()
+    {
+        return $this->product ? $this->amazonOrderId . ' ' . $this->product->getSku() :  $this->amazonOrderId;
+    }
+
     /**
     *  @Groups({"export_order"})
     */

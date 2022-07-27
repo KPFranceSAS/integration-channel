@@ -115,6 +115,12 @@ class AmazonReturn
         return $this->product ? $this->orderId . '_' . $this->product->getId() :  $this->orderId . '_';
     }
 
+
+    public function __toString()
+    {
+        return $this->orderId.' '.$this->getProduct()->getSku();
+    }
+
     /**
      *  @Groups({"export_order"})
      */

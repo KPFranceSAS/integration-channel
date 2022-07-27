@@ -332,6 +332,12 @@ class Product
      */
     private $minQtyFbaUk;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     *  @Groups({"export_product"})
+     */
+    private $unitCost;
+
 
 
     /**
@@ -1097,6 +1103,18 @@ class Product
     public function setLaRocaPurchaseBusinessCentralStock(?int $laRocaPurchaseBusinessCentralStock): self
     {
         $this->laRocaPurchaseBusinessCentralStock = $laRocaPurchaseBusinessCentralStock;
+
+        return $this;
+    }
+
+    public function getUnitCost(): ?float
+    {
+        return $this->unitCost;
+    }
+
+    public function setUnitCost(?float $unitCost): self
+    {
+        $this->unitCost = $unitCost;
 
         return $this;
     }
