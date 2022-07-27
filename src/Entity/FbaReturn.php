@@ -39,7 +39,7 @@ class FbaReturn
     public const STATUS_REIMBURSED_BY_FBA = 7;
 
     /**
-    * @Groups({"export_product"})
+    * @Groups({"export_order"})
     */
     public function getLocalizationLitteral()
     {
@@ -60,7 +60,7 @@ class FbaReturn
     }
 
     /**
-     * @Groups({"export_product"})
+     * @Groups({"export_order"})
      */
     public function getStatusLitteral()
     {
@@ -105,13 +105,12 @@ class FbaReturn
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"export_product"})
      */
     private $status;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_product"})
+     * @Groups({"export_order"})
      */
     private $amazonOrderId;
 
@@ -128,13 +127,13 @@ class FbaReturn
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"export_product"})
+     * @Groups({"export_order"})
      */
     private $sku;
 
     /**
      * @ORM\Column(type="date_immutable")
-     *  @Groups({"export_product"})
+     *  @Groups({"export_order"})
      */
     private $postedDate;
 
@@ -150,7 +149,7 @@ class FbaReturn
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_product"})
+     * @Groups({"export_order"})
      */
     private $lpn;
 
@@ -161,19 +160,19 @@ class FbaReturn
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_product"})
+     * @Groups({"export_order"})
      */
     private $marketplaceName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_product"})
+     * @Groups({"export_order"})
      */
     private $localization;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_product"})
+     * @Groups({"export_order"})
      */
     private $amzProductStatus;
 
@@ -189,31 +188,31 @@ class FbaReturn
 
     /**
      * @ORM\Column(type="boolean")
-     *  @Groups({"export_product"})
+     *  @Groups({"export_order"})
      */
     private $close;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_product"})
+     *  @Groups({"export_order"})
      */
     private $businessCentralDocument;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_product"})
+     *  @Groups({"export_order"})
      */
     private $refundPrincipal;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_product"})
+     *  @Groups({"export_order"})
      */
     private $refundCommission;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_product"})
+     *  @Groups({"export_order"})
      */
     private $commissionOnRefund;
 
@@ -226,7 +225,9 @@ class FbaReturn
         return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
     }
 
-
+    /**
+     *  @Groups({"export_order"})
+     */
     public function getSkuProduct()
     {
         return $this->product ? $this->product->getSku() :  $this->sku ;
