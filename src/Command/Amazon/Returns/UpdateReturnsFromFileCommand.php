@@ -40,21 +40,8 @@ class UpdateReturnsFromFileCommand extends Command
         $pathFile = $input->getArgument('pathFile');
         $returnIntegrateds = $this->csvExtracter->extractAssociativeDatasFromCsv($pathFile);
         $output->writeln('Start imports ' . count($returnIntegrateds));
+        
         $fbaReturns = $this->manager->getRepository(FbaReturn::class)->findBy([
-            'close' => false,
-            'status' => FbaReturn::STATUS_RETURN_TO_SALE,
-        ]);
-
-        $output->writeln('Start nbFbaReturn sellable ' . count($fbaReturns));
-
-        foreach ($fbaReturns as $fbaReturn) {
-            $this->checkForFbaReturn($fbaReturn, $returnIntegrateds);
-        }
-
-
-        $fbaReturns = $this->manager->getRepository(FbaReturn::class)->findBy([
-            'close' => false,
-            'status' => FbaReturn::STATUS_RETURN_TO_FBA_NOTSELLABLE,
             "businessCentralDocument" => null
         ]);
 
@@ -63,7 +50,6 @@ class UpdateReturnsFromFileCommand extends Command
         foreach ($fbaReturns as $fbaReturn) {
             $this->checkForFbaReturn($fbaReturn, $returnIntegrateds);
         }
-
 
         $this->manager->flush();
         return Command::SUCCESS;
@@ -78,9 +64,6 @@ class UpdateReturnsFromFileCommand extends Command
             foreach ($returnIntegrateds as $returnIntegrated) {
                 if ($returnIntegrated['External Document No_']==$fbaReturn->getAmazonOrderId() && $returnIntegrated['Package Tracking No_']==$fbaReturn->getLpn()) {
                     $fbaReturn->setBusinessCentralDocument($returnIntegrated['Document No_']);
-                    if ($fbaReturn->getStatus() == FbaReturn::STATUS_RETURN_TO_SALE) {
-                        $fbaReturn->setClose(true);
-                    }
                     return;
                 }
             }

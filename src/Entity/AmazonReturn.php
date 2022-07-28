@@ -118,7 +118,7 @@ class AmazonReturn
 
     public function __toString()
     {
-        return $this->orderId.' '.$this->getProduct()->getSku();
+        return "#".$this->orderId.' Sku>'.$this->sku.' LPN> '.$this->licensePlateNumber;
     }
 
     /**

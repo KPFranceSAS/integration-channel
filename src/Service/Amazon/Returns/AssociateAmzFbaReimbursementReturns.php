@@ -59,8 +59,15 @@ class AssociateAmzFbaReimbursementReturns
                     $this->logger->critical($event.'>>'.$e->getMessage());
                     $this->errors[]= $event.'>>'.$e->getMessage();
             }
-            //$this->manager->flush();
+            $this->manager->flush();
         }
+
+
+        if (count($this->errors) > 0) {
+            $messageError = implode('<br/><br/>', array_unique($this->errors));
+            $this->mailer->sendEmail('Erreur AMAZON FBA return', $messageError, 'stephane.lanjard@kpsport.com');
+        }
+    
     }
 
 
@@ -78,8 +85,29 @@ class AssociateAmzFbaReimbursementReturns
 
     protected function associateAmazonReturn(AmazonReturn $amazonReturn)
     {
-
-            //$fbaReturn = $this->getBestFbaReturnAmazonReturn($amazonReturn);
+        $fbaReturn = $this->getBestFbaReturnAmazonReturn($amazonReturn);
+        $fbaReturn->setAmazonReturn($amazonReturn);
+        $disposition = $amazonReturn->getDetailedDisposition();       
+        $fbaReturn->addLog('Found return in FBA '.$amazonReturn. ' with disposition'.$disposition.' and status '.$amazonReturn->getStatus());
+        
+        $fbaReturn->setAmzProductStatus($disposition);
+        $fbaReturn->setLpn($amazonReturn->getLicensePlateNumber());
+        if($amazonReturn->getStatus() == 'Reimbursed'){
+            $fbaReturn->setLocalization(FbaReturn::LOCALIZATION_FBA_REIMBURSED);
+            if(!$fbaReturn->getAmazonReimbursement()){
+                $fbaReturn->setStatus(FbaReturn::STATUS_WAITING_REIMBURSED_BY_FBA);
+            }
+        } else {
+            if ($disposition == 'SELLABLE') {
+                $fbaReturn->setLocalization(FbaReturn::LOCALIZATION_FBA);
+                $fbaReturn->setStatus(FbaReturn::STATUS_RETURN_TO_SALE);
+                $fbaReturn->addLog('Product is sellable and put again in FBA');
+            } else {
+                $fbaReturn->setLocalization(FbaReturn::LOCALIZATION_FBA_REFURBISHED);
+                $fbaReturn->setStatus(FbaReturn::STATUS_RETURN_TO_FBA_NOTSELLABLE);
+                $fbaReturn->addLog('Product is not sellable and will be send back in Biarritz');
+            }
+        }
         
     }
 
@@ -90,12 +118,30 @@ class AssociateAmzFbaReimbursementReturns
         ->findBy(
             [
              'amazonOrderId' => $amazonReturn->getOrderId(),
-             'product'=> $amazonReturn->getProduct()
-            ]
+             'product'=> $amazonReturn->getProduct(),
+             'amazonReturn' => null
+            ],
+            ['postedDate'=>'ASC']
         );
 
-        // check if a sale return is associated to one of them.
-        
+        if(count($fbaReturns)==0){
+            throw new Exception('No FBA return for amazon return '.$amazonReturn);
+        }
+
+        if($amazonReturn->getStatus() == 'Reimbursed'){
+            // check if a sale return is associated to one of return marked as Reimbursed.
+            foreach($fbaReturns as $fbaReturn){
+                if($fbaReturn->getAmazonReimbursement()){
+                    return $fbaReturn;
+                }
+            }
+        } else {
+            foreach($fbaReturns as $fbaReturn){
+                if($fbaReturn->getAmazonReimbursement()===null){
+                    return $fbaReturn;
+                }
+            }
+        }        
         return $fbaReturns[0];
     }
 
@@ -112,6 +158,9 @@ class AssociateAmzFbaReimbursementReturns
             ['postedDate'=>'ASC']
         );
 
+        if(count($fbaReturns)==0){
+            throw new Exception('No FBA return for AmazonReimbursement '.$reimbursement);
+        }
 
         // check if a sale return is associated to one of return marked as Reimbursed.
         foreach($fbaReturns as $fbaReturn){
@@ -124,7 +173,11 @@ class AssociateAmzFbaReimbursementReturns
     }
 
 
-
+    protected function getSaleReturnBusinessCentral($lpn): ?string
+    {
+        $saleReturn = $this->kpFranceConnector->getSaleReturnByPackageTrackingNo($lpn);
+        return $saleReturn ? $saleReturn['number'] : null;
+    }
 
 
     protected function checkRemboursementIsPrincipal(AmazonReimbursement $reimbursement)

@@ -101,8 +101,6 @@ class Product
      */
     private $fbaOutboundStock = 0;
 
-
-
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"export_product"})

@@ -42,7 +42,6 @@ class UpdateReturnsBiarritzFromFileCommand extends Command
         $returnIntegrateds = $this->csvExtracter->extractAssociativeDatasFromCsv($pathFile);
         $output->writeln('Start imports ' . count($returnIntegrateds));
         $fbaReturns = $this->manager->getRepository(FbaReturn::class)->findBy([
-            'close' => false,
             'status' => FbaReturn::STATUS_RETURN_TO_FBA_NOTSELLABLE,
         ]);
 
@@ -65,9 +64,6 @@ class UpdateReturnsBiarritzFromFileCommand extends Command
                         if ($returnIntegrated['LaRoca']=='x') {
                             $fbaReturn->setLocalization(FbaReturn::LOCALIZATION_LAROCA);
                             $fbaReturn->setStatus(FbaReturn::STATUS_SENT_TO_LAROCA);
-                            if ($fbaReturn->getBusinessCentralDocument()) {
-                                $fbaReturn->setClose(true);
-                            }
                         } else {
                             $fbaReturn->setLocalization(FbaReturn::LOCALIZATION_BIARRITZ);
                             $fbaReturn->setStatus(FbaReturn::STATUS_RETURN_TO_BIARRITZ);
