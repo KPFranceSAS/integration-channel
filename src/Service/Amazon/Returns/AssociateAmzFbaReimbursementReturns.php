@@ -199,6 +199,26 @@ class AssociateAmzFbaReimbursementReturns
                 }
             }
         }
+
+
+        $financials = $this->manager
+                        ->getRepository(AmazonFinancialEvent::class)
+                        ->findBy(
+                            ['transactionType'=>'AdjustmentEvent',
+                             'amountType'=> 'FBA Inventory Reimbursement',
+                             'amountDescription'=> 'REVERSAL_REIMBURSEMENT',
+                             'amazonOrderId' => $reimbursement->getAmazonOrderId(),
+                             'product'=> $reimbursement->getProduct()
+                            ]
+                        );
+        if (count($financials)>0) {
+            foreach ($financials as $financial) {
+                if (abs($financial->getAmountCurrency())==abs($reimbursement->getAmountTotalCurrency())) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
