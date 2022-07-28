@@ -200,8 +200,7 @@ class AssociateAmzFbaReimbursementReturns
                             ['transactionType'=>'RefundEvent',
                              'amountType'=> 'ItemChargeAdjustmentList',
                              'amountDescription'=> 'Goodwill',
-                             'amazonOrderId' => $reimbursement->getAmazonOrderId(),
-                             'product'=> $reimbursement->getProduct()
+                             'amazonOrderId' => $reimbursement->getAmazonOrderId()
                             ]
                         );
         if (count($financials)>0) {
@@ -219,8 +218,7 @@ class AssociateAmzFbaReimbursementReturns
                             ['transactionType'=>'AdjustmentEvent',
                              'amountType'=> 'FBA Inventory Reimbursement',
                              'amountDescription'=> 'REVERSAL_REIMBURSEMENT',
-                             'amazonOrderId' => $reimbursement->getAmazonOrderId(),
-                             'product'=> $reimbursement->getProduct()
+                             'amazonOrderId' => $reimbursement->getAmazonOrderId()
                             ]
                         );
         if (count($financials)>0) {
