@@ -119,10 +119,15 @@ class AssociateAmzFbaReimbursementReturns
             [
              'amazonOrderId' => $amazonReturn->getOrderId(),
              'product'=> $amazonReturn->getProduct(),
-             'amazonReturn' => null
             ],
             ['postedDate'=>'ASC']
         );
+
+        foreach($fbaReturns as $key => $fbaReturn){
+            if($fbaReturn->getAmazonReturn()){
+                unset($fbaReturns[$key]);
+            }
+        }
 
         if(count($fbaReturns)==0){
             throw new Exception('No FBA return for amazon return '.$amazonReturn);
@@ -153,13 +158,18 @@ class AssociateAmzFbaReimbursementReturns
             [
              'amazonOrderId' => $reimbursement->getAmazonOrderId(),
              'product'=> $reimbursement->getProduct(),
-             'amazonReimbursement' => null
             ],
             ['postedDate'=>'ASC']
         );
 
         if(count($fbaReturns)==0){
             throw new Exception('No FBA return for AmazonReimbursement '.$reimbursement);
+        }
+
+        foreach($fbaReturns as $key => $fbaReturn){
+            if($fbaReturn->getAmazonReimbursement()){
+                unset($fbaReturns[$key]);
+            }
         }
 
         // check if a sale return is associated to one of return marked as Reimbursed.
