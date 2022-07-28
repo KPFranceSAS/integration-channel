@@ -11,6 +11,7 @@ use AmazonPHP\SellingPartner\Model\Finances\FinancialEventGroup;
 use AmazonPHP\SellingPartner\Model\Finances\NetworkComminglingTransactionEvent;
 use AmazonPHP\SellingPartner\Model\Finances\ProductAdsPaymentEvent;
 use AmazonPHP\SellingPartner\Model\Finances\RetrochargeEvent;
+use AmazonPHP\SellingPartner\Model\Finances\SellerDealPaymentEvent;
 use AmazonPHP\SellingPartner\Model\Finances\ServiceFeeEvent;
 use AmazonPHP\SellingPartner\Model\Finances\ShipmentEvent;
 use AmazonPHP\SellingPartner\Model\Finances\ShipmentItem;
@@ -63,7 +64,15 @@ class AmzApiFinancial
         $financialGroups = $this->amzApi->getAllFinancials($startDate, $startEnd);
         $this->logger->info('------------Manages with ' . count($financialGroups) . ' groups---------------');
         foreach ($financialGroups as $financialGroup) {
-            $this->manageFinancialEventGroup($financialGroup);
+            try{
+                $this->manageFinancialEventGroup($financialGroup);
+            } catch (Exception $e){
+                $this->mailer->sendEmail(
+                    'Error Report Financial '.$financialGroup->getFinancialEventGroupId(), 
+                    $e->getMessage(), 
+                    'stephane.lanjard@kpsport.com'
+                );
+            }
         }
     }
 
@@ -362,6 +371,26 @@ class AmzApiFinancial
 
         return $financialEvents;
     }
+
+
+    protected function convertSellerDealPaymentEventList(SellerDealPaymentEvent $financialEvent): array {
+        $amzFinancialEvent = new AmazonFinancialEvent();
+        $amzFinancialEvent->setTransactionType($financialEvent->getModelName());
+        $amzFinancialEvent->setPostedDate($financialEvent->getPostedDate());
+        $amzFinancialEvent->setAmountDescription($financialEvent->getDealDescription());
+        $amzFinancialEvent->setAmountType($financialEvent->getEventType());
+        $amzFinancialEvent->setAmazonOrderId($financialEvent->getDealId());
+        $amzFinancialEvent->setSellerOrderId($financialEvent->getDealId());
+        $convertedAmount = $this->calculator->getConvertedAmountDate(
+            $financialEvent->getTotalAmount()->getCurrencyAmount(),
+            $financialEvent->getTotalAmount()->getCurrencyCode(),
+            $amzFinancialEvent->getPostedDate()
+        );
+        $amzFinancialEvent->setAmount($convertedAmount);
+        $amzFinancialEvent->setAmountCurrency($financialEvent->getTotalAmount()->getCurrencyAmount());
+        return [$amzFinancialEvent];
+    }
+
 
 
     protected function convertNetworkComminglingTransactionEventList(

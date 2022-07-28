@@ -23,6 +23,10 @@ class GenerateAmzFbaReturn
 
     protected $kpFranceConnector;
 
+
+    /*
+    UPDATE fba_return SET status = 0, logs = "[]", localization = 'CLIENT', lpn= null, amz_product_status = null, amazon_removal_id =null, close = false, amazon_return_id=null, amazon_reimbursement_id = null, business_central_document = null   ;
+    */
     public function __construct(
         LoggerInterface $logger,
         ManagerRegistry $manager,
@@ -91,7 +95,7 @@ class GenerateAmzFbaReturn
             $fbaReturn->setRefundCommission($commisionCost);
             $fbaReturn->setRefundPrincipal($principalCost);
             $fbaReturn->setCommissionOnRefund($refundCommisionCost);
-            $fbaReturn->setStatus(FbaReturn::STATUS_CREATED);
+            $fbaReturn->setStatus(FbaReturn::STATUS_WAITING_CUSTOMER);
             $fbaReturn->setSku($amazonFinancialEvent->getSku());
             $fbaReturn->setPostedDate(DateTimeImmutable::createFromMutable($amazonFinancialEvent->getPostedDate()));
             $fbaReturn->setProduct($amazonFinancialEvent->getProduct());

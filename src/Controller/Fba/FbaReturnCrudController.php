@@ -8,10 +8,14 @@ use DateTime;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
 
 class FbaReturnCrudController extends AdminCrudController
 {
@@ -51,8 +55,52 @@ class FbaReturnCrudController extends AdminCrudController
             TextField::new('statusLitteral'),
             TextField::new('localizationLitteral'),
             TextField::new('lpn'),
+            TextField::new('amzProductStatus'),
             TextField::new('businessCentralDocument'),
             BooleanField::new('close')->renderAsSwitch(false),
         ];
     }
+
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(ChoiceFilter::new('status')
+                ->canSelectMultiple(true)
+                ->setChoices(
+                    [
+                        'Waiting for return' => FbaReturn::STATUS_WAITING_CUSTOMER,
+                        'Returned to FBA Unsellable' => FbaReturn::STATUS_RETURN_TO_FBA_NOTSELLABLE,
+                        'Reintegrated to sale' => FbaReturn::STATUS_RETURN_TO_SALE,
+                        'Return in Biarritz' => FbaReturn::STATUS_RETURN_TO_BIARRITZ,
+                        'Receipted in La Roca'=> FbaReturn::STATUS_RETURN_TO_LAROCA,
+                        'Sent to La Roca' => FbaReturn::STATUS_SENT_TO_LAROCA,
+                        'Reimbursed by fba' => FbaReturn::STATUS_REIMBURSED_BY_FBA,
+                   ]
+                ))
+            ->add(DateTimeFilter::new('postedDate', "Posted date"))
+            ->add(BooleanFilter::new('close', 'Is close'))
+            ->add(ChoiceFilter::new('marketplaceName', "Marketplace")
+                ->canSelectMultiple(true)
+                ->setChoices(
+                    [
+                        'Amazon UK' => 'Amazon UK',
+                        'Amazon IT'  => "Amazon Seller Central - IT",
+                        'Amazon DE' => "Amazon Seller Central - DE",
+                        'Amazon ES' => "Amazon Seller Central - ES",
+                        'Amazon FR' => 'Amazon Seller Central - FR',
+                    ]
+                ))
+            ->add(ChoiceFilter::new('localization')
+                        ->canSelectMultiple(true)
+                        ->setChoices(
+                            [
+                                FbaReturn::LOCALIZATION_CLIENT => FbaReturn::LOCALIZATION_CLIENT,
+                                FbaReturn::LOCALIZATION_FBA => FbaReturn::LOCALIZATION_FBA,
+                                FbaReturn::LOCALIZATION_FBA_REFURBISHED => FbaReturn::LOCALIZATION_FBA_REFURBISHED,
+                                FbaReturn::LOCALIZATION_LAROCA => FbaReturn::LOCALIZATION_LAROCA,
+                                FbaReturn::LOCALIZATION_BIARRITZ => FbaReturn::LOCALIZATION_BIARRITZ,
+                           ]
+                    ));   
+            }
 }

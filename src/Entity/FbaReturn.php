@@ -15,26 +15,28 @@ class FbaReturn
 
     public const LOCALIZATION_CLIENT = 'CLIENT';
 
-    public const LOCALIZATION_FBA_REFURBISHED = 'FBA_REFURBISHED';
+    public const LOCALIZATION_FBA_REFURBISHED = 'FBA REFURBISHED';
+
+    public const LOCALIZATION_FBA_REIMBURSED = 'FBA REIMBURSED';
+
 
     public const LOCALIZATION_BIARRITZ = 'BIARRITZ';
 
     public const LOCALIZATION_LAROCA = 'LAROCA';
 
+    public const STATUS_WAITING_CUSTOMER = 0;
 
-    public const STATUS_CREATED = 0;
+    public const STATUS_RETURN_TO_FBA_NOTSELLABLE = 1;
 
-    public const STATUS_WAITING_CUSTOMER = 1;
+    public const STATUS_RETURN_TO_SALE = 2;
 
-    public const STATUS_RETURN_TO_FBA_NOTSELLABLE = 2;
+    public const STATUS_RETURN_TO_BIARRITZ = 3;
 
-    public const STATUS_RETURN_TO_SALE = 3;
+    public const STATUS_RETURN_TO_LAROCA = 4;
 
-    public const STATUS_RETURN_TO_BIARRITZ = 4;
+    public const STATUS_SENT_TO_LAROCA = 5;
 
-    public const STATUS_RETURN_TO_LAROCA = 5;
-
-    public const STATUS_SENT_TO_LAROCA = 6;
+    public const STATUS_WAITING_REIMBURSED_BY_FBA = 6;
 
     public const STATUS_REIMBURSED_BY_FBA = 7;
 
@@ -48,6 +50,8 @@ class FbaReturn
                 return 'FBA Sellable';
             case self::LOCALIZATION_FBA_REFURBISHED:
                 return 'FBA Unsellable';
+            case self::LOCALIZATION_FBA_REIMBURSED:
+                return 'FBA Reimbursed';
             case self::LOCALIZATION_BIARRITZ:
                 return 'Biarritz';
             case self::LOCALIZATION_LAROCA:
@@ -65,8 +69,6 @@ class FbaReturn
     public function getStatusLitteral()
     {
         switch ($this->status) {
-            case self::STATUS_CREATED:
-                return 'Created';
             case self::STATUS_WAITING_CUSTOMER:
                 return 'Waiting for return';
             case self::STATUS_RETURN_TO_FBA_NOTSELLABLE:
@@ -77,6 +79,8 @@ class FbaReturn
                 return 'Reimbursed by fba';
             case self::STATUS_RETURN_TO_BIARRITZ:
                 return 'Return in Biarritz';
+            case self::STATUS_WAITING_REIMBURSED_BY_FBA:
+                return 'Waiting for reimbursed by FBA';
             case self::STATUS_RETURN_TO_LAROCA:
                 return 'Receipted in La Roca';
             case self::STATUS_SENT_TO_LAROCA:

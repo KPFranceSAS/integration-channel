@@ -53,9 +53,7 @@ class UpdateAmzFbaReturn
 
     protected function updateReturn(FbaReturn $fbaReturn)
     {
-        $fbaReturn->setStatus(FbaReturn::STATUS_WAITING_CUSTOMER);
-        // we check the state of the return.
-        if ($fbaReturn->hasNotBeenReturnedToFba()) {
+        if (!$fbaReturn->getAmazonReturn()) {
             $return = $this->hasBeenReturnedToFba($fbaReturn);
             if ($return) {
                 $this->logger->info('Found '.$return);
@@ -66,27 +64,58 @@ class UpdateAmzFbaReturn
                 
                 $fbaReturn->setAmzProductStatus($disposition);
                 $fbaReturn->setLpn($return->getLicensePlateNumber());
-                if ($disposition == 'SELLABLE') {
+                if ($return->getStatus()=='Unit returned to inventory') {
+                    if ($disposition == 'SELLABLE') {
+                        $fbaReturn->setLocalization(FbaReturn::LOCALIZATION_FBA);
+                        $fbaReturn->setStatus(FbaReturn::STATUS_RETURN_TO_SALE);
+                        $fbaReturn->addLog('Product is sellable and put again in FBA');
+                    } else {
+                        $fbaReturn->setLocalization(FbaReturn::LOCALIZATION_FBA_REFURBISHED);
+                        $fbaReturn->setStatus(FbaReturn::STATUS_RETURN_TO_FBA_NOTSELLABLE);
+                        $fbaReturn->addLog('Product is not sellable and will be send back in Biarritz');
+                    }
+                } else {
                     $fbaReturn->setLocalization(FbaReturn::LOCALIZATION_FBA);
                     $fbaReturn->setStatus(FbaReturn::STATUS_RETURN_TO_SALE);
-                    $fbaReturn->addLog('Product is sellable and put agin in FBA');
-                } else {
-                    $fbaReturn->setLocalization(FbaReturn::LOCALIZATION_FBA_REFURBISHED);
-                    $fbaReturn->setStatus(FbaReturn::STATUS_RETURN_TO_FBA_NOTSELLABLE);
-                    $fbaReturn->addLog('Product is not sellable and will be send back in Biarritz');
-                }
-            } else {
-                $reimbursement = $this->hasBeenReimbursedByFba($fbaReturn);
-                if ($reimbursement) {
-                    $this->logger->info('Found '.$reimbursement);
-                    $fbaReturn->setAmazonReimbursement($reimbursement);
-                    $fbaReturn->addLog('Found reimboursement from FBA'.$reimbursement);
-                    $fbaReturn->setStatus(FbaReturn::STATUS_REIMBURSED_BY_FBA);
-                    $fbaReturn->setClose(true);
+                    $fbaReturn->addLog('Product will be reimbursed by FBA');
                 }
             }
         }
+        if (!$fbaReturn->getAmazonReimbursement()) {
+            $reimbursement = $this->hasBeenReimbursedByFba($fbaReturn);
+            if ($reimbursement && $this->checkRemboursementIsPrincipal($reimbursement)) {
+                $this->logger->info('Found '.$reimbursement);
+                $fbaReturn->setAmazonReimbursement($reimbursement);
+                $fbaReturn->addLog('Found reimboursement from FBA'.$reimbursement);
+                $fbaReturn->setStatus(FbaReturn::STATUS_REIMBURSED_BY_FBA);
+                $fbaReturn->setClose(true);
+            }
+        }
     }
+
+
+    protected function checkRemboursementIsPrincipal(AmazonReimbursement $reimbursement)
+    {
+        $financials = $this->manager
+                        ->getRepository(AmazonFinancialEvent::class)
+                        ->findBy(
+                            ['transactionType'=>'RefundEvent',
+                             'amountType'=> 'ItemChargeAdjustmentList',
+                             'amountDescription'=> 'Goodwill',
+                             'amazonOrderId' => $reimbursement->getAmazonOrderId(),
+                             'product'=> $reimbursement->getProduct()
+                            ]
+                        );
+        if (count($financials)>0) {
+            foreach ($financials as $financial) {
+                if (abs($financial->getAmountCurrency())==abs($reimbursement->getAmountTotalCurrency())) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
 
 
     protected function hasBeenReturnedToFba(FbaReturn $fbaReturn): ?AmazonReturn
