@@ -38,6 +38,20 @@ class AssociateAmzFbaReimbursementReturns
     }
 
 
+    /**
+     * #402-5318048-2031553 Sku>P3D2052 LPN> LPNHE466191228>>No FBA return for amazon return #402-5318048-2031553 Sku>P3D2052 LPN> LPNHE466191228
+* charge back event 
+*206-9712213-7786746 Sku>P3D2449 LPN> LPNWE075909594>>No FBA return for amazon return #206-9712213-7786746 Sku>P3D2449 LPN> LPNWE075909594
+
+*  no refund event 
+*403-4009406-9483568 Sku>MI-EVO13 LPN> LPNHL974979412>>No FBA return for amazon return #403-4009406-9483568 Sku>MI-EVO13 LPN> LPNHL974979412
+
+* mauvaise association au fba return 
+*405-2449095-0635532 Sku>SNS-BEAM2EU1 LPN> LPNIC029509106>>No FBA return for amazon return #405-2449095-0635532 Sku>SNS-BEAM2EU1 LPN> LPNIC029509106
+
+*405-0601606-5425147 Sku>P2D2077 LPN> LPNHL973623004>>No FBA return for amazon return #405-0601606-5425147 Sku>P2D2077 LPN> LPNHL973623004 
+     */
+
 
     public function associateToFbaReturns()
     {

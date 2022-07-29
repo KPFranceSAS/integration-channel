@@ -144,15 +144,19 @@ abstract class AmzApiImport
 
     protected function addProductByFnsku($amz)
     {
-        $sku = $this->getProductCorrelationSku($amz->getSku());
         $fnsku = $amz->getFnsku();
+        $params = [
+            'fnsku' => $fnsku
+        ];
+
+        if ($amz->getSku()) {
+            $sku = $this->getProductCorrelationSku($amz->getSku());
+            $params ['sku'] = $sku;
+        }
 
         $product = $this->manager
                         ->getRepository(Product::class)
-                        ->findOneBy([
-                            'fnsku' => $fnsku,
-                            "sku" => $sku
-                        ]);
+                        ->findOneBy($params);
         if ($product) {
             $amz->setProduct($product);
         }
