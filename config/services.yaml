@@ -41,9 +41,10 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
-            $refreshToken : '%env(resolve:CHANNEL_REFRESHTOKEN)%'
-            $applicationId : '%env(resolve:CHANNEL_APPLICATIONID)%'
-            $sharedSecret : '%env(resolve:CHANNEL_SECRET)%'
+            $channelEndpoint : '%env(resolve:CHANNEL_ENDPOINT)%'
+            $channelRefreshToken : '%env(resolve:CHANNEL_REFRESHTOKEN)%'
+            $channelApplicationId : '%env(resolve:CHANNEL_APPLICATIONID)%'
+            $channelSharedSecret : '%env(resolve:CHANNEL_SECRET)%'
             
             $urlBC : '%env(resolve:BC_URL)%'
             $loginBC : '%env(resolve:BC_LOGIN)%'

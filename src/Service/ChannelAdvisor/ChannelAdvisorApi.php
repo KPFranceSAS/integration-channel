@@ -20,6 +20,8 @@ class ChannelAdvisorApi implements ApiInterface
 
     public const API_URL = 'https://api.channeladvisor.com/v1/';
 
+    protected $channelEndpoint;
+
     protected $refreshToken;
 
     protected $applicationId;
@@ -34,24 +36,37 @@ class ChannelAdvisorApi implements ApiInterface
 
     protected $logger;
 
-    public function __construct(LoggerInterface $logger, $refreshToken, $applicationId, $sharedSecret)
+    public function __construct(LoggerInterface $logger, $channelEndpoint, $channelRefreshToken, $channelApplicationId, $channelSharedSecret)
     {
         $this->logger = $logger;
-        $this->refreshToken = $refreshToken;
-        $this->applicationId = $applicationId;
-        $this->sharedSecret = $sharedSecret;
+        $this->channelEndpoint = 'https://'.$channelEndpoint;
+        $this->refreshToken = $channelRefreshToken;
+        $this->applicationId = $channelApplicationId;
+        $this->sharedSecret = $channelSharedSecret;
         $this->getAccessToken();
+    }
+
+
+    private function getApiEndPoint()
+    {
+        return $this->channelEndpoint."/v1/";
+    }
+
+    private function getAuthEndPoint()
+    {
+        return $this->channelEndpoint."/oauth2/token";
     }
 
     private function getAccessToken()
     {
         $client = new Client();
-        $response = $client->request('POST', self::AUTH_URL, [
+        $response = $client->request('POST', $this->getAuthEndPoint(), [
             'auth' => [$this->applicationId, $this->sharedSecret],
             'form_params' => [
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $this->refreshToken,
             ],
+            'debug' => true
         ]);
         $body = json_decode($response->getBody());
         $this->accessToken = $body->access_token;
@@ -179,7 +194,7 @@ class ChannelAdvisorApi implements ApiInterface
             'headers' => ['Content-Type' => 'application/pdf'],
         ];
         $client = new Client();
-        $response = $client->request('POST', self::API_URL . 'ChannelDocuments', $parameters);
+        $response = $client->request('POST', $this->getApiEndPoint(). 'ChannelDocuments', $parameters);
 
         return 204 == $response->getStatusCode();
     }
@@ -193,13 +208,16 @@ class ChannelAdvisorApi implements ApiInterface
     {
         $this->refreshAccessToken();
         $query = array_merge(['access_token' => $this->accessToken], $queryParams);
-        $parameters = ['query' => $query];
+        $parameters = [
+            'query' => $query,
+            'debug' => true
+        ];
         if ('GET' != $method && $form) {
             $parameters['json'] = $form;
         }
 
         $client = new Client();
-        $response = $client->request($method, self::API_URL . $endPoint, $parameters);
+        $response = $client->request($method, $this->getApiEndPoint() . $endPoint, $parameters);
 
         return json_decode($response->getBody());
     }
@@ -219,6 +237,10 @@ class ChannelAdvisorApi implements ApiInterface
 
         return null;
     }
+
+
+    
+
 
     public function getFullOrder($channelId)
     {

@@ -40,16 +40,22 @@ class AssociateAmzFbaReimbursementReturns
 
     /**
      * #402-5318048-2031553 Sku>P3D2052 LPN> LPNHE466191228>>No FBA return for amazon return #402-5318048-2031553 Sku>P3D2052 LPN> LPNHE466191228
-* charge back event 
+* charge back event
 *206-9712213-7786746 Sku>P3D2449 LPN> LPNWE075909594>>No FBA return for amazon return #206-9712213-7786746 Sku>P3D2449 LPN> LPNWE075909594
 
-*  no refund event 
+*  no refund event
 *403-4009406-9483568 Sku>MI-EVO13 LPN> LPNHL974979412>>No FBA return for amazon return #403-4009406-9483568 Sku>MI-EVO13 LPN> LPNHL974979412
 
-* mauvaise association au fba return 
+* mauvaise association au fba return 2 envois + carrier damaged
 *405-2449095-0635532 Sku>SNS-BEAM2EU1 LPN> LPNIC029509106>>No FBA return for amazon return #405-2449095-0635532 Sku>SNS-BEAM2EU1 LPN> LPNIC029509106
+* send product with reimbursement
+*405-0601606-5425147 Sku>P2D2077 LPN> LPNHL973623004>>No FBA return for amazon return #405-0601606-5425147 Sku>P2D2077 LPN> LPNHL973623004
 
-*405-0601606-5425147 Sku>P2D2077 LPN> LPNHL973623004>>No FBA return for amazon return #405-0601606-5425147 Sku>P2D2077 LPN> LPNHL973623004 
+
+*407-5534382-2839501 one reimbursed the other ones not // check what happens
+
+
+*ajouter un champ ignore sur return ou remboursment
      */
 
 
@@ -59,19 +65,19 @@ class AssociateAmzFbaReimbursementReturns
         $events = $this->getAllEventsAssociated();
         $nbEvents = count($events);
         $this->logger->info("Total events ".$nbEvents);
-        $i=0;   
+        $i=0;
         foreach ($events as $key => $event) {
-            try{
+            try {
                 $i++;
                 $this->logger->info(get_class($event)." #".$event->getId() .' ['.$key.'] '.$i.'/'.$nbEvents);
-                if(get_class($event)==AmazonReimbursement::class){
+                if (get_class($event)==AmazonReimbursement::class) {
                     $this->associateAmazonReimbursement($event);
                 } else {
                     $this->associateAmazonReturn($event);
                 }
-            } catch (Exception $e){
-                    $this->logger->critical($event.'>>'.$e->getMessage());
-                    $this->errors[]= $event.'>>'.$e->getMessage();
+            } catch (Exception $e) {
+                $this->logger->critical($event.'>>'.$e->getMessage());
+                $this->errors[]= $event.'>>'.$e->getMessage();
             }
             $this->manager->flush();
         }
@@ -81,7 +87,6 @@ class AssociateAmzFbaReimbursementReturns
             $messageError = implode('<br/><br/>', array_unique($this->errors));
             $this->mailer->sendEmail('Erreur AMAZON FBA return', $messageError, 'stephane.lanjard@kpsport.com');
         }
-    
     }
 
 
@@ -101,14 +106,14 @@ class AssociateAmzFbaReimbursementReturns
     {
         $fbaReturn = $this->getBestFbaReturnAmazonReturn($amazonReturn);
         $fbaReturn->setAmazonReturn($amazonReturn);
-        $disposition = $amazonReturn->getDetailedDisposition();       
+        $disposition = $amazonReturn->getDetailedDisposition();
         $fbaReturn->addLog('Found return in FBA '.$amazonReturn. ' with disposition'.$disposition.' and status '.$amazonReturn->getStatus());
         
         $fbaReturn->setAmzProductStatus($disposition);
         $fbaReturn->setLpn($amazonReturn->getLicensePlateNumber());
-        if($amazonReturn->getStatus() == 'Reimbursed'){
+        if ($amazonReturn->getStatus() == 'Reimbursed') {
             $fbaReturn->setLocalization(FbaReturn::LOCALIZATION_FBA_REIMBURSED);
-            if(!$fbaReturn->getAmazonReimbursement()){
+            if (!$fbaReturn->getAmazonReimbursement()) {
                 $fbaReturn->setStatus(FbaReturn::STATUS_WAITING_REIMBURSED_BY_FBA);
             }
         } else {
@@ -122,11 +127,11 @@ class AssociateAmzFbaReimbursementReturns
                 $fbaReturn->addLog('Product is not sellable and will be send back in Biarritz');
             }
         }
-        
     }
 
 
-    protected function getBestFbaReturnAmazonReturn(AmazonReturn $amazonReturn): FbaReturn {
+    protected function getBestFbaReturnAmazonReturn(AmazonReturn $amazonReturn): FbaReturn
+    {
         $fbaReturns = $this->manager
         ->getRepository(FbaReturn::class)
         ->findBy(
@@ -137,35 +142,36 @@ class AssociateAmzFbaReimbursementReturns
             ['postedDate'=>'ASC']
         );
 
-        foreach($fbaReturns as $key => $fbaReturn){
-            if($fbaReturn->getAmazonReturn()){
+        foreach ($fbaReturns as $key => $fbaReturn) {
+            if ($fbaReturn->getAmazonReturn()) {
                 unset($fbaReturns[$key]);
             }
         }
 
-        if(count($fbaReturns)==0){
+        if (count($fbaReturns)==0) {
             throw new Exception('No FBA return for amazon return '.$amazonReturn);
         }
 
-        if($amazonReturn->getStatus() == 'Reimbursed'){
+        if ($amazonReturn->getStatus() == 'Reimbursed') {
             // check if a sale return is associated to one of return marked as Reimbursed.
-            foreach($fbaReturns as $fbaReturn){
-                if($fbaReturn->getAmazonReimbursement()){
+            foreach ($fbaReturns as $fbaReturn) {
+                if ($fbaReturn->getAmazonReimbursement()) {
                     return $fbaReturn;
                 }
             }
         } else {
-            foreach($fbaReturns as $fbaReturn){
-                if($fbaReturn->getAmazonReimbursement()===null){
+            foreach ($fbaReturns as $fbaReturn) {
+                if ($fbaReturn->getAmazonReimbursement()===null) {
                     return $fbaReturn;
                 }
             }
-        }        
+        }
         return $fbaReturns[0];
     }
 
 
-    protected function getBestFbaReturnAmazonReimbursement(AmazonReimbursement $reimbursement): FbaReturn {
+    protected function getBestFbaReturnAmazonReimbursement(AmazonReimbursement $reimbursement): FbaReturn
+    {
         $fbaReturns = $this->manager
         ->getRepository(FbaReturn::class)
         ->findBy(
@@ -176,21 +182,21 @@ class AssociateAmzFbaReimbursementReturns
             ['postedDate'=>'ASC']
         );
 
-        foreach($fbaReturns as $key => $fbaReturn){
-            if($fbaReturn->getAmazonReimbursement()){
+        foreach ($fbaReturns as $key => $fbaReturn) {
+            if ($fbaReturn->getAmazonReimbursement()) {
                 unset($fbaReturns[$key]);
             }
         }
 
-        if(count($fbaReturns)==0){
+        if (count($fbaReturns)==0) {
             throw new Exception('No FBA return for AmazonReimbursement '.$reimbursement);
         }
 
         
 
         // check if a sale return is associated to one of return marked as Reimbursed.
-        foreach($fbaReturns as $fbaReturn){
-            if($fbaReturn->getAmazonReturn() && $fbaReturn->getAmazonReturn()->getStatus()== 'Reimbursed'){
+        foreach ($fbaReturns as $fbaReturn) {
+            if ($fbaReturn->getAmazonReturn() && $fbaReturn->getAmazonReturn()->getStatus()== 'Reimbursed') {
                 return $fbaReturn;
             }
         }
@@ -247,13 +253,14 @@ class AssociateAmzFbaReimbursementReturns
     }
 
 
-    protected function getAllEventsAssociated(): array {
+    protected function getAllEventsAssociated(): array
+    {
         $events = [];
         
         
         $remboursements =  $this->getAllReimboursmentsNotAssociated();
-        foreach($remboursements as $remboursement){
-            if($this->checkRemboursementIsPrincipal($remboursement)===false){
+        foreach ($remboursements as $remboursement) {
+            if ($this->checkRemboursementIsPrincipal($remboursement)===false) {
                 $this->logger->alert("Not an reimbursement of item");
             } else {
                 $events[$remboursement->getApprovalDate()->format('Y-m-d H:i:s')]=$remboursement;
@@ -262,7 +269,7 @@ class AssociateAmzFbaReimbursementReturns
 
 
         $returns =  $this->getAllReturnsNotAssociated();
-        foreach($returns as $return){
+        foreach ($returns as $return) {
             $events[$return->getReturnDate()->format('Y-m-d H:i:s')]=$return;
         }
 
@@ -272,7 +279,8 @@ class AssociateAmzFbaReimbursementReturns
 
 
     
-    protected function getAllReturnsNotAssociated(): array {
+    protected function getAllReturnsNotAssociated(): array
+    {
         $qb = $this->manager->createQueryBuilder();
         $expr = $this->manager->getExpressionBuilder();
         $qb->select('amz')
@@ -309,7 +317,4 @@ class AssociateAmzFbaReimbursementReturns
                 ->setParameter('reason', 'CustomerReturn');
         return $qb->getQuery()->getResult();
     }
-
-
-
 }
