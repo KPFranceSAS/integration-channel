@@ -210,7 +210,7 @@ class ChannelAdvisorApi implements ApiInterface
         $query = array_merge(['access_token' => $this->accessToken], $queryParams);
         $parameters = [
             'query' => $query,
-            'debug' => true
+            'debug' => false
         ];
         if ('GET' != $method && $form) {
             $parameters['json'] = $form;
@@ -222,22 +222,33 @@ class ChannelAdvisorApi implements ApiInterface
         return json_decode($response->getBody());
     }
 
-    public function getOrderByNumber($number, $profileId)
+    public function getOrderByNumber($number)
     {
-        $params = [
-            '$filter' => "SiteOrderID eq '$number' and ProfileID eq $profileId",
-        ];
+        return $this->getFirstOrder([
+            '$filter' => "SiteOrderID eq '$number'",
+        ]);
+    }
 
+
+    public function getOrderByNumberProfile($number, $profileId)
+    {
+        return $this->getFirstOrder([
+            '$filter' => "SiteOrderID eq '$number' and ProfileID eq $profileId",
+        ]);
+    }
+
+
+    public function getFirstOrder($params)
+    {
         $orderResults = $this->getOrders($params);
         if (count($orderResults->value) > 0) {
             $firstOrder = array_shift($orderResults->value);
 
-            return $firstOrder->ID;
+            return $this->getFullOrder($firstOrder->ID);
         }
 
         return null;
     }
-
 
     
 

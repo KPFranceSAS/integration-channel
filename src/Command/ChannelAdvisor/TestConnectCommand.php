@@ -30,9 +30,7 @@ class TestConnectCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $orders = $this->channelAdvisorApi->refreshAccessToken();
-        dump($orders);
-
+        $this->channelAdvisorApi->refreshAccessToken();
         return Command::SUCCESS;
     }
 }
