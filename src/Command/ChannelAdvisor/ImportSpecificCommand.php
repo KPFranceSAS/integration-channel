@@ -37,6 +37,7 @@ class ImportSpecificCommand extends Command
         $orderNumber = $input->getArgument('orderNumber');
         $orderApi = $this->channelAdvisorApi->getOrderByNumber($orderNumber);
         if ($orderApi) {
+            $orderApi->ShippingStatus = 'Shipped';
             $this->channelAdvisorIntegrateOrder->integrateOrder($orderApi);
         }
         
