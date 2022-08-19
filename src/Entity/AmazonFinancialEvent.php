@@ -174,6 +174,15 @@ class AmazonFinancialEvent
     /**
      *  @Groups({"export_order"})
      */
+    public function getProductUnitCost()
+    {
+        return $this->product ? $this->product->getUnitCost() :  null;
+    }
+
+
+    /**
+     *  @Groups({"export_order"})
+     */
     public function getAmazonOrderIdProductId()
     {
         return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
