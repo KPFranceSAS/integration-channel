@@ -86,9 +86,9 @@ abstract class IntegratorParent
 
             if (count($this->errors) > 0) {
                 $messageError = implode('<br/><br/>', array_unique($this->errors));
-                throw new \Exception($messageError);
+                throw new Exception($messageError);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->critical($e->getMessage());
             $this->mailer->sendEmailChannel($this->getChannel(), 'Order Integration - Error', $e->getMessage());
         }
