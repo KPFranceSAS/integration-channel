@@ -309,7 +309,7 @@ class ProductStockDaily
 
 
     /**
-    *  @Groups({"export_order"})
+    *  @Groups({"export_product"})
     */
     public function getProductId()
     {
@@ -318,7 +318,7 @@ class ProductStockDaily
 
 
     /**
-    *  @Groups({"export_order"})
+    *  @Groups({"export_product"})
     */
     public function getStockDateFormatYmd()
     {
@@ -327,7 +327,7 @@ class ProductStockDaily
 
 
     /**
-    *  @Groups({"export_order"})
+    *  @Groups({"export_product"})
     */
     public function getStockDateFormatCalendar()
     {
