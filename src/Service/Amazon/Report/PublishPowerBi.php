@@ -7,6 +7,7 @@ use App\Entity\AmazonReimbursement;
 use App\Entity\AmazonReturn;
 use App\Entity\FbaReturn;
 use App\Entity\Product;
+use App\Entity\ProductStockDaily;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -15,6 +16,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class PublishPowerBi
 {
+    const BATCH_SIZE = 500;
     public function __construct(LoggerInterface $logger, ManagerRegistry $manager, SerializerInterface $serializer, FilesystemOperator $kpssportStorage)
     {
         $this->kpssportStorage = $kpssportStorage;
@@ -37,6 +39,7 @@ class PublishPowerBi
     public function exportAll()
     {
         $this->exportProducts();
+        $this->exportProductsStock();
         $this->exportFbas();
         $this->exportReimbursements();
         $this->exportReturns();
@@ -63,6 +66,11 @@ class PublishPowerBi
     public function exportProducts()
     {
         $this->exportData(Product::class, 'export_product', 'products.json');
+    }
+
+    public function exportProductsStock()
+    {
+        $this->exportData(ProductStockDaily::class, 'export_product', 'productstocks.json');
     }
 
 
@@ -94,7 +102,7 @@ class PublishPowerBi
     {
         $this->logger->info("Export orders ");
         $orders = [];
-        $batchSize = 200;
+        
         $i = 1;
         $q = $this->manager->createQuery('select a from App\Entity\AmazonOrder a');
         foreach ($q->toIterable() as $amz) {
@@ -105,7 +113,7 @@ class PublishPowerBi
                 ]);
                 $orders[] = json_decode($order);
                 ++$i;
-                if (($i % $batchSize) === 0) {
+                if (($i % self::BATCH_SIZE) === 0) {
                     $this->logger->info("Exported  $i orders ");
                     $this->manager->clear(); // Detaches all objects from Doctrine!
                 }
@@ -121,7 +129,6 @@ class PublishPowerBi
     {
         $this->logger->info("Export financials ");
         $financials = [];
-        $batchSize = 200;
         $i = 1;
         $q = $this->manager->createQuery('select a from App\Entity\AmazonFinancialEvent a');
         foreach ($q->toIterable() as $amz) {
@@ -131,7 +138,7 @@ class PublishPowerBi
             ]);
             $financials[] = json_decode($financial);
             ++$i;
-            if (($i % $batchSize) === 0) {
+            if (($i % self::BATCH_SIZE) === 0) {
                 $this->logger->info("Exported  $i financials ");
                 $this->manager->clear(); // Detaches all objects from Doctrine!
             }
