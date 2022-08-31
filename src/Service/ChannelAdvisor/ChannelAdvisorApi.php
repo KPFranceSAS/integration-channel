@@ -66,7 +66,7 @@ class ChannelAdvisorApi implements ApiInterface
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $this->refreshToken,
             ],
-            'debug' => true
+            'debug' => false
         ]);
         $body = json_decode($response->getBody());
         $this->accessToken = $body->access_token;
