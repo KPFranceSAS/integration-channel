@@ -52,7 +52,8 @@ class AmzApiImportProduct
             $this->getNewProductsFromAmazon();
             $this->addUnitCosts();
         } catch (Exception $e) {
-            $this->mailer->sendEmail("[REPORT AMAZON Product ]", $e->getMessage());
+            $this->logger->critical($e->getMessage());
+            //$this->mailer->sendEmail("[REPORT AMAZON Product ]", $e->getMessage());
         }
     }
 
@@ -70,7 +71,8 @@ class AmzApiImportProduct
 
         if (count($this->errorProducts) > 0) {
             $message =  implode('<br/>', $this->errorProducts);
-            $this->mailer->sendEmail("[REPORT AMAZON Product ]", $message);
+            $this->logger->critical($message);
+            //$this->mailer->sendEmail("[REPORT AMAZON Product ]", $message);
         }
     }
 

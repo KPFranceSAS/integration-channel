@@ -22,6 +22,7 @@ class AssociateAmzFbaReimbursementReturns
 
     protected $logger;
 
+    protected $errors;
     protected $kpFranceConnector;
 
     public function __construct(
