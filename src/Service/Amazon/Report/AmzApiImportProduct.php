@@ -115,6 +115,7 @@ class AmzApiImportProduct
             $datasReport =  $this->getContentFromReportMarketplace($dateTimeStart, $marketplace);
             $this->logger->info("Data marketplace $marketplace >>>>" . count($datasReport));
             $datas[$marketplace] = $datasReport;
+            sleep(self::WAITING_TIME);
         }
 
         return $datas;
