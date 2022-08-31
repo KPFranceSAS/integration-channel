@@ -124,31 +124,42 @@ class AmzApiImportProduct
 
     public function getContentFromReportMarketplace($dateTimeStart, $marketplace)
     {
-        $report = $this->amzApi->createReport(
-            $dateTimeStart,
-            AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED,
-            [$marketplace]
-        );
-        for ($i = 0; $i < 30; $i++) {
-            $j = ($i + 1) * self::WAITING_TIME;
-            $this->logger->info("Wait  since $j seconds  reporting is done");
-            sleep(self::WAITING_TIME);
-            $errors = [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL];
-            $reportState = $this->amzApi->getReport($report->getReportId());
-            if ($reportState->getPayload()->getProcessingStatus() == AmzApi::STATUS_REPORT_DONE) {
-                $this->logger->info('Report processing done');
-                return $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
-            } elseif (in_array($reportState->getPayload()->getProcessingStatus(), $errors)) {
-                return  $this->amzApi->getContentLastReport(
-                    AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED,
-                    $dateTimeStart,
-                    [$marketplace]
-                );
-            } else {
-                $this->logger->info('Report processing not yet');
+        try {
+            $report = $this->amzApi->createReport(
+                $dateTimeStart,
+                AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED,
+                [$marketplace]
+            );
+        
+       
+            for ($i = 0; $i < 30; $i++) {
+                $j = ($i + 1) * self::WAITING_TIME;
+                $this->logger->info("Wait  since $j seconds  reporting is done");
+                sleep(self::WAITING_TIME);
+                $errors = [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL];
+                $reportState = $this->amzApi->getReport($report->getReportId());
+                if ($reportState->getPayload()->getProcessingStatus() == AmzApi::STATUS_REPORT_DONE) {
+                    $this->logger->info('Report processing done');
+                    return $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
+                } elseif (in_array($reportState->getPayload()->getProcessingStatus(), $errors)) {
+                    return  $this->amzApi->getContentLastReport(
+                        AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED,
+                        $dateTimeStart,
+                        [$marketplace]
+                    );
+                } else {
+                    $this->logger->info('Report processing not yet');
+                }
             }
+            return [];
+        } catch (Exception $e) {
+            $this->logger->critical($e->getMessage());
+            return  $this->amzApi->getContentLastReport(
+                AmzApi::TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED,
+                $dateTimeStart,
+                [$marketplace]
+            );
         }
-        return [];
     }
 
 
