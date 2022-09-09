@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
 use App\Helper\Utils\ExchangeRateCalculator;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,6 +14,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class AmazonOrder
 {
+    use TraitTimeUpdated;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -37,16 +40,6 @@ class AmazonOrder
      * @Groups({"export_order"})
      */
     private $purchaseDate;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $updatedAt;
 
     /**
      * @ORM\Column(type="datetime")
@@ -383,23 +376,7 @@ class AmazonOrder
         return lcfirst(str_replace($separator, '', ucwords($input, $separator)));
     }
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
+   
     public function getId(): ?int
     {
         return $this->id;
@@ -441,30 +418,7 @@ class AmazonOrder
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
+    
     public function getLastUpdatedDate(): ?\DateTimeInterface
     {
         return $this->lastUpdatedDate;

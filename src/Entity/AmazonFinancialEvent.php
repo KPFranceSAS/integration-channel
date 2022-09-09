@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\Traits\TraitTimeUpdated;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -16,6 +17,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class AmazonFinancialEvent
 {
+    use TraitTimeUpdated;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -23,15 +26,6 @@ class AmazonFinancialEvent
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
-    private $updatedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=AmazonFinancialEventGroup::class, inversedBy="amazonFinancialEvents")
@@ -188,22 +182,7 @@ class AmazonFinancialEvent
         return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
     }
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new DateTimeImmutable();
-    }
+   
 
 
     public function getProductSku(): ?string
@@ -244,34 +223,10 @@ class AmazonFinancialEvent
             : $this->amountCurrency . ' EUR';
     }
 
-    public function getCreatedAt(): ?DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    public function getEventGroup(): ?AmazonFinancialEventGroup
-    {
-        return $this->eventGroup;
-    }
+       public function getEventGroup(): ?AmazonFinancialEventGroup
+       {
+           return $this->eventGroup;
+       }
 
     public function setEventGroup(?AmazonFinancialEventGroup $eventGroup): self
     {

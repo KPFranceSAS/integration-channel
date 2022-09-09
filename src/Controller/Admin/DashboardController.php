@@ -13,12 +13,16 @@ use App\Controller\Order\FlashledOrderCrudController;
 use App\Controller\Order\MinibattOrderCrudController;
 use App\Controller\Order\OwletCareOrderCrudController;
 use App\Controller\Order\WebOrderCrudController;
+use App\Controller\Pricing\PricingCrudController;
 use App\Entity\AmazonFinancialEvent;
 use App\Entity\Brand;
 use App\Entity\Category;
 use App\Entity\FbaReturn;
+use App\Entity\ImportPricing;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
+use App\Entity\Promotion;
+use App\Entity\SaleChannel;
 use App\Entity\User;
 use App\Entity\WebOrder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
@@ -83,6 +87,23 @@ class DashboardController extends AbstractDashboardController
                         ->setController(ProductCrudController::class),
                     MenuItem::linkToCrud('Brand', 'far fa-registered', Brand::class),
                     MenuItem::linkToCrud('Category', 'fas fa-sitemap', Category::class),
+                ])
+                ->setPermission('ROLE_AMAZON'),
+            MenuItem::subMenu('Pricing', 'fas fa-money-bill')
+                ->setSubItems([
+                    MenuItem::linkToCrud('Product', 'fas fa-barcode', Product::class)
+                        ->setController(PricingCrudController::class),
+                    MenuItem::linkToCrud('Sales channel', 'far fa-registered', SaleChannel::class),
+                    MenuItem::linkToCrud(
+                        'Promotion',
+                        'fas fa-sitemap',
+                        Promotion::class
+                    ),
+                    MenuItem::linkToCrud(
+                        'Import',
+                        'fas fa-tasks',
+                        ImportPricing::class
+                    )->setPermission('ROLE_AMAZON'),
                 ])
                 ->setPermission('ROLE_AMAZON'),
             MenuItem::subMenu('Configuration', 'fas fa-cogs')

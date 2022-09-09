@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\Traits\TraitTimeUpdated;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -15,6 +16,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    use TraitTimeUpdated;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -39,25 +42,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $password;
 
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $updatedAt;
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
     public $plainPassword;
 
     /**
@@ -65,13 +49,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $channels = [];
 
-    /**
-     * @ORM\PreUpdate
-     */
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
-    }
 
     public function getId(): ?int
     {
@@ -109,7 +86,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function hasChannel(string $channel): bool
     {
-
         if ($this->channels && is_array($this->channels)) {
             foreach ($this->channels as $channelDb) {
                 if ($channelDb == $channel) {
@@ -124,7 +100,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function hasRole(string $role): bool
     {
-
         if ($this->roles && is_array($this->roles)) {
             foreach ($this->roles as $roleDb) {
                 if ($roleDb == $role) {
@@ -197,29 +172,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
+   
 
     public function getChannels(): ?array
     {

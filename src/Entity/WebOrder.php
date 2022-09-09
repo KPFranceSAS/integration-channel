@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
+use App\Helper\Traits\TraitLoggable;
+use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
 use DateTime;
-use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
@@ -16,6 +17,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class WebOrder
 {
+    use TraitTimeUpdated;
+
+    use TraitLoggable;
+
     public const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
     public const  CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
     public const  CHANNEL_FITBITEXPRESS = 'FITBITEXPRESS';
@@ -92,21 +97,6 @@ class WebOrder
     private $errors = [];
 
     /**
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private $logs = [];
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $updatedAt;
-
-    /**
      * @ORM\Column(type="integer")
      */
     private $status;
@@ -167,14 +157,6 @@ class WebOrder
     public $amzEvents;
 
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
-    }
 
     public function getNbHoursSinceCreation()
     {
@@ -292,11 +274,6 @@ class WebOrder
         return false;
     }
 
-
-
-
-
-
     public function getDelayProblemMessage()
     {
         if (
@@ -324,20 +301,6 @@ class WebOrder
             return $this->erpDocument == self::DOCUMENT_INVOICE ?  $this->invoiceErp : $this->orderErp;
         }
         return '-';
-    }
-
-
-    public function getLastLog()
-    {
-        $limitation = 35;
-        $log = end($this->logs);
-        if ($log) {
-            return strlen($log['content']) >  $limitation
-                ?  substr($log['content'], 0, $limitation) . '...'
-                : $log['content'];
-        } else {
-            return '';
-        }
     }
 
 
@@ -429,7 +392,7 @@ class WebOrder
     {
         $webOrder = WebOrder::createOrderFromShopify($orderApi);
         $webOrder->setExternalNumber('OWL-' . $orderApi['order_number']);
-        $webOrder->setChannel(WebOrder::CHANNEL_FLASHLED);
+        $webOrder->setChannel(WebOrder::CHANNEL_OWLETCARE);
         $webOrder->setSubchannel('Owletbaby.es');
         $webOrder->addLog('Retrieved from Owletbaby.es');
         return $webOrder;
@@ -501,17 +464,6 @@ class WebOrder
         return $webOrder;
     }
 
-    public function haveNoLogWithMessage($logMessage): bool
-    {
-        foreach ($this->logs as $log) {
-            if ($log['content'] == $logMessage) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
     /**
      * Undocumented function
      *
@@ -528,16 +480,6 @@ class WebOrder
     }
 
 
-
-    public function addLog($content, $level = 'info', $user = null)
-    {
-        $this->logs[] = [
-            'date' => date('d-m-Y H:i:s'),
-            'content' => $content,
-            'level' => $level,
-            'user' => $user
-        ];
-    }
 
 
     public function cleanErrors(): self
@@ -562,15 +504,6 @@ class WebOrder
 
 
 
-
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new DateTimeImmutable();
-    }
 
     public function getId(): ?int
     {
@@ -637,41 +570,7 @@ class WebOrder
         return $this;
     }
 
-    public function getLogs(): ?array
-    {
-        return $this->logs;
-    }
 
-    public function setLogs(?array $logs): self
-    {
-        $this->logs = $logs;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
 
     public function getStatus(): ?int
     {

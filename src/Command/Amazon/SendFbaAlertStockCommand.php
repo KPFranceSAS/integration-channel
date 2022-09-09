@@ -2,7 +2,6 @@
 
 namespace App\Command\Amazon;
 
-
 use App\Entity\Product;
 use App\Entity\User;
 use App\Service\MailService;
@@ -35,8 +34,6 @@ class SendFbaAlertStockCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-
         $products = $this->manager->getRepository(Product::class)->findAll();
         $zones = ['Eu', 'Uk'];
         foreach ($products as $product) {
@@ -49,7 +46,7 @@ class SendFbaAlertStockCommand extends Command
                         $product->getBrandName(),
                         $product->{'getMinQtyFba' . $zone}(),
                         $product->{'getFba' . $zone . 'InboundStock'}(),
-                        $product->{'getFba' . $zone . 'TotalStock'}(),
+                        $product->{'getFba' . $zone . 'SellableStock'}(),
                         $product->getLaRocaBusinessCentralStock(),
                     );
                 }
@@ -71,7 +68,7 @@ class SendFbaAlertStockCommand extends Command
         string $brand,
         int $minFbaQty,
         int $qtyFbaInbound,
-        int $qtyFbaTotal,
+        int $qtyFbaSellable,
         int $qtyStockLaRoca
     ) {
         $this->exports[] = [
@@ -81,7 +78,7 @@ class SendFbaAlertStockCommand extends Command
             'brand' => $brand,
             'minFbaQty' =>  $minFbaQty,
             'qtyFbaInbound' =>  $qtyFbaInbound,
-            'qtyFbaTotal' =>  $qtyFbaTotal,
+            'qtyFbaSellable' =>  $qtyFbaSellable,
             'qtyStockLaRoca' => $qtyStockLaRoca,
         ];
     }

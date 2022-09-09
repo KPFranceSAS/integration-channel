@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Product;
+use App\Helper\Traits\TraitTimeUpdated;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -14,53 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ProductStockDaily
 {
-    public static function buildOneFromProduct(Product $product): ProductStockDaily
-    {
-        $stockDaily = new ProductStockDaily();
-        $stockDaily->setFbaSellableStock($product->getFbaSellableStock());
-        $stockDaily->setFbaUnsellableStock($product->getFbaUnsellableStock());
-        $stockDaily->setFbaInboundStock($product->getFbaInboundStock());
-        $stockDaily->setFbaOutboundStock($product->getFbaOutboundStock());
-        $stockDaily->setFbaReservedStock($product->getFbaReservedStock());
-        $stockDaily->setFbaInboundShippedStock($product->getFbaInboundShippedStock());
-        $stockDaily->setFbaInboundWorkingStock($product->getFbaInboundWorkingStock());
-        $stockDaily->setFbaInboundReceivingStock($product->getFbaInboundReceivingStock());
-        $stockDaily->setFbaResearchingStock($product->getFbaResearchingStock());
-        $stockDaily->setFbaTotalStock($product->getFbaTotalStock());
-
-        $stockDaily->setFbaEuSellableStock($product->getFbaEuSellableStock());
-        $stockDaily->setFbaEuUnsellableStock($product->getFbaEuUnsellableStock());
-        $stockDaily->setFbaEuInboundStock($product->getFbaEuInboundStock());
-        $stockDaily->setFbaEuOutboundStock($product->getFbaEuOutboundStock());
-        $stockDaily->setFbaEuReservedStock($product->getFbaEuReservedStock());
-        $stockDaily->setFbaEuInboundShippedStock($product->getFbaEuInboundShippedStock());
-        $stockDaily->setFbaEuInboundWorkingStock($product->getFbaEuInboundWorkingStock());
-        $stockDaily->setFbaEuInboundReceivingStock($product->getFbaEuInboundReceivingStock());
-        $stockDaily->setFbaEuResearchingStock($product->getFbaEuResearchingStock());
-        $stockDaily->setFbaEuTotalStock($product->getFbaEuTotalStock());
-
-        $stockDaily->setFbaUkSellableStock($product->getFbaUkSellableStock());
-        $stockDaily->setFbaUkUnsellableStock($product->getFbaUkUnsellableStock());
-        $stockDaily->setFbaUkInboundStock($product->getFbaUkInboundStock());
-        $stockDaily->setFbaUkOutboundStock($product->getFbaUkOutboundStock());
-        $stockDaily->setFbaUkReservedStock($product->getFbaUkReservedStock());
-        $stockDaily->setFbaUkInboundShippedStock($product->getFbaUkInboundShippedStock());
-        $stockDaily->setFbaUkInboundWorkingStock($product->getFbaUkInboundWorkingStock());
-        $stockDaily->setFbaUkInboundReceivingStock($product->getFbaUkInboundReceivingStock());
-        $stockDaily->setFbaUkResearchingStock($product->getFbaUkResearchingStock());
-        $stockDaily->setFbaUkTotalStock($product->getFbaUkTotalStock());
-
-
-        
-        $stockDaily->setLaRocaBusinessCentralStock($product->getLaRocaBusinessCentralStock());
-        $stockDaily->setLaRocaPurchaseBusinessCentralStock($product->getLaRocaPurchaseBusinessCentralStock());
-        $stockDaily->setBusinessCentralStock($product->getBusinessCentralStock());
-        $stockDaily->setBusinessCentralTotalStock($product->getBusinessCentralTotalStock());
-
-        $stockDaily->setProduct($product);
-        return $stockDaily;
-    }
-
+    use TraitTimeUpdated;
 
     /**
      * @ORM\Id
@@ -75,19 +30,6 @@ class ProductStockDaily
      * @ORM\Column(type="datetime")
      */
     private $stockDate;
-
-   
-
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $updatedAt;
 
     
     /**
@@ -335,23 +277,7 @@ class ProductStockDaily
     }
 
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new DateTimeImmutable();
-    }
-
+   
     public function getProduct(): ?Product
     {
         return $this->product;
@@ -377,30 +303,6 @@ class ProductStockDaily
     public function setStockDate(\DateTimeInterface $stockDate): self
     {
         $this->stockDate = $stockDate;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -811,5 +713,53 @@ class ProductStockDaily
         $this->businessCentralStock = $businessCentralStock;
 
         return $this;
+    }
+
+
+    public static function buildOneFromProduct(Product $product): ProductStockDaily
+    {
+        $stockDaily = new ProductStockDaily();
+        $stockDaily->setFbaSellableStock($product->getFbaSellableStock());
+        $stockDaily->setFbaUnsellableStock($product->getFbaUnsellableStock());
+        $stockDaily->setFbaInboundStock($product->getFbaInboundStock());
+        $stockDaily->setFbaOutboundStock($product->getFbaOutboundStock());
+        $stockDaily->setFbaReservedStock($product->getFbaReservedStock());
+        $stockDaily->setFbaInboundShippedStock($product->getFbaInboundShippedStock());
+        $stockDaily->setFbaInboundWorkingStock($product->getFbaInboundWorkingStock());
+        $stockDaily->setFbaInboundReceivingStock($product->getFbaInboundReceivingStock());
+        $stockDaily->setFbaResearchingStock($product->getFbaResearchingStock());
+        $stockDaily->setFbaTotalStock($product->getFbaTotalStock());
+
+        $stockDaily->setFbaEuSellableStock($product->getFbaEuSellableStock());
+        $stockDaily->setFbaEuUnsellableStock($product->getFbaEuUnsellableStock());
+        $stockDaily->setFbaEuInboundStock($product->getFbaEuInboundStock());
+        $stockDaily->setFbaEuOutboundStock($product->getFbaEuOutboundStock());
+        $stockDaily->setFbaEuReservedStock($product->getFbaEuReservedStock());
+        $stockDaily->setFbaEuInboundShippedStock($product->getFbaEuInboundShippedStock());
+        $stockDaily->setFbaEuInboundWorkingStock($product->getFbaEuInboundWorkingStock());
+        $stockDaily->setFbaEuInboundReceivingStock($product->getFbaEuInboundReceivingStock());
+        $stockDaily->setFbaEuResearchingStock($product->getFbaEuResearchingStock());
+        $stockDaily->setFbaEuTotalStock($product->getFbaEuTotalStock());
+
+        $stockDaily->setFbaUkSellableStock($product->getFbaUkSellableStock());
+        $stockDaily->setFbaUkUnsellableStock($product->getFbaUkUnsellableStock());
+        $stockDaily->setFbaUkInboundStock($product->getFbaUkInboundStock());
+        $stockDaily->setFbaUkOutboundStock($product->getFbaUkOutboundStock());
+        $stockDaily->setFbaUkReservedStock($product->getFbaUkReservedStock());
+        $stockDaily->setFbaUkInboundShippedStock($product->getFbaUkInboundShippedStock());
+        $stockDaily->setFbaUkInboundWorkingStock($product->getFbaUkInboundWorkingStock());
+        $stockDaily->setFbaUkInboundReceivingStock($product->getFbaUkInboundReceivingStock());
+        $stockDaily->setFbaUkResearchingStock($product->getFbaUkResearchingStock());
+        $stockDaily->setFbaUkTotalStock($product->getFbaUkTotalStock());
+
+
+        
+        $stockDaily->setLaRocaBusinessCentralStock($product->getLaRocaBusinessCentralStock());
+        $stockDaily->setLaRocaPurchaseBusinessCentralStock($product->getLaRocaPurchaseBusinessCentralStock());
+        $stockDaily->setBusinessCentralStock($product->getBusinessCentralStock());
+        $stockDaily->setBusinessCentralTotalStock($product->getBusinessCentralTotalStock());
+
+        $stockDaily->setProduct($product);
+        return $stockDaily;
     }
 }

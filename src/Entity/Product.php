@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use App\Helper\Traits\TraitTimeUpdated;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -12,6 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Product
 {
+    use TraitTimeUpdated;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -32,15 +37,6 @@ class Product
      */
     private $asin;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $updatedAt;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -336,6 +332,33 @@ class Product
      */
     private $unitCost;
 
+    /**
+     * @Assert\Valid
+     * @ORM\OneToMany(targetEntity=ProductSaleChannel::class, mappedBy="product", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $productSaleChannels;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SalePrice::class, mappedBy="product", orphanRemoval=true, cascade={"persist","remove"})
+     */
+    private $salePrices;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $eurPrice;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $gbpPrice;
+
+    public function __construct()
+    {
+        $this->productSaleChannels = new ArrayCollection();
+        $this->salePrices = new ArrayCollection();
+    }
+
 
 
     /**
@@ -402,7 +425,7 @@ class Product
     public function needTobeAlert($zone): bool
     {
         if ($this->{'minQtyFba' . $zone} && $this->laRocaBusinessCentralStock > 0) {
-            $stock = $this->{'fba' . $zone . 'TotalStock'} + $this->{'fba' . $zone . 'InboundStock'};
+            $stock = $this->{'fba' . $zone . 'SellableStock'} + $this->{'fba' . $zone . 'InboundStock'};
             return ($stock <= $this->{'minQtyFba' . $zone});
         }
         return false;
@@ -412,19 +435,16 @@ class Product
     /**
      * @ORM\PrePersist
      */
-    public function setCreatedAtValue(): void
+    public function prePersist(): void
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
         $this->calculateRatio();
     }
 
     /**
      * @ORM\PreUpdate
      */
-    public function setUpdatedAtValue(): void
+    public function preUpdate(): void
     {
-        $this->updatedAt = new \DateTimeImmutable();
         $this->calculateRatio();
     }
 
@@ -528,29 +548,7 @@ class Product
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
+    
 
     public function getDescription(): ?string
     {
@@ -1113,6 +1111,90 @@ class Product
     public function setUnitCost(?float $unitCost): self
     {
         $this->unitCost = $unitCost;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductSaleChannel[]
+     */
+    public function getProductSaleChannels(): Collection
+    {
+        return $this->productSaleChannels;
+    }
+
+    public function addProductSaleChannel(ProductSaleChannel $productSaleChannel): self
+    {
+        if (!$this->productSaleChannels->contains($productSaleChannel)) {
+            $this->productSaleChannels[] = $productSaleChannel;
+            $productSaleChannel->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductSaleChannel(ProductSaleChannel $productSaleChannel): self
+    {
+        if ($this->productSaleChannels->removeElement($productSaleChannel)) {
+            // set the owning side to null (unless already changed)
+            if ($productSaleChannel->getProduct() === $this) {
+                $productSaleChannel->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|SalePrice[]
+     */
+    public function getSalePrices(): Collection
+    {
+        return $this->salePrices;
+    }
+
+    public function addSalePrice(SalePrice $salePrice): self
+    {
+        if (!$this->salePrices->contains($salePrice)) {
+            $this->salePrices[] = $salePrice;
+            $salePrice->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSalePrice(SalePrice $salePrice): self
+    {
+        if ($this->salePrices->removeElement($salePrice)) {
+            // set the owning side to null (unless already changed)
+            if ($salePrice->getProduct() === $this) {
+                $salePrice->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getEurPrice(): ?float
+    {
+        return $this->eurPrice;
+    }
+
+    public function setEurPrice(?float $eurPrice): self
+    {
+        $this->eurPrice = $eurPrice;
+
+        return $this;
+    }
+
+    public function getGbpPrice(): ?float
+    {
+        return $this->gbpPrice;
+    }
+
+    public function setGbpPrice(?float $gbpPrice): self
+    {
+        $this->gbpPrice = $gbpPrice;
 
         return $this;
     }

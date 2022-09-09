@@ -2,19 +2,21 @@
 
 namespace App\Entity;
 
+use App\Helper\Traits\TraitTimeUpdated;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
-
 
 /**
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("skuUsed")
- * 
+ *
  */
 class ProductCorrelation
 {
+    use TraitTimeUpdated;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -30,40 +32,11 @@ class ProductCorrelation
 
     /**
      * @ORM\Column(type="string", length=255)
-     * 
+     *
      */
     private $skuErp;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $updatedAt;
-
-
-
-
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
-    }
 
     public function getId(): ?int
     {
@@ -90,30 +63,6 @@ class ProductCorrelation
     public function setSkuErp(string $skuErp): self
     {
         $this->skuErp = $skuErp;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }

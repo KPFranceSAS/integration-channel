@@ -11,7 +11,7 @@ STOCK ALERT - FBA replenishment order is recommended for the following sku (Chec
             <th style="padding:5px; border: 1px solid #aeabab;" align="left">Brand</th>
             <th style="padding:5px; border: 1px solid #aeabab;" align="left">Recommended Qty</th>
             <th style="padding:5px; border: 1px solid #aeabab;" align="left">Fba Inbound</th>
-            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Fba Stock</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Fba Sellable Stock</th>
             <th style="padding:5px; border: 1px solid #aeabab;" align="left">La Roca Stock</th>
         </tr>
     </thead>
@@ -24,7 +24,7 @@ STOCK ALERT - FBA replenishment order is recommended for the following sku (Chec
             <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.brand|upper}}</td>
             <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.minFbaQty}}</td>
             <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.qtyFbaInbound}}</td>
-            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.qtyFbaTotal}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.qtyFbaSellable}}</td>
             <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{export.qtyStockLaRoca}}</td>
         </tr>
     {% endfor %}

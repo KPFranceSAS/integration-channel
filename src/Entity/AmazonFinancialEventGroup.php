@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\AmazonFinancialEvent;
+use App\Helper\Traits\TraitTimeUpdated;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,6 +18,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class AmazonFinancialEventGroup
 {
+    use TraitTimeUpdated;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -73,15 +76,6 @@ class AmazonFinancialEventGroup
      */
     private $endDate;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $updatedAt;
 
 
     /**
@@ -181,23 +175,7 @@ class AmazonFinancialEventGroup
         $this->amazonFinancialEvents = new ArrayCollection();
     }
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new DateTimeImmutable();
-    }
-
+   
     public function getId(): ?int
     {
         return $this->id;
@@ -287,29 +265,7 @@ class AmazonFinancialEventGroup
         return $this;
     }
 
-    public function getCreatedAt(): ?DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(?DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(?DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
+    
 
     public function getOriginalTotal(): ?float
     {

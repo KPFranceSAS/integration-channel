@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
 use App\Helper\Utils\ExchangeRateCalculator;
 use DateTime;
@@ -14,6 +15,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class AmazonReimbursement
 {
+    use TraitTimeUpdated;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -134,15 +137,6 @@ class AmazonReimbursement
      */
     private $product;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $updatedAt;
 
 
     /**
@@ -244,22 +238,7 @@ class AmazonReimbursement
         return lcfirst(str_replace($separator, '', ucwords($input, $separator)));
     }
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
-    }
+ 
 
     public function getId(): ?int
     {
@@ -458,29 +437,7 @@ class AmazonReimbursement
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
+    
 
     public function getOriginalReimbursement(): ?self
     {

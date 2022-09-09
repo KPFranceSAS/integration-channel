@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Helper\Traits\TraitLoggable;
+use App\Helper\Traits\TraitTimeUpdated;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -11,6 +13,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class FbaReturn
 {
+    use TraitTimeUpdated;
+
+    use TraitLoggable;
+    
     public const LOCALIZATION_FBA = 'FBA';
 
     public const LOCALIZATION_CLIENT = 'CLIENT';
@@ -97,15 +103,6 @@ class FbaReturn
      */
     private $id;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
-    private $updatedAt;
 
     /**
      * @ORM\Column(type="integer")
@@ -141,10 +138,6 @@ class FbaReturn
      */
     private $postedDate;
 
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
-    private $logs = [];
 
     /**
      * @ORM\ManyToOne(targetEntity=AmazonRemovalOrder::class, inversedBy="fbaReturns")
@@ -271,38 +264,11 @@ class FbaReturn
     }
 
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function setCreatedAtValue(): void
-    {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
-
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function setUpdatedAtValue(): void
-    {
-        $this->updatedAt = new \DateTimeImmutable();
-    }
+   
 
     public function __toString()
     {
         return $this->amazonOrderId.' '.$this->sku;
-    }
-
-
-    public function addLog($content, $level = 'info', $user = null)
-    {
-        $this->logs[] = [
-            'date' => date('d-m-Y H:i:s'),
-            'content' => $content,
-            'level' => $level,
-            'user' => $user
-        ];
     }
 
 
@@ -311,29 +277,7 @@ class FbaReturn
         return $this->id;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
+    
 
     public function getStatus(): ?int
     {
@@ -407,17 +351,7 @@ class FbaReturn
         return $this;
     }
 
-    public function getLogs(): ?array
-    {
-        return $this->logs;
-    }
 
-    public function setLogs(?array $logs): self
-    {
-        $this->logs = $logs;
-
-        return $this;
-    }
 
     public function getAmazonRemoval(): ?AmazonRemovalOrder
     {
