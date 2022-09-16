@@ -37,7 +37,7 @@ class WebOrderCrudController extends AdminCrudController
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->overrideTemplate('crud/detail', 'admin/crud/order.html.twig');
+        $crud->overrideTemplate('crud/detail', 'admin/crud/order/detail.html.twig');
 
         return $crud;
     }
@@ -294,7 +294,7 @@ class WebOrderCrudController extends AdminCrudController
                 ->setEntityId($webOrder->getId())
                 ->generateUrl());
         }
-        return $this->renderForm('admin/crud/changeStatus.html.twig', ['form' => $form, 'entity' => $webOrder]);
+        return $this->renderForm('admin/crud/order/changeStatus.html.twig', ['form' => $form, 'entity' => $webOrder]);
     }
 
 

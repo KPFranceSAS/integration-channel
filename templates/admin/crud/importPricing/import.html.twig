@@ -1,0 +1,214 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+
+{% block body_id 'ea-edit-' %}
+{% block body_class 'ea-edit ea-edit-' %}
+{% block content_title %}
+	{{import.importType}}
+{% endblock %}
+{% block main %}
+
+	{% block new_form %}
+		{{ form(form) }}
+    {% endblock new_form %}
+
+
+		{% set urlCsv= ea_url()
+    .setDashboard('App\\Controller\\Admin\\DashboardController')
+    .setController('App\\Controller\\Pricing\\ImportPricingCrudController')
+    .setAction('createCsvSampleFile')
+	.set('typeImport', import.importType)
+	.set('typeFile', 'csv')
+	 %}
+
+    {% set urlXls= ea_url()
+    .setDashboard('App\\Controller\\Admin\\DashboardController')
+    .setController('App\\Controller\\Pricing\\ImportPricingCrudController')
+    .setAction('createCsvSampleFile')
+	.set('typeImport', import.importType)
+	.set('typeFile', 'xlsx')
+	 %}
+
+
+		<div class="mt-5">
+			<div class="alert alert-info">
+				The file you import need some required columns to be imported.<br/>
+                For csv file, the column should be separated by point comma.<br/>
+				<a href="{{urlCsv}}" target="_blank">Download csv with column</a> <br/>
+                <a href="{{urlXls}}" target="_blank">Download xlsx with column</a> 
+			</div>
+
+
+			{% if  import.importType == constant('App\\Entity\\ImportPricing::Type_Import_Promotion') %}
+					<div class="mt-5">
+						<table class="table datagrid table-condensed">
+							<thead>
+								<tr>
+									<th>Field name</th>
+									<th>Field description</th>
+									<th>Mandatory</th>
+									<th>Values</th>
+									<th>Comments</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>skus</td>
+									<td>Product SKUs</td>
+									<td>X</td>
+									<td>string</td>
+									<td>Skus of the product separated by commas<br/>
+										Ex : PX-P3D2449<br/>
+										  	PX-P3D2449,PX-P3D2450
+									</td>
+								</tr>
+								<tr>
+									<td>beginDate</td>
+									<td>Promotion start</td>
+									<td>X</td>
+									<td>Date (YYYY-MM-DD) or DateTime (YYYY-MM-DD HH:MM)</td>
+									<td>If format Date, Time will be setup on 00:00<br/>
+										Ex : 2022-01-01<br/>
+										  	2022-01-01 12:00
+									</td>
+								</tr>
+								<tr>
+									<td>endDate</td>
+									<td>Promotion end</td>
+									<td>X</td>
+									<td>Date (YYYY-MM-DD) or DateTime (YYYY-MM-DD HH:MM)</td>
+									<td>If format Date, Time will be setup on 23:59<br/>
+										Ex : 2022-01-01<br/>
+										  	2022-01-01 12:00
+									</td>
+								</tr>
+								<tr>
+									<td>saleChannels</td>
+									<td>List of sale channels where promotions are applied</td>
+									<td>X</td>
+									<td>{% for saleChannel in saleChannels %}{{ saleChannel.code}} > {{saleChannel.name}}<br/>{% endfor %}</td>
+									<td>List of sale channels codes separated by commas
+										<br/>
+										Ex : {% for saleChannel in saleChannels %}{% if loop.first %}{{ saleChannel.code}}{% endif %}{% endfor %}<br/>
+										  	{% for saleChannel in saleChannels %}{{ saleChannel.code}}{% if loop.last == false %},{% endif %}{% endfor %}
+									</td>
+								</tr>
+								<tr>
+									<td>type</td>
+									<td>Type of promotion ({{constant('App\\Entity\\Promotion::TYPE_PERCENT')}} or {{constant('App\\Entity\\Promotion::TYPE_FIXED')}})</td>
+									<td>X</td>
+									<td>{{constant('App\\Entity\\Promotion::TYPE_PERCENT')}} or {{constant('App\\Entity\\Promotion::TYPE_FIXED')}}</td>
+									<td>If type is {{constant('App\\Entity\\Promotion::TYPE_PERCENT')}}, final price will be sale price on channel minus percentage of discount<br/>
+									If type is {{constant('App\\Entity\\Promotion::TYPE_FIXED')}},final price will be the fixed price</td>
+								</tr>
+								<tr>
+									<td>amount</td>
+									<td>Value of promotion</td>
+									<td>X</td>
+									<td></td>
+									<td>If promotionType is percent, percentage amount of fixed price<br/>
+									If promotionTYpe is fixed, fixed price during promotion
+									</td>
+								</tr>
+								<tr>
+									<td>frequency</td>
+									<td>Frenquency of promotion</td>
+									<td>X</td>
+									<td>{{constant('App\\Entity\\Promotion::FREQUENCY_CONTINUE')}} or {{constant('App\\Entity\\Promotion::FREQUENCY_WEEKEND')}} or {{constant('App\\Entity\\Promotion::FREQUENCY_TIMETOTIME')}}</td>
+									<td>If frequency is {{constant('App\\Entity\\Promotion::FREQUENCY_CONTINUE')}}, promotion is applicable from beginDate to endDate<br/>
+									    If frequency is {{constant('App\\Entity\\Promotion::FREQUENCY_WEEKEND')}}, promotion is applicable from beginDate to endDate, only the week end from friday 18:00 to sunday 23:59<br/>
+										If frequency is {{constant('App\\Entity\\Promotion::FREQUENCY_TIMETOTIME')}}, promotion is applicable from beginDate to endDate, only the days picked in the weekDates column from beginHour and endHour</td>
+								</tr>
+								<tr>
+									<td>comment</td>
+									<td>Comments</td>
+									<td></td>
+									<td>Max 255 characters</td>
+									<td>Will help to retrieve the info on search</td>
+								</tr>
+								<tr>
+									<td>priority</td>
+									<td>Priority of the promotion</td>
+									<td></td>
+									<td>Number beween 0 and 10</td>
+									<td>By default 0. The priority will help to prioritize 2 promotions that overlap.<br/>
+										If for a same product on a same channel and for a same period of time, we have 2 promotions then we will compare the priority.<br/>
+									The promotion with higher priority will be choosen.<br/>
+									If prority is same, the best discount will be applied.</td>
+								</tr>
+								<tr>
+									<td>beginHour</td>
+									<td>Begin hour of promotion </td>
+									<td>x (only when frequency is {{constant('App\\Entity\\Promotion::FREQUENCY_TIMETOTIME')}})</td>
+									<td>Format HH:MM</td>
+									<td>Ex : 12:00<br/>
+										  	22:59</td>
+								</tr>
+								<tr>
+									<td>endHour</td>
+									<td>End hour of promotion </td>
+									<td>x (only when frequency is {{constant('App\\Entity\\Promotion::FREQUENCY_TIMETOTIME')}})</td>
+									<td>Format HH:MM</td>
+									<td>Ex : 12:00<br/>
+										  	22:59</td>
+								</tr>
+								<tr>
+									<td>weekDays</td>
+									<td>LIst of day numbers in the week separated by comma </td>
+									<td>x (only when frequency is {{constant('App\\Entity\\Promotion::FREQUENCY_TIMETOTIME')}})</td>
+									<td>1 > Monday<br/>2 > Tuesday<br/>3 > Wednesday<br/>4 > Thursday<br/>5 > Friday<br/>6 > Saturday<br/>7 > Sunday </td>
+									<td>Ex : 1,2,3 > for Monday, Tuesday and Wednesday<br/>
+										1,5 > for Monday and Friday
+									</td>
+								</tr>
+							</tbody>
+				</table>
+			</div>
+			{% else %}
+			<div class="mt-5">
+						<table class="table datagrid table-condensed">
+							<thead>
+								<tr>
+									<th>Field name</th>
+									<th>Field description</th>
+									<th>Mandatory</th>
+									<th>Values</th>
+									<th>Comments</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>sku</td>
+									<td>Product SKU</td>
+									<td>X</td>
+									<td>string</td>
+									<td></td>
+								</tr>
+								{% for saleChannel in saleChannels %}
+									<tr>
+										<td>{{saleChannel.code}}-enabled</td>
+										<td>Enabled on {{saleChannel.name}}</td>
+										<td></td>
+										<td>0 or 1</td>
+										<td>0 > Disabled<br/>
+											1 > Enabled
+										</td>
+									</tr>
+									<tr>
+										<td>{{saleChannel.code}}-price</td>
+										<td>Price on {{saleChannel.name}}</td>
+										<td>x (if enabled on sale channel)</td>
+										<td>numeric</td>
+										<td>
+										</td>
+									</tr>
+								{% endfor %}
+							</tbody>
+				</table>
+			</div>
+			{% endif %}
+
+			
+		</div>
+
+	{% endblock %}

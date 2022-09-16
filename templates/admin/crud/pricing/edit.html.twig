@@ -1,0 +1,100 @@
+{% extends '@!EasyAdmin/crud/edit.html.twig' %}
+
+
+{% block main %}
+<div class="nav-tabs-custom form-tabs">
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+          <a class="nav-link active" href="#ea_container_form" id="ea_tab_form" data-bs-toggle="tab">
+          <i class="fa fa-fw fa-fas fa-barcode"></i>Pricing</a>
+    </li>
+    <li class="nav-item">
+          <a class="nav-link " href="#ea_container_promotions" id="ea_tab_promotions" data-bs-toggle="tab">
+          <i class="fa fa-fw fa-fas fa-barcode"></i>Promotions</a>
+    </li>
+     <li class="nav-item">
+          <a class="nav-link " href="#ea_container_graph" id="ea_tab_graph" data-bs-toggle="tab">
+          <i class="fa fa-fw fa-fas fa-barcode"></i>Graph</a>
+    </li>
+
+ </ul>
+ <div class="tab-content">
+    <div class="tab-pane active" id="ea_container_form">
+               {{parent()}}
+    </div>
+    <div class="tab-pane " id="ea_container_promotions">
+        {% for productSaleChannel in entity.instance.productSaleChannels %}
+            {% set url = ea_url()
+                    .setController('App\\Controller\\Pricing\\PromotionCrudController')
+                    .setAction('new')
+                    .set('entityId', null)
+                    .set('productSaleChannelId', productSaleChannel.id)
+                    .includeReferrer() 
+                    %}
+            <div>
+                <div class="row">
+                    <div class="col-8"><strong>Sale Channel {{productSaleChannel}}</strong></div>
+                    <div class="col-4"><a class="btn btn-primary btn-sm" href="{{url}}"><i class="action-icon fa fa-plus"></i> Add a promotion</a></div>
+                </div>
+                <div class="mt-3 mb-5">
+                    <table class="table datagrid">
+                        <thead>
+                            <tr>
+                                <th class="header-for-field-text text-left">Active</th>
+                                <th class="header-for-field-text text-left">Regular Price</th>
+                                <th class="header-for-field-text text-left">Promotion Price</th>
+                                <th class="header-for-field-text text-left">Promotion Description Type</th>
+                                <th class="header-for-field-text text-left">Promotion Description Frequency</th>
+                                <th class="header-for-field-text text-left">Begin Date</th>
+                                <th class="header-for-field-text text-left">End date</th>
+                                <th class="header-for-field-text text-left"></th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                                {% for promotion in productSaleChannel.promotions %}
+                                    {% set urlEdit = ea_url()
+                                        .setController('App\\Controller\\Pricing\\PromotionCrudController')
+                                        .setAction('edit')
+                                        .set('entityId', promotion.id)
+                                        .includeReferrer() 
+                                        %}
+                                    <tr>
+                                        <td class="text-left field-text">{% if promotion.active %}<i class="fa fa-check"><i>{% else %}<i class="fa fa-times"><i>{% endif %}</td>
+                                        <td class="text-left field-text">{{promotion.regularPrice}}</td>
+                                        <td class="text-left field-text">{{promotion.promotionPrice}}</td>
+                                        <td class="text-left field-text">{{promotion.promotionDescriptionType}}</td>
+                                        <td class="text-left field-text">{{promotion.promotionDescriptionFrequency}}</td>
+                                        <td class="text-left field-text">{{promotion.beginDate|date('Y-m-d H:i')}}</td>
+                                        <td class="text-left field-text">{{promotion.endDate|date('Y-m-d H:i')}}</td>
+                                        <td class="actions ">
+                                            <a href="{{urlEdit}}" class="action-edit">
+                                                <i class="action-icon fa fa-pencil"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="8">No promotions</td>
+                                    </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+           
+           </div>
+        {% endfor %}
+    </div>
+    <div class="tab-pane" id="ea_container_graph">
+        {{ render_chart(chart) }}
+    </div>
+    
+ </div>
+
+
+    
+
+</div>
+
+
+
+{% endblock %}

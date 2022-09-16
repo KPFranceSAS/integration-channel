@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\ProductSaleChannel;
 use App\Helper\Traits\TraitTimeUpdated;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -359,6 +360,17 @@ class Product
         $this->salePrices = new ArrayCollection();
     }
 
+
+
+    public function getProductSaleChannelByCode($code): ?ProductSaleChannel 
+    {
+        foreach($this->productSaleChannels as $productSaleChannel){
+            if($productSaleChannel->getSaleChannel()->getCode() == $code){
+                return $productSaleChannel;
+            }
+        }
+        return null;
+    }
 
 
     /**

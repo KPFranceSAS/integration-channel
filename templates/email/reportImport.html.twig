@@ -1,0 +1,33 @@
+<p>Your import has been imported</p>
+<p>Find below the detail of your import</p>
+
+<p>
+<h4>
+Warnings and errors
+</h4>
+</p>
+<ul>
+{% for item in job.getWarningErrorLogs %}
+	<li style="margin-bottom:5px;">
+	{% if  item.level == 'error' %}<span style="color:#fff; background:red;">ERROR</span>{% endif %}
+	{% if  item.level == 'warning' %}<span style="color:#000; background:yellow;">WARNING</span>{% endif %}
+	{{item.content}}
+	</li>
+{% endfor %}
+</ul>
+</p>
+
+
+
+<p>
+<h4>
+Details
+</h4>
+</p>
+{% for item in job.logs %}
+	{% if  item.level == 'error' %}<span style="color:#fff; background:red;">ERROR</span>{% endif %}
+	{% if  item.level == 'success' %}<span style="color:#fff; background:green;">SUCCESS</span>{% endif %}
+	{% if  item.level == 'warning' %}<span style="color:#000; background:yellow;">WARNING</span>{% endif %}
+	{{item.content}}<br/>
+{% endfor %}
+</p>

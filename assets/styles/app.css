@@ -1,0 +1,129 @@
+/* public/css/admin.css */
+:root {
+    --body-max-width: 100%;
+    --font-size-base: 12px;
+
+    --sidebar-bg: #000;
+    --sidebar-logo-color: #fff;
+    --sidebar-menu-color: #fff;
+    --sidebar-menu-icon-color: #fff;
+    --sidebar-menu-submenu-color: #fff;
+    --responsive-header-logo-color: #fff;
+    --responsive-header-bg: #000;
+    --responsive-table-label-color: #000;
+}
+
+
+
+
+#navigation-toggler {
+    color: #fff;
+    filter: none;
+}
+
+.responsive-header .user-menu-wrapper a.user-details,
+.responsive-header .user-menu-wrapper a.user-details:hover {
+    color: #fff;
+}
+
+.tfoot-col-label {
+    text-align: right;
+}
+
+
+
+@media (min-width: 992px) {
+
+    body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover .submenu,
+    body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover .menu-item-contents,
+    body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover {
+        background: var(--sidebar-bg);
+    }
+}
+
+@media (max-width: 992px) {
+    table.datagrid:not(.datagrid-empty) tr {
+        margin-bottom: 10px;
+    }
+
+    .tfoot-col-label {
+        display: none !important;
+    }
+}
+
+
+.popover__title {
+    color: #e2e8f0;
+}
+
+.popover__title:hover {
+    color: #6c757d;
+}
+
+.popover__ext {
+    width: 20px;
+    display: inline-block;
+}
+
+
+.popover__wrapper {
+    position: relative;
+    margin-left: 5px;
+    display: inline-block;
+}
+
+.popover__content {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    left: -150px;
+    top:35px;
+    background-color: var(--body-bg);
+    transform: translate(0, 10px);
+    padding: 1rem;
+    border: 1px solid var(--table-cell-border-color);
+    
+    min-width: 300px;
+}
+
+.popover__wrapper:hover .popover__content {
+    z-index: 10;
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0, -20px);
+    transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);
+}
+
+@media (min-width: 992px) {
+    .popover__content {
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        left: 15px;
+        top:0px;
+        width: auto;
+        min-width: 250px;
+    }
+}
+
+@media (max-width: 992px){
+
+    .popover__content table.datagrid:not(.datagrid-empty) td:before {
+        width: 75%;
+    }
+
+    .popover__content  table.datagrid:not(.datagrid-empty) tr:not(.empty-row) td {
+        padding-left: 75%;
+    }
+}
+
+
+.closebutton {
+    color:#fff;
+    margin:5px 5px 0 0;
+    font-size:14px
+}
+
+.ea-sidebar-width-compact .closebutton{
+    display:none;
+}

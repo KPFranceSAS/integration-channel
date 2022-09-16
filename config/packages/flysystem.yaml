@@ -35,3 +35,16 @@ flysystem:
                 directoryPerm: 0744
                 permPublic: 0700
                 permPrivate: 0744             
+        channelAdvisor.storage:
+            adapter: 'sftp'
+            options:
+                host: '%env(resolve:CHANNEL_SFTP_HOST)%'
+                port: 22
+                username: '%env(resolve:CHANNEL_SFTP_USERNAME)%'
+                password: '%env(resolve:CHANNEL_SFTP_PASSWORD)%'
+                privateKey: 
+                root: '/'
+                timeout: 60
+                directoryPerm: 0744
+                permPublic: 0700
+                permPrivate: 0744 

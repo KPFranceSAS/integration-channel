@@ -2,11 +2,9 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\WebOrder;
 use App\Helper\Utils\StringUtils;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\CSV\Writer;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -15,20 +13,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
-use EasyCorp\Bundle\EasyAdminBundle\Factory\FieldFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Orm\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use function Symfony\Component\String\u;
-
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-use Symfony\Component\HttpFoundation\HeaderUtils;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 abstract class AdminCrudController extends AbstractCrudController
 {
@@ -166,60 +159,6 @@ abstract class AdminCrudController extends AbstractCrudController
     }
 
 
-    /*public function export(
-        FilterFactory $filterFactory,
-        AdminContext $context,
-        EntityFactory $entityFactory,
-        ParameterBagInterface $params,
-        LoggerInterface $logger
-    ) {
-        $directory = $params->get('kernel.project_dir') . '/var/export/';
-        $fileName = u('Export_' . $this->getName() . '_' . date('Ymd_His'))->snake() . '.csv';
-        $fields = $this->getFieldsExport();
-        $writer = $this->createWriter($fields, $directory . $fileName);
-
-        $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
-        $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
-        $pageSize = 500;
-        $currentPage = 1;
-
-        do {
-            $firstResult = ($currentPage - 1) * $pageSize;
-            $query = $queryBuilder
-               ->setFirstResult($firstResult)
-               ->setMaxResults($pageSize)
-               ->getQuery();
-
-            $paginator = new Paginator($query);
-            $logger->info('$firstResult :' . $firstResult);
-            if (($firstResult + $pageSize) < $paginator->count()) {
-                $currentPage++;
-            } else {
-                $currentPage = 0;
-            }
-            $entities = $entityFactory->createCollection($context->getEntity(), $paginator->getIterator());
-            $entityFactory->processFieldsForAll($entities, $fields);
-
-            $entitiesArray = $entities->getIterator();
-            foreach ($entitiesArray as $entityArray) {
-                $this->addDataToWriter($writer, $entityArray);
-            }
-
-            $this->container->get('doctrine')->getManager()->clear();
-        } while ($currentPage != 0);
-
-        $writer->close();
-        $logger->info('Finish ');
-
-        $response = new BinaryFileResponse($directory . $fileName);
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->setContentDisposition(
-            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-            $fileName
-        );
-        return $response;
-    }*/
-
 
     protected function addDataToWriter(Writer $writer, EntityDto $entity)
     {
@@ -237,6 +176,7 @@ abstract class AdminCrudController extends AbstractCrudController
     protected function createWriter(FieldCollection $fields, string $filePath): Writer
     {
         $writer = WriterEntityFactory::createCSVWriter();
+        $writer->setFieldDelimiter(';');
         $writer->openToFile($filePath);
         $cellHeaders = [];
         foreach ($fields as $field) {

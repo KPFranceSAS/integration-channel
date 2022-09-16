@@ -31,6 +31,28 @@ class DatetimeUtils
     }
 
 
+    public static function getChoicesWeekDayName(): array
+    {
+       return [
+           1 => 'Monday',
+           2 => 'Tuesday',
+           3 => 'Wednesday',
+           4 => 'Thursday',
+           5 => 'Friday',
+           6 => 'Saturday',
+           7 => 'Sunday'
+        ];
+    }
+
+
+
+    public static function getDayName($numberDay): string
+    {
+       $days = self::getChoicesWeekDayName();
+       return array_key_exists($numberDay, $days) ? $days[$numberDay] : null;
+    }
+
+
     public static function createStringTimeFromAliExpressDate(string $date, $format = 'd-m-Y H:i'): string
     {
         $dateTime = self::createDateTimeFromAliExpressDate($date);

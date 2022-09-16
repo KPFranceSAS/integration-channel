@@ -1,0 +1,19 @@
+{% if   entity.instance.status == constant('App\\Entity\\ImportPricing::Status_Imported') %}
+	{% set classColor = 'success' %}
+	{% set value = 'Imported' %}
+{% elseif  entity.instance.status == constant('App\\Entity\\ImportPricing::Status_Cancelled') %}
+	{% set classColor = 'warning' %}
+	{% set value = 'Cancelled' %}
+{% elseif  entity.instance.status == constant('App\\Entity\\ImportPricing::Status_Created') %}
+	{% set classColor = 'secondary' %}
+	{% set  value = 'Waiting confirm' %}
+{% elseif  entity.instance.status == constant('App\\Entity\\ImportPricing::Status_ToImport') %}
+	{% set classColor = 'secondary' %}
+	{% set value = 'Waiting processing' %}	
+{% else %}
+	{% set classColor = 'secondary' %}
+	{% set value = 'Other' %}
+{% endif %}
+<span class="badge badge-{{classColor}}">
+		{{value}}
+</span>

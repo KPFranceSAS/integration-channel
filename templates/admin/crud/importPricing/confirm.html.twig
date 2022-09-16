@@ -1,0 +1,46 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+
+{% block body_id 'ea-edit-' %}
+{% block body_class 'ea-edit ea-edit-' %}
+{% block content_title %}
+	Confirm content of the imported file
+{% endblock %}
+{% block main %}
+	<div>
+		<table class="table datagrid">
+			<thead>
+				<tr>
+					<th>Line #</th>
+					{% for headerTd in import.getContentHeader %}
+						<th>{{headerTd}}</th>
+					{% endfor %}
+				</tr>
+			</thead>
+			<tbody>
+				{% for contentLine in import.getContent %}
+					<tr>
+						<td data-label="Line #" class="text-left field-text">{{loop.index}}</td>
+						{% for label, value in contentLine %}
+							<td data-label="{{label}}" class="text-left field-text">{{value}}</td>
+						{% endfor %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	{% block form %}
+		{{ form_start(form) }}
+		<div class="mt-5 mb-3 text-right">
+			<div class="btn-toolbar" role="toolbar" aria-label="">
+				<div class="btn-group mr-2" role="group" aria-label="">
+					{{ form_row(form.toImport) }}
+				</div>
+				<div class="btn-group" role="group" aria-label="">
+					{{ form_row(form.cancel) }}
+				</div>
+			</div>
+		</div>
+		{{ form_end(form) }}
+	{% endblock form %}
+{% endblock %}

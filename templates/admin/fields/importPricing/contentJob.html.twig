@@ -1,0 +1,27 @@
+ <div>
+        {% if field.value|length > 0 %}
+        <table class="table datagrid  ">
+            <thead>
+                <tr>
+                    <th>Line #</th>
+                {% for label, valueContent in field.value[0] %}
+                    <th>{{label}}</th>
+                {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for contentLine in field.value %}
+                    <tr>
+                    	<td data-label="Line #" class="text-left field-text">{{loop.index}}</td>
+                        {% for label, valueContent in contentLine %}
+                            <td data-label="{{label}}" class="text-left field-text">{{valueContent}}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info ">File was considered as empty</div>
+        {% endif %}
+    </div>

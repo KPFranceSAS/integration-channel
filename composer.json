@@ -58,8 +58,10 @@
         "symfony/string": "5.4.*",
         "symfony/translation": "5.4.*",
         "symfony/twig-bundle": "^5.4",
+        "symfony/ux-chartjs": "^2.4",
         "symfony/validator": "5.4.*",
         "symfony/web-link": "5.4.*",
+        "symfony/webpack-encore-bundle": "^1.15",
         "symfony/yaml": "5.4.*",
         "twig/cssinliner-extra": "^3.3",
         "twig/extra-bundle": "^2.12|^3.0",
@@ -84,7 +86,11 @@
         "preferred-install": {
             "*": "dist"
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "symfony/flex": true,
+            "symfony/runtime": true
+        }
     },
     "autoload": {
         "psr-4": {
