@@ -63,6 +63,12 @@ class ProductSaleChannel
     private $price;
 
 
+    public function getSalePriceForNow()
+    {
+        $now = new DateTime('now');
+        return $this->getSalePrice($now);
+    }    
+
 
     public function getSalePrice(DateTime $date)
     {

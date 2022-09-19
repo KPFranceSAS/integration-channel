@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\ProductSaleChannel;
 use App\Helper\Traits\TraitTimeUpdated;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -362,6 +363,40 @@ class Product
 
 
 
+    public function getRegularPriceOnMarketplace($marketplace) : ?float
+    {
+        $productMarketplace = $this->getProductSaleChannelByCode($marketplace);
+        return $productMarketplace->getPrice();
+    }    
+
+
+    public function isOnsaleOnMArketplace($marketplace): bool
+    {
+        $productMarketplace = $this->getProductSaleChannelByCode($marketplace);
+        return $productMarketplace->getEnabled();
+    }    
+
+
+
+    public function getSalePriceForNowOnMarketplace($marketplace) : ?float
+    {
+        $now = new DateTime('now');
+       return $this->getSalePriceOnMarketplace($now, $marketplace);
+    }    
+
+
+    public function getSalePriceOnMarketplace(DateTime $date, $marketplace) : ?float
+    {
+        $productMarketplace = $this->getProductSaleChannelByCode($marketplace);
+        return $productMarketplace->getSalePrice($date);
+    }
+
+
+    
+
+
+
+
     public function getProductSaleChannelByCode($code): ?ProductSaleChannel 
     {
         foreach($this->productSaleChannels as $productSaleChannel){
@@ -376,7 +411,7 @@ class Product
     /**
      * @Groups({"export_product"})
      */
-    public function getProductId()
+    public function getProductId(): int
     {
         return $this->getId();
     }
@@ -385,7 +420,7 @@ class Product
      *
      * @Groups({"export_product"})
      */
-    public function getBrandName()
+    public function getBrandName(): string
     {
         return $this->brand ? $this->brand->getName() : 'NO BRAND';
     }
@@ -395,7 +430,7 @@ class Product
      *
      * @Groups({"export_product"})
      */
-    public function getCategoryName()
+    public function getCategoryName(): string
     {
         return $this->category ? $this->category->getName() : 'NO CATEGORY';
     }
@@ -460,7 +495,7 @@ class Product
         $this->calculateRatio();
     }
 
-    private function calculateRatio()
+    private function calculateRatio(): void
     {
         $this->fbaTotalStock = $this->fbaSellableStock + $this->fbaUnsellableStock + $this->fbaResearchingStock + $this->fbaReservedStock;
         $this->fbaEuTotalStock = $this->fbaEuSellableStock + $this->fbaEuUnsellableStock + $this->fbaEuResearchingStock + $this->fbaEuReservedStock;
@@ -486,45 +521,45 @@ class Product
         }
     }
 
-    public function addFbaSellableStock(int $stock, string $marketplace)
+    public function addFbaSellableStock(int $stock, string $marketplace): void
     {
         $this->fbaSellableStock += $stock;
         $this->{'fba' . ucfirst($marketplace) . 'SellableStock'} += $stock;
     }
 
 
-    public function addFbaReservedStock(int $stock, string $marketplace)
+    public function addFbaReservedStock(int $stock, string $marketplace): void
     {
         $this->fbaReservedStock += $stock;
         $this->{'fba' . ucfirst($marketplace) . 'ReservedStock'} += $stock;
     }
 
-    public function addFbaRearchingStock(int $stock, string $marketplace)
+    public function addFbaRearchingStock(int $stock, string $marketplace): void
     {
         $this->fbaResearchingStock += $stock;
         $this->{'fba' . ucfirst($marketplace) . 'ResearchingStock'} += $stock;
     }
 
 
-    public function addFbaUnsellableStock(int $stock, string $marketplace)
+    public function addFbaUnsellableStock(int $stock, string $marketplace): void
     {
         $this->fbaUnsellableStock += $stock;
         $this->{'fba' . ucfirst($marketplace) . 'UnsellableStock'} += $stock;
     }
 
-    public function addFbaInboundReceivingStock(int $stock, string $marketplace)
+    public function addFbaInboundReceivingStock(int $stock, string $marketplace): void
     {
         $this->fbaInboundReceivingStock += $stock;
         $this->{'fba' . ucfirst($marketplace) . 'InboundReceivingStock'} += $stock;
     }
 
-    public function addFbaInboundWorkingStock(int $stock, string $marketplace)
+    public function addFbaInboundWorkingStock(int $stock, string $marketplace): void
     {
         $this->fbaInboundWorkingStock += $stock;
         $this->{'fba' . ucfirst($marketplace) . 'InboundWorkingStock'} += $stock;
     }
 
-    public function addFbaInboundShippedStock(int $stock, string $marketplace)
+    public function addFbaInboundShippedStock(int $stock, string $marketplace): void
     {
         $this->fbaInboundShippedStock += $stock;
         $this->{'fba' . ucfirst($marketplace) . 'InboundShippedStock'} += $stock;
