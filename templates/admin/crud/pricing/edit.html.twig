@@ -34,7 +34,9 @@
             <div>
                 <div class="row">
                     <div class="col-8"><strong>Sale Channel {{productSaleChannel}}</strong></div>
+                    {% if app.user.hasSaleChannel(productSaleChannel.saleChannel) %}
                     <div class="col-4"><a class="btn btn-primary btn-sm" href="{{url}}"><i class="action-icon fa fa-plus"></i> Add a promotion</a></div>
+                    {% endif %}
                 </div>
                 <div class="mt-3 mb-5">
                     <table class="table datagrid">

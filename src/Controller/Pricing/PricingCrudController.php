@@ -42,7 +42,8 @@ class PricingCrudController extends AdminCrudController
     {
         $crud = parent::configureCrud($crud);
         $crud->overrideTemplate('crud/edit', 'admin/crud/pricing/edit.html.twig');
-        return $crud->setEntityPermission('ROLE_AMAZON');
+        $crud->setEntityPermission('ROLE_PRICING');
+        return $crud;
     }
 
 

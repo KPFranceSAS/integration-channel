@@ -5,7 +5,10 @@ namespace App\Controller\Pricing;
 use App\Controller\Admin\AdminCrudController;
 use App\Entity\ProductSaleChannel;
 use App\Entity\Promotion;
+use App\Entity\SaleChannel;
 use App\Helper\Utils\DatetimeUtils;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -30,7 +33,8 @@ class PromotionCrudController extends AdminCrudController
     {
         $crud = parent::configureCrud($crud);
         $crud->setFormOptions(['attr' => ['data-controller'=>'promotion']]);
-        return $crud->setEntityPermission('ROLE_AMAZON');
+        $crud->setEntityPermission('ROLE_PRICING');
+        return $crud;
     }
 
 
@@ -70,8 +74,19 @@ public function createEntity(string $entityFqcn)
 
     public function configureFields(string $pageName): iterable
     {
+        /**@var User */
+        $user = $this->getUser();
+        $saleChannels = $user->getSaleChannels();
+        $saleChannelsId= [];
+        foreach($saleChannels as $saleChannel){
+            $saleChannelsId []= $saleChannel->getId();
+        }
+
+
+
+
         return [
-            BooleanField::new('active'),
+            BooleanField::new('active')->renderAsSwitch(false),
             TextField::new('productName')
                 ->onlyOnIndex(),
             TextField::new('saleChannelName')
@@ -85,6 +100,9 @@ public function createEntity(string $entityFqcn)
             TextField::new('promotionDescriptionFrequency')
                 ->onlyOnIndex(),
             AssociationField::new("productSaleChannel")
+                ->setQueryBuilder(
+                    fn (QueryBuilder $queryBuilder) => $queryBuilder->andWhere($queryBuilder->expr()->in('entity.saleChannel', $saleChannelsId))->orderBy('entity.product')
+                )
                 ->onlyOnForms(),
             DateTimeField::new('beginDate')
                 ->setColumns(3),

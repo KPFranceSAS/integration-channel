@@ -67,12 +67,23 @@ class SaleChannel
      */
     private $color;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="saleChannels")
+     */
+    private $users;
+
     
     public function __construct()
     {
         $this->productSaleChannels = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
+    public function __toString(){
+        return $this->name;
+    }   
+    
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -189,6 +200,33 @@ class SaleChannel
     public function setColor(?string $color): self
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): self
+    {
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
+            $user->addSaleChannel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): self
+    {
+        if ($this->users->removeElement($user)) {
+            $user->removeSaleChannel($this);
+        }
 
         return $this;
     }

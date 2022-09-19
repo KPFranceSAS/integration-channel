@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use App\Helper\Traits\TraitTimeUpdated;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -48,6 +51,86 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="json", nullable=true)
      */
     private $channels = [];
+
+
+
+
+
+    /**
+     * @ORM\ManyToMany(targetEntity=SaleChannel::class, inversedBy="users")
+     */
+    private $saleChannels;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isAdmin;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isPricingManager;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isFbaManager;
+
+
+
+     /**
+     * @ORM\PrePersist
+     */
+    public function prePersist(): void
+    {
+        $this->updateRoles();
+    }
+
+    /**
+     * @ORM\PreUpdate
+     */
+    public function preUpdate(): void
+    {
+        $this->updateRoles();
+    }
+
+    private function updateRoles(): void
+    {
+        $roles = ["ROLE_USER"];
+
+        if($this->isAdmin){
+            $roles[] = 'ROLE_ADMIN';
+        }
+
+        if($this->isFbaManager){
+            $roles[] = 'ROLE_AMAZON';
+        } 
+
+        if($this->isPricingManager){
+            $roles[] = 'ROLE_PRICING';
+        } else {
+            $this->saleChannels =[];
+        }
+
+        $this->roles = $roles;
+    }
+
+
+    public function __construct()
+    {
+        $this->saleChannels = new ArrayCollection();
+    }
+
+
+
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        if ($this->isPricingManager && count($this->saleChannels)==0) {
+                $context->buildViolation('You must define at least one sale channel')
+                    ->atPath('saleChannels')
+                    ->addViolation();
+        }
+    }
 
 
     public function getId(): ?int
@@ -182,6 +265,74 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setChannels(?array $channels): self
     {
         $this->channels = $channels;
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * @return Collection<int, SaleChannel>
+     */
+    public function getSaleChannels(): Collection
+    {
+        return $this->saleChannels;
+    }
+
+    public function addSaleChannel(SaleChannel $saleChannel): self
+    {
+        if (!$this->saleChannels->contains($saleChannel)) {
+            $this->saleChannels[] = $saleChannel;
+        }
+
+        return $this;
+    }
+
+    public function hasSaleChannel(SaleChannel $saleChannel): bool
+    {
+        return $this->saleChannels->contains($saleChannel);
+    }
+
+    public function removeSaleChannel(SaleChannel $saleChannel): self
+    {
+        $this->saleChannels->removeElement($saleChannel);
+
+        return $this;
+    }
+
+    public function isIsAdmin(): ?bool
+    {
+        return $this->isAdmin;
+    }
+
+    public function setIsAdmin(?bool $isAdmin): self
+    {
+        $this->isAdmin = $isAdmin;
+
+        return $this;
+    }
+
+    public function isIsPricingManager(): ?bool
+    {
+        return $this->isPricingManager;
+    }
+
+    public function setIsPricingManager(?bool $isPricingManager): self
+    {
+        $this->isPricingManager = $isPricingManager;
+
+        return $this;
+    }
+
+    public function isIsFbaManager(): ?bool
+    {
+        return $this->isFbaManager;
+    }
+
+    public function setIsFbaManager(?bool $isFbaManager): self
+    {
+        $this->isFbaManager = $isFbaManager;
 
         return $this;
     }

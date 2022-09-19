@@ -31,6 +31,12 @@ class ImportPricingCrudController extends AdminCrudController
     }
 
 
+    public function getDefautOrder(): array
+    {
+        return ['id' => "DESC"];
+    }
+
+
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -49,8 +55,7 @@ class ImportPricingCrudController extends AdminCrudController
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        
-
+        $crud->setEntityPermission('ROLE_PRICING');
         return $crud;
     }
 
@@ -138,7 +143,9 @@ class ImportPricingCrudController extends AdminCrudController
     {
         $import->setUser($this->getUser());
         $import->setStatus(ImportPricing::Status_Created);
-        $import->setContent($this->importDatas($import->uploadedFile));
+        $datas = $this->importDatas($import->uploadedFile);
+        
+        $import->setContent($datas);
         $manager =  $this->container->get('doctrine')->getManager();
         $manager->persist($import);
         
@@ -247,10 +254,12 @@ class ImportPricingCrudController extends AdminCrudController
 
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $row) {
-                $cells = $row->toArray();
                 if (!$header) {
-                    $header = $cells;
+                    foreach($row->getCells() as $cell){
+                        $header[] = $cell->getValue();
+                    }
                 } else {
+                    $cells = $row->toArray();
                     if (count($cells) == count($header)) {
                         $dataLines = array_combine($header, $cells);
                         $datas[] = $dataLines;

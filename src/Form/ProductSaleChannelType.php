@@ -9,23 +9,42 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Security;
 
 class ProductSaleChannelType extends AbstractType
 {
+
+    private $user;
+
+    public function __construct(Security $scurity){
+        /**@var User */
+        $this->user = $scurity->getUser();
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
+
         $builder
-            ->add('enabled', CheckboxType::class)
-            ->add('price', MoneyType::class)
-            /*->add('promotions', CollectionType::class, [
-                'entry_type' => PromotionType::class,
-                'entry_options' => ['label' => false],
-                'allow_add' => true,
-                'allow_delete' => true,
-                'by_reference' => false
-            ]);*/
-        ;
+        ->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            [$this, 'onPreSetData']
+        );
+    }
+
+
+
+    public function onPreSetData(FormEvent $event): void
+    {
+        $productMarketplace = $event->getData();
+        $enabled = $this->user->hasSaleChannel($productMarketplace->getSaleChannel());
+        $form = $event->getForm();
+        $form
+            ->add('enabled', CheckboxType::class, ['disabled'=>!$enabled])
+            ->add('price', MoneyType::class, ['currency'=>$productMarketplace->getSaleChannel()->getCurrencyCode(), 'disabled'=>!$enabled]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

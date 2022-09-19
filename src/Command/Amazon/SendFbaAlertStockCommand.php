@@ -91,7 +91,7 @@ class SendFbaAlertStockCommand extends Command
 
         $users = $this->manager->getRepository(User::class)->findAll();
         foreach ($users as $user) {
-            if ($user->hasRole('ROLE_AMAZON_ALERT')) {
+            if ($user->hasRole('ROLE_AMAZON')) {
                 $emails[] = $user->getEmail();
             }
         }

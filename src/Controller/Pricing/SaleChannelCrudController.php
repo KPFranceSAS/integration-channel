@@ -3,9 +3,13 @@
 namespace App\Controller\Pricing;
 
 use App\Controller\Admin\AdminCrudController;
+use App\Controller\Pricing\ImportPricingCrudController;
 use App\Entity\SaleChannel;
+use App\Entity\User;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
@@ -22,12 +26,22 @@ class SaleChannelCrudController extends AdminCrudController
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        return $crud->setEntityPermission('ROLE_ADMIN');
+        $crud->setEntityPermission('ROLE_PRICING');
+        return $crud;
     }
 
 
+    public function configureActions(Actions $actions): Actions
+{
+    $actions = parent::configureActions($actions);
+    $actions->setPermission(Action::NEW, 'ROLE_ADMIN');
+    $actions->setPermission(Action::DELETE, 'ROLE_ADMIN');
+    $actions->setPermission(Action::BATCH_DELETE, 'ROLE_ADMIN');
+    $actions->setPermission(Action::EDIT, 'ROLE_ADMIN');
 
-   
+    return $actions;
+}
+
 
 
 

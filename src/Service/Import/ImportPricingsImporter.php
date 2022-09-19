@@ -60,7 +60,7 @@ class ImportPricingsImporter
             ]);
         foreach ($importPricings as $importPricing) {
             $this->setUser($importPricing->getUser());
-            //$importPricing->setStatus(ImportPricing::Status_Importing);
+            $importPricing->setStatus(ImportPricing::Status_Importing);
             $this->manager->flush();
             $this->importLines($importPricing);
             $this->tokenStorage->setToken(null);
@@ -130,9 +130,16 @@ class ImportPricingsImporter
                     $channelCode = str_replace('-'.$attribute, '', $column);
 
                     if (!array_key_exists($channelCode, $saleChannelDbs)) {
-                        $this->addError($importPricing, 'The sale channel '.$channelCode." doesn't exists or you cannot import pricing for this sale channel");
+                        $this->addError($importPricing, 'The sale channel '.$channelCode." doesn't exists");
                         return false;
                     }
+                    $saleChannel = $saleChannelDbs[$channelCode];
+                    if(!$importPricing->getUser()->hasSaleChannel($saleChannelDbs[$channelCode])){
+                        $this->addError($importPricing,"You cannot import pricing for this sale channel ".$channelCode);
+                        return false;
+                    }
+
+                    
                 }
             }
         }
@@ -458,7 +465,13 @@ class ImportPricingsImporter
                 return [];
             } else {
                 $this->addLog($importPricing, 'Find sale code with sale channel ' . $saleChannel. ' on line '.$lineNumber);
-                $saleChannelsDb[]=$saleChannelDb;
+                
+                if(!$importPricing->getUser()->hasSaleChannel($saleChannelDb)){
+                    $this->addError($importPricing,"You cannot import pricing for this sale channel ".$saleChannel);
+                } else {
+                    $saleChannelsDb[]=$saleChannelDb;
+                }
+              
             }
         }
         

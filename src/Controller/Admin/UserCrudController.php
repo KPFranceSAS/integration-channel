@@ -11,6 +11,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -38,6 +40,7 @@ class UserCrudController extends AdminCrudController
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
+        $crud->setFormOptions(['attr' => ['data-controller'=>'user']]);
         return $crud->setEntityPermission('ROLE_ADMIN');
     }
 
@@ -48,13 +51,6 @@ class UserCrudController extends AdminCrudController
     }
 
 
-    public function configureActions(Actions $actions): Actions
-    {
-        $actions = parent::configureActions($actions);
-        $actions->setPermission('export', 'ROLE_ADMIN');
-        $actions->setPermission(Action::NEW, 'ROLE_ADMIN');
-        return $actions;
-    }
 
 
 
@@ -68,15 +64,7 @@ class UserCrudController extends AdminCrudController
         $fields = [
             Field::new('email', 'Email')->setFormType(EmailType::class),
         ];
-        $fields[] = ChoiceField::new('channels', 'Channel Alerts')->setChoices($choices)->allowMultipleChoices();
-
-        $choiceRules = [
-            'ROLE_ADMIN' => 'ROLE_ADMIN',
-            'ROLE_AMAZON' => 'ROLE_AMAZON',
-            'ROLE_AMAZON_ALERT' => 'ROLE_AMAZON_ALERT',
-            'ROLE_USER' => 'ROLE_USER',
-        ];
-        $fields[] = ChoiceField::new('roles', 'Roles')->setChoices($choiceRules)->allowMultipleChoices();
+        
 
 
         if ($pageName != Crud::PAGE_INDEX) {
@@ -88,6 +76,19 @@ class UserCrudController extends AdminCrudController
                     'second_options' => ['label' => 'Repeat password'],
                     'required' => $pageName == Crud::PAGE_NEW
                 ]);
+            $fields[] = ChoiceField::new('channels', 'Channel Alerts')->setChoices($choices)->allowMultipleChoices()->setHelp("Receive alerts for orders done on this channels of integration");
+            
+            $fields[] = BooleanField::new('isFbaManager', 'Manage FBA');
+            $fields[] = BooleanField::new('isPricingManager', 'Manage price')->setFormTypeOptions(
+                [
+                    'attr.data-action'=>'change->user#togglesalechannels'
+                ]
+            );
+            $fields[] = AssociationField::new('saleChannels', 'Sale Channels')->setHelp("Manage pricings on sale channels");
+            $fields[] = BooleanField::new('isAdmin', 'Manage users');
+
+            
+
         }
         return $fields;
     }
