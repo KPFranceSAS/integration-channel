@@ -2,6 +2,10 @@
 
 namespace App\Helper\Utils;
 
+use DateTime;
+use DateTimeInterface;
+
+
 /**
  * Class Calculator
  */
@@ -19,24 +23,24 @@ class CalculatorDelay
     const HOLIDAY_FORMAT  = 'm-d';
     const FREE_DAY_FORMAT = 'Y-m-d';
 
-    /** @var \DateTime */
+    /** @var DateTime */
     private $date;
 
-    /** @var \DateTime[] */
+    /** @var DateTime[] */
     private $holidays = array();
 
-    /** @var \DateTime[] */
+    /** @var DateTime[] */
     private $freeDays = array();
 
     /** @var int[] */
     private $freeWeekDays = array();
 
     /**
-     * @param \DateTime $startDate Date to start calculations from
+     * @param DateTime $startDate Date to start calculations from
      *
      * @return $this
      */
-    public function setStartDate(\DateTimeInterface $startDate)
+    public function setStartDate(DateTimeInterface $startDate)
     {
         // Use clone so parameter is not passed as a reference.
         // If not, it can brake caller method by changing $startDate parameter while changing it here.
@@ -47,7 +51,7 @@ class CalculatorDelay
     }
 
     /**
-     * @param \DateTime[] $holidays Array of holidays that repeats each year. (Only month and date is used to match).
+     * @param DateTime[] $holidays Array of holidays that repeats each year. (Only month and date is used to match).
      *
      * @return $this
      */
@@ -59,7 +63,7 @@ class CalculatorDelay
     }
 
     /**
-     * @return \DateTime[]
+     * @return DateTime[]
      */
     private function getHolidays()
     {
@@ -67,7 +71,7 @@ class CalculatorDelay
     }
 
     /**
-     * @param \DateTime[] $freeDays Array of free days that dose not repeat.
+     * @param DateTime[] $freeDays Array of free days that dose not repeat.
      *
      * @return $this
      */
@@ -79,7 +83,7 @@ class CalculatorDelay
     }
 
     /**
-     * @return \DateTime[]
+     * @return DateTime[]
      */
     private function getFreeDays()
     {
@@ -120,6 +124,7 @@ class CalculatorDelay
         $iterator = 0;
         while ($iterator < $howManyDays) {
             $this->getDate()->modify('+1 day');
+
             if ($this->isBusinessDay($this->getDate())) {
                 $iterator++;
             }
@@ -150,23 +155,23 @@ class CalculatorDelay
 
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getDate()
     {
         if ($this->date === null) {
-            $this->date = new \DateTime();
+            $this->date = new DateTime();
         }
 
         return $this->date;
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      *
      * @return bool
      */
-    public function isBusinessDay(\DateTimeInterface $date)
+    public function isBusinessDay(DateTimeInterface $date)
     {
         if ($this->isFreeWeekDayDay($date)) {
             return false;
@@ -179,22 +184,22 @@ class CalculatorDelay
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      *
      * @return bool
      */
-    public function isFreeWeekDayDay(\DateTimeInterface $date)
+    public function isFreeWeekDayDay(DateTimeInterface $date)
     {
         $currentWeekDay = (int)$date->format(self::WEEK_DAY_FORMAT);
         return in_array($currentWeekDay, $this->getFreeWeekDays());
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      *
      * @return bool
      */
-    public function isHoliday(\DateTimeInterface $date)
+    public function isHoliday(DateTimeInterface $date)
     {
         $holidayFormatValue = $date->format(self::HOLIDAY_FORMAT);
         foreach ($this->getHolidays() as $holiday) {
@@ -207,11 +212,11 @@ class CalculatorDelay
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      *
      * @return bool
      */
-    public function isFreeDay(\DateTimeInterface $date)
+    public function isFreeDay(DateTimeInterface $date)
     {
         $freeDayFormatValue = $date->format(self::FREE_DAY_FORMAT);
         foreach ($this->getFreeDays() as $freeDay) {

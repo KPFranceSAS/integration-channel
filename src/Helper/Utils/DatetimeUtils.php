@@ -5,6 +5,7 @@ namespace App\Helper\Utils;
 use App\Helper\Utils\CalculatorDelay;
 use DateInterval;
 use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Umulmrum\Holiday\HolidayCalculator;
 use Umulmrum\Holiday\Provider\Spain\Spain;
@@ -63,7 +64,13 @@ class DatetimeUtils
 
     public static function isOutOfDelayBusinessDays(DateTimeInterface $date, int $nbHours, ?DateTimeInterface $toverify = null, $withHolidays = true): bool
     {
+        if($date instanceof DateTimeImmutable){
+            $date = DateTime::createFromImmutable($date);
+        }
         $toverify =  $toverify !== null ? $toverify :  new DateTime();
+        if($toverify instanceof DateTimeImmutable){
+            $toverify = DateTime::createFromImmutable($toverify);
+        }
         $calculator = new CalculatorDelay();
         $calculator->setStartDate($date);
         if ($withHolidays) {
@@ -78,13 +85,13 @@ class DatetimeUtils
             $calculator->skipToBegin();
         }
 
-
+       
         $nbDays = intdiv($nbHours, 24);
         if ($nbDays > 0) {
             $calculator->addBusinessDays($nbDays);
         }
-
         $dateLimit =  $calculator->getDate();
+        
 
         $nbHoursRestant = $nbHours % 24;
         if ($nbHoursRestant > 0) {
@@ -129,6 +136,9 @@ class DatetimeUtils
     public static function getDateOutOfDelayBusinessDaysFrom(int $nbHours, ?DateTimeInterface $toverify = null, $withBusineesDays = true): DateTimeInterface
     {
         $date =  $toverify !== null ? $toverify :  new DateTime();
+        if($date instanceof DateTimeImmutable){
+            $date = DateTime::createFromImmutable($date);
+        }
 
         $calculator = new CalculatorDelay();
         $calculator->setStartDate($date);
