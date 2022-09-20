@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
+use App\Entity\ProductLogEntry;
 use App\Entity\ProductSaleChannel;
 use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
-use App\Helper\UtilsDateTimeUtils;
 use DateInterval;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use IntlCalendar;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -17,6 +18,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 /**
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
+ * @Gedmo\Loggable(logEntryClass=ProductLogEntry::class)
  */
 class Promotion
 {
@@ -42,13 +44,13 @@ class Promotion
     private $id;
 
     /**
-     *
+     * @Gedmo\Versioned
      * @ORM\Column(type="datetime")
      */
     private $beginDate;
 
     /**
-     *
+     * @Gedmo\Versioned
      * @Assert\GreaterThan(propertyPath="beginDate")
      * @ORM\Column(type="datetime")
      */
@@ -56,19 +58,21 @@ class Promotion
  
 
     /**
+     * @Gedmo\Versioned
      * @ORM\ManyToOne(targetEntity=ProductSaleChannel::class, inversedBy="promotions")
      * @ORM\JoinColumn(nullable=false)
      */
     private $productSaleChannel;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="string", length=255)
      * @Assert\Choice(choices=Promotion::TYPES, message="Choose a valid type.")
      */
     private $discountType=self::TYPE_PERCENT;
 
     /**
-     *
+     * @Gedmo\Versioned
      * @ORM\Column(type="float", nullable=true)
      * @Assert\GreaterThan(0)
      * @Assert\LessThan(50)
@@ -76,35 +80,41 @@ class Promotion
     private $percentageAmount;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="float", nullable=true)
      * @Assert\GreaterThan(0)
      */
     private $fixedAmount;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max = 255)
      */
     private $comment;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="boolean")
      */
     private $active=true;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="integer")
      * @Assert\Range( min = 0,max = 10)
      */
     private $priority=0;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="string", length=255)
      * @Assert\Choice(choices=Promotion::FREQUENCIES, message="Choose a valid type.")
      */
     private $frequency = self::FREQUENCY_CONTINUE;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="array", nullable=true)
      */
     private $weekDays = [];
@@ -115,11 +125,13 @@ class Promotion
     private $searchableDescription;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="time", nullable=true)
      */
     private $beginHour;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="time", nullable=true)
      */
     private $endHour;
@@ -323,13 +335,13 @@ class Promotion
     {
         $path = $this->isPercentageType() ? 'percentageAmount' : 'fixedAmount';
 
-        if($this->isPercentageType() && !$this->percentageAmount){
+        if ($this->isPercentageType() && !$this->percentageAmount) {
             $context->buildViolation('You must define the percentage of promotion')
                 ->atPath('percentageAmount')
                 ->addViolation();
         }
 
-        if($this->isFixedType() && !$this->fixedAmount){
+        if ($this->isFixedType() && !$this->fixedAmount) {
             $context->buildViolation('You must define the fixed amount of promotion')
                 ->atPath('fixedAmount')
                 ->addViolation();

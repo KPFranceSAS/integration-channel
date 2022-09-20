@@ -84,13 +84,13 @@ class PricingCrudController extends AdminCrudController
             ];
         } elseif ($pageName==Crud::PAGE_EDIT) {
             return [
-                TextField::new('sku')->setDisabled(true),
                 CollectionField::new('productSaleChannels')
                     ->setEntryIsComplex(true)
                     ->renderExpanded(true)
                     ->setEntryType(ProductSaleChannelType::class)
                     ->allowAdd(false)
-                    ->allowDelete(false),
+                    ->allowDelete(false)
+                    ->setFormTypeOption('block_name', 'productsaleshannels_lists')
             ];
         } else {
             return [

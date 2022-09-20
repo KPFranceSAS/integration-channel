@@ -91,26 +91,41 @@ class DashboardController extends AbstractDashboardController
                 ->setPermission('ROLE_AMAZON'),
             MenuItem::subMenu('Pricing', 'fas fa-money-bill')
                 ->setSubItems([
-                    MenuItem::linkToCrud('Product', 'fas fa-barcode', Product::class)
-                        ->setController(PricingCrudController::class),
-                    MenuItem::linkToCrud('Sales channel', 'far fa-registered', SaleChannel::class),
+                    MenuItem::linkToCrud(
+                        'Prices',
+                        'fas fa-barcode',
+                        Product::class
+                    )->setController(PricingCrudController::class),
+                    
                     MenuItem::linkToCrud(
                         'Promotion',
-                        'fas fa-sitemap',
+                        'fas fa-percentage',
                         Promotion::class
                     ),
                     MenuItem::linkToCrud(
                         'Import',
                         'fas fa-tasks',
                         ImportPricing::class
-                    )->setPermission('ROLE_AMAZON'),
-                ])
-                ->setPermission('ROLE_AMAZON'),
+                    ),
+                    MenuItem::linkToCrud(
+                        'Sales channel',
+                        'far fa-registered',
+                        SaleChannel::class
+                    ),
+                ])->setPermission('ROLE_PRICING'),
             MenuItem::subMenu('Configuration', 'fas fa-cogs')
                 ->setSubItems([
-                    MenuItem::linkToCrud('SKU Mapping', 'fa fa-exchange', ProductCorrelation::class),
-                    MenuItem::linkToCrud('Users', 'fa fa-user', User::class)
-                ->setPermission('ROLE_ADMIN'),
+                    MenuItem::linkToCrud(
+                        'SKU Mapping',
+                        'fa fa-exchange',
+                        ProductCorrelation::class
+                    ),
+                    MenuItem::linkToCrud(
+                        'Users',
+                        'fa fa-user',
+                        User::class
+                    )->setPermission('ROLE_ADMIN'),
+                   
             ])
         ];
     }

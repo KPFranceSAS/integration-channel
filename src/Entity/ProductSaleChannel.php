@@ -2,17 +2,20 @@
 
 namespace App\Entity;
 
+use App\Entity\ProductLogEntry;
 use App\Entity\Promotion;
 use App\Helper\Traits\TraitTimeUpdated;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity()
+ * @Gedmo\Loggable(logEntryClass=ProductLogEntry::class)
  * @ORM\HasLifecycleCallbacks()
  */
 class ProductSaleChannel
@@ -43,16 +46,19 @@ class ProductSaleChannel
 
     /**
      * @ORM\Column(type="boolean")
+     * @Gedmo\Versioned
      */
     private $enabled=false;
 
     /**
      * @Assert\Valid()
      * @ORM\OneToMany(targetEntity=Promotion::class, mappedBy="productSaleChannel", orphanRemoval=true, cascade={"persist","remove"})
+     *
      */
     private $promotions;
 
     /**
+     * @Gedmo\Versioned
      * @ORM\Column(type="float", nullable=true)
      * @Assert\Expression(
      *   expression= "this.getEnabled() == false or (this.getEnabled() === true and value !== null)",
@@ -62,12 +68,37 @@ class ProductSaleChannel
      */
     private $price;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $recommendedPrice;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $estimatedCommission;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $estimatedShipping;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $estimatedCommissionPercent;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $estimatedShippingPercent;
+
 
     public function getSalePriceForNow()
     {
         $now = new DateTime('now');
         return $this->getSalePrice($now);
-    }    
+    }
 
 
     public function getSalePrice(DateTime $date)
@@ -107,11 +138,14 @@ class ProductSaleChannel
     }
 
    
-
+    public function getSaleChannelName()
+    {
+        return $this->saleChannel->getName();
+    }
 
     public function __toString()
     {
-        return $this->product->getBrand().' '.$this->product->getSku().' > '.$this->saleChannel->getName();
+        return $this->product->getBrand().' '.$this->product->getSku().' > '.$this->getSaleChannelName();
     }
 
     
@@ -235,6 +269,66 @@ class ProductSaleChannel
     public function setPrice(?float $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getRecommendedPrice(): ?float
+    {
+        return $this->recommendedPrice;
+    }
+
+    public function setRecommendedPrice(?float $recommendedPrice): self
+    {
+        $this->recommendedPrice = $recommendedPrice;
+
+        return $this;
+    }
+
+    public function getEstimatedCommission(): ?float
+    {
+        return $this->estimatedCommission;
+    }
+
+    public function setEstimatedCommission(?float $estimatedCommission): self
+    {
+        $this->estimatedCommission = $estimatedCommission;
+
+        return $this;
+    }
+
+    public function getEstimatedShipping(): ?float
+    {
+        return $this->estimatedShipping;
+    }
+
+    public function setEstimatedShipping(?float $estimatedShipping): self
+    {
+        $this->estimatedShipping = $estimatedShipping;
+
+        return $this;
+    }
+
+    public function getEstimatedCommissionPercent(): ?float
+    {
+        return $this->estimatedCommissionPercent;
+    }
+
+    public function setEstimatedCommissionPercent(?float $estimatedCommissionPercent): self
+    {
+        $this->estimatedCommissionPercent = $estimatedCommissionPercent;
+
+        return $this;
+    }
+
+    public function getEstimatedShippingPercent(): ?float
+    {
+        return $this->estimatedShippingPercent;
+    }
+
+    public function setEstimatedShippingPercent(?float $estimatedShippingPercent): self
+    {
+        $this->estimatedShippingPercent = $estimatedShippingPercent;
 
         return $this;
     }

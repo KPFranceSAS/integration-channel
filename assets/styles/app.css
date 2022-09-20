@@ -127,3 +127,12 @@
 .ea-sidebar-width-compact .closebutton{
     display:none;
 }
+
+.enabledProductSaleChannels .form-check {
+    padding-left: 0em;
+}
+
+
+.priceProductSaleChannels .input-group-text {
+    height: 35px;
+}

@@ -3,9 +3,7 @@
 namespace App\Controller\Pricing;
 
 use App\Controller\Admin\AdminCrudController;
-use App\Controller\Pricing\ImportPricingCrudController;
 use App\Entity\SaleChannel;
-use App\Entity\User;
 use App\Entity\WebOrder;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -32,15 +30,15 @@ class SaleChannelCrudController extends AdminCrudController
 
 
     public function configureActions(Actions $actions): Actions
-{
-    $actions = parent::configureActions($actions);
-    $actions->setPermission(Action::NEW, 'ROLE_ADMIN');
-    $actions->setPermission(Action::DELETE, 'ROLE_ADMIN');
-    $actions->setPermission(Action::BATCH_DELETE, 'ROLE_ADMIN');
-    $actions->setPermission(Action::EDIT, 'ROLE_ADMIN');
+    {
+        $actions = parent::configureActions($actions);
+        $actions->setPermission(Action::NEW, 'ROLE_ADMIN');
+        $actions->setPermission(Action::DELETE, 'ROLE_ADMIN');
+        $actions->setPermission(Action::BATCH_DELETE, 'ROLE_ADMIN');
+        $actions->setPermission(Action::EDIT, 'ROLE_ADMIN');
 
-    return $actions;
-}
+        return $actions;
+    }
 
 
 

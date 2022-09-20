@@ -8,11 +8,13 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
+ * @Gedmo\Loggable()
  * @ORM\HasLifecycleCallbacks()
  */
 class Product
@@ -337,6 +339,7 @@ class Product
     /**
      * @Assert\Valid
      * @ORM\OneToMany(targetEntity=ProductSaleChannel::class, mappedBy="product", cascade={"persist","remove"}, orphanRemoval=true)
+     *
      */
     private $productSaleChannels;
 
@@ -347,7 +350,8 @@ class Product
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     */
+     *
+     * */
     private $eurPrice;
 
     /**
@@ -362,27 +366,33 @@ class Product
     }
 
 
+    public function __toString()
+    {
+        return $this->sku.' '.$this->description;
+    }
+
+
 
     public function getRegularPriceOnMarketplace($marketplace) : ?float
     {
         $productMarketplace = $this->getProductSaleChannelByCode($marketplace);
         return $productMarketplace->getPrice();
-    }    
+    }
 
 
     public function isOnsaleOnMArketplace($marketplace): bool
     {
         $productMarketplace = $this->getProductSaleChannelByCode($marketplace);
         return $productMarketplace->getEnabled();
-    }    
+    }
 
 
 
     public function getSalePriceForNowOnMarketplace($marketplace) : ?float
     {
         $now = new DateTime('now');
-       return $this->getSalePriceOnMarketplace($now, $marketplace);
-    }    
+        return $this->getSalePriceOnMarketplace($now, $marketplace);
+    }
 
 
     public function getSalePriceOnMarketplace(DateTime $date, $marketplace) : ?float
@@ -397,10 +407,10 @@ class Product
 
 
 
-    public function getProductSaleChannelByCode($code): ?ProductSaleChannel 
+    public function getProductSaleChannelByCode($code): ?ProductSaleChannel
     {
-        foreach($this->productSaleChannels as $productSaleChannel){
-            if($productSaleChannel->getSaleChannel()->getCode() == $code){
+        foreach ($this->productSaleChannels as $productSaleChannel) {
+            if ($productSaleChannel->getSaleChannel()->getCode() == $code) {
                 return $productSaleChannel;
             }
         }

@@ -79,6 +79,19 @@ class SaleChannel
         $this->users = new ArrayCollection();
     }
 
+
+    public function getCurrencySymbol(){
+        switch ($this->currencyCode){
+            case 'EUR':
+                return '€';
+            case 'GBP' :
+                return '£';    
+            default :
+                return '';
+        }
+    }
+
+
     public function __toString(){
         return $this->name;
     }   
