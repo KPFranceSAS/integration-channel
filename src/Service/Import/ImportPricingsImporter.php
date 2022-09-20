@@ -155,7 +155,7 @@ class ImportPricingsImporter
                     if ($productSaleChannel) {
                         $valueFormatted = $attribute == 'enabled' ? (bool)$value : floatval(str_replace(',', '.', $value));
                         $productSaleChannel->{'set'.ucfirst($attribute)}($valueFormatted);
-                        $this->addLog($importPricing, 'Put on channel '.$channelCode." ".$column." to value ".$valueFormatted);
+                        $this->addLog($importPricing, 'Put on channel '.$channelCode." ".$column." to value ".$value);
                     } else {
                         $this->addError($importPricing, 'The sale channel '.$channelCode." doesn't link to any product");
                     }
