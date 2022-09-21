@@ -120,3 +120,10 @@ In this case :
 2. Check the availability of the stock of all the lines
 3. Check if the shipment has been done
 4. Check if the carrier has the tracking information
+
+### Delay of tracking
+If you received messages containing those information *Order AliExpress n°3018294824139882 (#54539) has been sent with the invoice GFV22/0900124 but no tracking is retrieved. Please confirm tracking on ALIEXPRESS*
+The invoice is created in Business central and shipment also has been created. But no tracking code is available. Normally, in the process, we get the tracking code in the next 12 hours after the creation of the invoice.
+
+In this case, you should investigate if there is some issues with tracking or with warehouse to resolve the issue.
+In the same time, you should add the tracking code on the marketplace of you get it to avoid any penalities.
