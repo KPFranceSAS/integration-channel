@@ -214,7 +214,7 @@ abstract class InvoiceParent
         $now = new DateTime();
         $interval = $now->diff($invoiceDate, true);
         $nbHours = $interval->format('%a') * 24 + $interval->format('%h');
-        if ($nbHours > 34) {
+        if ($nbHours > 12) {
             $this->addOnlyErrorToOrderIfNotExists($order, $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. Please confirm tracking on ' . $this->getChannel());
         }
     }

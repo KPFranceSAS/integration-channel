@@ -69,6 +69,10 @@ services:
             $aliExpressClientSecret : '%env(resolve:ALI_EXPRESS_SECRET)%'
             $aliExpressClientAccessToken : '%env(resolve:ALI_EXPRESS_TOKEN)%'
 
+            $lazadaClientId :  '%env(resolve:LAZADA_ID)%'
+            $lazadaClientSecret : '%env(resolve:LAZADA_SECRET)%'
+            $lazadaClientAccessToken : '%env(resolve:LAZADA_TOKEN)%'
+
             $fitbitExpressClientId :  '%env(resolve:FITBIT_EXPRESS_ID)%'
             $fitbitExpressClientSecret : '%env(resolve:FITBIT_EXPRESS_SECRET)%'
             $fitbitExpressClientAccessToken : '%env(resolve:FITBIT_EXPRESS_TOKEN)%'
