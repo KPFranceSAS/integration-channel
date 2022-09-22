@@ -137,6 +137,12 @@ class AmazonReimbursement
      */
     private $product;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+    *  @Groups({"export_order"})
+     */
+    private $marketplaceName;
+
 
 
     /**
@@ -471,6 +477,18 @@ class AmazonReimbursement
     public function setCurrencyUnit(string $currencyUnit): self
     {
         $this->currencyUnit = $currencyUnit;
+
+        return $this;
+    }
+
+    public function getMarketplaceName(): ?string
+    {
+        return $this->marketplaceName;
+    }
+
+    public function setMarketplaceName(?string $marketplaceName): self
+    {
+        $this->marketplaceName = $marketplaceName;
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Service\Amazon\Report;
 
+use App\Entity\AmazonOrder;
 use App\Entity\AmazonReimbursement;
 use App\Service\Amazon\AmzApi;
 use App\Service\Amazon\Report\AmzApiImport;
@@ -34,6 +35,14 @@ class AmzApiImportReimbursement extends AmzApiImport
             $reimbursementAmz = new AmazonReimbursement();
             $this->manager->persist($reimbursementAmz);
             $reimbursementAmz->importData($this->exchangeRate, $importOrder);
+
+            $ordersAmz = $this->manager->getRepository(AmazonOrder::class)->findBy([
+                "amazonOrderId" => $importOrder['amazon-order-id'],
+            ]);
+
+            if (count($ordersAmz)>0) {
+                $reimbursementAmz->setMarketplaceName($ordersAmz[0]->getSalesChannel());
+            }
         }
         $this->addProductByFnsku($reimbursementAmz);
         if ($importOrder['original-reimbursement-id']) {

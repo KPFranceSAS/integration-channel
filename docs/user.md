@@ -17,6 +17,8 @@ A full picture of the process is visible on [this schema](img/Processus_integrat
 ### Stock synchronization
 The app connects hourly to Business cental to get the level of stocks (La Roca, Madrid) of every SKU and send available level of stock to every sale channel. 
 Some rules are added to add some buffer and avoid syncronisation error.
+For the warehouse in La Roca, if the level is greater than 5, the available of stock is calculated as 70% of the real available stock. If the real stock is less than 5, the stoc k is considered equal to 0.
+For the warehouse in Madrid, real stock is sent.
 
 ### FBA and Amazon reporting
 The app connects to different reports provided by Amazon and uses the content to provide some helpers to manage business.
@@ -27,7 +29,9 @@ The app connects to different reports provided by Amazon and uses the content to
 - export datas to Power BI to provide datas to consume
 
 ### Pricing
-The app can send prices and promotions prices to the different sale channels setup. The promotion prices can be scheduled to help users to manage finely prices
+The app can manage prices and promotions prices to the different setup sale channels. The sale channel is a combination of a marketplace and a company, then Amazon.es will be involved in 2 companies that means there will be 2 sale channels for each company.
+For a sku given, users can manage if a product price is enabled on a sale channel and then define is price.
+The promotion system will help users to manage finely promotion prices.
 
 ## Usage
 
@@ -61,6 +65,21 @@ Interface has common functionality through all screens
 4. Display a chronology of the integration of the order
 5. Display all the elements retrieved from Business central, especially the VAT rates or shipping rates.
 6. For Amazon only, we retrieve all the financial datas associated with this transaction (order,r eturn, cashback, fee or shipping)
+
+
+### Pricing
+
+#### Prices
+
+
+#### Promotions
+
+
+##### Import
+
+
+#### Sale Channel
+
 
 
 ### Config

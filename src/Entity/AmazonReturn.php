@@ -102,6 +102,12 @@ class AmazonReturn
     private $amazonRemovalOrder;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     *  @Groups({"export_order"})
+     */
+    private $marketplaceName;
+
+    /**
      *  @Groups({"export_order"})
      */
     public function getAmazonOrderIdProductId()
@@ -331,6 +337,18 @@ class AmazonReturn
     public function setAmazonRemovalOrder(?AmazonRemovalOrder $amazonRemovalOrder): self
     {
         $this->amazonRemovalOrder = $amazonRemovalOrder;
+
+        return $this;
+    }
+
+    public function getMarketplaceName(): ?string
+    {
+        return $this->marketplaceName;
+    }
+
+    public function setMarketplaceName(?string $marketplaceName): self
+    {
+        $this->marketplaceName = $marketplaceName;
 
         return $this;
     }

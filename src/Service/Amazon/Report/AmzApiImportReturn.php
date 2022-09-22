@@ -2,6 +2,7 @@
 
 namespace App\Service\Amazon\Report;
 
+use App\Entity\AmazonOrder;
 use App\Entity\AmazonReturn;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Amazon\AmzApi;
@@ -35,7 +36,19 @@ class AmzApiImportReturn extends AmzApiImport
             $returnAmz = new AmazonReturn();
             $this->manager->persist($returnAmz);
             $returnAmz->importData($importOrder);
+            $ordersAmz = $this->manager->getRepository(AmazonOrder::class)->findBy([
+                "amazonOrderId" => $importOrder['order-id'],
+            ]);
+
+            if (count($ordersAmz)>0) {
+                $returnAmz->setMarketplaceName($ordersAmz[0]->getSalesChannel());
+            }
         }
+
+        
+
+        
+
         $this->addProductByFnsku($returnAmz);
         return $returnAmz;
     }

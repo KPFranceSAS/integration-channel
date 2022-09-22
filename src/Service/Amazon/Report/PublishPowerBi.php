@@ -38,14 +38,15 @@ class PublishPowerBi
 
     public function exportAll()
     {
-        $this->exportProducts();
+        $this->exportMarketplaceNames();
+        /*$this->exportProducts();
         $this->exportProductsStock();
         $this->exportFbas();
         $this->exportReimbursements();
         $this->exportReturns();
         $this->exportFinancialGroups();
         $this->exportFinancials();
-        $this->exportOrders();
+        $this->exportOrders();*/
     }
 
 
@@ -96,6 +97,20 @@ class PublishPowerBi
     {
         $this->exportData(AmazonFinancialEventGroup::class, 'export_order', 'financial_groups.json');
     }
+
+
+    public function exportMarketplaceNames()
+    {
+        $results = $this->manager->createQuery('select DISTINCT a.salesChannel from App\Entity\AmazonOrder a')->getArrayResult();
+        $marketplaces = [];
+        foreach ($results as $result) {
+            $marketplaces[] = [
+                'name' => $result['salesChannel']
+            ];
+        }
+        $this->kpssportStorage->write('marketplaces.json', json_encode($marketplaces), []);
+    }
+
 
 
     public function exportOrders()
