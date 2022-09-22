@@ -39,14 +39,14 @@ class PublishPowerBi
     public function exportAll()
     {
         $this->exportMarketplaceNames();
-        /*$this->exportProducts();
+        $this->exportProducts();
         $this->exportProductsStock();
         $this->exportFbas();
         $this->exportReimbursements();
         $this->exportReturns();
         $this->exportFinancialGroups();
         $this->exportFinancials();
-        $this->exportOrders();*/
+        $this->exportOrders();
     }
 
 
