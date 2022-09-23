@@ -18,9 +18,9 @@ class LazadaClient
 
     public $gatewayUrl;
 
-    public $connectTimeout;
+    public $connectTimeout=10;
 
-    public $readTimeout;
+    public $readTimeout=10;
 
     protected $signMethod = "sha256";
 
@@ -35,7 +35,7 @@ class LazadaClient
         return $this->appkey;
     }
 
-    public function __construct(LoggerInterface $loggerInterface, $lazadaClientId, $lazadaClientSecret, $lazadaClientAccessToken, $logLevel = "ERROR")
+    public function __construct(LoggerInterface $loggerInterface, $lazadaClientId, $lazadaClientSecret, $lazadaClientAccessToken, $logLevel = "DEBUG")
     {
         $this->gatewayUrl = 'https://api.proyectoarise.es/rest';
         $this->appkey = $lazadaClientId;

@@ -20,6 +20,7 @@ class BuildHistoricCommand extends Command
 
     public function __construct(KpFranceConnector $saleOrderConnector, ManagerRegistry $manager)
     {
+        /** @var \Doctrine\ORM\EntityManagerInterface */
         $this->manager = $manager->getManager();
         $this->bcConnector = $saleOrderConnector;
         parent::__construct();
@@ -42,6 +43,7 @@ class BuildHistoricCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $counter = 0;
+       
         $q = $this->manager->createQuery('select a from App\Entity\AmazonOrder a where a.orderStatus = :shipped and a.purchaseDate < :dateCreate and a.itemStatus = :shipped
             and a.amazonOrderId NOT IN (select p.externalNumber from App\Entity\WebOrder p)')
             ->setParameter('dateCreate', '2022-01-01 00:00:00')
@@ -82,7 +84,6 @@ class BuildHistoricCommand extends Command
 
     public function treatFromChannel($amzOrderId, $amzOrderSubChannel, OutputInterface $output)
     {
-
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($amzOrderId);
         $webOrder->setStatus(WebOrder::STATE_INVOICED);
@@ -102,7 +103,8 @@ class BuildHistoricCommand extends Command
                 $webOrder->addLog('Retrieved data from business central');
                 $webOrder->setOrderErp($invoice['orderNumber']);
                 $orderApi->ShippingLastName = $invoice['shipToName'];
-                $orderApi->ShippingAddressLine1 = $invoice['shippingPostalAddress']["street"];;
+                $orderApi->ShippingAddressLine1 = $invoice['shippingPostalAddress']["street"];
+                ;
                 $orderApi->ShippingCity = $invoice['shippingPostalAddress']["city"];
                 $orderApi->ShippingStateOrProvince =  $invoice['shippingPostalAddress']["state"];
                 $orderApi->ShippingStateOrProvinceName = $invoice['shippingPostalAddress']["state"];
@@ -142,7 +144,7 @@ class BuildHistoricCommand extends Command
 
 
     /**
-     * Get Customer client according to profile 
+     * Get Customer client according to profile
      *
      * @param string $profileId
      * @param string $siteId

@@ -24,7 +24,7 @@ class ConnectLazadaCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->getOrders();
+        $this->getProducts();
         return Command::SUCCESS;
     }
 
@@ -32,14 +32,14 @@ class ConnectLazadaCommand extends Command
 
     private function updatePrice()
     {
-        $result = $this->aliExpress->updatePrice("1005001794660227", "X-MUE4093GL", '34.99', '26.30');
+        $result = $this->lazadaApi->updatePrice("1005001794660227", "X-MUE4093GL", '34.99', '26.30');
         var_dump($result);
     }
 
 
     private function updateStockLevel()
     {
-        $result = $this->aliExpress->updateStockLevel("1005001800940160", "X-PFJ4086EU", 1029);
+        $result = $this->lazadaApi->updateStockLevel("1005001800940160", "X-PFJ4086EU", 1029);
         var_dump($result);
     }
 
@@ -47,7 +47,7 @@ class ConnectLazadaCommand extends Command
 
     private function markCompanyTransport()
     {
-        $order = $this->aliExpress->getOrder("3016506064585909");
+        $order = $this->lazadaApi->getOrder("3016506064585909");
         var_dump($order);
 
         /*$carriers = $this->aliExpress->getCarriers();
@@ -58,7 +58,7 @@ class ConnectLazadaCommand extends Command
 
 
 
-        $result = $this->aliExpress->markOrderAsFulfill("3015988148626826", "SPAIN_LOCAL_DHL", "0837590170");
+        $result = $this->lazadaApi->markOrderAsFulfill("3015988148626826", "SPAIN_LOCAL_DHL", "0837590170");
         var_dump($result);
     }
 

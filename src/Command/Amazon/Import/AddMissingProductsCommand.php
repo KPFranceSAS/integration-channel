@@ -22,14 +22,13 @@ class AddMissingProductsCommand extends Command
     public function __construct(LoggerInterface $logger, ManagerRegistry $manager)
     {
         $this->logger = $logger;
+        /** @var \Doctrine\ORM\EntityManagerInterface */
         $this->manager = $manager->getManager();
         parent::__construct();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-
         $this->logger->info("Export orders ");
 
         $batchSize = 200;

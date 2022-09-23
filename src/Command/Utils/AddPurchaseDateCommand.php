@@ -15,6 +15,7 @@ class AddPurchaseDateCommand extends Command
 
     public function __construct(ManagerRegistry $manager)
     {
+        /** @var \Doctrine\ORM\EntityManagerInterface */
         $this->manager = $manager->getManager();
         parent::__construct();
     }

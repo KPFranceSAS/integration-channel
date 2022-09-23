@@ -130,7 +130,7 @@ class LazadaApi implements ApiInterface
             $realOffset =  $offset+1;
             $this->logger->info('Get products batch n°' .$realOffset . ' / ' . $max_page . ' >>' . json_encode($params));
             $reponse = $this->client->execute($req);
-
+            $this->logger->info('Get response');
             if ($reponse->data->total_products > 0) {
                 $products = array_merge($products, $reponse->data->products);
             }
@@ -147,7 +147,7 @@ class LazadaApi implements ApiInterface
     public const PAGINATION = 2;
 
     
-
+    /*
     public function updateStockLevel($productId, $productSku, $inventory)
     {
         $req = new AliexpressSolutionBatchProductInventoryUpdateRequest();

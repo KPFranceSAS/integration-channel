@@ -23,6 +23,7 @@ class AddMissingReturnsCommand extends Command
     public function __construct(LoggerInterface $logger, ManagerRegistry $manager)
     {
         $this->logger = $logger;
+        /** @var \Doctrine\ORM\EntityManagerInterface */
         $this->manager = $manager->getManager();
         parent::__construct();
     }
