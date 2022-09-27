@@ -44,11 +44,6 @@ class StoreHistoryPricingsCommand extends Command
         $output->writeln("Saved  $i product sale channels and $newSaved historical added");
         $this->manager->flush();
         $this->manager->clear();
-        
-
-
-
-
         return Command::SUCCESS;
     }
 }

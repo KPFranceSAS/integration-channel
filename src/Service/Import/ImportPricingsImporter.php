@@ -134,12 +134,10 @@ class ImportPricingsImporter
                         return false;
                     }
                     $saleChannel = $saleChannelDbs[$channelCode];
-                    if(!$importPricing->getUser()->hasSaleChannel($saleChannelDbs[$channelCode])){
-                        $this->addError($importPricing,"You cannot import pricing for this sale channel ".$channelCode);
+                    if (!$importPricing->getUser()->hasSaleChannel($saleChannelDbs[$channelCode])) {
+                        $this->addError($importPricing, "You cannot import pricing for this sale channel ".$channelCode);
                         return false;
                     }
-
-                    
                 }
             }
         }
@@ -466,12 +464,11 @@ class ImportPricingsImporter
             } else {
                 $this->addLog($importPricing, 'Find sale code with sale channel ' . $saleChannel. ' on line '.$lineNumber);
                 
-                if(!$importPricing->getUser()->hasSaleChannel($saleChannelDb)){
-                    $this->addError($importPricing,"You cannot import pricing for this sale channel ".$saleChannel);
+                if (!$importPricing->getUser()->hasSaleChannel($saleChannelDb)) {
+                    $this->addError($importPricing, "You cannot import pricing for this sale channel ".$saleChannel);
                 } else {
                     $saleChannelsDb[]=$saleChannelDb;
                 }
-              
             }
         }
         
@@ -484,7 +481,7 @@ class ImportPricingsImporter
         $skus = explode(",", $line['skus']);
         $productsDb = [];
         foreach ($skus as $sku) {
-            $productDb = $this->manager->getRepository(Product::class)->findOneBy(['sku' => $line["sku"]]);
+            $productDb = $this->manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
             if (!$productDb) {
                 $this->addError($importPricing, 'No product with sku ' . $sku. ' on line '.$lineNumber);
                 return [];
