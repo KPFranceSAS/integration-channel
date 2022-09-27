@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Helper\Invoice;
+namespace App\Service\Arise;
 
 
 use App\Entity\WebOrder;
-use App\Helper\Api\AliExpressApiParent;
 use App\Helper\Invoice\InvoiceParent;
-use App\Helper\Utils\DatetimeUtils;
+use App\Service\Arise\AriseApi;
 
-
-abstract class AliExpressInvoiceParent extends InvoiceParent
+class AriseInvoice extends InvoiceParent
 {
 
 
-    protected function getAliExpressApi(): AliExpressApiParent
+    protected function getAriseApi(): AriseApi
     {
         return $this->getApi();
     }
@@ -21,7 +19,7 @@ abstract class AliExpressInvoiceParent extends InvoiceParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_ALIEXPRESS;
+        return WebOrder::CHANNEL_ARISE;
     }
 
 
@@ -33,13 +31,13 @@ abstract class AliExpressInvoiceParent extends InvoiceParent
         } else {
             $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by ' . $tracking['Carrier'] . " with tracking number " . $tracking['Tracking number']);
             $order->setTrackingUrl('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking['Tracking number']);
-            $result = $this->getAliExpressApi()->markOrderAsFulfill($order->getExternalNumber(), "SPAIN_LOCAL_DHL", $tracking['Tracking number']);
+            $result = $this->getAriseApi()->markOrderAsFulfill($order->getExternalNumber(), "DHL", $tracking['Tracking number']);
             if ($result) {
-                $this->addLogToOrder($order, 'Mark as fulfilled on Aliexpress');
+                $this->addLogToOrder($order, 'Mark as fulfilled on Arise');
                 return true;
             } else {
-                $orderAliexpress = $this->getAliExpressApi()->getOrder($order->getExternalNumber());
-                if ($orderAliexpress->logistics_status == "WAIT_SELLER_SEND_GOODS" && $orderAliexpress->order_status == "IN_CANCEL") {
+                $orderAliexpress = $this->getAriseApi()->getOrder($order->getExternalNumber());
+                /*if ($orderAliexpress->logistics_status == "WAIT_SELLER_SEND_GOODS" && $orderAliexpress->order_status == "IN_CANCEL") {
                     $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting tracking number ' . $tracking['Tracking number'] . ' Customer asks for cancelation and no response was done online. A response should be brought before ' . DatetimeUtils::createStringTimeFromDate($orderAliexpress->over_time_left));
                 } else if ($orderAliexpress->order_status == 'FINISH' && $orderAliexpress->order_end_reason == "cancel_order_close_trade") {
                     $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting tracking number ' . $tracking['Tracking number'] . ' Order has been cancelled online on ' . DatetimeUtils::createStringTimeFromDate($orderAliexpress->gmt_trade_end));
@@ -49,7 +47,7 @@ abstract class AliExpressInvoiceParent extends InvoiceParent
                     $order->setStatus(WebOrder::STATE_CANCELLED);
                 } else {
                     $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting tracking number ' . $tracking['Tracking number']);
-                }
+                }*/
             }
         }
         return false;

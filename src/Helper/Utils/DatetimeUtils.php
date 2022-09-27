@@ -15,21 +15,25 @@ class DatetimeUtils
     /**
      * @return \DateTime|\DateTimeImmutable
      */
-    public static function transformFromIso8601(string $value): DateTimeInterface
+    public static function transformFromIso8601(string $value): DateTime
     {
         $date = explode('T', $value);
         return DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
     }
 
 
-
-    public static function createDateTimeFromAliExpressDate(string $date): DateTimeInterface
+    public static function createDateTimeFromDate(string $date, $format='Y-m-d H:i:s'): DateTime
     {
-        $dateTime = DateTime::createFromFormat('Y-m-d H:i:s', $date);
-        //$dateTime->add(new DateInterval('PT9H'));
+        $dateTime = DateTime::createFromFormat($format, $date);
         return $dateTime;
     }
 
+
+    public static function createStringTimeFromDate(string $date, $format = 'd-m-Y H:i'): string
+    {
+        $dateTime = self::createDateTimeFromDate($date);
+        return $dateTime ? $dateTime->format($format) : $date;
+    }
 
     public static function getChoicesWeekDayName(): array
     {
@@ -53,11 +57,7 @@ class DatetimeUtils
     }
 
 
-    public static function createStringTimeFromAliExpressDate(string $date, $format = 'd-m-Y H:i'): string
-    {
-        $dateTime = self::createDateTimeFromAliExpressDate($date);
-        return $dateTime ? $dateTime->format($format) : $date;
-    }
+ 
 
 
 

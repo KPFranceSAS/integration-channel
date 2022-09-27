@@ -1,0 +1,16 @@
+{% if field.value|length > 0 %}
+
+	<div class="">
+		{{field.value.address_billing.last_name}} {{field.value.address_billing.first_name}}<br/>
+		{{field.value.address_billing.address1}}<br/>
+		{{field.value.address_billing.address2}}<br/>
+		{{field.value.address_billing.post_code}}
+		{{field.value.address_billing.city}},
+		{{field.value.address_billing.country}}
+
+	</div>
+{% else %}
+	<span class="badge badge-secondary">
+		Data not accessible from Arise
+	</span>
+{% endif %}

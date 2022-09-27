@@ -47,7 +47,7 @@ abstract class IntegratorParent
 
 
     public function getApi()
-    {
+    {   
         return $this->apiAggregator->getApi($this->getChannel());
     }
 

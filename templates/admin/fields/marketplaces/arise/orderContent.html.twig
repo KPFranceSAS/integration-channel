@@ -1,0 +1,84 @@
+{% if field.value|length > 0 %}
+
+	<div class="">
+		<table class="table datagrid ">
+			<thead>
+				<tr>
+					<th>
+						Sku
+					</th>
+					<th>
+						Title
+					</th>
+
+					<th>
+						Unit Price
+					</th>
+					<th>
+						Paid Price
+					</th>
+					<th>
+						Qty
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for line in field.value.lines %}
+					<tr>
+						<td data-label="Sku" class="text-left field-text">
+							{{line.sku}}
+						</td>
+						<td data-label="Title" class="text-left field-text">
+							{{line.name|slice(0,20)}}
+						</td>
+						<td data-label="Unit price" class="text-left field-text">
+							{{line.item_price}}
+						</td>
+						<td data-label="Paid price" class="text-left field-text">
+							{{line.paid_price}}
+						</td>
+						<td data-label="Qty" class="text-left field-text">
+							1
+						</td>
+					</tr>
+				{% endfor %}
+				
+			</tbody>
+			<tfoot>
+				<tr >
+					<td colspan="4" class="tfoot-col-label">
+						<strong>Total shipping</strong>
+					</td>
+					<td colspan="" data-label="Total shipping" class="text-left field-text">
+						{{field.value.shipping_fee}}
+						EUR
+					</td>
+				</tr>
+				<tr >
+					<td colspan="4" class="tfoot-col-label">
+						<strong>Voucher {{field.value.voucher_code}}</strong>
+					</td>
+					<td colspan="" data-label="Total price" class="text-left field-text">
+						- {{field.value.voucher}}
+						EUR
+					</td>
+				</tr>
+				<tr >
+					<td colspan="4" class="tfoot-col-label">
+						<strong>Total</strong>
+					</td>
+					<td colspan="" data-label="Total price" class="text-left field-text">
+					{% set total = field.value.price - field.value.voucher %}
+						{{total}}
+						EUR
+					</td>
+				</tr>
+				
+			</tfoot>
+		</table>
+	</div>
+{% else %}
+	<span class="badge badge-secondary">
+		Data not accessible from Arise
+	</span>
+{% endif %}

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Command\Lazada;
+namespace App\Command\Arise;
 
-use App\Service\Lazada\LazadaClient;
-use App\Service\Lazada\LazadaRequest;
+use App\Service\Arise\AriseClient;
+use App\Service\Arise\AriseRequest;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -11,16 +11,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class GenerateTokenCommand extends Command
 {
-    protected static $defaultName = 'app:lazada-generate-code';
-    protected static $defaultDescription = 'Generate a new token for Lazada.';
+    protected static $defaultName = 'app:arise-generate-code';
+    protected static $defaultDescription = 'Generate a new token for Arise. https://auth.proyectoarise.com/apps/oauth/authorize?response_type=code&force_auth=true&redirect_uri=https://marketplace.kps-group.com/&client_id=500696';
 
-    public function __construct(LazadaClient $lazadaClient)
+    public function __construct(AriseClient $ariseClient)
     {
-        $this->lazadaClient = $lazadaClient;
+        $this->ariseClient = $ariseClient;
         parent::__construct();
     }
 
-    private $lazadaClient;
+    private $ariseClient;
 
     protected function configure(): void
     {
@@ -32,9 +32,9 @@ class GenerateTokenCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $request = new LazadaRequest('/auth/token/create');
+        $request = new AriseRequest('/auth/token/create');
         $request->addApiParam('code', $input->getArgument('code'));
-        var_dump($this->lazadaClient->execute($request));
+        dump($this->ariseClient->execute($request, false));
         return Command::SUCCESS;
     }
 }

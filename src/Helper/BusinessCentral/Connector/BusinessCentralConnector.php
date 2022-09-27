@@ -93,7 +93,7 @@ abstract class BusinessCentralConnector
                 'Authorization' => "Basic " . base64_encode("$loginBC:$passwordBC"),
             ],
         ]);
-        $this->debugger = ($appEnv == 'dev' || $appEnv == 'test');
+        $this->debugger = false;
     }
 
 

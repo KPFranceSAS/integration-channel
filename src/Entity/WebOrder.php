@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Helper\Traits\TraitLoggable;
 use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
+use DateInterval;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -28,6 +29,12 @@ class WebOrder
     public const  CHANNEL_MINIBATT = 'MINIBATT';
     public const  CHANNEL_FLASHLED = 'FLASHLED';
     public const  CHANNEL_FITBITCORPORATE = 'FITBITCORPORATE';
+    public const  CHANNEL_ARISE = 'ARISE';
+
+
+
+
+    
     public const  DOCUMENT_ORDER = 'ORDER';
     public const  DOCUMENT_INVOICE = 'INVOICE';
 
@@ -324,6 +331,8 @@ class WebOrder
             case WebOrder::CHANNEL_FITBITCORPORATE:
                 $order = $this->getOrderContent();
                 return 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'];
+            case WebOrder::CHANNEL_ARISE:
+                return 'https://sellercenter.proyectoarise.es/apps/order/detail?tradeOrderId=' . $this->externalNumber;
         }
         throw new Exception('No url link of weborder for ' . $this->channel);
     }
@@ -364,14 +373,14 @@ class WebOrder
     public static function createOneFrom($orderApi, $channel): WebOrder
     {
         switch ($channel) {
-            case  WebOrder::CHANNEL_ALIEXPRESS:
-                return WebOrder::createOneFromAliExpress($orderApi);
-            case   WebOrder::CHANNEL_ALIEXPRESS:
+            case WebOrder::CHANNEL_ALIEXPRESS:
                 return WebOrder::createOneFromAliExpress($orderApi);
             case   WebOrder::CHANNEL_FITBITEXPRESS:
                 $webOrder = WebOrder::createOneFromAliExpress($orderApi);
                 $webOrder->setChannel(WebOrder::CHANNEL_FITBITEXPRESS);
                 return $webOrder;
+            case WebOrder::CHANNEL_ARISE:
+                return WebOrder::createOneFromArise($orderApi);    
             case   WebOrder::CHANNEL_CHANNELADVISOR:
                 return WebOrder::createOneFromChannelAdvisor($orderApi);
             case   WebOrder::CHANNEL_OWLETCARE:
@@ -455,7 +464,7 @@ class WebOrder
         $webOrder->setChannel(WebOrder::CHANNEL_ALIEXPRESS);
         $webOrder->setSubchannel('AliExpress');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $datePurchase = DatetimeUtils::createDateTimeFromAliExpressDate($orderApi->gmt_pay_success);
+        $datePurchase = DatetimeUtils::createDateTimeFromDate($orderApi->gmt_pay_success);
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
@@ -463,6 +472,30 @@ class WebOrder
         $webOrder->setContent($orderApi);
         return $webOrder;
     }
+
+
+
+
+    public static function createOneFromArise($orderApi): WebOrder
+    {
+        $webOrder = new WebOrder();
+        $webOrder->setExternalNumber($orderApi->order_id);
+        $webOrder->setStatus(WebOrder::STATE_CREATED);
+        $webOrder->setChannel(WebOrder::CHANNEL_ARISE);
+        $webOrder->setSubchannel('Arise');
+        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
+        $datePurchase = DatetimeUtils::createDateTimeFromDate(substr($orderApi->created_at, 0, 19));
+        $datePurchase->add(new DateInterval('PT8H'));
+        $webOrder->setPurchaseDate($datePurchase);
+        $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
+        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+        $webOrder->addLog('Retrieved from Arise');
+        $webOrder->setContent($orderApi);
+        return $webOrder;
+    }
+
+
+
 
     /**
      * Undocumented function

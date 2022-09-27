@@ -34,7 +34,7 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
             try {
                 $orderFull = $this->getAliExpressApi()->getOrder($orderApi->order_id);
 
-                $datePurchase = DatetimeUtils::createDateTimeFromAliExpressDate($orderFull->gmt_pay_success);
+                $datePurchase = DatetimeUtils::createDateTimeFromDate($orderFull->gmt_pay_success);
                 $now = new DateTime();
                 $interval = $now->diff($datePurchase, true);
                 $totalHours = $interval->format('%a') * 24 + $interval->format('%h');

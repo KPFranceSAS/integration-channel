@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Service\Lazada;
+namespace App\Service\Arise;
 
 use Exception;
 
-class LazadaRequest
+class AriseRequest
 {
     public $apiName;
 

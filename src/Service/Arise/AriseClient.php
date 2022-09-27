@@ -1,18 +1,20 @@
 <?php
 
-namespace App\Service\Lazada;
+namespace App\Service\Arise;
 
-use App\Service\Lazada\LazadaRequest;
+use App\Service\Arise\AriseRequest;
 use Exception;
 use Psr\Log\LoggerInterface;
 
-class LazadaClient
+class AriseClient
 {
     public $loggerInterface;
 
     public $appkey;
 
     public $accessToken;
+
+    public $refreshToken;
 
     public $secretKey;
 
@@ -26,7 +28,6 @@ class LazadaClient
 
     protected $sdkVersion = "iop-sdk-php-20200227";
 
-    public $logLevel;
 
     public $logger;
 
@@ -35,14 +36,28 @@ class LazadaClient
         return $this->appkey;
     }
 
-    public function __construct(LoggerInterface $loggerInterface, $lazadaClientId, $lazadaClientSecret, $lazadaClientAccessToken, $logLevel = "DEBUG")
+    public function __construct(LoggerInterface $loggerInterface, $ariseClientId, $ariseClientSecret, $ariseClientAccessToken, $ariseClientRefreshToken)
     {
         $this->gatewayUrl = 'https://api.proyectoarise.es/rest';
-        $this->appkey = $lazadaClientId;
-        $this->secretKey = $lazadaClientSecret;
-        $this->logLevel = $logLevel;
-        $this->accessToken = $lazadaClientAccessToken;
+        $this->appkey = $ariseClientId;
+        $this->secretKey = $ariseClientSecret;
+
+        $this->accessToken =  $ariseClientAccessToken;
+        $this->refreshToken = $ariseClientRefreshToken;
         $this->logger = $loggerInterface;
+    }
+
+
+
+    public function getRefreshedToken()
+    {
+        if (!$this->accessToken) {
+            $request = new AriseRequest('/auth/token/refresh');
+            $request->addApiParam('refresh_token', $this->refreshToken);
+            $reponse = $this->execute($request, false);
+            $this->accessToken = $reponse->access_token;
+        }
+        return $this->accessToken;
     }
 
     
@@ -209,15 +224,13 @@ class LazadaClient
         return $response;
     }
 
-    public function execute(LazadaRequest $request, $accessToken = null)
+    public function execute(AriseRequest $request, $withToken = true)
     {
         $sysParams["app_key"] = $this->appkey;
         $sysParams["sign_method"] = $this->signMethod;
         $sysParams["timestamp"] = $this->msectime();
-        if (null != $accessToken) {
-            $sysParams["access_token"] = $accessToken;
-        } else {
-            $sysParams["access_token"] = $this->accessToken;
+        if ($withToken) {
+            $sysParams["access_token"] = $this->getRefreshedToken();
         }
 
         $apiParams = $request->udfParams;
@@ -232,11 +245,6 @@ class LazadaClient
         $requestUrl .= '?';
 
         $sysParams["partner_id"] = $this->sdkVersion;
-
-        if ($this->logLevel == 'DEBUG') {
-            $sysParams["debug"] = 'true';
-        }
-
         $sysParams["sign"] = $this->generateSign($request->apiName, array_merge($apiParams, $sysParams));
 
         foreach ($sysParams as $sysParamKey => $sysParamValue) {
@@ -264,9 +272,7 @@ class LazadaClient
         if (isset($respObject->code) && $respObject->code != "0") {
             $this->logApiError($requestUrl, $respObject->code, $respObject->message);
         } else {
-            if ($this->logLevel == "DEBUG" || $this->logLevel == "INFO") {
-                $this->logApiError($requestUrl, '', '');
-            }
+            $this->logApiError($requestUrl, '', '');
         }
         return $respObject;
     }
