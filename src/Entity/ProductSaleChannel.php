@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\ProductLogEntry;
+use App\Entity\ProductSaleChannelHistory;
 use App\Entity\Promotion;
 use App\Helper\Traits\TraitTimeUpdated;
 use DateTime;
@@ -93,6 +94,11 @@ class ProductSaleChannel
      */
     private $estimatedShippingPercent;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ProductSaleChannelHistory::class, mappedBy="productSaleChannel", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $productSaleChannelHistories;
+
 
     public function getSalePriceForNow()
     {
@@ -148,10 +154,113 @@ class ProductSaleChannel
         return $this->product->getBrand().' '.$this->product->getSku().' > '.$this->getSaleChannelName();
     }
 
+
+
+    public function checkAndAddHistory(): bool
+    {
+        $oldProductSaleChannelHistory = $this->getLastProductSaleChannelHistory();
+        if(!$oldProductSaleChannelHistory){
+            $this->createFirstRecord();
+            return true;
+        } else {
+            $newProductSaleChannelHistory = $this->createNewRecord();
+            if($this->shouldBeSavedHistoric($newProductSaleChannelHistory, $oldProductSaleChannelHistory)){
+                $this->addProductSaleChannelHistory($newProductSaleChannelHistory);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function createFirstRecord(): ProductSaleChannelHistory
+    {
+        $productSaleHistory = new ProductSaleChannelHistory();
+        $productSaleHistory->setTypeModification(ProductSaleChannelHistory::TYPE_CREATION);
+        $productSaleHistory->setEnabled(false);
+        $this->addProductSaleChannelHistory($productSaleHistory);
+        return $productSaleHistory;
+    }
+
+
+
+    public function shouldBeSavedHistoric(ProductSaleChannelHistory $new, ProductSaleChannelHistory $old): bool {
+        if($new->isEnabled()!=$old->isEnabled()){
+            $new->setTypeModification($new->isEnabled() ? ProductSaleChannelHistory::TYPE_ACTIVATION : ProductSaleChannelHistory::TYPE_DESACTIVATION);    
+            return true;
+        }
+        
+        
+
+        if($new->getPrice()!=$old->getPrice()){
+            if($new->getRegularPrice()!=$old->getRegularPrice()){
+                $new->setTypeModification(ProductSaleChannelHistory::TYPE_MODIFICATION_REGULAR_PRICE);
+                return true;
+            }
+
+            if($new->getPromotionPrice()!=$old->getPromotionPrice()){
+                if(!$new->getPromotionPrice()){
+                    $new->setTypeModification(ProductSaleChannelHistory::TYPE_DESACTIVATION_PROMOTION);
+                } elseif(!$old->getPromotionPrice()){
+                    $new->setTypeModification(ProductSaleChannelHistory::TYPE_ACTIVATION_PROMOTION);
+                } else {
+                    $new->setTypeModification(ProductSaleChannelHistory::TYPE_MODIFICATION_SALE_PRICE);
+                }
+               
+                return true;
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+
+
+
+
+    public function createNewRecord(): ProductSaleChannelHistory
+    {
+        $productSaleHistory = new ProductSaleChannelHistory();       
+        $productSaleHistory->setEnabled($this->enabled);
+        if($this->enabled){
+            $productSaleHistory->setRegularPrice($this->price);
+            $promotion = $this->getBestPromotionForNow();
+            if($promotion){
+                $productSaleHistory->setDescription(strlen($promotion->getComment())>0 ? $promotion->getComment() : substr($promotion->getPromotionDescriptionFrequency().' '.$promotion->getPromotionDescriptionType(), 0, 255));
+                $productSaleHistory->setPrice($promotion->getPromotionPrice());
+                $productSaleHistory->setPromotionPrice($promotion->getPromotionPrice());
+            } else {
+                $productSaleHistory->setPrice($this->price);
+            }
+        } 
+        return $productSaleHistory;
+    }
+
+
+    public function getLastProductSaleChannelHistory(): ?ProductSaleChannelHistory
+    {
+        $oldest =null;
+        if(count($this->productSaleChannelHistories)> 0) {
+            foreach($this->productSaleChannelHistories as $productHistory){
+                if(!$oldest){
+                    $oldest = $productHistory;
+                } else {
+                    if($oldest->getCreatedAt() < $productHistory->getCreatedAt()){
+                        $oldest = $productHistory;
+                    }
+                }
+            }   
+        } 
+
+        return $oldest;
+    }
+
+
     
     public function __construct()
     {
         $this->promotions = new ArrayCollection();
+        $this->productSaleChannelHistories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -329,6 +438,36 @@ class ProductSaleChannel
     public function setEstimatedShippingPercent(?float $estimatedShippingPercent): self
     {
         $this->estimatedShippingPercent = $estimatedShippingPercent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProductSaleChannelHistory>
+     */
+    public function getProductSaleChannelHistories(): Collection
+    {
+        return $this->productSaleChannelHistories;
+    }
+
+    public function addProductSaleChannelHistory(ProductSaleChannelHistory $productSaleChannelHistory): self
+    {
+        if (!$this->productSaleChannelHistories->contains($productSaleChannelHistory)) {
+            $this->productSaleChannelHistories[] = $productSaleChannelHistory;
+            $productSaleChannelHistory->setProductSaleChannel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductSaleChannelHistory(ProductSaleChannelHistory $productSaleChannelHistory): self
+    {
+        if ($this->productSaleChannelHistories->removeElement($productSaleChannelHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($productSaleChannelHistory->getProductSaleChannel() === $this) {
+                $productSaleChannelHistory->setProductSaleChannel(null);
+            }
+        }
 
         return $this;
     }
