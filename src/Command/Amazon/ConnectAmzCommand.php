@@ -35,8 +35,6 @@ class ConnectAmzCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-
         $this->getFinancialEvents();
         //$this->getFinancialsGroup();
 
@@ -56,16 +54,15 @@ class ConnectAmzCommand extends Command
 
     protected function getFinancialsGroup()
     {
-
         /*
     Select ROUND(SUM(afe.amount_currency)) as total,  ROUND(afeg.original_total_currency) as groupe,  afeg.id, afeg.start_date, afeg.end_date, afeg.financial_event_id , afeg.marketplace  FROM integration_channel.amazon_financial_event afe
-    LEFT JOIN integration_channel.amazon_financial_event_group afeg on afeg.id = afe.event_group_id 
-    GROUP BY afeg.id 
+    LEFT JOIN integration_channel.amazon_financial_event_group afeg on afeg.id = afe.event_group_id
+    GROUP BY afeg.id
 
-    Select SUM(afe.amount), SUM(afe.amount_currency), afe.transaction_type, afe.amount_type, afe.amount_description 
+    Select SUM(afe.amount), SUM(afe.amount_currency), afe.transaction_type, afe.amount_type, afe.amount_description
 FROM integration_channel.amazon_financial_event afe
 WHERE event_group_id = 1
-GROUP BY afe.transaction_type, afe.amount_type, afe.amount_description 
+GROUP BY afe.transaction_type, afe.amount_type, afe.amount_description
     */
 
         $financialGroups = $this->fincancial->getAllFinancialEventsByGroup('XlFY-Vub4rWx9qpS4LgQeFC2MeRxqbKzTC7CmaREdIw');
@@ -84,10 +81,9 @@ GROUP BY afe.transaction_type, afe.amount_type, afe.amount_description
 
     protected function getFinancialEvents()
     {
-
         $dateTime = new DateTime('2019-11-01');
         $dateTimeFin = new DateTime('2020-06-03');
-        $financialGroups = $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);
+        $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);
     }
 
 

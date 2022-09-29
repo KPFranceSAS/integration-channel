@@ -74,6 +74,20 @@ abstract class ShopifyApiParent implements ApiInterface
     }
 
 
+
+    public function getAllTransactions(string $orderNumber)
+    {
+        return $this->getPaginatedElements(
+            "orders/$orderNumber/transactions",
+            [],
+            [
+                "order_id" => $orderNumber,
+            ],
+            'transactions'
+        );
+    }
+
+
     public function getOrder(string $orderNumber)
     {
         return $this->getPaginatedElements(
@@ -214,6 +228,11 @@ abstract class ShopifyApiParent implements ApiInterface
         if (strpos($link, 'rel="next"') === false) {
             return null;
         }
+
+        if (strpos($link, 'rel="previous"') !== false) {
+            $linkPart = explode('rel="previous"', $link, 2);
+            $link = $linkPart[1];
+        }
         $tobeReplace = ["<", ">", 'rel="next"', ";", 'rel="previous"'];
         $tobeReplaceWith = ["", "", "", ""];
         parse_str(parse_url(str_replace($tobeReplace, $tobeReplaceWith, $link), PHP_URL_QUERY), $op);
@@ -221,12 +240,15 @@ abstract class ShopifyApiParent implements ApiInterface
     }
 
 
-    protected function getPaginatedElements($endPoint, $headers = [], $query = [])
+    protected function getPaginatedElements($endPoint, $headers = [], $query = [], $associativeIndex =null)
     {
         $nextToken = null;
         $elements = [];
+
+        $indexKey = $associativeIndex ? $associativeIndex : $endPoint;
         do {
             if ($nextToken) {
+                $query = [];
                 $query['page_info'] = $nextToken;
             }
             $response = $this->client->get(
@@ -235,9 +257,15 @@ abstract class ShopifyApiParent implements ApiInterface
                 $query
             );
             $responseArray = $response->getDecodedBody();
-            $this->logger->info('Fetch ' . count($responseArray[$endPoint]) . " new elements");
-            $elements = array_merge($elements, $responseArray[$endPoint]);
-            $nextToken = $this->extractLinkNext($response->getHeader('Link'));
+            if (array_key_exists($indexKey, $responseArray)) {
+                $this->logger->info('Fetch ' . count($responseArray[$indexKey ]) . " new elements");
+                $elements = array_merge($elements, $responseArray[$indexKey ]);
+                $this->logger->info('Fetch ' . count($elements) . " elements");
+                
+                $nextToken = $this->extractLinkNext($response->getHeader('Link'));
+            } else {
+                throw new Exception('Error get '.$endPoint.' on Shopify '.$responseArray['errors']);
+            }
         } while ($nextToken != null);
         return $elements;
     }

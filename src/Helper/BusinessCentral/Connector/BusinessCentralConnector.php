@@ -17,12 +17,6 @@ abstract class BusinessCentralConnector
     public const INIA = "INIA SLU";
 
 
-
-
-
-
-
-
     public const EP_ACCOUNT = "accounts";
 
     public const EP_COMPANIES = "companies";
@@ -34,6 +28,10 @@ abstract class BusinessCentralConnector
     public const EP_PAYMENT_TERMS = "paymentTerms";
 
     public const EP_CUSTOMERS = "customers";
+
+    public const EP_CUSTOMER_PAYMENT_JOURNALS = "customerPaymentJournals";
+
+    public const EP_CUSTOMER_PAYMENTS = "customerPayments";
 
     public const EP_ITEMS = "items";
 
@@ -662,6 +660,53 @@ abstract class BusinessCentralConnector
     {
         return $this->getElementsByArray(
             self::EP_PURCHASES_ORDERS,
+            null,
+            true
+        );
+    }
+
+
+    public function getAllCustomerPaymentJournals()
+    {
+        return $this->getElementsByArray(
+            self::EP_CUSTOMER_PAYMENT_JOURNALS,
+            null,
+            true
+        );
+    }
+
+
+    public function getCustomerPaymentJournalByCode(string $code): ?array
+    {
+        $customerPayementJournals = $this->getAllCustomerPaymentJournals();
+        foreach ($customerPayementJournals as $customerJournal) {
+            if ($customerJournal['code'] == $code) {
+                return $customerJournal;
+            }
+        }
+        return null;
+      
+        /* return $this->getElementsByArray(
+            self::EP_CUSTOMER_PAYMENT_JOURNALS,
+            "code eq '$code'"
+        );*/
+    }
+
+
+
+    public function createCustomerPayment(string $customerJournal, array $payment)
+    {
+        return $this->doPostRequest(
+            self::EP_CUSTOMER_PAYMENT_JOURNALS . "($customerJournal)/" . self::EP_CUSTOMER_PAYMENTS,
+            $payment
+        );
+    }
+
+
+    public function getAllCustomerPaymentJournalByJournal(string $customerJournal)
+    {
+        return $this->getElementsByArray(
+            self::EP_CUSTOMER_PAYMENT_JOURNALS . "($customerJournal)/" . self::EP_CUSTOMER_PAYMENTS,
             null,
             true
         );

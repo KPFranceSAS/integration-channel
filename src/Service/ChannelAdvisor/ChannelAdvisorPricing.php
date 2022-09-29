@@ -29,7 +29,8 @@ class ChannelAdvisorPricing
     }
 
 
-    public function exportPricings(){
+    public function exportPricings()
+    {
         $saleChannels = $this->managerRegistry->getRepository(SaleChannel::class)->findBy([
             'channel' => WebOrder::CHANNEL_CHANNELADVISOR
         ]);
@@ -38,10 +39,10 @@ class ChannelAdvisorPricing
         
 
         $header = ['sku'];
-        foreach($saleChannels as $saleChannel){
+        foreach ($saleChannels as $saleChannel) {
             $code = $saleChannel->getCode().'-';
             array_push($header, $code.'enabled', $code.'price', $code.'promoprice');
-        }   
+        }
         $datasToExport=[implode(';', $header)];
         $this->logger->info("start export ".count($products)." products on ".count($saleChannels)." sale channels");
         foreach ($products as $product) {
@@ -51,13 +52,17 @@ class ChannelAdvisorPricing
 
 
         $dataArray = implode("\r\n", $datasToExport);
-        $filename = 'pricing_'.date('Ymd_His').'.csv';
+        $filename = 'pricing_'.date('Ymd_His').'.PRICE.csv';
         $this->logger->info("start export pricing locally");
         $this->defaultStorage->write('pricings/'.$filename, $dataArray);
         $this->logger->info("start export pricing on channeladvisor");
-        $this->channelAdvisorStorage->write('accounts/12044693/Pricings/'.$filename, $dataArray);
-       
-        
+
+        $this->channelAdvisorStorage->write('/accounts/12009934/Inventory/Transform/'.$filename, $dataArray);
+        $this->channelAdvisorStorage->write('/accounts/12010023/Inventory/Transform/'.$filename, $dataArray);
+        $this->channelAdvisorStorage->write('/accounts/12010024/Inventory/Transform/'.$filename, $dataArray);
+        $this->channelAdvisorStorage->write('/accounts/12010025/Inventory/Transform/'.$filename, $dataArray);
+        $this->channelAdvisorStorage->write('/accounts/12010026/Inventory/Transform/'.$filename, $dataArray);
+        $this->channelAdvisorStorage->write('/accounts/12044693/Inventory/Transform/'.$filename, $dataArray);
     }
 
 
@@ -65,24 +70,22 @@ class ChannelAdvisorPricing
     {
         $productArray = array_fill_keys($header, null);
         $productArray['sku'] = $product->getSku();
-        foreach($saleChannels as $saleChannel){
-           $code = $saleChannel->getCode().'-';
-           $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
+        foreach ($saleChannels as $saleChannel) {
+            $code = $saleChannel->getCode().'-';
+            $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
           
-           if($productMarketplace->getEnabled()){
+            if ($productMarketplace->getEnabled()) {
                 $productArray[$code.'enabled']= 1 ;
                 $productArray[$code.'price']= $productMarketplace->getPrice() ;
                 $promotion = $productMarketplace->getBestPromotionForNow();
-                if($promotion){
+                if ($promotion) {
                     $productArray[$code.'promoprice']= $promotion->getPromotionPrice() ;
                 }
-           } else {
+            } else {
                 $productArray[$code.'enabled']= 0;
-           }
+            }
         }
 
         return $productArray;
     }
-
-
 }
