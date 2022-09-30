@@ -5,6 +5,8 @@ namespace App\Service\Amazon\Report;
 use AmazonPHP\SellingPartner\Marketplace;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
+use App\Entity\ProductSaleChannel;
+use App\Entity\SaleChannel;
 use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\Amazon\AmzApi;
 use App\Service\BusinessCentral\BusinessCentralAggregator;
@@ -188,6 +190,7 @@ class AmzApiImportProduct
             $connector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
             $itemBc = $connector->getItemByNumber($sku);
             if ($itemBc) {
+                $saleChannels = $this->manager->getRepository(SaleChannel::class)->findAll();
                 $this->logger->info('New product ' . $sku);
                 $product = new Product();
                 $product->setAsin($importOrder['asin']);
@@ -196,6 +199,13 @@ class AmzApiImportProduct
                 $product->setSku($sku);
                 $this->manager->persist($product);
                 $this->manager->flush();
+                foreach ($saleChannels as $saleChannel) {
+                    $productSaleChannel = new ProductSaleChannel();
+                    $productSaleChannel->setProduct($product);
+                    $saleChannel->addProductSaleChannel($productSaleChannel);
+                }
+                $this->manager->flush();
+               
             } else {
                 $this->errorProducts[] = 'Product ' . $sku . ' not found in Business central';
             }

@@ -41,6 +41,8 @@ class ExportFlashledTransactionCommand extends Command
                 $transactions = $this->flashledApi->getAllTransactions($order['id']);
                 foreach ($transactions as $transaction) {
                     $customerPayment = $this->getCustomerPayment($transaction, $order);
+
+
                     if ($customerPayment) {
                         $result = $this->kitPerzonalisationSport->createCustomerPayment($customerJournal['id'], $customerPayment->transformToArray());
                     }
@@ -56,8 +58,6 @@ class ExportFlashledTransactionCommand extends Command
 
     private function getCustomerPayment($transaction, $order): ?CustomerPayment
     {
-       
-
         if ($transaction['status']!='success' && $transaction['kind']!='sale') {
             dump($transaction);
             return null;

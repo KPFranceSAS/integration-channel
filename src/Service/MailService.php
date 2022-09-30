@@ -52,7 +52,7 @@ class MailService
 
         $email = (new Email())
             ->from(new Address('devops@kpsport.com', 'DEV OPS'))
-            ->subject($titre)
+            ->subject("[Patxira] ".$titre)
             ->html($contenu);
         if (is_array($emails)) {
             foreach ($emails as $emailRecipient) {
@@ -113,4 +113,33 @@ class MailService
 
         return false;
     }
+
+
+
+    /**
+     */
+    public function sendEmailRole($role, $titre, $contenu)
+    {
+        $this->logger->info("Sending email $titre to role " . $role . "  > $contenu ");
+
+        $emails = [];
+
+        $users = $this->manager->getRepository(User::class)->findAll();
+        foreach ($users as $user) {
+            if ($user->hasRole($role)) {
+                $emails[] = $user->getEmail();
+            }
+        }
+
+        $newTitre = $titre;
+
+        if (count($emails) > 0) {
+            $this->sendEmail($newTitre, $contenu, $emails);
+        } else {
+            $this->sendEmail($newTitre, $contenu);
+        }
+    }
+
+
+
 }

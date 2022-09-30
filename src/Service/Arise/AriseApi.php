@@ -249,7 +249,7 @@ class AriseApi implements ApiInterface
             if ($line->status == 'pending') {
                 $orderItemIds[]=$line->order_item_id;
             }
-        }    
+        }
         $payload = [
             'pack_order_list'=> [
                 [
@@ -362,7 +362,7 @@ class AriseApi implements ApiInterface
     {
         try {
             $order = $this->getOrder($orderId);
-            if($this->checkIfOrderIsNotMarkedAsShipped($order)){
+            if ($this->checkIfOrderIsNotMarkedAsShipped($order)) {
                 $this->logger->info('Order id marked as sent');
 
                 $packId = $this->createPackForOrder($order);
@@ -383,13 +383,11 @@ class AriseApi implements ApiInterface
 
     public function checkIfOrderIsNotMarkedAsShipped($order): bool
     {
-        foreach($order->lines as $line){
-            if($line->status=='pending'){
+        foreach ($order->lines as $line) {
+            if ($line->status=='pending') {
                 return true;
             }
         }
         return false;
     }
-
-
 }
