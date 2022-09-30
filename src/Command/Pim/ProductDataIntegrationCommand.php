@@ -97,7 +97,7 @@ class ProductDataIntegrationCommand extends Command
 
 
         if(count($errors)>0){
-            $this->mailService->sendEmail('[Products] Error PIM with products', implode('<br/>', $errors));
+            $this->mailService->sendEmail('[Products] Error PIM with products', implode('<br/>', $errors), 'devops@kpsport.com');
         }
 
 
