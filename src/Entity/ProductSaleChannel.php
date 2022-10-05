@@ -114,6 +114,15 @@ class ProductSaleChannel
     }
 
 
+    public function getSalePriceDescription(DateTime $date)
+    {
+        $promotion = $this->getBestPromotionForDate($date);
+        return $promotion ? 'Promotion :'.$promotion->getComment() : 'Regular price';
+    }
+
+    
+
+
     public function getBestPromotionForNow(): ?Promotion
     {
         $now = new DateTime('now');

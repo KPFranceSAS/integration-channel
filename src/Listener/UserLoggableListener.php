@@ -10,6 +10,8 @@ use Symfony\Component\Security\Core\Security;
 
 class UserLoggableListener extends LoggableListener
 {
+    private $security;
+
     public function setSecurity(Security $security)
     {
         $this->security = $security;

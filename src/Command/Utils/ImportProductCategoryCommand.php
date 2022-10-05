@@ -99,7 +99,7 @@ class ImportProductCategoryCommand extends Command
     {
         $skuSanitized = strtoupper($sku);
         $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
-        $skuFinal = $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
+        $skuFinal = $productCorrelation ? $productCorrelation->getSkuErpBc() : $skuSanitized;
 
         return  $this->manager->getRepository(Product::class)->findOneBy(["sku" => $skuFinal]);
     }

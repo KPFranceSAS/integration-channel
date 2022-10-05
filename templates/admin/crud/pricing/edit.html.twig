@@ -21,7 +21,12 @@
 			</li>
 			<li class="nav-item">
 				<a class="nav-link " href="#ea_container_graph" id="ea_tab_graph" data-bs-toggle="tab">
-					<i class="fa fa-fw fa-fas fa-chart-line"></i>Visualize
+					<i class="fa fa-fw fa-fas fa-chart-line"></i>Sale prices
+				</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link " href="#ea_container_history" id="ea_tab_history" data-bs-toggle="tab">
+					<i class="fa fa-fw fa-fas fa-chart-line"></i>History
 				</a>
 			</li>
 			<li class="nav-item">
@@ -89,6 +94,8 @@
 										<th class="header-for-field-text text-left">Promotion Description Frequency</th>
 										<th class="header-for-field-text text-left">Begin Date</th>
 										<th class="header-for-field-text text-left">End date</th>
+										<th class="header-for-field-text text-left">Priority</th>
+										<th class="header-for-field-text text-left">Comment</th>
 										<th class="header-for-field-text text-left"></th>
 									</tr>
 								</thead>
@@ -116,6 +123,8 @@
 															<td class="text-left field-text">{{promotion.promotionDescriptionFrequency}}</td>
 															<td class="text-left field-text">{{promotion.beginDate|date('Y-m-d H:i')}}</td>
 															<td class="text-left field-text">{{promotion.endDate|date('Y-m-d H:i')}}</td>
+															<td class="text-left field-text">{{promotion.priority}}</td>
+															<td class="text-left field-text">{{promotion.comment}}</td>
 															<td class="actions ">
 																{% if app.user.hasSaleChannel(productSaleChannel.saleChannel) %}
 																	<a href="{{urlEdit}}" class="action-edit">
@@ -126,7 +135,7 @@
 														</tr>
 													{% else %}
 														<tr>
-															<td colspan="8">No promotions</td>
+															<td colspan="9">No promotions</td>
 														</tr>
 													{% endfor %}
 												</tbody>
@@ -140,7 +149,10 @@
 					{% endfor %}
 				</div>
 				<div class="tab-pane" id="ea_container_graph">
-					{{ render_chart(chart) }}
+					{{ render_chart(chartNextPrices, {'data-controller': 'productpricing'}) }}
+				</div>
+				<div class="tab-pane" id="ea_container_history">
+					{{ render_chart(chartHistoryPrices, {'data-controller': 'productpricing'}) }}
 				</div>
 
 				<div class="tab-pane" id="ea_container_log">

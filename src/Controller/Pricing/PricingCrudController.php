@@ -3,6 +3,7 @@
 namespace App\Controller\Pricing;
 
 use App\Controller\Admin\AdminCrudController;
+use App\Controller\Pricing\ImportPricingCrudController;
 use App\Entity\Product;
 use App\Entity\SaleChannel;
 use App\Form\ProductSaleChannelType;
@@ -12,12 +13,15 @@ use Box\Spout\Writer\CSV\Writer;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use function Symfony\Component\String\u;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -29,6 +33,11 @@ class PricingCrudController extends AdminCrudController
     public static function getEntityFqcn(): string
     {
         return Product::class;
+    }
+
+    public function getDefautOrder(): array
+    {
+        return ['sku' => "ASC"];
     }
 
 
@@ -66,7 +75,13 @@ class PricingCrudController extends AdminCrudController
 
 
 
-
+        public function configureFilters(Filters $filters): Filters
+        {
+            return $filters
+                ->add(EntityFilter::new('brand'))
+                ->add(EntityFilter::new('category'))
+                ->add(TextFilter::new('sku'));
+        }
 
 
     public function configureFields(string $pageName): iterable

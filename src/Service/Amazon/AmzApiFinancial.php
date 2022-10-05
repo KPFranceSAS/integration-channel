@@ -581,7 +581,7 @@ class AmzApiFinancial
                                     ->findOneBy([
                                         'skuUsed' => $skuSanitized
                                     ]);
-            $sku = $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
+            $sku = $productCorrelation ? $productCorrelation->getSkuErpBc() : $skuSanitized;
 
             $product = $this->manager->getRepository(Product::class)->findOneBy([
                 "sku" => $sku

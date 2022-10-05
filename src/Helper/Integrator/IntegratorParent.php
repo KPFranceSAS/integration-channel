@@ -346,7 +346,7 @@ abstract class IntegratorParent
     {
         $skuSanitized = strtoupper($sku);
         $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
-        $skuFinal = $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
+        $skuFinal = $productCorrelation ? $productCorrelation->getSkuErpBc() : $skuSanitized;
 
         $product = $this->getBusinessCentralConnector($company)->getItemByNumber($skuFinal);
         if (!$product) {

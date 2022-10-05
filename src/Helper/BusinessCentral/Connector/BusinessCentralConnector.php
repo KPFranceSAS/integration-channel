@@ -685,11 +685,6 @@ abstract class BusinessCentralConnector
             }
         }
         return null;
-      
-        /* return $this->getElementsByArray(
-            self::EP_CUSTOMER_PAYMENT_JOURNALS,
-            "code eq '$code'"
-        );*/
     }
 
 

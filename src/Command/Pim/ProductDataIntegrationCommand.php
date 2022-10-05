@@ -90,7 +90,7 @@ class ProductDataIntegrationCommand extends Command
                     $messages[] = "Product with SKU ".$sku." has been added to Patxira. You need to enable it on Marketplace.";
                 } else {
                     $output->writeln('Do no exists in Business central '.$sku);
-                    $errors[] = "Product with SKU ".$sku." exists in PIM but not in Business central. PLease correct product in PIM to Business central SKU.";
+                    $errors[] = "Product with SKU ".$sku." exists in PIM but not in Business central. Please correct product in PIM to Business central SKU.";
                 }
             }
         }

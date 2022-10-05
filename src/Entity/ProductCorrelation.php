@@ -26,15 +26,21 @@ class ProductCorrelation
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Assert\NotIdenticalTo(propertyPath="skuErp", message="This value should be different from ERP one")
+     * 
      */
     private $skuUsed;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      *
      */
     private $skuErp;
+
+    /**
+     * @Assert\NotNull()
+     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="productCorrelations")
+     */
+    private $product;
 
 
 
@@ -57,8 +63,14 @@ class ProductCorrelation
 
     public function getSkuErp(): ?string
     {
-        return $this->skuErp;
+        return  $this->skuErp;
     }
+
+    public function getSkuErpBc(): ?string
+    {
+        return $this->product ? $this->product->getSku() : $this->skuErp;
+    }
+    
 
     public function setSkuErp(string $skuErp): self
     {
@@ -66,4 +78,17 @@ class ProductCorrelation
 
         return $this;
     }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): self
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
 }

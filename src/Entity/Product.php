@@ -359,10 +359,17 @@ class Product
      */
     private $gbpPrice;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ProductCorrelation::class, mappedBy="product")
+     */
+    private $productCorrelations;
+
+
     public function __construct()
     {
         $this->productSaleChannels = new ArrayCollection();
         $this->salePrices = new ArrayCollection();
+        $this->productCorrelations = new ArrayCollection();
     }
 
 
@@ -1255,4 +1262,36 @@ class Product
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, ProductCorrelation>
+     */
+    public function getProductCorrelations(): Collection
+    {
+        return $this->productCorrelations;
+    }
+
+    public function addProductCorrelation(ProductCorrelation $productCorrelation): self
+    {
+        if (!$this->productCorrelations->contains($productCorrelation)) {
+            $this->productCorrelations[] = $productCorrelation;
+            $productCorrelation->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductCorrelation(ProductCorrelation $productCorrelation): self
+    {
+        if ($this->productCorrelations->removeElement($productCorrelation)) {
+            // set the owning side to null (unless already changed)
+            if ($productCorrelation->getProduct() === $this) {
+                $productCorrelation->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+    
 }

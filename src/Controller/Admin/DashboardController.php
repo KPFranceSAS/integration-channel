@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use App\Controller\Fba\ProductCrudController;
+use App\Controller\Configuration\ProductCrudController;
 use App\Controller\Fba\StockCrudController;
 use App\Controller\Order\AliexpressOrderCrudController;
 use App\Controller\Order\ChannelAdvisorOrderCrudController;
@@ -83,10 +83,6 @@ class DashboardController extends AbstractDashboardController
                         ->setController(StockCrudController::class),
                     MenuItem::linkToCrud('Fees', 'fas fa-money-bill-alt', AmazonFinancialEvent::class),
                     MenuItem::linkToCrud('FBA Returns', 'fas fa-exchange-alt', FbaReturn::class),
-                    MenuItem::linkToCrud('Product', 'fas fa-barcode', Product::class)
-                        ->setController(ProductCrudController::class),
-                    MenuItem::linkToCrud('Brand', 'far fa-registered', Brand::class),
-                    MenuItem::linkToCrud('Category', 'fas fa-sitemap', Category::class),
                 ])
                 ->setPermission('ROLE_AMAZON'),
             MenuItem::subMenu('Pricing', 'fas fa-money-bill')
@@ -116,6 +112,20 @@ class DashboardController extends AbstractDashboardController
             MenuItem::subMenu('Configuration', 'fas fa-cogs')
                 ->setSubItems([
                     MenuItem::linkToCrud(
+                        'Product', 
+                        'fas fa-barcode', 
+                        Product::class)->setController(ProductCrudController::class),
+                    MenuItem::linkToCrud(
+                        'Brand', 
+                        'far fa-registered', 
+                        Brand::class
+                    ),
+                    MenuItem::linkToCrud(
+                        'Category',
+                        'fas fa-sitemap',
+                        Category::class
+                    ),
+                    MenuItem::linkToCrud(
                         'SKU Mapping',
                         'fa fa-exchange',
                         ProductCorrelation::class
@@ -125,7 +135,6 @@ class DashboardController extends AbstractDashboardController
                         'fa fa-user',
                         User::class
                     )->setPermission('ROLE_ADMIN'),
-                   
             ])
         ];
     }

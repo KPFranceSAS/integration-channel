@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\PercentField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
@@ -60,7 +61,7 @@ class StockCrudController extends AdminCrudController
             ->setAction(Action::INDEX)
             ->generateUrl();
 
-        $replenishmentEu = Action::new('replenishmentEu', 'EU replenishment')
+        $replenishmentEu = Action::new('replenishmentEu', 'EU restock')
             ->setIcon('fas fa-truck-loading')
             ->linkToUrl($url)
             ->setCssClass('btn btn-primary')
@@ -77,7 +78,7 @@ class StockCrudController extends AdminCrudController
             ->setAction(Action::INDEX)
             ->generateUrl();
 
-        $replenishmentUk = Action::new('replenishmentUk', 'Uk replenishment')
+        $replenishmentUk = Action::new('replenishmentUk', 'Uk restock')
             ->setIcon('fas fa-truck-loading')
             ->linkToUrl($url)
             ->setCssClass('btn btn-primary')
@@ -85,7 +86,7 @@ class StockCrudController extends AdminCrudController
 
         $actions->add(Crud::PAGE_INDEX, $replenishmentUk);
 
-        return $actions->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE, Action::DETAIL, ACTION::EDIT);
+        return $actions->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE, Action::DETAIL);
     }
 
 
@@ -153,11 +154,26 @@ class StockCrudController extends AdminCrudController
 
     public function configureFields(string $pageName): iterable
     {
+        if($pageName == Crud::PAGE_EDIT){
+            return [
+                TextField::new('sku')->setDisabled(),
+                TextField::new('description', 'Product name')->setDisabled(),
+                TextField::new('asin')->setDisabled(),
+                TextField::new('fnsku')->setDisabled(),
+                NumberField::new('unitCost', 'Unit cost €')->setDisabled(),
+                IntegerField::new('minQtyFbaEu', 'Min FBA Eu'),
+                IntegerField::new('minQtyFbaUk', 'Min FBA Uk'),
+            ];
+        }
+
         return [
             TextField::new('brand', 'Brand'),
             TextField::new('category', 'Category'),
             TextField::new('sku'),
             TextField::new('description', 'Product name'),
+            NumberField::new('unitCost', 'Unit cost €')->setDisabled(),
+            IntegerField::new('minQtyFbaEu', 'Min FBA Eu'),
+            IntegerField::new('minQtyFbaUk', 'Min FBA Uk'),
             IntegerField::new('fbaEuTotalStock', 'FBA Eu stock')->setTemplatePath('admin/fields/stocks/fbaEuStock.html.twig'),
             IntegerField::new('fbaUkTotalStock', 'FBA Uk stock')->setTemplatePath('admin/fields/stocks/fbaUkStock.html.twig'),
             IntegerField::new('fbaTotalStock', 'FBA stock')->setTemplatePath('admin/fields/stocks/fbaStock.html.twig'),

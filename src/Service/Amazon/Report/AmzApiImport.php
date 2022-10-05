@@ -171,6 +171,6 @@ abstract class AmzApiImport
                                     ->findOneBy([
                                         'skuUsed' => $skuSanitized
                                     ]);
-        return $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
+        return $productCorrelation ? $productCorrelation->getSkuErpBc() : $skuSanitized;
     }
 }

@@ -11,8 +11,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ProductSaleChannelHistory
 {
-
-    
     public const TYPE_CREATION = 0;
     public const TYPE_ACTIVATION = 1;
 
@@ -27,6 +25,10 @@ class ProductSaleChannelHistory
     public const TYPE_DESACTIVATION_PROMOTION = 6;
 
     use TraitTimeUpdated;
+
+
+    
+
 
     /**
      * @ORM\Id
@@ -71,6 +73,38 @@ class ProductSaleChannelHistory
      */
     private $promotionPrice;
 
+
+    public function getFullDescription()
+    {
+        $description = $this->getTypeModificationLitteral();
+        if ($this->description) {
+            $description.= ' > '.$this->description;
+        }
+        return $description;
+    }
+
+
+    public function getTypeModificationLitteral()
+    {
+        switch($this->typeModification) {
+            case self::TYPE_CREATION:
+                return 'Creation';
+            case self::TYPE_ACTIVATION:
+                return 'Activation';
+            case self::TYPE_DESACTIVATION:
+                return 'Desactiviation';
+            case self::TYPE_MODIFICATION_REGULAR_PRICE:
+                return 'Regular price modification';
+            case self::TYPE_MODIFICATION_SALE_PRICE:
+                return 'Sale price modification';
+            case self::TYPE_ACTIVATION_PROMOTION:
+                return 'Promotion activation';
+            case self::TYPE_DESACTIVATION_PROMOTION:
+                return 'Promotion desactivation';
+            default:
+                return 'Other';    
+        }
+    }
     public function getId(): ?int
     {
         return $this->id;

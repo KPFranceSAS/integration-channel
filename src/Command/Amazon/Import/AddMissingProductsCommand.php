@@ -136,6 +136,6 @@ class AddMissingProductsCommand extends Command
     {
         $skuSanitized = strtoupper($sku);
         $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
-        return $productCorrelation ? $productCorrelation->getSkuErp() : $skuSanitized;
+        return $productCorrelation ? $productCorrelation->getSkuErpBc() : $skuSanitized;
     }
 }
