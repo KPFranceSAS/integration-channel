@@ -210,11 +210,11 @@ abstract class InvoiceParent
     public function checkInvoiceIsLate(WebOrder $order, $invoice)
     {
         $this->logger->info('Check if late ' . $invoice['number'] . " >> " . $invoice['invoiceDate']);
-        $invoiceDate = DateTime::createFromFormat('Y-m-d H:i', $invoice['invoiceDate'] . ' 16:00');
+        $invoiceDate = DateTime::createFromFormat('Y-m-d H:i', $invoice['invoiceDate'] . ' 18:00');
         $now = new DateTime();
         $interval = $now->diff($invoiceDate, true);
         $nbHours = $interval->format('%a') * 24 + $interval->format('%h');
-        if ($nbHours > 12) {
+        if ($nbHours > 30) {
             $this->addOnlyErrorToOrderIfNotExists($order, $order . ' has been sent with the invoice ' . $invoice['number'] . ' but no tracking is retrieved. Please confirm tracking on ' . $this->getChannel());
         }
     }

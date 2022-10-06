@@ -21,7 +21,7 @@ For the warehouse in La Roca, if the level is greater than 5, the available of s
 For the warehouse in Madrid, real stock is sent.
 
 ### FBA and Amazon reporting
-The app connects to different reports provided by Amazon and uses the content to provide some helpers to manage business.
+The app connects to different reports provided by Amazon and uses the content to provide some helpers to manage Business.
 
 - stock level on FBA and alert regarding skus that need to be sent to FBA
 - returns and reimbursements of FBA
@@ -60,35 +60,57 @@ Interface has common functionality through all screens
 ![Order](img/order-page.png "Order page")
 
 1. List of all sale channels
-2. Common action as See online the sale order (Amazon, Aliexpress, ...), download the pdf invoice form business central, ...
+2. Common action as See online the sale order (Amazon, Aliexpress, ...), download the pdf invoice form Business central, ...
 3. Display all the elements retrieved from sale channel regarding the order + status of the integration in the information system
 4. Display a chronology of the integration of the order
 5. Display all the elements retrieved from Business central, especially the VAT rates or shipping rates.
 6. For Amazon only, we retrieve all the financial datas associated with this transaction (order,r eturn, cashback, fee or shipping)
 
+### Amazon & FBA
+
+#### Inventory
+
+#### Fees
+
+#### FBA Returns
 
 ### Pricing
 
 #### Prices
 
-
 #### Promotions
 
-
-##### Import
-
+#### Import
 
 #### Sale Channel
-
-
 
 ### Config
 #### Sku mappings
 
 ![Sku](img/Sku-Mappings.png "Sku mappings")
 
-For some reasons, the skus created in the sale channel is not corresponding to any sku in BUsiness central.
-THis interface enables operators to add, edit or delete sku mappings between a sku used in a sale channel and the sku used in BUsiness central.
+For some reasons, the skus created in the sale channel is not corresponding to any sku in Business central.
+THis interface enables operators to add, edit or delete sku mappings between a sku used in a sale channel and the sku used in Business central.
+
+#### Products
+
+![Products](img/Products.png "Products")
+
+Products are integrated through some other services of syncronization. (PIM, Product Onboarding, Business Central).
+You can edit the description, category and brand if it is not well setup. 
+
+#### Brands
+
+![Brands](img/Brands.png "Brands")
+
+You can add, edit and delete Brand from this interface. This data will be use essentially in the PowerBI report.
+
+#### Categorys
+
+![Categorys](img/Categorys.png "Categorys")
+
+You can add, edit and delete Category from this interface. This data will be use essentially in the PowerBI report.
+
 
 #### Users
 
@@ -116,7 +138,6 @@ In the case, you received an error with SKU mapping error. the steps are :\
 6. Go to the order marked as Error of integration. 
 7. Click on Retry.
 8. The Weborder is integrated. If you don't do the steps 6 to 8, a process would do it twice a day for you.
-[Check the video](https://www.loom.com/share/8f0cc5e142a947d8b66ffdf93eaf25d3)
 
 ### Address length
 If you received messages containing those information *The BC sale order WPV21-01103 corresponding to the weborder 8155312123395027 has been created with an address length of the street over 40 characters. Please modify it on Business central*
@@ -127,7 +148,7 @@ In this case :
 
 ### Delay of treatment
 If you received messages containing those information *Order AliExpress n°3017869929123012 (#53100) > Shipping should be processed in 30 hours for Order AliExpress n°3017869929123012 (#53100)*
-Some businesss rules have been added to check the integration process. 
+Some Businesss rules have been added to check the integration process. 
 > Every sale order managed by 3PL should be invoiced in less than 24 hours
 
 > Every sale order managed by our own warehouse should be processed in the 30 hours after the purchase.
