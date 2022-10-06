@@ -3,7 +3,6 @@
 namespace App\Command\Amazon\Returns;
 
 use App\Service\Amazon\Returns\CheckIntegrationFbaReturn;
-use App\Service\Amazon\Returns\UpdateAmzFbaReturn;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

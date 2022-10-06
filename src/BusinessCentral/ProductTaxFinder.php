@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Service\BusinessCentral;
+namespace App\BusinessCentral;
 
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 use Exception;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;

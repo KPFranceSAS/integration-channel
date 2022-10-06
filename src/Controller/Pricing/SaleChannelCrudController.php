@@ -5,7 +5,7 @@ namespace App\Controller\Pricing;
 use App\Controller\Admin\AdminCrudController;
 use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;

@@ -2,9 +2,9 @@
 
 namespace App\Command\Flashled;
 
-use App\Helper\BusinessCentral\Model\CustomerPayment;
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
+use App\BusinessCentral\Model\CustomerPayment;
 use App\Helper\Utils\DatetimeUtils;
-use App\Service\BusinessCentral\KitPersonalizacionSportConnector;
 use App\Service\Flashled\FlashledApi;
 use App\Service\Flashled\FlashledIntegrateOrder;
 use Symfony\Component\Console\Command\Command;

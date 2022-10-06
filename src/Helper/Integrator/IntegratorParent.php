@@ -2,14 +2,14 @@
 
 namespace App\Helper\Integrator;
 
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Model\SaleOrder;
+use App\BusinessCentral\Model\SaleOrderLine;
+use App\BusinessCentral\ProductTaxFinder;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Helper\BusinessCentral\Model\SaleOrder;
-use App\Helper\BusinessCentral\Model\SaleOrderLine;
 use App\Service\Aggregator\ApiAggregator;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\BusinessCentral\ProductTaxFinder;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;

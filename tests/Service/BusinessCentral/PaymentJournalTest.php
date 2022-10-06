@@ -2,8 +2,8 @@
 
 namespace App\Tests\Service\BusinessCentral;
 
-use App\Helper\BusinessCentral\Model\CustomerPayment;
-use App\Service\BusinessCentral\KitPersonalizacionSportConnector;
+use App\BusinessCentral\Model\CustomerPayment;
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use App\Service\Flashled\FlashledIntegrateOrder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

@@ -2,12 +2,11 @@
 
 namespace App\Command\AliExpress;
 
+use App\BusinessCentral\Connector\GadgetIberiaConnector;
 use App\Entity\WebOrder;
 use App\Helper\Api\AliExpressApiParent;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\ApiAggregator;
-use App\Service\AliExpress\AliExpressApi;
-use App\Service\BusinessCentral\GadgetIberiaConnector;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;

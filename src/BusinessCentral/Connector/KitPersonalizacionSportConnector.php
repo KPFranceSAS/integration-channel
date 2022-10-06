@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\BusinessCentral;
+namespace App\BusinessCentral\Connector;
 
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 
 class KitPersonalizacionSportConnector extends BusinessCentralConnector
 {

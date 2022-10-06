@@ -6,7 +6,7 @@ use App\Entity\Brand;
 use App\Entity\Product;
 use App\Entity\ProductSaleChannel;
 use App\Entity\SaleChannel;
-use App\Service\BusinessCentral\KitPersonalizacionSportConnector;
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use App\Service\MailService;
 use App\Service\Pim\AkeneoConnector;
 use Doctrine\Persistence\ManagerRegistry;

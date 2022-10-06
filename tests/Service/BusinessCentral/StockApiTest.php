@@ -2,7 +2,7 @@
 
 namespace App\Tests\Service\BusinessCentral;
 
-use App\Service\BusinessCentral\KitPersonalizacionSportConnector;
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class StockApiTest extends KernelTestCase

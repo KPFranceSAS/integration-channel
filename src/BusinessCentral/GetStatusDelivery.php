@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Service\BusinessCentral;
+namespace App\BusinessCentral;
 
-use App\Service\BusinessCentral\BusinessCentralAggregator;
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 

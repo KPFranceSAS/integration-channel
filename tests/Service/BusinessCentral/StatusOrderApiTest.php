@@ -2,8 +2,8 @@
 
 namespace App\Tests\Service\BusinessCentral;
 
-use App\Service\BusinessCentral\GadgetIberiaConnector;
-use App\Service\BusinessCentral\KitPersonalizacionSportConnector;
+use App\BusinessCentral\Connector\GadgetIberiaConnector;
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class StatusOrderApiTest extends KernelTestCase

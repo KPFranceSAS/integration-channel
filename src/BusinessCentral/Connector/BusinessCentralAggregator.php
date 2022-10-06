@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Service\BusinessCentral;
+namespace App\BusinessCentral\Connector;
 
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Service\BusinessCentral\KpFranceConnector;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
+use App\BusinessCentral\Connector\KpFranceConnector;
 use Exception;
 
 class BusinessCentralAggregator

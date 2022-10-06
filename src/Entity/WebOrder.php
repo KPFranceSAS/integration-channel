@@ -32,9 +32,6 @@ class WebOrder
     public const  CHANNEL_ARISE = 'ARISE';
 
 
-
-
-    
     public const  DOCUMENT_ORDER = 'ORDER';
     public const  DOCUMENT_INVOICE = 'INVOICE';
 

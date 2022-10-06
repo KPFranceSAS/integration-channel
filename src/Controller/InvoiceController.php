@@ -2,10 +2,10 @@
 
 namespace App\Controller;
 
+use App\BusinessCentral\Connector\GadgetIberiaConnector;
 use App\Entity\WebOrder;
 use App\Helper\Utils\InvoiceDownload;
 use App\Service\Aggregator\ApiAggregator;
-use App\Service\BusinessCentral\GadgetIberiaConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
@@ -55,7 +55,9 @@ class InvoiceController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $qb = $doctrine->getManager()->createQueryBuilder();
+            /** @var \Doctrine\ORM\EntityManagerInterface */
+            $manager = $doctrine->getManager();
+            $qb = $manager->createQueryBuilder();
             $qb->select('w')
                 ->from(WebOrder::class, 'w')
                 ->where('w.externalNumber = :externalNumber')

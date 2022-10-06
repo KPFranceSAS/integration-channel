@@ -2,7 +2,7 @@
 
 namespace App\Tests\Service\Flashled;
 
-use App\Service\BusinessCentral\KitPersonalizacionSportConnector;
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use App\Service\Flashled\FlashledIntegrateOrder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

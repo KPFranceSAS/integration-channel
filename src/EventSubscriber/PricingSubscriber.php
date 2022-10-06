@@ -5,7 +5,6 @@ namespace App\EventSubscriber;
 use App\Controller\Pricing\PricingCrudController;
 use App\Entity\Product;
 use App\Entity\ProductLogEntry;
-use App\Entity\ProductSaleChannelHistory;
 use DateInterval;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;

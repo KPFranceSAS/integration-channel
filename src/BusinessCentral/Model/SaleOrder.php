@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Helper\BusinessCentral\Model;
+namespace App\BusinessCentral\Model;
 
-use App\Helper\BusinessCentral\Model\PostalAddress;
+use App\BusinessCentral\Model\PostalAddress;
 
 class SaleOrder
 {

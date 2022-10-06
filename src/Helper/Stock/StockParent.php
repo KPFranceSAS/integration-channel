@@ -2,12 +2,12 @@
 
 namespace App\Helper\Stock;
 
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\ProductStockFinder;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\Aggregator\ApiAggregator;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
-use App\Service\BusinessCentral\ProductStockFinder;
 use App\Service\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use function Symfony\Component\String\u;
@@ -27,7 +27,13 @@ abstract class StockParent
 
     protected $productStockFinder;
 
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, ApiAggregator $apiAggregator, ProductStockFinder $productStockFinder)
+    public function __construct(ManagerRegistry $manager, 
+                    LoggerInterface $logger, 
+                    MailService $mailer,
+                    BusinessCentralAggregator $businessCentralAggregator, 
+                    ApiAggregator $apiAggregator, 
+                    ProductStockFinder $productStockFinder
+                    )
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();

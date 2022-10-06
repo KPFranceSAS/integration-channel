@@ -2,10 +2,9 @@
 
 namespace App\Command\Amazon;
 
+use App\BusinessCentral\Connector\KpFranceConnector;
 use App\Entity\AmazonOrder;
-use App\Entity\IntegrationFile;
 use App\Entity\WebOrder;
-use App\Service\BusinessCentral\KpFranceConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;

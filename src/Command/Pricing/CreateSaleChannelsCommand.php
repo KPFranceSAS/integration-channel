@@ -6,7 +6,7 @@ use App\Entity\Product;
 use App\Entity\ProductSaleChannel;
 use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

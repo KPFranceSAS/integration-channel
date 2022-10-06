@@ -2,9 +2,9 @@
 
 namespace App\EventSubscriber;
 
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Entity\WebOrder;
 use App\Service\Amazon\History\AmzHistoryAggregator;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

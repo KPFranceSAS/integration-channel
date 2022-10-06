@@ -2,9 +2,9 @@
 
 namespace App\Tests\Service\BusinessCentral;
 
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Service\BusinessCentral\GadgetIberiaConnector;
-use App\Service\BusinessCentral\ProductTaxFinder;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Connector\GadgetIberiaConnector;
+use App\BusinessCentral\ProductTaxFinder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class ProductTaxFinderTest extends KernelTestCase

@@ -3,7 +3,7 @@
 namespace App\Command\Pim;
 
 use Akeneo\Pim\ApiClient\Exception\UnprocessableEntityHttpException;
-use App\Service\BusinessCentral\KpFranceConnector;
+use App\BusinessCentral\Connector\KpFranceConnector;
 use App\Service\Pim\AkeneoConnector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

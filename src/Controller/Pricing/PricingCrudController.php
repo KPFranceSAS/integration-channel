@@ -7,7 +7,6 @@ use App\Controller\Pricing\ImportPricingCrudController;
 use App\Entity\Product;
 use App\Entity\SaleChannel;
 use App\Form\ProductSaleChannelType;
-use App\Helper\Utils\StringUtils;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\CSV\Writer;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;

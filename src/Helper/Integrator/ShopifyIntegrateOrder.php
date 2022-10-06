@@ -3,8 +3,8 @@
 namespace App\Helper\Integrator;
 
 use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Model\SaleOrder;
-use App\Helper\BusinessCentral\Model\SaleOrderLine;
+use App\BusinessCentral\Model\SaleOrder;
+use App\BusinessCentral\Model\SaleOrderLine;
 use App\Helper\Integrator\IntegratorParent;
 use App\Helper\Utils\DatetimeUtils;
 

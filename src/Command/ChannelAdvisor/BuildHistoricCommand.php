@@ -4,8 +4,8 @@ namespace App\Command\ChannelAdvisor;
 
 use App\Entity\AmazonOrder;
 use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Service\BusinessCentral\KpFranceConnector;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Connector\KpFranceConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use stdClass;
 use Symfony\Component\Console\Command\Command;

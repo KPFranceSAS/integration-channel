@@ -4,7 +4,7 @@ namespace App\Command\FitbitExpress;
 
 use App\Entity\WebOrder;
 use App\Service\AliExpress\AliExpressIntegrateOrder;
-use App\Service\BusinessCentral\GadgetIberiaConnector;
+use App\BusinessCentral\Connector\GadgetIberiaConnector;
 use App\Service\FitbitExpress\FitbitExpressApi;
 use Doctrine\Persistence\ManagerRegistry;
 use OrderQuery;

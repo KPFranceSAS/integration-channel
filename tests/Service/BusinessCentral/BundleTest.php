@@ -2,9 +2,8 @@
 
 namespace App\Tests\Service\BusinessCentral;
 
-use App\Service\AliExpress\AliExpressIntegrateOrder;
-use App\Service\BusinessCentral\GadgetIberiaConnector;
-use App\Service\BusinessCentral\KitPersonalizacionSportConnector;
+
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use App\Service\Flashled\FlashledIntegrateOrder;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

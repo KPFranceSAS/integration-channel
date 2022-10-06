@@ -3,9 +3,9 @@
 namespace App\Service\ChannelAdvisor;
 
 use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Helper\BusinessCentral\Model\SaleOrder;
-use App\Helper\BusinessCentral\Model\SaleOrderLine;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Model\SaleOrder;
+use App\BusinessCentral\Model\SaleOrderLine;
 use App\Helper\Integrator\IntegratorParent;
 use App\Service\ChannelAdvisor\ChannelAdvisorApi;
 use Exception;

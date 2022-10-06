@@ -4,7 +4,6 @@ namespace App\Controller\Pricing;
 
 use App\Controller\Admin\AdminCrudController;
 use App\Entity\ImportPricing;
-use App\Entity\Promotion;
 use App\Entity\SaleChannel;
 use App\Form\ConfirmImportPricingFormType;
 use App\Form\ImportPricingFormType;

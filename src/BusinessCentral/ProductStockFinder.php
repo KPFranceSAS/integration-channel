@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\BusinessCentral;
+namespace App\BusinessCentral;
 
 use App\Entity\WebOrder;
 use App\Service\MailService;

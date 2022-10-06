@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helper\BusinessCentral\Model;
+namespace App\BusinessCentral\Model;
 
 class PostalAddress
 {

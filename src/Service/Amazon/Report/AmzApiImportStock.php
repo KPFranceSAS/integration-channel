@@ -3,11 +3,11 @@
 namespace App\Service\Amazon\Report;
 
 use AmazonPHP\SellingPartner\Marketplace;
+use App\BusinessCentral\ProductStockFinder;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
 use App\Service\Amazon\AmzApi;
-use App\Service\BusinessCentral\ProductStockFinder;
 use App\Service\MailService;
 use DateInterval;
 use DateTime;

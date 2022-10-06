@@ -3,7 +3,6 @@
 namespace App\Command\Amazon\Returns;
 
 use App\Entity\FbaReturn;
-use App\Entity\ProductCorrelation;
 use App\Helper\Utils\CsvExtracter;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;

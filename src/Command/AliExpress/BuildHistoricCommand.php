@@ -2,9 +2,9 @@
 
 namespace App\Command\AliExpress;
 
+use App\BusinessCentral\Connector\GadgetIberiaConnector;
 use App\Entity\WebOrder;
 use App\Service\AliExpress\AliExpressApi;
-use App\Service\BusinessCentral\GadgetIberiaConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use OrderQuery;
 use Symfony\Component\Console\Command\Command;

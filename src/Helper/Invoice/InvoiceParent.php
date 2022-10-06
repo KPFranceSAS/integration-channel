@@ -2,9 +2,9 @@
 
 namespace App\Helper\Invoice;
 
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\ApiAggregator;
-use App\Service\BusinessCentral\BusinessCentralAggregator;
 use App\Service\Carriers\GetTracking;
 use App\Service\MailService;
 use DateTime;

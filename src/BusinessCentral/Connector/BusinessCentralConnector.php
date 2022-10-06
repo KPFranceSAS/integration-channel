@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helper\BusinessCentral\Connector;
+namespace App\BusinessCentral\Connector;
 
 use Exception;
 use GuzzleHttp\Client;

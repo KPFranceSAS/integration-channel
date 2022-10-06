@@ -7,7 +7,7 @@ use App\Entity\AmazonOrder;
 use App\Entity\AmazonReimbursement;
 use App\Entity\AmazonReturn;
 use App\Entity\FbaReturn;
-use App\Service\BusinessCentral\KpFranceConnector;
+use App\BusinessCentral\Connector\KpFranceConnector;
 use App\Service\MailService;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;

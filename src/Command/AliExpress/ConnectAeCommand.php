@@ -5,7 +5,7 @@ namespace App\Command\AliExpress;
 use App\Service\AliExpress\AliExpressApi;
 use App\Service\AliExpress\AliExpressIntegrateOrder;
 use App\Service\AliExpress\AliExpressStock;
-use App\Service\BusinessCentral\GadgetIberiaConnector;
+use App\BusinessCentral\Connector\GadgetIberiaConnector;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

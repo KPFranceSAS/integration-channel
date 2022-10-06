@@ -2,7 +2,7 @@
 
 namespace App\Tests\Service\BusinessCentral;
 
-use App\Service\BusinessCentral\KitPersonalizacionSportConnector;
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class PurchaseTest extends KernelTestCase
@@ -13,6 +13,6 @@ class PurchaseTest extends KernelTestCase
         $bcConnector = static::getContainer()->get(KitPersonalizacionSportConnector::class);
         $product = $bcConnector->getItemByNumber("PX-P3D2044");
         $purchaseOrders = $bcConnector->getPurchaseInvoicesByItemNumber($product['id']);
-        dump(count($purchaseOrders));
+        $this->assertIsArray($purchaseOrders);
     }
 }

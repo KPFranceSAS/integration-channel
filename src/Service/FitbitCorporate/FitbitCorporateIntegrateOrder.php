@@ -3,7 +3,7 @@
 namespace App\Service\FitbitCorporate;
 
 use App\Entity\WebOrder;
-use App\Helper\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Helper\Integrator\ShopifyIntegrateOrder;
 
 class FitbitCorporateIntegrateOrder extends ShopifyIntegrateOrder

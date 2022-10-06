@@ -3,7 +3,7 @@
 namespace App\Tests\Service\BusinessCentral;
 
 use App\Service\AliExpress\AliExpressIntegrateOrder;
-use App\Service\BusinessCentral\GadgetIberiaConnector;
+use App\BusinessCentral\Connector\GadgetIberiaConnector;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class GadgetIberiaConnectorTest extends KernelTestCase
