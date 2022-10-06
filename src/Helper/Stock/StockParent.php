@@ -8,7 +8,7 @@ use App\BusinessCentral\ProductStockFinder;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\ApiAggregator;
-use App\Service\MailService;
+use App\Helper\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use function Symfony\Component\String\u;
 use Psr\Log\LoggerInterface;

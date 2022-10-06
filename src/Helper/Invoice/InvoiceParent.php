@@ -6,7 +6,7 @@ use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Carriers\GetTracking;
-use App\Service\MailService;
+use App\Helper\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;

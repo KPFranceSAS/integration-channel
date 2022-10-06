@@ -11,7 +11,7 @@ use App\Entity\Promotion;
 use App\Entity\SaleChannel;
 use App\Entity\User;
 use App\Entity\Vendor;
-use App\Service\MailService;
+use App\Helper\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use function Symfony\Component\String\u;

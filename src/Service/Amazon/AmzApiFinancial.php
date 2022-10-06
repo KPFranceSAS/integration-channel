@@ -22,7 +22,7 @@ use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Helper\Utils\ExchangeRateCalculator;
 use App\Service\Amazon\AmzApi;
-use App\Service\MailService;
+use App\Helper\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -64,12 +64,12 @@ class AmzApiFinancial
         $financialGroups = $this->amzApi->getAllFinancials($startDate, $startEnd);
         $this->logger->info('------------Manages with ' . count($financialGroups) . ' groups---------------');
         foreach ($financialGroups as $financialGroup) {
-            try{
+            try {
                 $this->manageFinancialEventGroup($financialGroup);
-            } catch (Exception $e){
+            } catch (Exception $e) {
                 $this->mailer->sendEmail(
-                    'Error Report Financial '.$financialGroup->getFinancialEventGroupId(), 
-                    $e->getMessage(), 
+                    'Error Report Financial '.$financialGroup->getFinancialEventGroupId(),
+                    $e->getMessage(),
                     'stephane.lanjard@kpsport.com'
                 );
             }
@@ -373,7 +373,8 @@ class AmzApiFinancial
     }
 
 
-    protected function convertSellerDealPaymentEventList(SellerDealPaymentEvent $financialEvent): array {
+    protected function convertSellerDealPaymentEventList(SellerDealPaymentEvent $financialEvent): array
+    {
         $amzFinancialEvent = new AmazonFinancialEvent();
         $amzFinancialEvent->setTransactionType($financialEvent->getModelName());
         $amzFinancialEvent->setPostedDate($financialEvent->getPostedDate());

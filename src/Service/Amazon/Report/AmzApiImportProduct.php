@@ -10,7 +10,7 @@ use App\Entity\SaleChannel;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Service\Amazon\AmzApi;
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
-use App\Service\MailService;
+use App\Helper\MailService;
 use DateInterval;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -205,7 +205,6 @@ class AmzApiImportProduct
                     $saleChannel->addProductSaleChannel($productSaleChannel);
                 }
                 $this->manager->flush();
-               
             } else {
                 $this->errorProducts[] = 'Product ' . $sku . ' not found in Business central';
             }

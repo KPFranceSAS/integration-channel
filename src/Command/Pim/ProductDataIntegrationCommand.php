@@ -7,7 +7,7 @@ use App\Entity\Product;
 use App\Entity\ProductSaleChannel;
 use App\Entity\SaleChannel;
 use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
-use App\Service\MailService;
+use App\Helper\MailService;
 use App\Service\Pim\AkeneoConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
@@ -96,12 +96,12 @@ class ProductDataIntegrationCommand extends Command
         }
 
 
-        if(count($errors)>0){
+        if (count($errors)>0) {
             $this->mailService->sendEmail('[Products] Error PIM with products', implode('<br/>', $errors), 'devops@kpsport.com');
         }
 
 
-        if(count($messages)>0){
+        if (count($messages)>0) {
             $this->mailService->sendEmailRole('ROLE_PRICING', '[Pricing] New products to configure', implode('<br/>', $messages));
         }
             

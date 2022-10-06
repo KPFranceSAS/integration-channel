@@ -10,7 +10,7 @@ use App\BusinessCentral\ProductTaxFinder;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\ApiAggregator;
-use App\Service\MailService;
+use App\Helper\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use function Symfony\Component\String\u;
@@ -47,7 +47,7 @@ abstract class IntegratorParent
 
 
     public function getApi()
-    {   
+    {
         return $this->apiAggregator->getApi($this->getChannel());
     }
 

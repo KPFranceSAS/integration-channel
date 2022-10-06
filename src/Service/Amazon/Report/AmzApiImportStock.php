@@ -8,7 +8,7 @@ use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
 use App\Service\Amazon\AmzApi;
-use App\Service\MailService;
+use App\Helper\MailService;
 use DateInterval;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -45,7 +45,6 @@ class AmzApiImportStock
 
     public function updateStocks()
     {
-
         $datas = $this->getContentFromReports();
 
 

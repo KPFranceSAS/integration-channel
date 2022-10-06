@@ -3,7 +3,7 @@
 namespace App\BusinessCentral;
 
 use App\Entity\WebOrder;
-use App\Service\MailService;
+use App\Helper\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use League\Flysystem\FilesystemOperator;

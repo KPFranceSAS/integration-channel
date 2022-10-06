@@ -4,7 +4,7 @@ namespace App\Command\Amazon;
 
 use App\Entity\Product;
 use App\Entity\User;
-use App\Service\MailService;
+use App\Helper\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

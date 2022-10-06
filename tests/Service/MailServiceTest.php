@@ -2,7 +2,7 @@
 
 namespace App\Tests\Service;
 
-use App\Service\MailService;
+use App\Helper\MailService;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Bundle\FrameworkBundle\Test\MailerAssertionsTrait;
 

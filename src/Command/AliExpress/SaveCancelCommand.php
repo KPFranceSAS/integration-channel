@@ -7,7 +7,7 @@ use App\Entity\WebOrder;
 use App\Helper\Api\AliExpressApiParent;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\ApiAggregator;
-use App\Service\MailService;
+use App\Helper\MailService;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
