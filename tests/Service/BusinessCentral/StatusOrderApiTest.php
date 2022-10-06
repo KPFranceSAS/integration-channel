@@ -7,7 +7,7 @@ use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class StatusOrderApiTest extends KernelTestCase
-{
+{       
     public function testGetStatus(): void
     {
         $kitConn = static::getContainer()->get(KitPersonalizacionSportConnector::class);

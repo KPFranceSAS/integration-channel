@@ -27,14 +27,14 @@ abstract class StockParent
 
     protected $productStockFinder;
 
-    public function __construct(ManagerRegistry $manager, 
-                    LoggerInterface $logger, 
-                    MailService $mailer,
-                    BusinessCentralAggregator $businessCentralAggregator, 
-                    ApiAggregator $apiAggregator, 
-                    ProductStockFinder $productStockFinder
-                    )
-    {
+    public function __construct(
+        ManagerRegistry $manager,
+        LoggerInterface $logger,
+        MailService $mailer,
+        BusinessCentralAggregator $businessCentralAggregator,
+        ApiAggregator $apiAggregator,
+        ProductStockFinder $productStockFinder
+    ) {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
