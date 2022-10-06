@@ -1,8 +1,9 @@
 {% extends '@!EasyAdmin/crud/edit.html.twig' %}
 
 {% block content_title %}
-   Edit Pricing {{entity.instance.sku}}<br/>
-   <small>{{entity.instance.description}}</small>
+	Edit Pricing
+	{{entity.instance.sku}}<br/>
+	<small>{{entity.instance.description}}</small>
 {% endblock %}
 
 
@@ -25,11 +26,6 @@
 				</a>
 			</li>
 			<li class="nav-item">
-				<a class="nav-link " href="#ea_container_history" id="ea_tab_history" data-bs-toggle="tab">
-					<i class="fa fa-fw fa-fas fa-chart-line"></i>History
-				</a>
-			</li>
-			<li class="nav-item">
 				<a class="nav-link " href="#ea_container_log" id="ea_tab_log" data-bs-toggle="tab">
 					<i class="fa fa-fw fa-fas fa-history"></i>Logs
 				</a>
@@ -38,7 +34,7 @@
 		<div class="tab-content">
 			<div class="tab-pane active" id="ea_container_form">
 				{{ form_start(edit_form) }}
-				<table class="table">
+				<table class="table datagrid">
 					<thead>
 						<tr>
 							<th scope="col">Sale Channel</th>
@@ -50,9 +46,10 @@
 
 						{% for productSaleChannel in edit_form.productSaleChannels %}
 							<tr>
-								<td>{{productSaleChannel.vars.data.SaleChannelName}}</td>
-								<td class="enabledProductSaleChannels">{{ form_widget(productSaleChannel.enabled) }}{{ form_errors(productSaleChannel.enabled) }}</td>
-								<td class="priceProductSaleChannels">{{ form_widget(productSaleChannel.price) }}{{ form_errors(productSaleChannel.price) }}</td>
+
+								<td data-label="Sale channel">{{productSaleChannel.vars.data.SaleChannelName}}</td>
+								<td data-label="Enabled" class="enabledProductSaleChannels">{{ form_widget(productSaleChannel.enabled) }}{{ form_errors(productSaleChannel.enabled) }}</td>
+								<td data-label="Price" class="priceProductSaleChannels">{{ form_widget(productSaleChannel.price) }}{{ form_errors(productSaleChannel.price) }}</td>
 							</tr>
 						{% endfor %}
 					</tbody>
@@ -72,15 +69,14 @@
 						<div class="row">
 							<div class="col-8">
 								<h6>{{productSaleChannel.saleChannel}}
-                                    <a class="btn btn-primary btn-sm " style="margin-left:20px;padding: 2px 4px;" href="{{url}}">
-										<i class="action-icon fa fa-plus"></i></a>
-                                </h6>
-                                
+									<a class="btn btn-primary btn-sm " style="margin-left:20px;padding: 2px 4px;" href="{{url}}">
+										<i class="action-icon fa fa-plus"></i>
+									</a>
+								</h6>
+
 							</div>
 							{% if app.user.hasSaleChannel(productSaleChannel.saleChannel) %}
-								<div class="col-4">
-									
-								</div>
+								<div class="col-4"></div>
 							{% endif %}
 						</div>
 						<div class="mt-3 mb-5">
@@ -108,101 +104,98 @@
                                         .includeReferrer() 
                                         %}
 										<tr>
-											<td class="text-left field-text">
+											<td class="text-left field-text" data-label="Active">
 												{% if promotion.active %}
 													<i class="fa fa-check">
-														<i>
-														{% else %}
-															<i class="fa fa-times">
-																<i>
-																{% endif %}
-															</td>
-															<td class="text-left field-text"><strike>{{promotion.regularPrice}}{{productSaleChannel.saleChannel.currencySymbol}}</strike></td>
-															<td class="text-left field-text">{{promotion.promotionPrice}}{{productSaleChannel.saleChannel.currencySymbol}}</td>
-															<td class="text-left field-text">{{promotion.promotionDescriptionType}}</td>
-															<td class="text-left field-text">{{promotion.promotionDescriptionFrequency}}</td>
-															<td class="text-left field-text">{{promotion.beginDate|date('Y-m-d H:i')}}</td>
-															<td class="text-left field-text">{{promotion.endDate|date('Y-m-d H:i')}}</td>
-															<td class="text-left field-text">{{promotion.priority}}</td>
-															<td class="text-left field-text">{{promotion.comment}}</td>
-															<td class="actions ">
-																{% if app.user.hasSaleChannel(productSaleChannel.saleChannel) %}
-																	<a href="{{urlEdit}}" class="action-edit">
-																		<i class="action-icon fa fa-pencil"></i>
-																	</a>
-																{% endif %}
-															</td>
-														</tr>
+														<i class="fa fa-check"></i>
 													{% else %}
-														<tr>
-															<td colspan="9">No promotions</td>
-														</tr>
-													{% endfor %}
-												</tbody>
+														<i class="fa fa-times"></i>
+													{% endif %}
+												</td>
+											</td>
+											<td data-label="Regular Price" class="text-left field-text">
+												<strike>{{promotion.regularPrice}}{{productSaleChannel.saleChannel.currencySymbol}}</strike>
+											</td>
+											<td data-label="Promotion price" class="text-left field-text">{{promotion.promotionPrice}}{{productSaleChannel.saleChannel.currencySymbol}}</td>
+											<td data-label="Promotion Description Type" class="text-left field-text">{{promotion.promotionDescriptionType}}</td>
+											<td data-label="Promotion Description Frequency" class="text-left field-text">{{promotion.promotionDescriptionFrequency}}</td>
+											<td data-label="Begin Date" class="text-left field-text">{{promotion.beginDate|date('Y-m-d H:i')}}</td>
+											<td data-label="End date" class="text-left field-text">{{promotion.endDate|date('Y-m-d H:i')}}</td>
+											<td data-label="Priority" class="text-left field-text">{{promotion.priority}}</td>
+											<td data-label="Comment" class="text-left field-text">{{promotion.comment}}</td>
+											<td class="actions ">
+												{% if app.user.hasSaleChannel(productSaleChannel.saleChannel) %}
+													<a href="{{urlEdit}}" class="action-edit">
+														<i class="action-icon fa fa-pencil"></i>
+													</a>
+												{% endif %}
 											</td>
 										</tr>
-									</table>
-								</tbody>
-							</div>
-
-						</div>
-					{% endfor %}
-				</div>
-				<div class="tab-pane" id="ea_container_graph">
-					{{ render_chart(chartNextPrices, {'data-controller': 'productpricing'}) }}
-				</div>
-				<div class="tab-pane" id="ea_container_history">
-					{{ render_chart(chartHistoryPrices, {'data-controller': 'productpricing'}) }}
-				</div>
-
-				<div class="tab-pane" id="ea_container_log">
-					<table class="table">
-					<thead>
-									<tr>
-							<th scope="col">Logged at</th>
-							<th scope="col">Sale Channel</th>
-							<th scope="col">Type</th>
-							<th scope="col">Action</th>
-							<th scope="col">User</th>
-							<th scope="col">Modification</th>
-							<th scope="col">Object id</th>
-							<th scope="col">Version</th>
-						</tr>
-						</thead>
-									<tbody>
-									{% for log in logs %}
+									{% else %}
 										<tr>
-											<td>{{log.loggedAt|date('d-m-Y H:i:s')}}</td>
-											<td>{{log.saleChannelName}}</td>
-											<td>{{log.humanType}}</td>
-											<td>{{log.action}}</td>
-											<td>{{log.username ? log.username :  'System'}}</td>
-											<td>
-												{% for key, data in log.data%}
-													{{key}}
-													:
-													{% if data is iterable %}
-														{{data|json_encode}}
-													{% elseif data is instanceof('\DateTime') %}	
-														{{data|date('d-m-Y H:i:s') }}
-													{% else %}
-														{{data }}
-													{% endif %}<br/>
-												{% endfor %}
-											</td>
-											<td>{{log.objectId}}</td>
-											<td>{{log.version}}</td>
+											<td colspan="9">No promotions</td>
 										</tr>
 									{% endfor %}
-									</tbody>
-								</table>
-				</div>
-
-
+								</tbody>
+							</td>
+						</tr>
+					</table>
+				</tbody>
 			</div>
 
-
 		</div>
+	{% endfor %}
+</div>
+<div class="tab-pane" id="ea_container_graph">
+	<div class="row">
 
 
-	{% endblock %}
+		<div class="col-md-6">{{ render_chart(chartHistoryPrices, {'data-controller': 'productpricing'}) }}</div>
+		<div class="col-md-6">{{ render_chart(chartNextPrices, {'data-controller': 'productpricing'}) }}
+		</div>
+	</div>
+</div>
+
+
+<div class="tab-pane" id="ea_container_log">
+	<table class="table datagrid">
+		<thead>
+			<tr>
+				<th scope="col">Logged at</th>
+				<th scope="col">Sale Channel</th>
+				<th scope="col">Type</th>
+				<th scope="col">Action</th>
+				<th scope="col">User</th>
+				<th scope="col">Modification</th>
+				<th scope="col">Object id</th>
+				<th scope="col">Version</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for log in logs %}
+				<tr>
+					<td data-label="Logged at">{{log.loggedAt|date('d-m-Y H:i:s')}}</td>
+					<td data-label="Sale Channel">{{log.saleChannelName}}</td>
+					<td data-label="Type">{{log.humanType}}</td>
+					<td data-label="Action">{{log.action}}</td>
+					<td data-label="User">{{log.username ? log.username :  'System'}}</td>
+					<td data-label="Modification">
+						{% for key, data in log.data%}
+							{{key}}
+							:
+							{% if data is iterable %}
+								{{data|json_encode}}
+							{% elseif data is instanceof('\DateTime') %}
+								{{data|date('d-m-Y H:i:s') }}
+							{% else %}
+								{{data }}
+							{% endif %}<br/>
+						{% endfor %}
+					</td>
+					<td data-label="Object id">{{log.objectId}}</td>
+					<td data-label="Version">{{log.version}}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div></div></div>{% endblock %}

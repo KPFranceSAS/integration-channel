@@ -13,20 +13,20 @@
     {% endblock new_form %}
 
 
-		{% set urlCsv= ea_url()
-    .setDashboard('App\\Controller\\Admin\\DashboardController')
-    .setController('App\\Controller\\Pricing\\ImportPricingCrudController')
-    .setAction('createCsvSampleFile')
-	.set('typeImport', import.importType)
-	.set('typeFile', 'csv')
+	{% set urlCsv= ea_url()
+			.setDashboard('App\\Controller\\Admin\\DashboardController')
+			.setController('App\\Controller\\Pricing\\ImportPricingCrudController')
+			.setAction('createCsvSampleFile')
+			.set('typeImport', import.importType)
+			.set('typeFile', 'csv')
 	 %}
 
     {% set urlXls= ea_url()
-    .setDashboard('App\\Controller\\Admin\\DashboardController')
-    .setController('App\\Controller\\Pricing\\ImportPricingCrudController')
-    .setAction('createCsvSampleFile')
-	.set('typeImport', import.importType)
-	.set('typeFile', 'xlsx')
+		.setDashboard('App\\Controller\\Admin\\DashboardController')
+		.setController('App\\Controller\\Pricing\\ImportPricingCrudController')
+		.setAction('createCsvSampleFile')
+		.set('typeImport', import.importType)
+		.set('typeFile', 'xlsx')
 	 %}
 
 

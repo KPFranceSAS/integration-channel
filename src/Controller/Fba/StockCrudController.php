@@ -36,14 +36,13 @@ class StockCrudController extends AdminCrudController
 
     public function getName(): string
     {
-        return 'Stock';
+        return 'Inventory';
     }
 
 
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
-        $crud->setPaginatorPageSize(500);
         return $crud->setEntityPermission('ROLE_AMAZON');
     }
 
@@ -154,7 +153,7 @@ class StockCrudController extends AdminCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        if($pageName == Crud::PAGE_EDIT){
+        if ($pageName == Crud::PAGE_EDIT) {
             return [
                 TextField::new('sku')->setDisabled(),
                 TextField::new('description', 'Product name')->setDisabled(),

@@ -13,38 +13,17 @@ class ConnectOwletCareCommand extends Command
     protected static $defaultName = 'app:owletcare-test';
     protected static $defaultDescription = 'Connection to owletcare test';
 
-    public function __construct(OwletCareApi $owletCareApi, OwletCareIntegrateOrder $owletCareIntegrateOrder)
+    public function __construct(OwletCareApi $owletCareApi)
     {
         $this->owletCareApi = $owletCareApi;
-        $this->owletCareIntegrateOrder = $owletCareIntegrateOrder;
         parent::__construct();
     }
 
-    private $owletCareIntegrateOrder;
 
     private $owletCareApi;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $mainLocation = $this->owletCareApi->getMainLocation();
-
-        $orders = $this->owletCareApi->getAllOrdersToSend();
-        /*foreach ($orders as $order) {
-            //dump($order);
-            $ids = [];
-            foreach ($order['line_items'] as $item) {
-                $ids[] = ['id' => $item['id']];
-            }
-
-            $response = $this->owletCareApi->markAsFulfilled($order['id'], $mainLocation['id'], $ids);
-            dump($response->getDecodedBody());
-            return Command::SUCCESS;
-        }*/
-
-
-
-
-
 
         return Command::SUCCESS;
     }

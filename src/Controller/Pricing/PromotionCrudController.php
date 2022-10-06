@@ -3,15 +3,19 @@
 namespace App\Controller\Pricing;
 
 use App\Controller\Admin\AdminCrudController;
+use App\Controller\Pricing\ImportPricingCrudController;
 use App\Entity\ProductSaleChannel;
 use App\Entity\Promotion;
 use App\Entity\SaleChannel;
+use App\Filter\ProductFilter;
+use App\Filter\SaleChannelFilter;
 use App\Helper\Utils\DatetimeUtils;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -21,6 +25,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 
 class PromotionCrudController extends AdminCrudController
 {
@@ -59,13 +68,13 @@ public function createEntity(string $entityFqcn)
 {
     $promotion = new Promotion();
     $requestProductMarketplace = $this->getContext()->getRequest()->get('productSaleChannelId', null);
-    if($requestProductMarketplace){
+    if ($requestProductMarketplace) {
         $productMarketplace = $this->container
                                     ->get('doctrine')
                                     ->getManager()
                                     ->getRepository(ProductSaleChannel::class)
                                     ->find($requestProductMarketplace);
-        $promotion->setProductSaleChannel($productMarketplace);                             
+        $promotion->setProductSaleChannel($productMarketplace);
     }
    
     return $promotion;
@@ -78,7 +87,7 @@ public function createEntity(string $entityFqcn)
         $user = $this->getUser();
         $saleChannels = $user->getSaleChannels();
         $saleChannelsId= [];
-        foreach($saleChannels as $saleChannel){
+        foreach ($saleChannels as $saleChannel) {
             $saleChannelsId []= $saleChannel->getId();
         }
 
@@ -110,7 +119,6 @@ public function createEntity(string $entityFqcn)
                 ->setColumns(3),
             FormField::addRow(),
             IntegerField::new('priority')
-                ->onlyOnForms()
                 ->setFormTypeOptions(
                     [
                         'attr.min'=>0,
@@ -169,5 +177,16 @@ public function createEntity(string $entityFqcn)
                 ->onlyOnForms()
                 ->setColumns(1),
         ];
+    }
+
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(ProductFilter::new('product'))
+            ->add(SaleChannelFilter::new('saleChannel'))
+            ->add(BooleanFilter::new('active'))
+            ->add(DateTimeFilter::new('beginDate'))
+            ->add(DateTimeFilter::new('endDate'));
     }
 }

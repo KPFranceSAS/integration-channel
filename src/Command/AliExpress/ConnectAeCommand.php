@@ -60,17 +60,6 @@ class ConnectAeCommand extends Command
     {
         $order = $this->aliExpress->getOrder("3016506064585909");
         var_dump($order);
-
-        /*$carriers = $this->aliExpress->getCarriers();
-        foreach ($carriers as $carrier) {
-            var_dump($carrier->service_name);
-        }
-        */
-
-
-
-        $result = $this->aliExpress->markOrderAsFulfill("3015988148626826", "SPAIN_LOCAL_DHL", "0837590170");
-        var_dump($result);
     }
 
 

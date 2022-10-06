@@ -72,7 +72,6 @@ class PricingSubscriber implements EventSubscriberInterface
         $datasets = [];
         $nextDays = 90;
         foreach ($product->getProductSaleChannels() as $productSaleChannel) {
-            
             if ($productSaleChannel->getEnabled()) {
                 $dateNow = new DateTime();
                 $dateNow->setTime(8, 0);
@@ -132,7 +131,7 @@ class PricingSubscriber implements EventSubscriberInterface
                     ];
             }
         }
-        $dateNow->add(new DateInterval('PT2H'));
+        
             
 
 
@@ -163,7 +162,7 @@ class PricingSubscriber implements EventSubscriberInterface
                         "text" => 'Date'
                     ],
                         'time' => [
-                            "unit" =>'week'
+                            "unit" =>'day'
                           ],
                     ],
                     
@@ -215,7 +214,7 @@ class PricingSubscriber implements EventSubscriberInterface
                         "label" => $productSaleChannelHistory->getFullDescription(),
                         'currency' => $currency
                     ];
-                    if($productSaleChannelHistory->getPrice() > $biggerPrice){
+                    if ($productSaleChannelHistory->getPrice() > $biggerPrice) {
                         $biggerPrice = $productSaleChannelHistory->getPrice();
                     }
                 }
@@ -248,6 +247,7 @@ class PricingSubscriber implements EventSubscriberInterface
             'scales' => [
                 'y' => [
                     'min' => 0,
+                    'suggestedMax' => 1.2*$biggerPrice,
                 ],
                 'x' => [
                         'type' => 'time',
@@ -256,7 +256,7 @@ class PricingSubscriber implements EventSubscriberInterface
                             "text" => 'Date'
                         ],
                         'time' => [
-                            "unit" =>'week'
+                            "unit" =>'day'
                         ],
                     ],
                 ],
