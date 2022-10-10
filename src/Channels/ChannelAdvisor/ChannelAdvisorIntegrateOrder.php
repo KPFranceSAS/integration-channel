@@ -2,12 +2,12 @@
 
 namespace App\Channels\ChannelAdvisor;
 
-use App\Entity\WebOrder;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
-use App\Service\Aggregator\IntegratorParent;
 use App\Channels\ChannelAdvisor\ChannelAdvisorApi;
+use App\Entity\WebOrder;
+use App\Service\Aggregator\IntegratorParent;
 use Exception;
 use stdClass;
 

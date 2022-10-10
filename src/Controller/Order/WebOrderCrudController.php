@@ -6,6 +6,7 @@ use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Controller\Admin\AdminCrudController;
 use App\Controller\Admin\DashboardController;
+use App\Entity\User;
 use App\Entity\WebOrder;
 use App\Filter\LateOrderFilter;
 use App\Form\ChangeStatusInvoiceType;
@@ -64,13 +65,16 @@ class WebOrderCrudController extends AdminCrudController
             ->addCssClass('btn')
             ->linkToCrudAction('retryIntegration');
 
-        $changeStatusToInvoiced = Action::new('changeStatusToInvoiced', 'Mark as invoiced', 'fas fa-check')
-            ->displayIf(static function ($entity) {
-                return $entity->canChangeStatusToInvoiced();
-            })
-            ->addCssClass('btn')
-            ->linkToCrudAction('changeStatusToInvoiced');
-
+        /** @var \App\Entity\User */
+        $user = $this->getUser();
+        if ($user->hasRole('ROLE_ADMIN')) {
+            $changeStatusToInvoiced = Action::new('changeStatusToInvoiced', 'Mark as invoiced', 'fas fa-check')
+                ->displayIf(static function ($entity) {
+                    return $entity->canChangeStatusToInvoiced();
+                })
+                ->addCssClass('btn')
+                ->linkToCrudAction('changeStatusToInvoiced');
+        }
 
         $seeOriginalOrder = Action::new('checkOrderOnline', 'See online', 'fa fa-eye')
             ->addCssClass('btn')

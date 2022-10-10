@@ -2,10 +2,10 @@
 
 namespace App\Channels\Shopify\FitbitCorporate;
 
+use App\Channels\Shopify\ShopifyUpdateStatusParent;
 use App\Entity\WebOrder;
-use App\Channels\Shopify\ShopifyInvoiceParent;
 
-class FitbitCorporateInvoice extends ShopifyInvoiceParent
+class FitbitCorporateUpdateStatus extends ShopifyUpdateStatusParent
 {
     public function getChannel()
     {

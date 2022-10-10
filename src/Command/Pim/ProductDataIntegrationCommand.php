@@ -2,11 +2,11 @@
 
 namespace App\Command\Pim;
 
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use App\Entity\Brand;
 use App\Entity\Product;
 use App\Entity\ProductSaleChannel;
 use App\Entity\SaleChannel;
-use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use App\Helper\MailService;
 use App\Service\Pim\AkeneoConnector;
 use Doctrine\Persistence\ManagerRegistry;
@@ -97,7 +97,7 @@ class ProductDataIntegrationCommand extends Command
 
 
         if (count($errors)>0) {
-            $this->mailService->sendEmail('[Products] Error PIM with products', implode('<br/>', $errors), 'devops@kpsport.com');
+            $this->mailService->sendEmailRole('ROLE_PRICING', '[Products] Error PIM with products', implode('<br/>', $errors));
         }
 
 

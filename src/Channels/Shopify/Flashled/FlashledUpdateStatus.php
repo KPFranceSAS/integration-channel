@@ -2,10 +2,10 @@
 
 namespace App\Channels\Shopify\Flashled;
 
+use App\Channels\Shopify\ShopifyUpdateStatusParent;
 use App\Entity\WebOrder;
-use App\Channels\Shopify\ShopifyInvoiceParent;
 
-class FlashledInvoice extends ShopifyInvoiceParent
+class FlashledUpdateStatus extends ShopifyUpdateStatusParent
 {
     public function getChannel()
     {

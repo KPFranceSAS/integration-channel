@@ -2,10 +2,10 @@
 
 namespace App\Channels\Shopify\OwletCare;
 
+use App\Channels\Shopify\ShopifyUpdateStatusParent;
 use App\Entity\WebOrder;
-use App\Channels\Shopify\ShopifyInvoiceParent;
 
-class OwletCareInvoice extends ShopifyInvoiceParent
+class OwletCareUpdateStatus extends ShopifyUpdateStatusParent
 {
     public function getChannel()
     {

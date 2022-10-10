@@ -2,15 +2,15 @@
 
 namespace App\Channels\ChannelAdvisor;
 
-use App\Entity\WebOrder;
-use App\Service\Aggregator\InvoiceParent;
 use App\Channels\ChannelAdvisor\ChannelAdvisorApi;
+use App\Entity\WebOrder;
+use App\Service\Aggregator\UpdateStatusParent;
 
 /**
  * Services that will get through the API the order from ChannelAdvisor
  *
  */
-class ChannelAdvisorInvoice extends InvoiceParent
+class ChannelAdvisorUpdateStatus extends UpdateStatusParent
 {
     protected function getChannelApi(): ChannelAdvisorApi
     {
@@ -24,7 +24,7 @@ class ChannelAdvisorInvoice extends InvoiceParent
     }
 
 
-    protected function postInvoice(WebOrder $order, $invoice)
+    protected function postUpdateStatusInvoice(WebOrder $order, $invoice)
     {
         $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
         $this->addLogToOrder($order, 'Retrieve invoice content ' . $invoice['number']);

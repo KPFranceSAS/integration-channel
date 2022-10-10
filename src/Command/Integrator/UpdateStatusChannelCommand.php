@@ -2,24 +2,24 @@
 
 namespace App\Command\Integrator;
 
-use App\Service\Aggregator\InvoiceAggregator;
+use App\Service\Aggregator\UpdateStatusAggregator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class InvoiceIntegrateCommand extends Command
+class UpdateStatusChannelCommand extends Command
 {
-    protected static $defaultName = 'app:integrate-invoices-from';
-    protected static $defaultDescription = 'Integrates all invoices waiting to be transformed to invoices with the given sale channel';
+    protected static $defaultName = 'app:update-status-from';
+    protected static $defaultDescription = 'Update all sale orders for the given sale channel';
 
-    public function __construct(InvoiceAggregator $invoiceAggregator)
+    public function __construct(UpdateStatusAggregator  $updateStatusAggregator)
     {
-        $this->invoiceAggregator = $invoiceAggregator;
+        $this->updateStatusAggregator = $updateStatusAggregator;
         parent::__construct();
     }
 
-    private $invoiceAggregator;
+    private $updateStatusAggregator;
 
 
     protected function configure(): void
@@ -34,9 +34,9 @@ class InvoiceIntegrateCommand extends Command
     {
         $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
 
-        $integrator = $this->invoiceAggregator->getInvoice($channelIntegration);
+        $integrator = $this->updateStatusAggregator->getInvoice($channelIntegration);
         $retryIntegration = boolval($input->getArgument('retryIntegration'));
-        $integrator->processInvoices($retryIntegration);
+        $integrator->updateStatusSales($retryIntegration);
         return Command::SUCCESS;
     }
 }

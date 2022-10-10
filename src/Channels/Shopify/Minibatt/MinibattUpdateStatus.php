@@ -2,10 +2,10 @@
 
 namespace App\Channels\Shopify\Minibatt;
 
+use App\Channels\Shopify\ShopifyUpdateStatusParent;
 use App\Entity\WebOrder;
-use App\Channels\Shopify\ShopifyInvoiceParent;
 
-class MinibattInvoice extends ShopifyInvoiceParent
+class MinibattUpdateStatus extends ShopifyUpdateStatusParent
 {
     public function getChannel()
     {

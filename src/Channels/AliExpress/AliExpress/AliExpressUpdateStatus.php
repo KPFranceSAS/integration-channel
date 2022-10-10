@@ -2,10 +2,10 @@
 
 namespace App\Channels\AliExpress\AliExpress;
 
+use App\Channels\AliExpress\AliExpressUpdateStatusParent;
 use App\Entity\WebOrder;
-use App\Channels\AliExpress\AliExpressInvoiceParent;
 
-class AliExpressInvoice extends AliExpressInvoiceParent
+class AliExpressUpdateStatus extends AliExpressUpdateStatusParent
 {
     public function getChannel()
     {

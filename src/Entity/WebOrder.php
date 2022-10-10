@@ -162,6 +162,11 @@ class WebOrder
 
 
 
+    public function isFulfiledBySeller()
+    {
+        return $this->fulfilledBy == self::FULFILLED_BY_SELLER;
+    }
+
     public function getNbHoursSinceCreation()
     {
         $now = new DateTime();
@@ -377,7 +382,7 @@ class WebOrder
                 $webOrder->setChannel(WebOrder::CHANNEL_FITBITEXPRESS);
                 return $webOrder;
             case WebOrder::CHANNEL_ARISE:
-                return WebOrder::createOneFromArise($orderApi);    
+                return WebOrder::createOneFromArise($orderApi);
             case   WebOrder::CHANNEL_CHANNELADVISOR:
                 return WebOrder::createOneFromChannelAdvisor($orderApi);
             case   WebOrder::CHANNEL_OWLETCARE:

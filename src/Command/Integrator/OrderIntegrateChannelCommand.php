@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class OrderIntegrateCommand extends Command
+class OrderIntegrateChannelCommand extends Command
 {
     protected static $defaultName = 'app:integrate-orders-from';
     protected static $defaultDescription = 'INtegrates all orders waiting to be invoiced with the given sale channel';

@@ -39,7 +39,7 @@ class MailService
      * @param string|Address|array $emails the recipients
      * @return void
      */
-    public function sendEmail($titre, $contenu, $emails = 'marketplace-alerts@kpsport.com')
+    public function sendEmail($titre, $contenu, $emails = 'devops@kpsport.com')
     {
         $this->logger->info("Sending email $titre to " . json_encode($emails) . "  > $contenu ");
 

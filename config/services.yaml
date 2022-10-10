@@ -9,8 +9,8 @@ services:
     _instanceof:
         App\Service\Aggregator\StockParent:
             tags: ['app.stockupdater']
-        App\Service\Aggregator\InvoiceParent:
-            tags: ['app.invoice']
+        App\Service\Aggregator\UpdateStatusParent:
+            tags: ['app.statusupdater']
         App\Service\Aggregator\ApiInterface:
             tags: ['app.apiconnector']
         App\Service\Aggregator\IntegratorParent:
@@ -29,9 +29,9 @@ services:
     App\Service\Aggregator\ApiAggregator:
         arguments:
             - !tagged_iterator app.apiconnector
-    App\Service\Aggregator\InvoiceAggregator:
+    App\Service\Aggregator\UpdateStatusAggregator:
         arguments:
-            - !tagged_iterator app.invoice
+            - !tagged_iterator app.statusupdater
     App\Service\Aggregator\StockAggregator:
         arguments:
             - !tagged_iterator app.stockupdater

@@ -2,11 +2,11 @@
 
 namespace App\Channels\Arise;
 
-use App\Entity\WebOrder;
-use App\Service\Aggregator\InvoiceParent;
 use App\Channels\Arise\AriseApi;
+use App\Entity\WebOrder;
+use App\Service\Aggregator\UpdateStatusParent;
 
-class AriseInvoice extends InvoiceParent
+class AriseUpdateStatus extends UpdateStatusParent
 {
     protected function getAriseApi(): AriseApi
     {
@@ -20,15 +20,10 @@ class AriseInvoice extends InvoiceParent
     }
 
 
-    protected function postInvoice(WebOrder $order, $invoice)
+    protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber)
     {
-        $tracking = $this->getTracking($order, $invoice);
-        if (!$tracking) {
-            $this->logger->info('Any tracking found for invoice ' . $invoice['number']);
-        } else {
-            $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by ' . $tracking['Carrier'] . " with tracking number " . $tracking['Tracking number']);
-            $order->setTrackingUrl('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking['Tracking number']);
-            $result = $this->getAriseApi()->markOrderAsFulfill($order->getExternalNumber(), "DHL", $tracking['Tracking number']);
+
+            $result = $this->getAriseApi()->markOrderAsFulfill($order->getExternalNumber(), "DHL", $trackingNumber);
             if ($result) {
                 $this->addLogToOrder($order, 'Mark as fulfilled on Arise');
                 return true;
@@ -45,8 +40,9 @@ class AriseInvoice extends InvoiceParent
                 } else {
                     $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting tracking number ' . $tracking['Tracking number']);
                 }*/
+                return false;
             }
-        }
-        return false;
+        
+        
     }
 }
