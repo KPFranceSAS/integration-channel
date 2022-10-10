@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Tests\AliExpress;
+namespace App\Tests\Channels\AliExpress;
 
 use App\BusinessCentral\Connector\GadgetIberiaConnector;
 use App\Channels\AliExpress\AliExpress\AliExpressIntegrateOrder;
