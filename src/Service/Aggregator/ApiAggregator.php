@@ -2,8 +2,8 @@
 
 namespace App\Service\Aggregator;
 
-use App\Helper\Api\ApiInterface;
-use App\Helper\Utils\Aggregator;
+use App\Service\Aggregator\ApiInterface;
+use App\Service\Aggregator\Aggregator;
 
 class ApiAggregator extends Aggregator
 {

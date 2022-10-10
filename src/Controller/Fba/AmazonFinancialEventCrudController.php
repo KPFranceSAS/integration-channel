@@ -27,6 +27,12 @@ class AmazonFinancialEventCrudController extends AdminCrudController
     }
 
 
+    public function getDefautOrder(): array
+    {
+        return ['postedDate' => "DESC"];
+    }
+
+
 
     public function configureCrud(Crud $crud): Crud
     {

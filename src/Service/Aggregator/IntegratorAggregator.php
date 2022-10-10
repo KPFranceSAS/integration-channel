@@ -2,8 +2,8 @@
 
 namespace App\Service\Aggregator;
 
-use App\Helper\Integrator\IntegratorParent;
-use App\Helper\Utils\Aggregator;
+use App\Service\Aggregator\Aggregator;
+use App\Service\Aggregator\IntegratorParent;
 
 class IntegratorAggregator extends Aggregator
 {

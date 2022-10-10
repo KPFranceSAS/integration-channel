@@ -7,13 +7,13 @@ parameters:
 
 services:
     _instanceof:
-        App\Helper\Stock\StockParent:
+        App\Service\Aggregator\StockParent:
             tags: ['app.stockupdater']
-        App\Helper\Invoice\InvoiceParent:
+        App\Service\Aggregator\InvoiceParent:
             tags: ['app.invoice']
-        App\Helper\Api\ApiInterface:
+        App\Service\Aggregator\ApiInterface:
             tags: ['app.apiconnector']
-        App\Helper\Integrator\IntegratorParent:
+        App\Service\Aggregator\IntegratorParent:
             tags: ['app.integrator']
 
     App\:

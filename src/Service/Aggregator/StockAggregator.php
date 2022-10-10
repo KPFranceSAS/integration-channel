@@ -2,8 +2,8 @@
 
 namespace App\Service\Aggregator;
 
-use App\Helper\Stock\StockParent;
-use App\Helper\Utils\Aggregator;
+use App\Service\Aggregator\StockParent;
+use App\Service\Aggregator\Aggregator;
 
 class StockAggregator extends Aggregator
 {

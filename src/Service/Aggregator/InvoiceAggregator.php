@@ -2,8 +2,8 @@
 
 namespace App\Service\Aggregator;
 
-use App\Helper\Invoice\InvoiceParent;
-use App\Helper\Utils\Aggregator;
+use App\Service\Aggregator\InvoiceParent;
+use App\Service\Aggregator\Aggregator;
 
 class InvoiceAggregator extends Aggregator
 {
