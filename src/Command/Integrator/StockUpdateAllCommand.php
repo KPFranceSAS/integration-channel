@@ -4,23 +4,22 @@ namespace App\Command\Integrator;
 
 use App\Entity\IntegrationChannel;
 use App\Helper\MailService;
-use App\Service\Aggregator\IntegratorAggregator;
+use App\Service\Aggregator\StockAggregator;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class OrderIntegrateAllCommand extends Command
+class StockUpdateAllCommand extends Command
 {
-    protected static $defaultName = 'app:integrate-orders-all';
-    protected static $defaultDescription = 'Integrates all orders from all sale channels';
+    protected static $defaultName = 'app:update-stocks-all';
+    protected static $defaultDescription = 'Update stocks in all channels';
 
-    public function __construct(IntegratorAggregator $integrateAggregator,ManagerRegistry $managerRegistry, LoggerInterface $logger, MailService $mailService)
+    public function __construct(StockAggregator $stockAggregator, ManagerRegistry $managerRegistry, LoggerInterface $logger, MailService $mailService)
     {
-        $this->integrateAggregator = $integrateAggregator;
+        $this->stockAggregator = $stockAggregator;
         $this->logger = $logger;
         $this->mailService = $mailService;
         $this->managerRegistry = $managerRegistry->getManager();
@@ -29,45 +28,38 @@ class OrderIntegrateAllCommand extends Command
 
     private $managerRegistry;
 
-    private $integrateAggregator;
+    private $stockAggregator;
 
     private $logger;
 
     private $mailService;
 
 
-    protected function configure(): void
-    {
-        $this
-            ->setDescription(self::$defaultDescription)
-            ->addArgument('retryIntegration', InputArgument::OPTIONAL, 'To reimport all errors add 1', false);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $channels = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
             [
                 "active"=>true,
-                "orderSync"=>true,
+                "stockSync"=>true,
             ]
         );
         foreach ($channels as $channel) {
             try {
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('Start integration CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('Start stock update CHANNEL >>> '.$channel->getCode());
                 $this->logger->info('##########################################');
                 $this->logger->info('');
-                $integrator = $this->integrateAggregator->getIntegrator($channel->getCode());
-                $retryIntegration = boolval($input->getArgument('retryIntegration'));
-                $integrator->processOrders($retryIntegration);
+                $stockUpdate = $this->stockAggregator->getStock($channel->getCode());
+                $stockUpdate->send();
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('End integration CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('End stock update CHANNEL >>> '.$channel->getCode());
                 $this->logger->info('##########################################');
                 $this->logger->info('');
             } catch (Exception $e) {
-                $this->mailService->sendEmail('Error in OrderIntegrateChannelCommand', $e->getMessage());
+                $this->mailService->sendEmail('Error in StockUpdateAllCommand', $e->getMessage());
             }
         }
 

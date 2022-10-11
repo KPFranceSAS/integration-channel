@@ -19,6 +19,7 @@ use App\Entity\Brand;
 use App\Entity\Category;
 use App\Entity\FbaReturn;
 use App\Entity\ImportPricing;
+use App\Entity\IntegrationChannel;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Entity\Promotion;
@@ -105,7 +106,7 @@ class DashboardController extends AbstractDashboardController
                     ),
                     MenuItem::linkToCrud(
                         'Sales channel',
-                        'far fa-registered',
+                        'fas fa-store-alt',
                         SaleChannel::class
                     ),
                 ])->setPermission('ROLE_PRICING'),
@@ -129,6 +130,11 @@ class DashboardController extends AbstractDashboardController
                         'SKU Mapping',
                         'fa fa-exchange',
                         ProductCorrelation::class
+                    ),
+                    MenuItem::linkToCrud(
+                        'Integration channel',
+                        'fas fa-stream',
+                        IntegrationChannel::class
                     ),
                     MenuItem::linkToCrud(
                         'Users',
