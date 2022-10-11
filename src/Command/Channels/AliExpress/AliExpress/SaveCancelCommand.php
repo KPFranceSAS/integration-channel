@@ -70,6 +70,7 @@ class SaveCancelCommand extends Command
             $this->checkOrderStatus($webOrder);
         }
 
+         /** @var array[\App\Entity\WebOrder] */
         $webOrdersCancel = $this->manager->getRepository(WebOrder::class)
                 ->findBy(
                     [
