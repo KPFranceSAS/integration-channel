@@ -44,13 +44,17 @@ class UpdateStatusAllCommand extends Command
         $channels = $this->invoiceAggregator->getChannels();
         foreach ($channels as $channel) {
             try {
+                $this->logger->info('');
                 $this->logger->info('<<< ------------------------------ >>> ');
                 $this->logger->info('Start update status CHANNEL >>> '.$channel);
+                $this->logger->info('');
                 $integrator = $this->invoiceAggregator->getInvoice($channel);
                 $retryIntegration = boolval($input->getArgument('retryIntegration'));
                 $integrator->updateStatusSales($retryIntegration);
+                $this->logger->info('');
                 $this->logger->info('End update status CHANNEL >>> '.$channel);
                 $this->logger->info('<<< ------------------------------ >>> ');
+                $this->logger->info('');
             } catch (Exception $e) {
                 $this->mailService->sendEmail('Error in InvoiceIntegrateAllCommand', $e->getMessage());
             }
