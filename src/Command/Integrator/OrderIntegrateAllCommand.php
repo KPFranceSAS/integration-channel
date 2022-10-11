@@ -11,7 +11,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class OrderIntegrateChannelCommand extends Command
+class OrderIntegrateAllCommand extends Command
 {
     protected static $defaultName = 'app:integrate-orders-all';
     protected static $defaultDescription = 'Integrates all orders from all sale channels';
