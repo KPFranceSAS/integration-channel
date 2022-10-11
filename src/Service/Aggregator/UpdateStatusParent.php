@@ -154,7 +154,7 @@ abstract class UpdateStatusParent
                 $order->cleanErrors();
                 $tracking =  $this->getTrackingDhl($statusSaleOrder['ShipmentNo']);
                 if (!$tracking) {
-                    $this->addOnlyLogToOrderIfNotExists($order, 'TTracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo']);
+                    $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo']);
                 } else {
                     $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DHL with tracking number ' . $tracking);
                     $order->setTrackingUrl('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking);
