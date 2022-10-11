@@ -65,16 +65,7 @@ class WebOrderCrudController extends AdminCrudController
             ->addCssClass('btn')
             ->linkToCrudAction('retryIntegration');
 
-        /** @var \App\Entity\User */
-        $user = $this->getUser();
-        if ($user->hasRole('ROLE_ADMIN')) {
-            $changeStatusToInvoiced = Action::new('changeStatusToInvoiced', 'Mark as invoiced', 'fas fa-check')
-                ->displayIf(static function ($entity) {
-                    return $entity->canChangeStatusToInvoiced();
-                })
-                ->addCssClass('btn')
-                ->linkToCrudAction('changeStatusToInvoiced');
-        }
+        
 
         $seeOriginalOrder = Action::new('checkOrderOnline', 'See online', 'fa fa-eye')
             ->addCssClass('btn')
@@ -145,14 +136,26 @@ class WebOrderCrudController extends AdminCrudController
             ->add(Crud::PAGE_DETAIL, $seeOriginalOrder)
             ->add(Crud::PAGE_DETAIL, $seeTrackOrder)
             ->add(Crud::PAGE_DETAIL, $retryIntegration)
-            ->add(Crud::PAGE_DETAIL, $changeStatusToInvoiced)
-
             ->add(Crud::PAGE_INDEX, $viewInvoiceIndex)
             ->add(Crud::PAGE_INDEX, $exportIndex)
             ->add(Crud::PAGE_INDEX, $retryIntegrationIndex)
             ->add(Crud::PAGE_INDEX, $viewOrderIndex)
             ->addBatchAction($retryAllIntegrationBatchs)
             ->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE, Action::EDIT);
+
+        /** @var \App\Entity\User */
+        $user = $this->getUser();
+        if ($user->hasRole('ROLE_ADMIN')) {
+            $changeStatusToInvoiced = Action::new('changeStatusToInvoiced', 'Mark as invoiced', 'fas fa-check')
+                ->displayIf(static function ($entity) {
+                    return $entity->canChangeStatusToInvoiced();
+                })
+                ->addCssClass('btn')
+                ->linkToCrudAction('changeStatusToInvoiced');
+                $actions->add(Crud::PAGE_DETAIL, $changeStatusToInvoiced);
+        }        
+
+
 
         return $actions;
     }

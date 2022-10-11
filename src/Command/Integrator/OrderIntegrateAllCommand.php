@@ -43,13 +43,17 @@ class OrderIntegrateAllCommand extends Command
         $channels = $this->integrateAggregator->getChannels();
         foreach ($channels as $channel) {
             try {
+                $this->logger->info('');
                 $this->logger->info('<<< ------------------------------ >>> ');
                 $this->logger->info('Start integration CHANNEL >>> '.$channel);
+                $this->logger->info('');
                 $integrator = $this->integrateAggregator->getIntegrator($channel);
                 $retryIntegration = boolval($input->getArgument('retryIntegration'));
                 $integrator->processOrders($retryIntegration);
+                $this->logger->info('');
                 $this->logger->info('End integration CHANNEL >>> '.$channel);
                 $this->logger->info('<<< ------------------------------ >>> ');
+                $this->logger->info('');
             } catch (Exception $e) {
                 $this->mailService->sendEmail('Error in OrderIntegrateChannelCommand', $e->getMessage());
             }
