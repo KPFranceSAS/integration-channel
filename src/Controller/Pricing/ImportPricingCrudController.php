@@ -100,9 +100,10 @@ class ImportPricingCrudController extends AdminCrudController
         }
 
         if ($importType == ImportPricing::Type_Import_Pricing) {
-            $saleChannels = $this->container->get('doctrine')->getManager()->getRepository(SaleChannel::class)->findAll();
+            /** @var \App\Entity\User */
+            $user = $this->getUser();
             $lines = [ 'sku' ];
-            foreach ($saleChannels as $saleChannel) {
+            foreach ($user->getSaleChannels() as $saleChannel) {
                 $lines[]=$saleChannel->getCode().'-enabled';
                 $lines[]=$saleChannel->getCode().'-price';
             }
@@ -187,8 +188,17 @@ class ImportPricingCrudController extends AdminCrudController
         if ($form->isSubmitted() && $form->isValid()) {
             return $this->import($import);
         }
-        $saleChannels = $this->container->get('doctrine')->getManager()->getRepository(SaleChannel::class)->findAll();
-        return $this->renderForm('admin/crud/importPricing/import.html.twig', ['form' => $form, 'import' => $import, 'saleChannels'=> $saleChannels]);
+        /** @var \App\Entity\User */
+        $user = $this->getUser();
+        
+        return $this->renderForm(
+            'admin/crud/importPricing/import.html.twig', 
+            [
+                'form' => $form,
+                'import' => $import,
+                'saleChannels'=> $user->getSaleChannels()
+            ]
+        );
     }
 
 
