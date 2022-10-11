@@ -36,7 +36,7 @@ class ChannelAdvisorUpdateStatus extends UpdateStatusParent
         if (!$sendFile) {
             throw new \Exception('Upload  was not done uploaded on ChannelAdvisor for ' . $invoice['number']);
         }
-        $this->addLogToOrder($order, 'Invoice sent to channel Advisor');
+        $this->addLogToOrder($order, 'Invoice uploaded on ChannelAdvisor');
         return true;
     }
 }
