@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
@@ -91,6 +92,7 @@ class PricingCrudController extends AdminCrudController
                 AssociationField::new('brand'),
                 AssociationField::new('category'),
                 TextField::new('description', 'Product name'),
+                NumberField::new('unitCost', 'Unit cost €')->setDisabled(),
             ];
         } elseif ($pageName==Crud::PAGE_NEW) {
             return [

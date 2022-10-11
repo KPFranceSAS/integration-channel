@@ -194,9 +194,7 @@ abstract class UpdateStatusParent
                     $order->setInvoiceErp($invoice['number']);
                     $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
                     $order->setStatus(WebOrder::STATE_INVOICED);
-                }
-            } else {
-                $this->checkInvoiceIsLate($order, $invoice);
+                } 
             }
         } else {
             $this->checkOrderIsLate($order);
