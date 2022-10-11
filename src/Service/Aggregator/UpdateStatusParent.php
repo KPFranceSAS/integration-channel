@@ -137,7 +137,7 @@ abstract class UpdateStatusParent
         $statusSaleOrder = $this->getSaleOrderStatus($order);
 
         if (in_array($statusSaleOrder['statusCode'], ["99", "-1", "0", "1", "2"])) {
-            $this->addOnlyLogToOrderIfNotExists($order, $statusSaleOrder['statusLabel']);
+            $this->addOnlyLogToOrderIfNotExists($order, 'Order status in BC >'.$statusSaleOrder['statusLabel'] .' statusCode '.$statusSaleOrder['statusCode'] );
             if ($statusSaleOrder['statusCode']=="0") {
                 $this->checkShipmentIsLate($order);
             }
