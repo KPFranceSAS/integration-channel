@@ -1,3 +1,5 @@
+####### INTEGRATION #######
+
 #### BUILD REPORT ####
 45 */2 * * * php /home/prod/integration/bin/console app:amz-full-maj-report-updates -vvv --env=prod
 */20 * * * * php /home/prod/integration/bin/console app:amz-check-invoiced -vvv --env=prod
@@ -6,105 +8,39 @@
 30 18 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
 30 2 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
 20 2 * * * php /home/prod/integration/bin/console app:amz-store-daily-stocks -vvv --env=prod
-
 35 * * * * php /home/prod/integration/bin/console app:amz-import-stock -vvv --env=prod
 0 9 * * * php /home/prod/integration/bin/console app:amz-send-alert-fba --env=prod
-
 
 ### PRICING ####
 * * * * * php /home/prod/integration/bin/console app:run-import-pricings -vvv --env=prod
 * * * * * php /home/prod/integration/bin/console app:store-history-pricings -vvv --env=prod
-10 */4 * * * php /home/prod/integration/bin/console app:pim-product-integration-from-pim -vvv --env=prod
+30 11 * * * php /home/prod/integration/bin/console app:pim-product-integration-from-pim -vvv --env=prod
 2 * * * * php /home/prod/integration/bin/console app:channel-export-pricings -vvv --env=prod
 32 * * * * php /home/prod/integration/bin/console app:channel-export-pricings -vvv --env=prod
 
-#### CHANNELAVISOR ####
-# Get orders and integrate orders
-5 * * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR -vvv --env=prod
+### INTEGRATION ORDER ###
+1 * * * * php /home/prod/integration/bin/console app:integrate-orders-all -vvv --env=prod
+31 * * * * php /home/prod/integration/bin/console app:integrate-orders-all -vvv --env=prod
 
+### REINTEGRATION WITH ERROR
+30 19 * * * php /home/prod/integration/bin/console app:integrate-orders-all 1 -vvv --env=prod
+30 7 * * * php /home/prod/integration/bin/console app:integrate-orders-all 1 -vvv --env=prod
 
-# Integrate invoice and upload invoice
-15 5 * * * php /home/prod/integration/bin/console app:integrate-invoices-from CHANNELADVISOR -vvv --env=prod
-15 12 * * * php /home/prod/integration/bin/console app:integrate-invoices-from CHANNELADVISOR -vvv --env=prod
-15 18 * * * php /home/prod/integration/bin/console app:integrate-invoices-from CHANNELADVISOR -vvv --env=prod
+### UPDATE STATUS ORDER ###
+3 * * * * php /home/prod/integration/bin/console app:update-status-orders-all -vvv --env=prod
+33 * * * * php /home/prod/integration/bin/console app:update-status-orders-all -vvv --env=prod
 
+### UPDATE STOCK LEVEL ###
+4 * * * * php /home/prod/integration/bin/console app:update-stocks-all -vvv --env=prod
+34 * * * * php /home/prod/integration/bin/console app:update-stocks-all -vvv --env=prod
 
-# Reintegrate orders in error
-5 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR 1 -vvv --env=prod
-30 11 * * * php /home/prod/integration/bin/console app:integrate-orders-from CHANNELADVISOR 1 -vvv --env=prod
-
-#### ALIEXPRESS ####
-# Get orders and integrate orders
-10 * * * * php /home/prod/integration/bin/console app:integrate-orders-from ALIEXPRESS -vvv --env=prod
-40 * * * * php /home/prod/integration/bin/console app:integrate-orders-from ALIEXPRESS -vvv --env=prod
-
-# Reintegrate orders
-10 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from ALIEXPRESS 1 -vvv --env=prod
-35 11 * * * php /home/prod/integration/bin/console app:integrate-orders-from ALIEXPRESS 1 -vvv --env=prod
-
-# Integrate invoice and send tracking
-20 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from ALIEXPRESS -vvv --env=prod
-
+### ALIEXPRESS                       
 # Check Cancelation online
 30 * * * * php /home/prod/integration/bin/console app:aliexpress-cancel-orders -vvv --env=prod
 
-# Send stoc levels
-15 * * * * php /home/prod/integration/bin/console app:update-stocks-to ALIEXPRESS --env=prod
-45 * * * * php /home/prod/integration/bin/console app:update-stocks-to ALIEXPRESS --env=prod
-
-#### FITBITEXPRESS ####
-# Get orders and integrate orders
-13 * * * * php /home/prod/integration/bin/console app:integrate-orders-from FITBITEXPRESS -vvv --env=prod
-43 * * * * php /home/prod/integration/bin/console app:integrate-orders-from FITBITEXPRESS -vvv --env=prod
-
-# Reintegrate orders
-15 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from FITBITEXPRESS 1 -vvv --env=prod
-45 11 * * * php /home/prod/integration/bin/console app:integrate-orders-from FITBITEXPRESS 1 -vvv --env=prod
-
-# Integrate invoice and send tracking
-25 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from FITBITEXPRESS -vvv --env=prod
-
+### FITBITEXPRESS ####
 # Check Cancelation online
 30 * * * * php /home/prod/integration/bin/console app:fitbitexpress-cancel-orders -vvv --env=prod
 
-# Send stoc levels
-25 * * * * php /home/prod/integration/bin/console app:update-stocks-to FITBITEXPRESS --env=prod
-
-#### OWLETCARE ####
-# Maj stock
-10 * * * * php /home/prod/integration/bin/console app:update-stocks-to OWLETCARE --env=prod
-
-# Get orders and integrate orders
-48 * * * * php /home/prod/integration/bin/console app:integrate-orders-from OWLETCARE -vvv --env=prod
-
-# Integrate invoice and send tracking
-22 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from OWLETCARE -vvv --env=prod
-
-# Reintegrate orders
-15 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from OWLETCARE 1 -vvv --env=prod
-45 11 * * * php /home/prod/integration/bin/console app:integrate-orders-from OWLETCARE 1 -vvv --env=prod
-
-
-#### FLASHLED ####
-# Maj stock
-12 * * * * php /home/prod/integration/bin/console app:update-stocks-to FLASHLED --env=prod
-# Get orders and integrate orders
-50 * * * * php /home/prod/integration/bin/console app:integrate-orders-from FLASHLED -vvv --env=prod
-# Integrate invoice and send tracking
-23 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from FLASHLED -vvv --env=prod
-
-45 11 * * * php /home/prod/integration/bin/console app:integrate-orders-from FLASHLED 1 -vvv --env=prod
-45 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from FLASHLED 1 -vvv --env=prod
-
-#### MINIBATT ####
-# Maj stock
-14 * * * * php /home/prod/integration/bin/console app:update-stocks-to MINIBATT --env=prod
-# Get orders and integrate orders
-49 * * * * php /home/prod/integration/bin/console app:integrate-orders-from MINIBATT -vvv --env=prod
-# Integrate invoice and send tracking
-23 * * * * php /home/prod/integration/bin/console app:integrate-invoices-from MINIBATT -vvv --env=prod
-
-45 11 * * * php /home/prod/integration/bin/console app:integrate-orders-from MINIBATT 1 -vvv --env=prod
-15 19 * * * php /home/prod/integration/bin/console app:integrate-orders-from MINIBATT 1 -vvv --env=prod
 ####### END INTEGRATION #######
 
