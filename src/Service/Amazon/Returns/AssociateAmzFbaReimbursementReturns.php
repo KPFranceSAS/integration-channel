@@ -2,12 +2,12 @@
 
 namespace App\Service\Amazon\Returns;
 
+use App\BusinessCentral\Connector\KpFranceConnector;
 use App\Entity\AmazonFinancialEvent;
 use App\Entity\AmazonOrder;
 use App\Entity\AmazonReimbursement;
 use App\Entity\AmazonReturn;
 use App\Entity\FbaReturn;
-use App\BusinessCentral\Connector\KpFranceConnector;
 use App\Helper\MailService;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
@@ -133,6 +133,7 @@ class AssociateAmzFbaReimbursementReturns
 
     protected function getBestFbaReturnAmazonReturn(AmazonReturn $amazonReturn): FbaReturn
     {
+        /** @var array[\App\Entity\FbaReturn] */
         $fbaReturns = $this->manager
         ->getRepository(FbaReturn::class)
         ->findBy(

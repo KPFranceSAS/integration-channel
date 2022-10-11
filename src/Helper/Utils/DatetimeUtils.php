@@ -22,6 +22,18 @@ class DatetimeUtils
     }
 
 
+    
+
+    public static function createDateTimeFromDateWithDelay(string $date,int $addHour = 8,  $format='Y-m-d H:i:s'): DateTime
+    {
+        $dateTime = DateTime::createFromFormat($format, $date);
+        if($addHour > 0){
+            $dateTime->add(new DateInterval('PT'.$addHour.'H'));
+        }
+        return $dateTime;
+    }
+
+
     public static function createDateTimeFromDate(string $date, $format='Y-m-d H:i:s'): DateTime
     {
         $dateTime = DateTime::createFromFormat($format, $date);

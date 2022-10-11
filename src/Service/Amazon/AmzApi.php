@@ -386,12 +386,11 @@ class AmzApi
     public function getAllMarketplaces()
     {
         return [
-            Marketplace::ES()->id(),
-            Marketplace::GB()->id(),
-            Marketplace::FR()->id(),
-            Marketplace::DE()->id(),
-            Marketplace::IT()->id(),
-
+            Marketplace::fromCountry('ES')->id(),
+            Marketplace::fromCountry('FR')->id(),
+            Marketplace::fromCountry('DE')->id(),
+            Marketplace::fromCountry('IT')->id(),
+            Marketplace::fromCountry('GB')->id(),
         ];
     }
 }

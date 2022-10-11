@@ -33,7 +33,7 @@ class SaleChannelSubscriber implements EventSubscriberInterface
         if (!($entity instanceof SaleChannel)) {
             return;
         }
-
+        /** @var array[\App\Entity\Product] */
         $products= $this->manager->getRepository(Product::class)->findAll();
         foreach ($products as $product) {
             $productSaleChannel = new ProductSaleChannel();

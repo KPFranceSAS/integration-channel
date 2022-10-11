@@ -3,14 +3,14 @@
 namespace App\Service\Amazon\Report;
 
 use AmazonPHP\SellingPartner\Marketplace;
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Entity\ProductSaleChannel;
 use App\Entity\SaleChannel;
-use App\BusinessCentral\Connector\BusinessCentralConnector;
-use App\Service\Amazon\AmzApi;
-use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Helper\MailService;
+use App\Service\Amazon\AmzApi;
 use DateInterval;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -107,11 +107,11 @@ class AmzApiImportProduct
         $datas = [];
 
         $marketplaces = [
-            Marketplace::ES()->id(),
-            Marketplace::FR()->id(),
-            Marketplace::DE()->id(),
-            Marketplace::IT()->id(),
-            Marketplace::GB()->id(),
+            Marketplace::fromCountry('ES')->id(),
+            Marketplace::fromCountry('FR')->id(),
+            Marketplace::fromCountry('DE')->id(),
+            Marketplace::fromCountry('IT')->id(),
+            Marketplace::fromCountry('GB')->id(),
         ];
         foreach ($marketplaces as $marketplace) {
             $datasReport =  $this->getContentFromReportMarketplace($dateTimeStart, $marketplace);

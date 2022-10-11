@@ -2,11 +2,11 @@
 
 namespace App\Command\Pricing;
 
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Entity\Product;
 use App\Entity\ProductSaleChannel;
 use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
-use App\BusinessCentral\Connector\BusinessCentralConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -46,7 +46,7 @@ class CreateSaleChannelsCommand extends Command
             ['code'=>'amazon_uk_gi', 'name'=>'Amazon.uk Gadget Iberia', 'countryCode'=>'GB', 'currencyCode'=>'GBP', 'company'=> BusinessCentralConnector::GADGET_IBERIA],
             ['code'=>'aliexpress_es_gi', 'name'=>'Aliexpress.es Gadget Iberia', 'countryCode'=>'ES', 'currencyCode'=>'EUR', 'company'=> BusinessCentralConnector::GADGET_IBERIA],*/
         ];
-       
+        /** @var array[\App\Entity\Product] */
         $products= $this->manager->getRepository(Product::class)->findAll();
 
         foreach ($amrektplaces as $marketplace) {
@@ -59,16 +59,15 @@ class CreateSaleChannelsCommand extends Command
             $saleChannel->setColor($marketplace['color']);
             $saleChannel->setChannel(WebOrder::CHANNEL_CHANNELADVISOR);
 
-                foreach ($products as $product) {
-                    $productSaleChannel = new ProductSaleChannel();
-                    $productSaleChannel->setProduct($product);
-                    $saleChannel->addProductSaleChannel($productSaleChannel);
-                }
+            foreach ($products as $product) {
+                $productSaleChannel = new ProductSaleChannel();
+                $productSaleChannel->setProduct($product);
+                $saleChannel->addProductSaleChannel($productSaleChannel);
+            }
                
             
             $this->manager->persist($saleChannel);
             $this->manager->flush();
-            
         }
         
 

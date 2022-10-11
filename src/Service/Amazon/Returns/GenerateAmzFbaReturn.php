@@ -2,13 +2,13 @@
 
 namespace App\Service\Amazon\Returns;
 
+use App\BusinessCentral\Connector\KpFranceConnector;
 use App\Entity\AmazonFinancialEvent;
 use App\Entity\AmazonOrder;
 use App\Entity\AmazonReturn;
 use App\Entity\FbaReturn;
-use App\Helper\Utils\DatetimeUtils;
-use App\BusinessCentral\Connector\KpFranceConnector;
 use App\Helper\MailService;
+use App\Helper\Utils\DatetimeUtils;
 use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
@@ -16,6 +16,8 @@ use Psr\Log\LoggerInterface;
 class GenerateAmzFbaReturn
 {
     protected $mailer;
+
+    protected $errors;
 
     protected $manager;
 

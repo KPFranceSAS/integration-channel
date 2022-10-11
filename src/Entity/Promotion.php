@@ -372,7 +372,7 @@ class Promotion
 
 
             if ($this->getPromotionPrice() && $this->getPromotionPrice() < ((100 + ProductSaleChannel::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {
-                $context->buildViolation('You do promotions where result is only 10% more than product cost ')
+                $context->buildViolation('You do promotion on final price '.$this->getPromotionPrice().' where result have only '.ProductSaleChannel::TX_MARGIN.'% more than product cost ('.$this->getProduct()->getUnitCost().')')
                             ->atPath($path)
                             ->addViolation();
             }

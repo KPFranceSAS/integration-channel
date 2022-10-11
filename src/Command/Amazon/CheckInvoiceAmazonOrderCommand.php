@@ -29,7 +29,14 @@ class CheckInvoiceAmazonOrderCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $orders = $this->manager->getRepository(AmazonOrder::class)->findBy(['integrated' => false, 'orderStatus' => 'Shipped', 'itemStatus' => 'Shipped']);
+        /**@var array[\App\Entity\AmazonOrder] */
+        $orders = $this->manager->getRepository(AmazonOrder::class)->findBy(
+            [
+                'integrated' => false,
+                'orderStatus' => 'Shipped',
+                'itemStatus' => 'Shipped'
+            ]
+        );
         $progressPar = new ProgressBar($output, count($orders));
         $progressPar->start();
         foreach ($orders as $order) {
@@ -51,7 +58,6 @@ class CheckInvoiceAmazonOrderCommand extends Command
 
     private function checkAmzOrder(AmazonOrder $amazonOrder)
     {
-
         // check if WebOrder file
         $orderAmz = $this->manager->getRepository(WebOrder::class)->findOneBy([
             "externalNumber" => $amazonOrder->getAmazonOrderId(),

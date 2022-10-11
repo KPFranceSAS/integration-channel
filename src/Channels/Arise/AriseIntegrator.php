@@ -2,21 +2,23 @@
 
 namespace App\Channels\Arise;
 
-use App\Channels\AliExpress\AliExpress\AliExpressIntegrateOrder;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\PostalAddress;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
+use App\Channels\AliExpress\AliExpress\AliExpressIntegrateOrder;
+use App\Channels\Arise\AriseApi;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\IntegratorParent;
 use App\Service\Aggregator\StockParent;
-use App\Channels\Arise\AriseApi;
 use DateTime;
 use Exception;
 use function Symfony\Component\String\u;
 
 class AriseIntegrator extends IntegratorParent
 {
+    public const ARISE_CUSTOMER_NUMBER = "002355";
+
     /**
      * process all invocies directory
      *
@@ -55,15 +57,9 @@ class AriseIntegrator extends IntegratorParent
 
 
 
-    protected function getClientNumber()
-    {
-        return AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER;
-    }
-
-
     public function getCustomerBC($orderApi)
     {
-        return AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER;
+        return AriseIntegrator::ARISE_CUSTOMER_NUMBER;
     }
 
 
@@ -77,7 +73,7 @@ class AriseIntegrator extends IntegratorParent
     public function transformToAnBcOrder($orderApi): SaleOrder
     {
         $orderBC = new SaleOrder();
-        $orderBC->customerNumber = $this->getClientNumber();
+        $orderBC->customerNumber = $this->getCustomerBC($orderApi);
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->created_at, 0, 10));
         $datePayment->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');

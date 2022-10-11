@@ -2,8 +2,8 @@
 
 namespace App\Command\Channels\AliExpress\AliExpress;
 
-use App\Channels\AliExpress\AliExpressApiParent;
 use App\BusinessCentral\Connector\GadgetIberiaConnector;
+use App\Channels\AliExpress\AliExpressApiParent;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
 use App\Helper\Utils\DatetimeUtils;
@@ -58,6 +58,7 @@ class SaveCancelCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var array[\App\Entity\WebOrder] */
         $webOrders = $this->manager->getRepository(WebOrder::class)
                 ->findBy(
                     [

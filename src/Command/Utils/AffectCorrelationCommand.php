@@ -30,7 +30,6 @@ class AffectCorrelationCommand extends Command
     {
         $correlations = $this->manager->getRepository(ProductCorrelation::class)->findAll();
         foreach ($correlations as $correlation) {
-           
             if (!$correlation->getProduct()) {
                 $product = $this->manager->getRepository(Product::class)->findOneBy([
                     'sku'=>$correlation->getSkuErp()
@@ -38,10 +37,9 @@ class AffectCorrelationCommand extends Command
                 if ($product) {
                     $correlation->setProduct($product);
                 } else {
-                    $this->output->writeln('No product for SKU '.$correlation->getSkuErp());
+                    $output->writeln('No product for SKU '.$correlation->getSkuErp());
                 }
-               
-            } 
+            }
         }
         $this->manager->flush();
       

@@ -5,9 +5,7 @@ namespace App\Channels\ChannelAdvisor;
 use App\Entity\Product;
 use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
-use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
-use GuzzleHttp\Client;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use stdClass;
@@ -35,6 +33,9 @@ class ChannelAdvisorPricing
             'channel' => WebOrder::CHANNEL_CHANNELADVISOR
         ]);
 
+        /**
+         * @var array[\App\Entity\Product]
+         */
         $products = $this->managerRegistry->getRepository(Product::class)->findAll();
         
 

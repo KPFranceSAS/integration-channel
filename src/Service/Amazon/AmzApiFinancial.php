@@ -20,9 +20,9 @@ use App\Entity\AmazonFinancialEventGroup;
 use App\Entity\AmazonOrder;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
+use App\Helper\MailService;
 use App\Helper\Utils\ExchangeRateCalculator;
 use App\Service\Amazon\AmzApi;
-use App\Helper\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -120,6 +120,7 @@ class AmzApiFinancial
 
     protected function checkIfWeImport(FinancialEventGroup $financialEventGroup): bool
     {
+        /** var array[\App\Entity\AmazonFinancialEventGroup] */
         $financialEventGroupDb = $this->manager
                                     ->getRepository(AmazonFinancialEventGroup::class)
                                     ->findOneBy([

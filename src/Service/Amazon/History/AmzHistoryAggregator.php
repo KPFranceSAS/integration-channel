@@ -39,6 +39,7 @@ class AmzHistoryAggregator
 
     private function addAmazonOrderEvents($orderNumber)
     {
+        /** @var array[\App\Entity\AmazonOrder] */
         $amazonEvents = $this->manager
                          ->getRepository(AmazonOrder::class)
                          ->findBy(['amazonOrderId' => $orderNumber]);

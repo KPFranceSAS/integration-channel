@@ -39,7 +39,7 @@ class UpdateReturnsFromFileCommand extends Command
         $pathFile = $input->getArgument('pathFile');
         $returnIntegrateds = $this->csvExtracter->extractAssociativeDatasFromCsv($pathFile);
         $output->writeln('Start imports ' . count($returnIntegrateds));
-        
+        /**@var array[\App\Entity\FbaReturn] */
         $fbaReturns = $this->manager->getRepository(FbaReturn::class)->findBy([
             "businessCentralDocument" => null
         ]);

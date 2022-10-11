@@ -230,7 +230,8 @@ class AriseClient
         $sysParams["sign_method"] = $this->signMethod;
         $sysParams["timestamp"] = $this->msectime();
         if ($withToken) {
-            $sysParams["access_token"] = $this->getRefreshedToken();
+            $sysParams["access_token"] = $this->accessToken;
+            //$sysParams["access_token"] = $this->getRefreshedToken();
         }
 
         $apiParams = $request->udfParams;

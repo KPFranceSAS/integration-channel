@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class ProductSaleChannel
 {
-    public const TX_MARGIN = 30;
+    public const TX_MARGIN = 20;
 
     use TraitTimeUpdated;
 
@@ -168,12 +168,12 @@ class ProductSaleChannel
     public function checkAndAddHistory(): bool
     {
         $oldProductSaleChannelHistory = $this->getLastProductSaleChannelHistory();
-        if(!$oldProductSaleChannelHistory){
+        if (!$oldProductSaleChannelHistory) {
             $this->createFirstRecord();
             return true;
         } else {
             $newProductSaleChannelHistory = $this->createNewRecord();
-            if($this->shouldBeSavedHistoric($newProductSaleChannelHistory, $oldProductSaleChannelHistory)){
+            if ($this->shouldBeSavedHistoric($newProductSaleChannelHistory, $oldProductSaleChannelHistory)) {
                 $this->addProductSaleChannelHistory($newProductSaleChannelHistory);
                 return true;
             }
@@ -192,24 +192,25 @@ class ProductSaleChannel
 
 
 
-    public function shouldBeSavedHistoric(ProductSaleChannelHistory $new, ProductSaleChannelHistory $old): bool {
-        if($new->isEnabled()!=$old->isEnabled()){
-            $new->setTypeModification($new->isEnabled() ? ProductSaleChannelHistory::TYPE_ACTIVATION : ProductSaleChannelHistory::TYPE_DESACTIVATION);    
+    public function shouldBeSavedHistoric(ProductSaleChannelHistory $new, ProductSaleChannelHistory $old): bool
+    {
+        if ($new->isEnabled()!=$old->isEnabled()) {
+            $new->setTypeModification($new->isEnabled() ? ProductSaleChannelHistory::TYPE_ACTIVATION : ProductSaleChannelHistory::TYPE_DESACTIVATION);
             return true;
         }
         
         
 
-        if($new->getPrice()!=$old->getPrice()){
-            if($new->getRegularPrice()!=$old->getRegularPrice()){
+        if ($new->getPrice()!=$old->getPrice()) {
+            if ($new->getRegularPrice()!=$old->getRegularPrice()) {
                 $new->setTypeModification(ProductSaleChannelHistory::TYPE_MODIFICATION_REGULAR_PRICE);
                 return true;
             }
 
-            if($new->getPromotionPrice()!=$old->getPromotionPrice()){
-                if(!$new->getPromotionPrice()){
+            if ($new->getPromotionPrice()!=$old->getPromotionPrice()) {
+                if (!$new->getPromotionPrice()) {
                     $new->setTypeModification(ProductSaleChannelHistory::TYPE_DESACTIVATION_PROMOTION);
-                } elseif(!$old->getPromotionPrice()){
+                } elseif (!$old->getPromotionPrice()) {
                     $new->setTypeModification(ProductSaleChannelHistory::TYPE_ACTIVATION_PROMOTION);
                 } else {
                     $new->setTypeModification(ProductSaleChannelHistory::TYPE_MODIFICATION_SALE_PRICE);
@@ -229,19 +230,19 @@ class ProductSaleChannel
 
     public function createNewRecord(): ProductSaleChannelHistory
     {
-        $productSaleHistory = new ProductSaleChannelHistory();       
+        $productSaleHistory = new ProductSaleChannelHistory();
         $productSaleHistory->setEnabled($this->enabled);
-        if($this->enabled){
+        if ($this->enabled) {
             $productSaleHistory->setRegularPrice($this->price);
             $promotion = $this->getBestPromotionForNow();
-            if($promotion){
+            if ($promotion) {
                 $productSaleHistory->setDescription(strlen($promotion->getComment())>0 ? $promotion->getComment() : substr($promotion->getPromotionDescriptionFrequency().' '.$promotion->getPromotionDescriptionType(), 0, 255));
                 $productSaleHistory->setPrice($promotion->getPromotionPrice());
                 $productSaleHistory->setPromotionPrice($promotion->getPromotionPrice());
             } else {
                 $productSaleHistory->setPrice($this->price);
             }
-        } 
+        }
         return $productSaleHistory;
     }
 
@@ -249,17 +250,17 @@ class ProductSaleChannel
     public function getLastProductSaleChannelHistory(): ?ProductSaleChannelHistory
     {
         $oldest =null;
-        if(count($this->productSaleChannelHistories)> 0) {
-            foreach($this->productSaleChannelHistories as $productHistory){
-                if(!$oldest){
+        if (count($this->productSaleChannelHistories)> 0) {
+            foreach ($this->productSaleChannelHistories as $productHistory) {
+                if (!$oldest) {
                     $oldest = $productHistory;
                 } else {
-                    if($oldest->getCreatedAt() < $productHistory->getCreatedAt()){
+                    if ($oldest->getCreatedAt() < $productHistory->getCreatedAt()) {
                         $oldest = $productHistory;
                     }
                 }
-            }   
-        } 
+            }
+        }
 
         return $oldest;
     }

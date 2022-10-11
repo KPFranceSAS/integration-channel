@@ -27,6 +27,7 @@ class StoreDailyStockCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var array[\App\Entity\Product] */
         $products = $this->manager->getRepository(Product::class)->findAll();
         $progressPar = new ProgressBar($output, count($products));
         $progressPar->start();

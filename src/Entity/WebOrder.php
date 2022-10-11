@@ -466,7 +466,7 @@ class WebOrder
         $webOrder->setChannel(WebOrder::CHANNEL_ALIEXPRESS);
         $webOrder->setSubchannel('AliExpress');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $datePurchase = DatetimeUtils::createDateTimeFromDate($orderApi->gmt_pay_success);
+        $datePurchase = DatetimeUtils::createDateTimeFromDateWithDelay($orderApi->gmt_pay_success);
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
@@ -486,8 +486,7 @@ class WebOrder
         $webOrder->setChannel(WebOrder::CHANNEL_ARISE);
         $webOrder->setSubchannel('Arise');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $datePurchase = DatetimeUtils::createDateTimeFromDate(substr($orderApi->created_at, 0, 19));
-        $datePurchase->add(new DateInterval('PT8H'));
+        $datePurchase = DatetimeUtils::createDateTimeFromDateWithDelay(substr($orderApi->created_at, 0, 19));
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);

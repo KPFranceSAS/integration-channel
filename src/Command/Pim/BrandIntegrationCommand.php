@@ -33,6 +33,7 @@ class BrandIntegrationCommand extends Command
     {
         $products = $this->akeneoConnector->getAllProducts();
         foreach ($products as $product) {
+            /** @var \App\Entity\Product */
             $productDb = $this->manager->getRepository(Product::class)->findOneBy([
                 'sku' => $product['identifier']
             ]);

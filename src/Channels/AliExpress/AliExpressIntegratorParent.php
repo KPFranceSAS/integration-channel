@@ -2,16 +2,17 @@
 
 namespace App\Channels\AliExpress;
 
-use App\Channels\AliExpress\AliExpressApiParent;
-use App\Channels\AliExpress\AliExpressStock;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\PostalAddress;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
+use App\Channels\AliExpress\AliExpressApiParent;
+use App\Channels\AliExpress\AliExpressStock;
 use App\Entity\WebOrder;
+use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\IntegratorParent;
 use App\Service\Aggregator\StockParent;
-use App\Helper\Utils\DatetimeUtils;
+use DateInterval;
 use DateTime;
 use Exception;
 use function Symfony\Component\String\u;
@@ -32,7 +33,7 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
             try {
                 $orderFull = $this->getAliExpressApi()->getOrder($orderApi->order_id);
 
-                $datePurchase = DatetimeUtils::createDateTimeFromDate($orderFull->gmt_pay_success);
+                $datePurchase = DatetimeUtils::createDateTimeFromDateWithDelay($orderFull->gmt_pay_success);
                 $now = new DateTime();
                 $interval = $now->diff($datePurchase, true);
                 $totalHours = $interval->format('%a') * 24 + $interval->format('%h');

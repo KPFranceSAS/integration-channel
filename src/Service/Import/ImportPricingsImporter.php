@@ -2,15 +2,12 @@
 
 namespace App\Service\Import;
 
-use App\Entity\Brand;
-use App\Entity\Company;
 use App\Entity\ImportPricing;
 use App\Entity\Product;
 use App\Entity\ProductSaleChannel;
 use App\Entity\Promotion;
 use App\Entity\SaleChannel;
 use App\Entity\User;
-use App\Entity\Vendor;
 use App\Helper\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -133,7 +130,6 @@ class ImportPricingsImporter
                         $this->addError($importPricing, 'The sale channel '.$channelCode." doesn't exists");
                         return false;
                     }
-                    $saleChannel = $saleChannelDbs[$channelCode];
                     if (!$importPricing->getUser()->hasSaleChannel($saleChannelDbs[$channelCode])) {
                         $this->addError($importPricing, "You cannot import pricing for this sale channel ".$channelCode);
                         return false;

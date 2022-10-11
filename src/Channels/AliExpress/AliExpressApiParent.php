@@ -141,7 +141,7 @@ abstract class AliExpressApiParent implements ApiInterface
         $mutipleProductUpdateList->product_id = $productId;
         $multipleSkuUpdateList = new SynchronizeSkuRequestDto();
         $multipleSkuUpdateList->sku_code = $productSku;
-        $multipleSkuUpdateList->inventory = $inventory;
+        $multipleSkuUpdateList->{'inventory'} = $inventory;
         $mutipleProductUpdateList->multiple_sku_update_list = $multipleSkuUpdateList;
         $req->setMutipleProductUpdateList(json_encode($mutipleProductUpdateList));
         $this->logger->info('Update Stock Level ' . $productId . ' / SKU ' . $productSku . ' >> ' . $inventory . ' units');

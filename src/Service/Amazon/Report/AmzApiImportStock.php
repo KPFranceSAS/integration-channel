@@ -7,8 +7,8 @@ use App\BusinessCentral\ProductStockFinder;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
-use App\Service\Amazon\AmzApi;
 use App\Helper\MailService;
+use App\Service\Amazon\AmzApi;
 use DateInterval;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
@@ -103,11 +103,11 @@ class AmzApiImportStock
         $datas = [];
 
         $marketplaces = [
-            ['marketplace' => Marketplace::ES()->id(), 'code' => 'eu'],
-            ['marketplace' => Marketplace::FR()->id(), 'code' => 'eu'],
-            ['marketplace' => Marketplace::DE()->id(), 'code' => 'eu'],
-            ['marketplace' => Marketplace::IT()->id(), 'code' => 'eu'],
-            ['marketplace' => Marketplace::GB()->id(), 'code' => 'uk'],
+            ['marketplace' => Marketplace::fromCountry('ES')->id(), 'code' => 'eu'],
+            ['marketplace' => Marketplace::fromCountry('FR')->id(), 'code' => 'eu'],
+            ['marketplace' => Marketplace::fromCountry('DE')->id(), 'code' => 'eu'],
+            ['marketplace' => Marketplace::fromCountry('IT')->id(), 'code' => 'eu'],
+            ['marketplace' => Marketplace::fromCountry('GB')->id(), 'code' => 'uk'],
         ];
         foreach ($marketplaces as $marketplace) {
             $datasReport =  $this->getContentFromReportMarketplace($dateTimeStart, $marketplace['marketplace']);

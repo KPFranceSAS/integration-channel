@@ -97,6 +97,7 @@ abstract class IntegratorParent
 
     public function reIntegrateAllOrders()
     {
+        /** @var array[\App\Entity\WebOrder] */
         $ordersToReintegrate = $this->manager->getRepository(WebOrder::class)->findBy(
             [
                 'status' => WebOrder::STATE_ERROR,
