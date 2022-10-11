@@ -2,7 +2,7 @@
 
 namespace App\Command\Utils;
 
-use App\Entity\WebOrder;
+use App\Entity\IntegrationChannel;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,7 +34,7 @@ class AddPurchaseDateCommand extends Command
     {
         $batchSize = 200;
         $i = 1;
-        $q = $this->manager->createQuery('select a from App\Entity\WebOrder a where a.channel =:channel')->setParameter('channel', WebOrder::CHANNEL_CHANNELADVISOR);
+        $q = $this->manager->createQuery('select a from App\Entity\WebOrder a where a.channel =:channel')->setParameter('channel', IntegrationChannel::CHANNEL_CHANNELADVISOR);
         foreach ($q->toIterable() as $webOrder) {
             $orderApi = $webOrder->getOrderContent();
             $webOrder->setPurchaseDateFromString($orderApi->CreatedDateUtc);

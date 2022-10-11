@@ -3,12 +3,12 @@
 namespace App\Channels\Shopify\FitbitCorporate;
 
 use App\Channels\Shopify\ShopifyUpdateStatusParent;
-use App\Entity\WebOrder;
+use App\Entity\IntegrationChannel;
 
 class FitbitCorporateUpdateStatus extends ShopifyUpdateStatusParent
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_FITBITCORPORATE;
+        return IntegrationChannel::CHANNEL_FITBITCORPORATE;
     }
 }

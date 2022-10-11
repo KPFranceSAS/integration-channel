@@ -2,13 +2,13 @@
 
 namespace App\Channels\Shopify\Minibatt;
 
-use App\Entity\WebOrder;
 use App\Channels\Shopify\ShopifyStockParent;
+use App\Entity\IntegrationChannel;
 
 class MinibattStock extends ShopifyStockParent
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_MINIBATT;
+        return IntegrationChannel::CHANNEL_MINIBATT;
     }
 }

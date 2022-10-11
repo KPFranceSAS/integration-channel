@@ -174,6 +174,7 @@ class AssociateAmzFbaReimbursementReturns
 
     protected function getBestFbaReturnAmazonReimbursement(AmazonReimbursement $reimbursement): FbaReturn
     {
+        /** @var array[\App\Entity\FbaReturn] */
         $fbaReturns = $this->manager
         ->getRepository(FbaReturn::class)
         ->findBy(
@@ -216,6 +217,7 @@ class AssociateAmzFbaReimbursementReturns
 
     protected function checkRemboursementIsPrincipal(AmazonReimbursement $reimbursement)
     {
+        /** @var array[\App\Entity\AmazonFinancialEvent] */
         $financials = $this->manager
                         ->getRepository(AmazonFinancialEvent::class)
                         ->findBy(
@@ -233,7 +235,7 @@ class AssociateAmzFbaReimbursementReturns
             }
         }
 
-
+          /** @var array[\App\Entity\AmazonFinancialEvent] */
         $financials = $this->manager
                         ->getRepository(AmazonFinancialEvent::class)
                         ->findBy(

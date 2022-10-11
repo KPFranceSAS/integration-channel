@@ -3,6 +3,7 @@
 namespace App\Channels\Arise;
 
 use App\Channels\Arise\AriseApi;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\UpdateStatusParent;
 
@@ -16,7 +17,7 @@ class AriseUpdateStatus extends UpdateStatusParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_ARISE;
+        return IntegrationChannel::CHANNEL_ARISE;
     }
 
 

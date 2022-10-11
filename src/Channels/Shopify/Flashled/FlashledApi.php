@@ -2,8 +2,8 @@
 
 namespace App\Channels\Shopify\Flashled;
 
-use App\Entity\WebOrder;
 use App\Channels\Shopify\ShopifyApiParent;
+use App\Entity\IntegrationChannel;
 use Psr\Log\LoggerInterface;
 
 class FlashledApi extends ShopifyApiParent
@@ -15,6 +15,6 @@ class FlashledApi extends ShopifyApiParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_FLASHLED;
+        return IntegrationChannel::CHANNEL_FLASHLED;
     }
 }

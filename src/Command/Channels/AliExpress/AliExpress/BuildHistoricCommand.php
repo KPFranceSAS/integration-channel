@@ -2,8 +2,9 @@
 
 namespace App\Command\Channels\AliExpress\AliExpress;
 
-use App\Channels\AliExpress\AliExpress\AliExpressApi;
 use App\BusinessCentral\Connector\GadgetIberiaConnector;
+use App\Channels\AliExpress\AliExpress\AliExpressApi;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use Doctrine\Persistence\ManagerRegistry;
 use OrderQuery;
@@ -60,7 +61,7 @@ class BuildHistoricCommand extends Command
                 $invoice = $this->bcConnector->getSaleInvoiceByExternalNumber($order->order_id);
                 if ($invoice) {
                     $orderApi = $this->aliExpressApi->getOrder($order->order_id);
-                    $webOrder = WebOrder::createOneFrom($orderApi, WebOrder::CHANNEL_ALIEXPRESS);
+                    $webOrder = WebOrder::createOneFrom($orderApi, IntegrationChannel::CHANNEL_ALIEXPRESS);
                     $this->manager->persist($webOrder);
                     $webOrder->setCompany($this->bcConnector->getCompanyName());
                     $webOrder->setStatus(WebOrder::STATE_INVOICED);
@@ -96,7 +97,7 @@ class BuildHistoricCommand extends Command
 
     private function checkIfImport($orderId)
     {
-        $orders = $this->manager->getRepository(WebOrder::class)->findBy(['channel' => WebOrder::CHANNEL_ALIEXPRESS, 'externalNumber' => $orderId]);
+        $orders = $this->manager->getRepository(WebOrder::class)->findBy(['channel' => IntegrationChannel::CHANNEL_ALIEXPRESS, 'externalNumber' => $orderId]);
         return count($orders) == 0;
     }
 }

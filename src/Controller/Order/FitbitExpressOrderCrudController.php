@@ -2,9 +2,9 @@
 
 namespace App\Controller\Order;
 
-use App\Controller\Order\WebOrderCrudController;
-use App\Entity\WebOrder;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Controller\Order\WebOrderCrudController;
+use App\Entity\IntegrationChannel;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
@@ -23,7 +23,7 @@ class FitbitExpressOrderCrudController extends WebOrderCrudController
     {
         $qb = $this->entityRepository->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
         $qb->andWhere('entity.channel = :channel');
-        $qb->setParameter('channel', WebOrder::CHANNEL_FITBITEXPRESS);
+        $qb->setParameter('channel', IntegrationChannel::CHANNEL_FITBITEXPRESS);
         return $qb;
     }
 

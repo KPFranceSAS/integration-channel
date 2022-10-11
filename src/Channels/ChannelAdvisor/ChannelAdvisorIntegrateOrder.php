@@ -6,6 +6,7 @@ use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\Channels\ChannelAdvisor\ChannelAdvisorApi;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\IntegratorParent;
 use Exception;
@@ -19,7 +20,7 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_CHANNELADVISOR;
+        return IntegrationChannel::CHANNEL_CHANNELADVISOR;
     }
 
 

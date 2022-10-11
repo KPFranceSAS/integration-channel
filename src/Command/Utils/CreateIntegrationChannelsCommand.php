@@ -3,7 +3,6 @@
 namespace App\Command\Utils;
 
 use App\Entity\IntegrationChannel;
-use App\Entity\WebOrder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -27,7 +26,7 @@ class CreateIntegrationChannelsCommand extends Command
     {
         $integrationChannels=[
             [
-                'code'=>WebOrder::CHANNEL_CHANNELADVISOR, 
+                'code'=>IntegrationChannel::CHANNEL_CHANNELADVISOR, 
                 'name'=>'ChannelAdvisor',
                 'active'=>true,
                 'price'=>true,
@@ -36,7 +35,7 @@ class CreateIntegrationChannelsCommand extends Command
                 'order'=>true,
             ],
             [
-                'code'=>WebOrder::CHANNEL_ALIEXPRESS, 
+                'code'=>IntegrationChannel::CHANNEL_ALIEXPRESS, 
                 'name'=>'AliExpress (Gadget Iberia)',
                 'active'=>true,
                 'price'=>false,
@@ -46,7 +45,7 @@ class CreateIntegrationChannelsCommand extends Command
             ],
            
             [
-                'code'=>WebOrder::CHANNEL_ARISE, 
+                'code'=>IntegrationChannel::CHANNEL_ARISE, 
                 'name'=>'Arise',
                 'active'=>false,
                 'price'=>false,
@@ -55,7 +54,7 @@ class CreateIntegrationChannelsCommand extends Command
                 'order'=>true,
             ],
             [
-                'code'=>WebOrder::CHANNEL_FITBITCORPORATE, 
+                'code'=>IntegrationChannel::CHANNEL_FITBITCORPORATE, 
                 'name'=>'Google & Fitbit',
                 'active'=>false,
                 'price'=>false,
@@ -64,7 +63,7 @@ class CreateIntegrationChannelsCommand extends Command
                 'order'=>true,
             ],
             [
-                'code'=>WebOrder::CHANNEL_FITBITEXPRESS, 
+                'code'=>IntegrationChannel::CHANNEL_FITBITEXPRESS, 
                 'name'=>'AliExpress (Fitbit)',
                 'active'=>true,
                 'price'=>false,
@@ -73,7 +72,7 @@ class CreateIntegrationChannelsCommand extends Command
                 'order'=>true,
             ],
             [
-                'code'=>WebOrder::CHANNEL_FLASHLED, 
+                'code'=>IntegrationChannel::CHANNEL_FLASHLED, 
                 'name'=>'Flashled',
                 'active'=>true,
                 'price'=>false,
@@ -82,7 +81,7 @@ class CreateIntegrationChannelsCommand extends Command
                 'order'=>true,
             ],
             [
-                'code'=>WebOrder::CHANNEL_MINIBATT, 
+                'code'=>IntegrationChannel::CHANNEL_MINIBATT, 
                 'name'=>'Minibatt',
                 'active'=>true,
                 'price'=>false,
@@ -91,7 +90,7 @@ class CreateIntegrationChannelsCommand extends Command
                 'order'=>true,
             ],
             [
-                'code'=>WebOrder::CHANNEL_OWLETCARE, 
+                'code'=>IntegrationChannel::CHANNEL_OWLETCARE, 
                 'name'=>'Minibatt',
                 'active'=>true,
                 'price'=>false,

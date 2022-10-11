@@ -2,8 +2,8 @@
 
 namespace App\Channels\Shopify\FitbitCorporate;
 
-use App\Entity\WebOrder;
 use App\Channels\Shopify\ShopifyApiParent;
+use App\Entity\IntegrationChannel;
 use Psr\Log\LoggerInterface;
 
 class FitbitCorporateApi extends ShopifyApiParent
@@ -15,6 +15,6 @@ class FitbitCorporateApi extends ShopifyApiParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_FITBITCORPORATE;
+        return IntegrationChannel::CHANNEL_FITBITCORPORATE;
     }
 }

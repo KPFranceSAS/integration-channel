@@ -3,12 +3,12 @@
 namespace App\Channels\Shopify\Minibatt;
 
 use App\Channels\Shopify\ShopifyUpdateStatusParent;
-use App\Entity\WebOrder;
+use App\Entity\IntegrationChannel;
 
 class MinibattUpdateStatus extends ShopifyUpdateStatusParent
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_MINIBATT;
+        return IntegrationChannel::CHANNEL_MINIBATT;
     }
 }

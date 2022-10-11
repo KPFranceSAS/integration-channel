@@ -2,8 +2,8 @@
 
 namespace App\Channels\AliExpress\AliExpress;
 
-use App\Entity\WebOrder;
 use App\Channels\AliExpress\AliExpressIntegratorParent;
+use App\Entity\IntegrationChannel;
 
 class AliExpressIntegrateOrder extends AliExpressIntegratorParent
 {
@@ -12,7 +12,7 @@ class AliExpressIntegrateOrder extends AliExpressIntegratorParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_ALIEXPRESS;
+        return IntegrationChannel::CHANNEL_ALIEXPRESS;
     }
 
 

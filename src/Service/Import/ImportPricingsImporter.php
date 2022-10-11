@@ -49,7 +49,7 @@ class ImportPricingsImporter
 
     public function importImportPricings()
     {
-        /**@var array[App\Entity\ImportPricing] */
+        /** @var array[App\Entity\ImportPricing] */
         $importPricings = $this->manager
             ->getRepository(ImportPricing::class)
             ->findBy([

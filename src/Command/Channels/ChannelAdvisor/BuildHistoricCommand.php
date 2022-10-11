@@ -2,10 +2,11 @@
 
 namespace App\Command\Channels\ChannelAdvisor;
 
-use App\Entity\AmazonOrder;
-use App\Entity\WebOrder;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Connector\KpFranceConnector;
+use App\Entity\AmazonOrder;
+use App\Entity\IntegrationChannel;
+use App\Entity\WebOrder;
 use Doctrine\Persistence\ManagerRegistry;
 use stdClass;
 use Symfony\Component\Console\Command\Command;
@@ -87,7 +88,7 @@ class BuildHistoricCommand extends Command
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($amzOrderId);
         $webOrder->setStatus(WebOrder::STATE_INVOICED);
-        $webOrder->setChannel(WebOrder::CHANNEL_CHANNELADVISOR);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_CHANNELADVISOR);
         $webOrder->setSubchannel($amzOrderSubChannel);
 
         $webOrder->setErpDocument(WebOrder::DOCUMENT_INVOICE);

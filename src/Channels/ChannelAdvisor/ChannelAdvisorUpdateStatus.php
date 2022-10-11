@@ -3,6 +3,7 @@
 namespace App\Channels\ChannelAdvisor;
 
 use App\Channels\ChannelAdvisor\ChannelAdvisorApi;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\UpdateStatusParent;
 
@@ -20,7 +21,7 @@ class ChannelAdvisorUpdateStatus extends UpdateStatusParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_CHANNELADVISOR;
+        return IntegrationChannel::CHANNEL_CHANNELADVISOR;
     }
 
 

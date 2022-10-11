@@ -2,9 +2,9 @@
 
 namespace App\Channels\Shopify\Flashled;
 
-use App\Entity\WebOrder;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Channels\Shopify\ShopifyIntegrateOrder;
+use App\Entity\IntegrationChannel;
 
 class FlashledIntegrateOrder extends ShopifyIntegrateOrder
 {
@@ -12,7 +12,7 @@ class FlashledIntegrateOrder extends ShopifyIntegrateOrder
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_FLASHLED;
+        return IntegrationChannel::CHANNEL_FLASHLED;
     }
 
 

@@ -2,9 +2,9 @@
 
 namespace App\Channels\Shopify\OwletCare;
 
-use App\Entity\WebOrder;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Channels\Shopify\ShopifyIntegrateOrder;
+use App\Entity\IntegrationChannel;
 
 class OwletCareIntegrateOrder extends ShopifyIntegrateOrder
 {
@@ -12,7 +12,7 @@ class OwletCareIntegrateOrder extends ShopifyIntegrateOrder
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_OWLETCARE;
+        return IntegrationChannel::CHANNEL_OWLETCARE;
     }
 
 

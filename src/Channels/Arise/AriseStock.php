@@ -2,16 +2,16 @@
 
 namespace App\Channels\Arise;
 
-use App\Channels\AliExpress\AliExpressStockParent;
+use App\Channels\Arise\AriseApi;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\StockParent;
-use App\Channels\Arise\AriseApi;
 
 class AriseStock extends StockParent
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_ARISE;
+        return IntegrationChannel::CHANNEL_ARISE;
     }
 
 

@@ -3,12 +3,12 @@
 namespace App\Channels\AliExpress\FitbitExpress;
 
 use App\Channels\AliExpress\AliExpressUpdateStatusParent;
-use App\Entity\WebOrder;
+use App\Entity\IntegrationChannel;
 
 class FitbitExpressUpdateStatus extends AliExpressUpdateStatusParent
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_FITBITEXPRESS;
+        return IntegrationChannel::CHANNEL_FITBITEXPRESS;
     }
 }

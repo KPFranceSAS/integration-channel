@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\BusinessCentral\Connector\GadgetIberiaConnector;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Helper\Utils\InvoiceDownload;
 use App\Service\Aggregator\ApiAggregator;
@@ -66,7 +67,7 @@ class InvoiceController extends AbstractController
                 ->andWhere('w.purchaseDate <= :date_end')
                 ->setParameter('date_start', $invoice->getDateStartString())
                 ->setParameter('date_end', $invoice->getDateEndString())
-                ->setParameter('channel', [WebOrder::CHANNEL_ALIEXPRESS, WebOrder::CHANNEL_FITBITEXPRESS])
+                ->setParameter('channel', [IntegrationChannel::CHANNEL_ALIEXPRESS, IntegrationChannel::CHANNEL_FITBITEXPRESS])
                 ->setParameter('externalNumber', $invoice->externalNumber);
 
 

@@ -90,10 +90,6 @@ public function createEntity(string $entityFqcn)
         foreach ($saleChannels as $saleChannel) {
             $saleChannelsId []= $saleChannel->getId();
         }
-
-
-
-
         return [
             BooleanField::new('active')->renderAsSwitch(false),
             TextField::new('productName')

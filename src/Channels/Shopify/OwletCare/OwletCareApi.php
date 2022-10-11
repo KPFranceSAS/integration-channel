@@ -2,8 +2,8 @@
 
 namespace App\Channels\Shopify\OwletCare;
 
-use App\Entity\WebOrder;
 use App\Channels\Shopify\ShopifyApiParent;
+use App\Entity\IntegrationChannel;
 use Psr\Log\LoggerInterface;
 
 class OwletCareApi extends ShopifyApiParent
@@ -16,6 +16,6 @@ class OwletCareApi extends ShopifyApiParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_OWLETCARE;
+        return IntegrationChannel::CHANNEL_OWLETCARE;
     }
 }

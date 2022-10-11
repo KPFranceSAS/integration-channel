@@ -1,14 +1,14 @@
 
-{% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_CHANNELADVISOR')  %}
+{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_CHANNELADVISOR')  %}
 	{% include "admin/fields/marketplaces/channelAdvisor/billingContent.html.twig" with {'field': field} %}
 {% endif %}
-{% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_ALIEXPRESS') or entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_FITBITEXPRESS')  %}
+{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ALIEXPRESS') or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_FITBITEXPRESS')  %}
 	{% include "admin/fields/marketplaces/aliExpress/billingContent.html.twig" with {'field': field} %}
 {% endif %}
-{% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_OWLETCARE')  or entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_MINIBATT')   or entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_FLASHLED')  %}
+{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_OWLETCARE')  or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MINIBATT')   or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_FLASHLED')  %}
 	{% include "admin/fields/marketplaces/shopify/billingContent.html.twig" with {'field': field} %}
 {% endif %}
 
-{% if entity.instance.channel == constant('App\\Entity\\WebOrder::CHANNEL_ARISE')  %}
+{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ARISE')  %}
 	{% include "admin/fields/marketplaces/arise/billingContent.html.twig" with {'field': field} %}
 {% endif %}

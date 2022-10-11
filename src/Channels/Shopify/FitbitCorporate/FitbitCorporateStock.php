@@ -2,13 +2,13 @@
 
 namespace App\Channels\Shopify\FitbitCorporate;
 
-use App\Entity\WebOrder;
 use App\Channels\Shopify\ShopifyStockParent;
+use App\Entity\IntegrationChannel;
 
 class FitbitCorporateStock extends ShopifyStockParent
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_FITBITCORPORATE;
+        return IntegrationChannel::CHANNEL_FITBITCORPORATE;
     }
 }

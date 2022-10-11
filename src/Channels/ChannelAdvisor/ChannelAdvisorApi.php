@@ -2,7 +2,7 @@
 
 namespace App\Channels\ChannelAdvisor;
 
-use App\Entity\WebOrder;
+use App\Entity\IntegrationChannel;
 use App\Service\Aggregator\ApiInterface;
 use DateTime;
 use GuzzleHttp\Client;
@@ -13,7 +13,7 @@ class ChannelAdvisorApi implements ApiInterface
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_CHANNELADVISOR;
+        return IntegrationChannel::CHANNEL_CHANNELADVISOR;
     }
 
     public const AUTH_URL = 'https://api.channeladvisor.com/oauth2/token';

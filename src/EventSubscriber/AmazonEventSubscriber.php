@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Service\Amazon\History\AmzHistoryAggregator;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
@@ -56,7 +57,7 @@ class AmazonEventSubscriber implements EventSubscriberInterface
         }
 
 
-        if (in_array($entity->getChannel(), [WebOrder::CHANNEL_CHANNELADVISOR])) {
+        if (in_array($entity->getChannel(), [IntegrationChannel::CHANNEL_CHANNELADVISOR])) {
             $entity->amzEvents = $this->amzHistoryAggregator->getAllEventsOrder($entity->getExternalNumber());
         }
     }

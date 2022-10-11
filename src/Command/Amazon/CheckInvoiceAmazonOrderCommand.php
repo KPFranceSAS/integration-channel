@@ -4,6 +4,7 @@ namespace App\Command\Amazon;
 
 use App\BusinessCentral\Connector\KpFranceConnector;
 use App\Entity\AmazonOrder;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Console\Command\Command;
@@ -61,7 +62,7 @@ class CheckInvoiceAmazonOrderCommand extends Command
         // check if WebOrder file
         $orderAmz = $this->manager->getRepository(WebOrder::class)->findOneBy([
             "externalNumber" => $amazonOrder->getAmazonOrderId(),
-            "channel" => WebOrder::CHANNEL_CHANNELADVISOR,
+            "channel" => IntegrationChannel::CHANNEL_CHANNELADVISOR,
             "status" => WebOrder::STATE_INVOICED
         ]);
         if ($orderAmz) {

@@ -6,6 +6,7 @@ use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Controller\Admin\AdminCrudController;
 use App\Controller\Admin\DashboardController;
+use App\Entity\IntegrationChannel;
 use App\Entity\User;
 use App\Entity\WebOrder;
 use App\Filter\LateOrderFilter;
@@ -227,10 +228,10 @@ class WebOrderCrudController extends AdminCrudController
     public function getChannels()
     {
         return [
-            WebOrder::CHANNEL_ALIEXPRESS => WebOrder::CHANNEL_ALIEXPRESS,
-            WebOrder::CHANNEL_FITBITEXPRESS => WebOrder::CHANNEL_FITBITEXPRESS,
-            WebOrder::CHANNEL_CHANNELADVISOR => WebOrder::CHANNEL_CHANNELADVISOR,
-            WebOrder::CHANNEL_OWLETCARE  => WebOrder::CHANNEL_OWLETCARE
+            IntegrationChannel::CHANNEL_ALIEXPRESS => IntegrationChannel::CHANNEL_ALIEXPRESS,
+            IntegrationChannel::CHANNEL_FITBITEXPRESS => IntegrationChannel::CHANNEL_FITBITEXPRESS,
+            IntegrationChannel::CHANNEL_CHANNELADVISOR => IntegrationChannel::CHANNEL_CHANNELADVISOR,
+            IntegrationChannel::CHANNEL_OWLETCARE  => IntegrationChannel::CHANNEL_OWLETCARE
         ];
     }
 

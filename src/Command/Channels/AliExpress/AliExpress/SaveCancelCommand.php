@@ -4,6 +4,7 @@ namespace App\Command\Channels\AliExpress\AliExpress;
 
 use App\BusinessCentral\Connector\GadgetIberiaConnector;
 use App\Channels\AliExpress\AliExpressApiParent;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
 use App\Helper\Utils\DatetimeUtils;
@@ -95,7 +96,7 @@ class SaveCancelCommand extends Command
 
     protected function getChannel()
     {
-        return WebOrder::CHANNEL_ALIEXPRESS;
+        return IntegrationChannel::CHANNEL_ALIEXPRESS;
     }
 
 

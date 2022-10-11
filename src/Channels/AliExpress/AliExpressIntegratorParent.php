@@ -7,7 +7,6 @@ use App\BusinessCentral\Model\PostalAddress;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\Channels\AliExpress\AliExpressApiParent;
-use App\Channels\AliExpress\AliExpressStock;
 use App\Entity\WebOrder;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\IntegratorParent;

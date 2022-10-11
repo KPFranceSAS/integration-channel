@@ -2,9 +2,9 @@
 
 namespace App\Channels\ChannelAdvisor;
 
+use App\Entity\IntegrationChannel;
 use App\Entity\Product;
 use App\Entity\SaleChannel;
-use App\Entity\WebOrder;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -30,7 +30,7 @@ class ChannelAdvisorPricing
     public function exportPricings()
     {
         $saleChannels = $this->managerRegistry->getRepository(SaleChannel::class)->findBy([
-            'channel' => WebOrder::CHANNEL_CHANNELADVISOR
+            'channel' => IntegrationChannel::CHANNEL_CHANNELADVISOR
         ]);
 
         /**

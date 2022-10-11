@@ -2,8 +2,8 @@
 
 namespace App\Channels\Shopify\Minibatt;
 
-use App\Entity\WebOrder;
 use App\Channels\Shopify\ShopifyApiParent;
+use App\Entity\IntegrationChannel;
 use Psr\Log\LoggerInterface;
 
 class MinibattApi extends ShopifyApiParent
@@ -15,6 +15,6 @@ class MinibattApi extends ShopifyApiParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_MINIBATT;
+        return IntegrationChannel::CHANNEL_MINIBATT;
     }
 }

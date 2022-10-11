@@ -2,10 +2,10 @@
 
 namespace App\Controller\Pricing;
 
-use App\Controller\Admin\AdminCrudController;
-use App\Entity\SaleChannel;
-use App\Entity\WebOrder;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Controller\Admin\AdminCrudController;
+use App\Entity\IntegrationChannel;
+use App\Entity\SaleChannel;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -65,10 +65,10 @@ class SaleChannelCrudController extends AdminCrudController
                 BusinessCentralConnector::KP_FRANCE => BusinessCentralConnector::KP_FRANCE,
             ]),
             ChoiceField::new('channel', 'Channel')->setChoices([
-                WebOrder::CHANNEL_CHANNELADVISOR => WebOrder::CHANNEL_CHANNELADVISOR,
-                WebOrder::CHANNEL_ALIEXPRESS => WebOrder::CHANNEL_ALIEXPRESS,
-                WebOrder::CHANNEL_FLASHLED => WebOrder::CHANNEL_FLASHLED,
-                WebOrder::CHANNEL_FITBITCORPORATE => WebOrder::CHANNEL_FITBITCORPORATE,
+                IntegrationChannel::CHANNEL_CHANNELADVISOR => IntegrationChannel::CHANNEL_CHANNELADVISOR,
+                IntegrationChannel::CHANNEL_ALIEXPRESS => IntegrationChannel::CHANNEL_ALIEXPRESS,
+                IntegrationChannel::CHANNEL_FLASHLED => IntegrationChannel::CHANNEL_FLASHLED,
+                IntegrationChannel::CHANNEL_FITBITCORPORATE => IntegrationChannel::CHANNEL_FITBITCORPORATE,
             ]),
             ColorField::new('color', 'Color'),
         ];

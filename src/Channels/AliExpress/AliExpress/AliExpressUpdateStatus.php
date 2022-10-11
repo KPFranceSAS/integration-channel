@@ -3,12 +3,12 @@
 namespace App\Channels\AliExpress\AliExpress;
 
 use App\Channels\AliExpress\AliExpressUpdateStatusParent;
-use App\Entity\WebOrder;
+use App\Entity\IntegrationChannel;
 
 class AliExpressUpdateStatus extends AliExpressUpdateStatusParent
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_ALIEXPRESS;
+        return IntegrationChannel::CHANNEL_ALIEXPRESS;
     }
 }

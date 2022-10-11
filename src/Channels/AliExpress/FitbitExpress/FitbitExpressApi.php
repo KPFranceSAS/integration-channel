@@ -3,7 +3,7 @@
 namespace App\Channels\AliExpress\FitbitExpress;
 
 use App\Channels\AliExpress\AliExpressApiParent;
-use App\Entity\WebOrder;
+use App\Entity\IntegrationChannel;
 use Psr\Log\LoggerInterface;
 
 class FitbitExpressApi extends AliExpressApiParent
@@ -16,6 +16,6 @@ class FitbitExpressApi extends AliExpressApiParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_FITBITEXPRESS;
+        return IntegrationChannel::CHANNEL_FITBITEXPRESS;
     }
 }

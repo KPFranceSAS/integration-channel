@@ -14,6 +14,18 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class IntegrationChannel
 {
+
+
+    public const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
+    public const CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
+    public const CHANNEL_FITBITEXPRESS = 'FITBITEXPRESS';
+    public const CHANNEL_OWLETCARE = 'OWLETCARE';
+    public const CHANNEL_MINIBATT = 'MINIBATT';
+    public const CHANNEL_FLASHLED = 'FLASHLED';
+    public const CHANNEL_FITBITCORPORATE = 'FITBITCORPORATE';
+    public const CHANNEL_ARISE = 'ARISE';
+
+
     use TraitTimeUpdated;
 
     /**

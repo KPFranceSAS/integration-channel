@@ -2,14 +2,15 @@
 
 namespace App\Channels\Shopify\Flashled;
 
-use App\Entity\WebOrder;
 use App\Channels\Shopify\ShopifyStockParent;
+use App\Entity\IntegrationChannel;
+use App\Entity\WebOrder;
 
 class FlashledStock extends ShopifyStockParent
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_FLASHLED;
+        return IntegrationChannel::CHANNEL_FLASHLED;
     }
 
 

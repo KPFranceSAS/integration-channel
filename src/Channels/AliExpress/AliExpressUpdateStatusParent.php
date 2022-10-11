@@ -3,6 +3,7 @@
 namespace App\Channels\AliExpress;
 
 use App\Channels\AliExpress\AliExpressApiParent;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\UpdateStatusParent;
@@ -17,7 +18,7 @@ abstract class AliExpressUpdateStatusParent extends UpdateStatusParent
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_ALIEXPRESS;
+        return IntegrationChannel::CHANNEL_ALIEXPRESS;
     }
 
 

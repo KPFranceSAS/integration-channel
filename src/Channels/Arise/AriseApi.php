@@ -3,9 +3,9 @@
 namespace App\Channels\Arise;
 
 use AmazonPHP\SellingPartner\Exception\Exception;
-use App\Entity\WebOrder;
-use App\Service\Aggregator\ApiInterface;
 use App\Channels\Arise\AriseClient;
+use App\Entity\IntegrationChannel;
+use App\Service\Aggregator\ApiInterface;
 use Psr\Log\LoggerInterface;
 
 class AriseApi implements ApiInterface
@@ -16,7 +16,7 @@ class AriseApi implements ApiInterface
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_ARISE;
+        return IntegrationChannel::CHANNEL_ARISE;
     }
 
 

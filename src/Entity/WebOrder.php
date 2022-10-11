@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
+use App\Entity\IntegrationChannel;
 use App\Helper\Traits\TraitLoggable;
 use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
-use DateInterval;
 use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
@@ -22,14 +22,7 @@ class WebOrder
 
     use TraitLoggable;
 
-    public const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
-    public const  CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
-    public const  CHANNEL_FITBITEXPRESS = 'FITBITEXPRESS';
-    public const  CHANNEL_OWLETCARE = 'OWLETCARE';
-    public const  CHANNEL_MINIBATT = 'MINIBATT';
-    public const  CHANNEL_FLASHLED = 'FLASHLED';
-    public const  CHANNEL_FITBITCORPORATE = 'FITBITCORPORATE';
-    public const  CHANNEL_ARISE = 'ARISE';
+
 
 
     public const  DOCUMENT_ORDER = 'ORDER';
@@ -272,7 +265,7 @@ class WebOrder
     public function hasDelayTreatment()
     {
         if (
-            $this->channel == self::CHANNEL_CHANNELADVISOR
+            $this->channel == IntegrationChannel::CHANNEL_CHANNELADVISOR
             && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL
             && $this->status != self::STATE_INVOICED
         ) {
@@ -286,7 +279,7 @@ class WebOrder
     public function getDelayProblemMessage()
     {
         if (
-            $this->channel == self::CHANNEL_CHANNELADVISOR
+            $this->channel == IntegrationChannel::CHANNEL_CHANNELADVISOR
             && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL && $this->status != self::STATE_INVOICED
         ) {
             return 'Invoice should be done in ' . self::TIMING_INTEGRATION . ' hours  for ' . $this->__toString();
@@ -316,24 +309,24 @@ class WebOrder
     public function getUrl()
     {
         switch ($this->channel) {
-            case WebOrder::CHANNEL_FITBITEXPRESS:
-            case WebOrder::CHANNEL_ALIEXPRESS:
+            case IntegrationChannel::CHANNEL_FITBITEXPRESS:
+            case IntegrationChannel::CHANNEL_ALIEXPRESS:
                 return 'https://gsp.aliexpress.com/apps/order/detail?orderId=' . $this->externalNumber;
-            case WebOrder::CHANNEL_CHANNELADVISOR:
+            case IntegrationChannel::CHANNEL_CHANNELADVISOR:
                 return 'https://sellercentral.amazon.fr/orders-v3/order/' . $this->externalNumber;
-            case WebOrder::CHANNEL_OWLETCARE:
+            case IntegrationChannel::CHANNEL_OWLETCARE:
                 $order = $this->getOrderContent();
                 return 'https://owlet-spain.myshopify.com/admin/orders/' . $order['id'];
-            case WebOrder::CHANNEL_MINIBATT:
+            case IntegrationChannel::CHANNEL_MINIBATT:
                 $order = $this->getOrderContent();
                 return 'https://minibattstore.myshopify.com/admin/orders/' . $order['id'];
-            case WebOrder::CHANNEL_FLASHLED:
+            case IntegrationChannel::CHANNEL_FLASHLED:
                 $order = $this->getOrderContent();
                 return 'https://testflashled.myshopify.com/admin/orders/' . $order['id'];
-            case WebOrder::CHANNEL_FITBITCORPORATE:
+            case IntegrationChannel::CHANNEL_FITBITCORPORATE:
                 $order = $this->getOrderContent();
                 return 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'];
-            case WebOrder::CHANNEL_ARISE:
+            case IntegrationChannel::CHANNEL_ARISE:
                 return 'https://sellercenter.proyectoarise.es/apps/order/detail?tradeOrderId=' . $this->externalNumber;
         }
         throw new Exception('No url link of weborder for ' . $this->channel);
@@ -344,7 +337,7 @@ class WebOrder
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->SiteOrderID);
         $webOrder->setStatus(WebOrder::STATE_CREATED);
-        $webOrder->setChannel(WebOrder::CHANNEL_CHANNELADVISOR);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_CHANNELADVISOR);
         $webOrder->setSubchannel($orderApi->SiteName);
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $webOrder->setPurchaseDateFromString($orderApi->CreatedDateUtc);
@@ -375,23 +368,23 @@ class WebOrder
     public static function createOneFrom($orderApi, $channel): WebOrder
     {
         switch ($channel) {
-            case WebOrder::CHANNEL_ALIEXPRESS:
+            case IntegrationChannel::CHANNEL_ALIEXPRESS:
                 return WebOrder::createOneFromAliExpress($orderApi);
-            case   WebOrder::CHANNEL_FITBITEXPRESS:
+            case IntegrationChannel::CHANNEL_FITBITEXPRESS:
                 $webOrder = WebOrder::createOneFromAliExpress($orderApi);
-                $webOrder->setChannel(WebOrder::CHANNEL_FITBITEXPRESS);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_FITBITEXPRESS);
                 return $webOrder;
-            case WebOrder::CHANNEL_ARISE:
+            case IntegrationChannel::CHANNEL_ARISE:
                 return WebOrder::createOneFromArise($orderApi);
-            case   WebOrder::CHANNEL_CHANNELADVISOR:
+            case IntegrationChannel::CHANNEL_CHANNELADVISOR:
                 return WebOrder::createOneFromChannelAdvisor($orderApi);
-            case   WebOrder::CHANNEL_OWLETCARE:
+            case IntegrationChannel::CHANNEL_OWLETCARE:
                 return WebOrder::createOneFromOwletcare($orderApi);
-            case   WebOrder::CHANNEL_FLASHLED:
+            case IntegrationChannel::CHANNEL_FLASHLED:
                 return WebOrder::createOneFromFlashled($orderApi);
-            case   WebOrder::CHANNEL_MINIBATT:
+            case IntegrationChannel::CHANNEL_MINIBATT:
                 return WebOrder::createOneFromMinibatt($orderApi);
-            case   WebOrder::CHANNEL_FITBITCORPORATE:
+            case IntegrationChannel::CHANNEL_FITBITCORPORATE:
                 return WebOrder::createOneFromFitbitCorporate($orderApi);
         }
 
@@ -403,7 +396,7 @@ class WebOrder
     {
         $webOrder = WebOrder::createOrderFromShopify($orderApi);
         $webOrder->setExternalNumber('OWL-' . $orderApi['order_number']);
-        $webOrder->setChannel(WebOrder::CHANNEL_OWLETCARE);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_OWLETCARE);
         $webOrder->setSubchannel('Owletbaby.es');
         $webOrder->addLog('Retrieved from Owletbaby.es');
         return $webOrder;
@@ -414,7 +407,7 @@ class WebOrder
     {
         $webOrder = WebOrder::createOrderFromShopify($orderApi);
         $webOrder->setExternalNumber('MNB-' . $orderApi['order_number']);
-        $webOrder->setChannel(WebOrder::CHANNEL_MINIBATT);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_MINIBATT);
         $webOrder->setSubchannel('Minibatt.com');
         $webOrder->addLog('Retrieved from Minibatt.com');
         return $webOrder;
@@ -425,7 +418,7 @@ class WebOrder
     {
         $webOrder = WebOrder::createOrderFromShopify($orderApi);
         $webOrder->setExternalNumber('FBT-' . $orderApi['order_number']);
-        $webOrder->setChannel(WebOrder::CHANNEL_FITBITCORPORATE);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_FITBITCORPORATE);
         $webOrder->setSubchannel('Google.kps.direct');
         $webOrder->addLog('Retrieved from Google.kps.direct');
         return $webOrder;
@@ -436,7 +429,7 @@ class WebOrder
     {
         $webOrder = WebOrder::createOrderFromShopify($orderApi);
         $webOrder->setExternalNumber('FLS-' . $orderApi['order_number']);
-        $webOrder->setChannel(WebOrder::CHANNEL_FLASHLED);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_FLASHLED);
         $webOrder->setSubchannel('Flashled.es');
         $webOrder->addLog('Retrieved from Flashled.es');
         return $webOrder;
@@ -463,7 +456,7 @@ class WebOrder
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->id);
         $webOrder->setStatus(WebOrder::STATE_CREATED);
-        $webOrder->setChannel(WebOrder::CHANNEL_ALIEXPRESS);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_ALIEXPRESS);
         $webOrder->setSubchannel('AliExpress');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $datePurchase = DatetimeUtils::createDateTimeFromDateWithDelay($orderApi->gmt_pay_success);
@@ -483,7 +476,7 @@ class WebOrder
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->order_id);
         $webOrder->setStatus(WebOrder::STATE_CREATED);
-        $webOrder->setChannel(WebOrder::CHANNEL_ARISE);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_ARISE);
         $webOrder->setSubchannel('Arise');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $datePurchase = DatetimeUtils::createDateTimeFromDateWithDelay(substr($orderApi->created_at, 0, 19));
@@ -526,10 +519,10 @@ class WebOrder
     public function getOrderContent()
     {
         if (in_array($this->channel, [
-            self::CHANNEL_OWLETCARE,
-            self::CHANNEL_FLASHLED,
-            self::CHANNEL_MINIBATT,
-            self::CHANNEL_FITBITCORPORATE,
+            IntegrationChannel::CHANNEL_OWLETCARE,
+            IntegrationChannel::CHANNEL_FLASHLED,
+            IntegrationChannel::CHANNEL_MINIBATT,
+            IntegrationChannel::CHANNEL_FITBITCORPORATE,
         ])) {
             return $this->getContent();
         }

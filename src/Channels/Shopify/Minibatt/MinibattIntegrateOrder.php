@@ -2,9 +2,9 @@
 
 namespace App\Channels\Shopify\Minibatt;
 
-use App\Entity\WebOrder;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Channels\Shopify\ShopifyIntegrateOrder;
+use App\Entity\IntegrationChannel;
 
 class MinibattIntegrateOrder extends ShopifyIntegrateOrder
 {
@@ -12,7 +12,7 @@ class MinibattIntegrateOrder extends ShopifyIntegrateOrder
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_MINIBATT;
+        return IntegrationChannel::CHANNEL_MINIBATT;
     }
 
 

@@ -3,7 +3,7 @@
 namespace App\Command\Channels\AliExpress\FitbitExpress;
 
 use App\Command\Channels\AliExpress\AliExpress\SaveCancelCommand;
-use App\Entity\WebOrder;
+use App\Entity\IntegrationChannel;
 
 class SaveCancelFitbitCommand extends SaveCancelCommand
 {
@@ -13,6 +13,6 @@ class SaveCancelFitbitCommand extends SaveCancelCommand
 
     protected function getChannel()
     {
-        return WebOrder::CHANNEL_FITBITEXPRESS;
+        return IntegrationChannel::CHANNEL_FITBITEXPRESS;
     }
 }

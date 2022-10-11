@@ -6,8 +6,8 @@ use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\PostalAddress;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
-use App\Channels\AliExpress\AliExpress\AliExpressIntegrateOrder;
 use App\Channels\Arise\AriseApi;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\IntegratorParent;
 use App\Service\Aggregator\StockParent;
@@ -212,6 +212,6 @@ class AriseIntegrator extends IntegratorParent
      */
     public function getChannel()
     {
-        return WebOrder::CHANNEL_ARISE;
+        return IntegrationChannel::CHANNEL_ARISE;
     }
 }

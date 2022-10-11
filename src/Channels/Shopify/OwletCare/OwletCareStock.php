@@ -2,13 +2,13 @@
 
 namespace App\Channels\Shopify\OwletCare;
 
-use App\Entity\WebOrder;
 use App\Channels\Shopify\ShopifyStockParent;
+use App\Entity\IntegrationChannel;
 
 class OwletCareStock extends ShopifyStockParent
 {
     public function getChannel()
     {
-        return WebOrder::CHANNEL_OWLETCARE;
+        return IntegrationChannel::CHANNEL_OWLETCARE;
     }
 }

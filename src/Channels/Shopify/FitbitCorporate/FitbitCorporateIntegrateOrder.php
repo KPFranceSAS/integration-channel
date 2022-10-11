@@ -2,9 +2,9 @@
 
 namespace App\Channels\Shopify\FitbitCorporate;
 
-use App\Entity\WebOrder;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Channels\Shopify\ShopifyIntegrateOrder;
+use App\Entity\IntegrationChannel;
 
 class FitbitCorporateIntegrateOrder extends ShopifyIntegrateOrder
 {
@@ -12,7 +12,7 @@ class FitbitCorporateIntegrateOrder extends ShopifyIntegrateOrder
 
     public function getChannel()
     {
-        return WebOrder::CHANNEL_FITBITCORPORATE;
+        return IntegrationChannel::CHANNEL_FITBITCORPORATE;
     }
 
 
