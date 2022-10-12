@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class StockUpdateCommand extends Command
+class StockCheckCommand extends Command
 {
     protected static $defaultName = 'app:check-stocks-to';
     protected static $defaultDescription = 'Check items with the given sale channel';
