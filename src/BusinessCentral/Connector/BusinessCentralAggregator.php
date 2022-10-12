@@ -9,34 +9,25 @@ use Exception;
 
 class BusinessCentralAggregator
 {
-    private $kpFranceConnector;
+    protected $services;
 
-    private $gadgetIberiaConnector;
-
-    private $kitPersonalizacionSportConnector;
 
     public function __construct(
-        KpFranceConnector $kpFranceConnector,
-        GadgetIberiaConnector $gadgetIberiaConnector,
-        KitPersonalizacionSportConnector $kitPersonalizacionSportConnector
+        iterable $services
     ) {
-        $this->kpFranceConnector = $kpFranceConnector;
-        $this->gadgetIberiaConnector = $gadgetIberiaConnector;
-        $this->kitPersonalizacionSportConnector = $kitPersonalizacionSportConnector;
+        foreach ($services as $service) {
+            $this->services[$service->getCompanyIntegration()] = $service;
+        }
     }
+
+
 
 
     public function getBusinessCentralConnector(string $companyName): BusinessCentralConnector
     {
-        if ($companyName == BusinessCentralConnector::KP_FRANCE) {
-            return $this->kpFranceConnector;
-        } elseif ($companyName == BusinessCentralConnector::GADGET_IBERIA) {
-            return $this->gadgetIberiaConnector;
-        } elseif ($companyName == BusinessCentralConnector::KIT_PERSONALIZACION_SPORT) {
-            return $this->kitPersonalizacionSportConnector;
+        if (array_key_exists($companyName, $this->services)) {
+            return $this->services[$companyName];
         }
-
-
         throw new Exception("Company $companyName is not related to any connector");
     }
 }

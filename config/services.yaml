@@ -15,6 +15,8 @@ services:
             tags: ['app.apiconnector']
         App\Service\Aggregator\IntegratorParent:
             tags: ['app.integrator']
+        App\BusinessCentral\Connector\BusinessCentralConnector:
+            tags: ['app.businesscentralconnector']
 
     App\:
         resource: '../src/'
@@ -35,6 +37,10 @@ services:
     App\Service\Aggregator\StockAggregator:
         arguments:
             - !tagged_iterator app.stockupdater
+    App\BusinessCentral\Connector\BusinessCentralAggregator:
+        arguments:
+            - !tagged_iterator app.businesscentralconnector
+            
 
 
     _defaults:

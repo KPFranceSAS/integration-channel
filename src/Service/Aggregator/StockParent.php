@@ -4,6 +4,7 @@ namespace App\Service\Aggregator;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use App\BusinessCentral\ProductStockFinder;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
@@ -52,6 +53,8 @@ abstract class StockParent
 
     abstract public function sendStocks();
 
+    abstract public function checkStocks(): array;
+
     abstract public function getChannel();
 
 
@@ -64,6 +67,22 @@ abstract class StockParent
             $this->mailer->sendEmailChannel($this->getChannel(), 'Send stock Integration - Error', $e->getMessage());
         }
     }
+
+
+    public function check()
+    {
+        try {
+            $errors = $this->checkStocks();
+            if(count($errors)>0){
+                $this->mailer->sendEmailChannel($this->getChannel(), 'SKU errors', implode('<br/>', $errors));
+            }
+        } catch (\Exception $e) {
+            $this->logger->critical($e->getMessage());
+            $this->mailer->sendEmailChannel($this->getChannel(), 'Send stock Integration - Error', $e->getMessage());
+        }
+    }
+
+
 
     public function getApi()
     {
@@ -85,6 +104,16 @@ abstract class StockParent
             }
         }
         return 0;
+    }
+
+
+
+    public function isSkuExists($sku): int
+    {
+        $skuFinal = $this->getProductCorrelationSku($sku);
+        $connector = $this->getBusinessCentralConnector(BusinessCentralConnector::KIT_PERSONALIZACION_SPORT);
+        $item = $connector->getItemByNumber($sku);
+        return $item!=null;
     }
 
 

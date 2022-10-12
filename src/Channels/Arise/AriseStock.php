@@ -52,6 +52,26 @@ class AriseStock extends StockParent
         $this->logger->info('---------------');
     }
 
+
+    public function checkStocks(): array
+    {
+        $errors=[];
+        $products = $this->getAriseApi()->getAllActiveProducts();
+        foreach ($products as $product) {
+            $name = (property_exists($product, 'attributes') && property_exists($product->attributes, 'name')) ? $product->attributes->name : null;
+            $this->logger->info('Check stock for ' . $name . ' / Id ' . $product->item_id);
+            foreach ($product->skus as $sku) {
+                $this->logger->info('Sku ' . $sku->SellerSku);
+                if(!$this->isSkuExists($sku->SellerSku)){
+                    $errors[] = 'Sku '.$sku->SellerSku. ' do not exist in BC and no sku mappings have been done also.';
+                }
+            }
+        }
+        return $errors;
+    }
+
+
+
     public function defineStockBrand($brand)
     {
         if ($brand && in_array($brand, StockParent::getBrandsFromMadrid())) {

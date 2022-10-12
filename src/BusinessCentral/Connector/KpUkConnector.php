@@ -12,7 +12,7 @@ class KpUkConnector extends BusinessCentralConnector
     }
 
 
-    protected function getCompanyIntegration()
+    public function getCompanyIntegration()
     {
         return self::KP_UK;
     }

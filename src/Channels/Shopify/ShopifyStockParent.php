@@ -2,8 +2,8 @@
 
 namespace App\Channels\Shopify;
 
-use App\Service\Aggregator\StockParent;
 use App\Channels\Shopify\ShopifyApiParent;
+use App\Service\Aggregator\StockParent;
 
 abstract class ShopifyStockParent extends StockParent
 {
@@ -32,5 +32,24 @@ abstract class ShopifyStockParent extends StockParent
                 $this->logger->info('Bundle ' . $sku  . ' no modification');
             }
         }
+    }
+
+
+
+    public function checkStocks(): array
+    {
+        $errors=[];
+        $inventoLevelies = $this->getShopifyApi()->getAllInventoryLevelsFromProduct();
+        foreach ($inventoLevelies as $inventoLeveli) {
+            $sku = $inventoLeveli['sku'];
+            if ($this->isNotBundle($sku)) {
+                if(!$this->isSkuExists($sku)){
+                    $errors[] = 'Sku '.$sku. ' do not exist in BC and no sku mappings have been done also.';
+                }
+            } else {
+                $this->logger->info('Bundle ' . $sku  . ' no check');
+            }
+        }
+        return $errors;
     }
 }

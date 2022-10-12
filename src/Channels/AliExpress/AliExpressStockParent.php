@@ -55,6 +55,38 @@ abstract class AliExpressStockParent extends StockParent
     }
 
 
+    /**
+     *
+     * @return void
+     */
+    public function checkStocks(): array
+    {
+        $errors=[];
+        $products = $this->getAliExpressApi()->getAllActiveProducts();
+        foreach ($products as $product) {
+            $this->logger->info('Check skus for ' . $product->subject . ' / Id ' . $product->product_id);
+            $productInfo = $this->getProductInfo($product->product_id);
+            if ($productInfo) {
+                
+                $skus = $this->extractSkuFromResponse($productInfo);
+                foreach ($skus as $skuCode) {
+                    $this->logger->info('Sku ' . $skuCode);
+                    if(!$this->isSkuExists($skuCode)){
+                        $errors[] = 'Sku '.$skuCode. ' do not exist in BC and no sku mappings have been done also.';
+                    }
+                }
+            } else {
+                $this->logger->error('No product info');
+            }
+        }
+        return $errors;
+    }
+
+
+
+
+
+
 
     public function getProductInfo($productId)
     {
@@ -72,7 +104,7 @@ abstract class AliExpressStockParent extends StockParent
 
     public function defineStockBrand($brand)
     {
-        if ($brand && in_array($brand, AliExpressStockParent::getBrandsFromMadrid())) {
+        if ($brand && in_array($brand, StockParent::getBrandsFromMadrid())) {
             return WebOrder::DEPOT_MADRID;
         }
         return WebOrder::DEPOT_LAROCA;

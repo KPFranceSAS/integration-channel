@@ -12,7 +12,7 @@ class KitPersonalizacionSportConnector extends BusinessCentralConnector
     }
 
 
-    protected function getCompanyIntegration()
+    public function getCompanyIntegration()
     {
         return BusinessCentralConnector::KIT_PERSONALIZACION_SPORT;
     }

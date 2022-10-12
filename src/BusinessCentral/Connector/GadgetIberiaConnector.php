@@ -12,7 +12,7 @@ class GadgetIberiaConnector extends BusinessCentralConnector
     }
 
 
-    protected function getCompanyIntegration()
+    public function getCompanyIntegration()
     {
         return BusinessCentralConnector::GADGET_IBERIA;
     }

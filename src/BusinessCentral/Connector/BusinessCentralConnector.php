@@ -97,7 +97,7 @@ abstract class BusinessCentralConnector
     }
 
 
-    abstract protected function getCompanyIntegration();
+    abstract public function getCompanyIntegration();
 
     abstract protected function getAccountNumberForExpedition();
 
