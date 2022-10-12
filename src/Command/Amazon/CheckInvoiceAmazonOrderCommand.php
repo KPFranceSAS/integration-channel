@@ -30,7 +30,7 @@ class CheckInvoiceAmazonOrderCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /**@var array[\App\Entity\AmazonOrder] */
+        /** @var array[\App\Entity\AmazonOrder] */
         $orders = $this->manager->getRepository(AmazonOrder::class)->findBy(
             [
                 'integrated' => false,
@@ -59,7 +59,7 @@ class CheckInvoiceAmazonOrderCommand extends Command
 
     private function checkAmzOrder(AmazonOrder $amazonOrder)
     {
-        // check if WebOrder file
+        /** @var \App\Entity\WebOrder */
         $orderAmz = $this->manager->getRepository(WebOrder::class)->findOneBy([
             "externalNumber" => $amazonOrder->getAmazonOrderId(),
             "channel" => IntegrationChannel::CHANNEL_CHANNELADVISOR,

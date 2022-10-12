@@ -16,6 +16,8 @@ abstract class BusinessCentralConnector
 
     public const INIA = "INIA SLU";
 
+    public const KP_UK = "KP UK";
+
 
     public const EP_ACCOUNT = "accounts";
 
@@ -35,7 +37,7 @@ abstract class BusinessCentralConnector
 
     public const EP_ITEMS = "items";
 
-    public const EP_STOCK_PRODUCTS = "itemStocks";
+    public const EP_STOCK_PRODUCTS = "itemAvailabilities";
 
     public const EP_SALES_ORDERS = "salesOrders";
 
@@ -101,7 +103,7 @@ abstract class BusinessCentralConnector
 
 
 
-    public function doDeleteRequest(string $endPoint)
+    public function doDeleteRequest(string $endPoint): bool
     {
         $response = $this->client->request(
             'DELETE',
@@ -116,7 +118,7 @@ abstract class BusinessCentralConnector
 
 
 
-    public function doPostRequest(string $endPoint, array $json, array $query = [])
+    public function doPostRequest(string $endPoint, array $json, array $query = []): ?array
     {
         if ($this->debugger) {
             $this->logger->info(json_encode($json));
@@ -138,7 +140,7 @@ abstract class BusinessCentralConnector
 
 
 
-    public function doPatchRequest(string $endPoint, string $etag, array $json, array $query = [])
+    public function doPatchRequest(string $endPoint, string $etag, array $json, array $query = []): ?array
     {
         if ($this->debugger) {
             $this->logger->info(json_encode($json));
@@ -227,7 +229,7 @@ abstract class BusinessCentralConnector
         string $number,
         string $filter = 'number',
         array $paramSupps = []
-    ) {
+    ) : ?array {
         $query = [
             '$filter' => "$filter eq '$number'"
         ];
@@ -308,31 +310,19 @@ abstract class BusinessCentralConnector
         return $this->getElementById(self::EP_ITEMS, $id);
     }
 
-    public function getStockPerProduct(string $sku)
+    public function getStockAvailabilityPerProduct(string $sku)
     {
         return $this->getElementsByArray(
             self::EP_STOCK_PRODUCTS,
-            '',
-            true,
-            ['$expand' => 'stockProductosLines($filter = ' . "itemNo eq '$sku'  )"]
+            "no eq '$sku'",
         );
     }
 
-    public function getStockPerProductPerLocation(string $sku, string $location)
-    {
-        return $this->getElementsByArray(
-            self::EP_STOCK_PRODUCTS,
-            '',
-            true,
-            ['$expand' => 'stockProductosLines($filter = ' . "itemNo eq '$sku' and locationFilter eq '$location' )"]
-        );
-    }
 
     /**
      * Sale order
      */
-
-    public function createSaleOrder(array $order)
+    public function createSaleOrder(array $order): ?array
     {
         return $this->doPostRequest(
             self::EP_SALES_ORDERS,
@@ -346,7 +336,7 @@ abstract class BusinessCentralConnector
      * Sale order
      */
 
-    public function updateSaleOrder(string $id, string $etag, array $order)
+    public function updateSaleOrder(string $id, string $etag, array $order): ?array
     {
         return $this->doPatchRequest(
             self::EP_SALES_ORDERS . '(' . $id . ')',
@@ -356,7 +346,7 @@ abstract class BusinessCentralConnector
     }
 
 
-    public function createSaleOrderLine(string $orderId, array $orderLine)
+    public function createSaleOrderLine(string $orderId, array $orderLine): ?array
     {
         return $this->doPostRequest(
             self::EP_SALES_ORDERS . "($orderId)/" . self::EP_SALES_ORDERS_LINE,
@@ -365,7 +355,7 @@ abstract class BusinessCentralConnector
     }
 
 
-    public function getFullSaleOrder(string $id)
+    public function getFullSaleOrder(string $id): ?array
     {
         return  $this->getElementById(
             self::EP_SALES_ORDERS,
@@ -374,7 +364,7 @@ abstract class BusinessCentralConnector
         );
     }
 
-    public function getFullSaleOrderByNumber(string $number)
+    public function getFullSaleOrderByNumber(string $number): ?array
     {
         return $this->getElementByNumber(
             self::EP_SALES_ORDERS,
@@ -385,7 +375,7 @@ abstract class BusinessCentralConnector
     }
 
 
-    public function getStatusOrderByNumber(string $number)
+    public function getStatusOrderByNumber(string $number): ?array
     {
         return  $this->getElementByNumber(
             self::EP_STATUS_ORDERS,
@@ -396,29 +386,29 @@ abstract class BusinessCentralConnector
     }
 
 
-    public function getSaleOrder(string $id)
+    public function getSaleOrder(string $id): ?array
     {
         return $this->getElementById(self::EP_SALES_ORDERS, $id);
     }
 
-    public function getSaleOrderByNumber(string $number)
+    public function getSaleOrderByNumber(string $number): ?array
     {
         return $this->getElementByNumber(self::EP_SALES_ORDERS, $number);
     }
 
-    public function getSaleOrderByExternalNumber(string $number)
+    public function getSaleOrderByExternalNumber(string $number): ?array
     {
         return $this->getElementByNumber(self::EP_SALES_ORDERS, $number, 'externalDocumentNumber');
     }
 
 
-    public function getAllSalesLineForOrder(string $orderId)
+    public function getAllSalesLineForOrder(string $orderId): ?array
     {
         return $this->doGetRequest(self::EP_SALES_ORDERS . "($orderId)/" . self::EP_SALES_ORDERS_LINE)["value"];
     }
 
 
-    public function getSaleLineOrder(string $orderId, string $id)
+    public function getSaleLineOrder(string $orderId, string $id): ?array
     {
         return $this->getElementById(self::EP_SALES_ORDERS . "($orderId)/" . self::EP_SALES_ORDERS_LINE, $id);
     }
@@ -469,13 +459,13 @@ abstract class BusinessCentralConnector
     /**
      * Payment methods
      */
-    public function getAllPaymentMethods()
+    public function getAllPaymentMethods(): array
     {
         return $this->doGetRequest(self::EP_PAYMENT_METHODS);
     }
 
 
-    public function getPaymentMethodByCode(string $code)
+    public function getPaymentMethodByCode(string $code): ?array
     {
         return $this->getElementsByArray(self::EP_PAYMENT_METHODS, "code eq '$code' ");
     }
@@ -484,12 +474,12 @@ abstract class BusinessCentralConnector
     /**
      * Payment terms
      */
-    public function getAllPaymentTerms()
+    public function getAllPaymentTerms(): array
     {
         return $this->doGetRequest(self::EP_PAYMENT_TERMS);
     }
 
-    public function getPaymentTermByCode(string $code)
+    public function getPaymentTermByCode(string $code): ?array
     {
         return $this->getElementsByArray(self::EP_PAYMENT_TERMS, "code eq '$code' ");
     }
@@ -498,19 +488,19 @@ abstract class BusinessCentralConnector
     /**
      * Customers
      */
-    public function getAllCustomers()
+    public function getAllCustomers(): array
     {
         return $this->doGetRequest(self::EP_CUSTOMERS);
     }
 
 
-    public function getCustomer(string $id)
+    public function getCustomer(string $id): ?array
     {
         return $this->getElementById(self::EP_CUSTOMERS, $id);
     }
 
 
-    public function getCustomerByNumber(string $number)
+    public function getCustomerByNumber(string $number): ?array
     {
         return $this->getElementByNumber(
             self::EP_CUSTOMERS,
@@ -523,12 +513,12 @@ abstract class BusinessCentralConnector
     /**
      * Account
      */
-    public function getAccountByNumber(string $number)
+    public function getAccountByNumber(string $number): ?array
     {
         return $this->getElementByNumber(self::EP_ACCOUNT, $number);
     }
 
-    public function getAccountForExpedition()
+    public function getAccountForExpedition(): ?array
     {
         return $this->getAccountByNumber($this->getAccountNumberForExpedition());
     }
@@ -537,13 +527,13 @@ abstract class BusinessCentralConnector
     /**
      * Sale invoice
      */
-    public function getSaleInvoice(string $id)
+    public function getSaleInvoice(string $id): ?array
     {
         return $this->getElementById(self::EP_SALES_INVOICES, $id);
     }
 
 
-    public function getFullSaleInvoiceByNumber(string $number)
+    public function getFullSaleInvoiceByNumber(string $number): ?array
     {
         return $this->getElementByNumber(
             self::EP_SALES_INVOICES,
@@ -554,7 +544,7 @@ abstract class BusinessCentralConnector
     }
 
 
-    public function getSaleInvoiceByNumber(string $number)
+    public function getSaleInvoiceByNumber(string $number): ?array
     {
         return $this->getElementByNumber(
             self::EP_SALES_INVOICES,
@@ -562,7 +552,7 @@ abstract class BusinessCentralConnector
         );
     }
 
-    public function getSaleInvoiceByExternalNumber(string $number)
+    public function getSaleInvoiceByExternalNumber(string $number): ?array
     {
         return $this->getElementByNumber(
             self::EP_SALES_INVOICES,
@@ -571,7 +561,7 @@ abstract class BusinessCentralConnector
         );
     }
 
-    public function getSaleInvoiceByOrderNumber(string $number)
+    public function getSaleInvoiceByOrderNumber(string $number): ?array
     {
         return $this->getElementByNumber(
             self::EP_SALES_INVOICES,
@@ -592,7 +582,7 @@ abstract class BusinessCentralConnector
     public function getSaleInvoiceByExternalDocumentNumberCustomer(
         string $number,
         string $customerNumber
-    ) {
+    ): ?array {
         $filters = "externalDocumentNumber eq '$number' and customerNumber eq '$customerNumber' ";
         return $this->getElementsByArray(
             self::EP_SALES_INVOICES,
@@ -603,7 +593,7 @@ abstract class BusinessCentralConnector
     }
 
 
-    public function getSaleReturnByNumber(string $number)
+    public function getSaleReturnByNumber(string $number): ?array
     {
         return $this->getElementByNumber(
             self::EP_SALES_RETURNS,
@@ -611,7 +601,7 @@ abstract class BusinessCentralConnector
         );
     }
 
-    public function getSaleReturnBy(string $condition, string $number)
+    public function getSaleReturnBy(string $condition, string $number): ?array
     {
         return $this->getElementsByArray(
             self::EP_SALES_RETURNS,
@@ -622,26 +612,26 @@ abstract class BusinessCentralConnector
     }
 
 
-    public function getSaleReturnByExternalNumber(string $number)
+    public function getSaleReturnByExternalNumber(string $number): ?array
     {
         return $this->getSaleReturnBy("externalDocumentNo", $number);
     }
 
 
-    public function getSaleReturnByInvoice(string $number)
+    public function getSaleReturnByInvoice(string $number): ?array
     {
         return $this->getSaleReturnBy("correctedInvoiceNo", $number);
     }
 
 
-    public function getSaleReturnByPackageTrackingNo(string $number)
+    public function getSaleReturnByPackageTrackingNo(string $number): ?array
     {
         return $this->getSaleReturnBy("packageTrackingNo", $number);
     }
 
 
 
-    public function getSaleReturnByLpnAndExternalNumber(string $lpn, string $number)
+    public function getSaleReturnByLpnAndExternalNumber(string $lpn, string $number): array
     {
         return $this->getElementsByArray(
             self::EP_SALES_RETURNS,
@@ -652,21 +642,9 @@ abstract class BusinessCentralConnector
     }
 
 
-    /**
-     * purchase Orders
-     *
-     */
-    public function getPurchaseInvoicesByItemNumber(string $number)
-    {
-        return $this->getElementsByArray(
-            self::EP_PURCHASES_ORDERS,
-            null,
-            true
-        );
-    }
 
 
-    public function getAllCustomerPaymentJournals()
+    public function getAllCustomerPaymentJournals(): array
     {
         return $this->getElementsByArray(
             self::EP_CUSTOMER_PAYMENT_JOURNALS,
@@ -689,7 +667,7 @@ abstract class BusinessCentralConnector
 
 
 
-    public function createCustomerPayment(string $customerJournal, array $payment)
+    public function createCustomerPayment(string $customerJournal, array $payment): ?array
     {
         return $this->doPostRequest(
             self::EP_CUSTOMER_PAYMENT_JOURNALS . "($customerJournal)/" . self::EP_CUSTOMER_PAYMENTS,
@@ -698,7 +676,7 @@ abstract class BusinessCentralConnector
     }
 
 
-    public function getAllCustomerPaymentJournalByJournal(string $customerJournal)
+    public function getAllCustomerPaymentJournalByJournal(string $customerJournal): ?array
     {
         return $this->getElementsByArray(
             self::EP_CUSTOMER_PAYMENT_JOURNALS . "($customerJournal)/" . self::EP_CUSTOMER_PAYMENTS,

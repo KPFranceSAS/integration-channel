@@ -75,6 +75,7 @@ class AmzHistoryAggregator
 
     private function addAmazonReimbursementEvents($orderNumber)
     {
+        /** @var array[\App\Entity\AmazonReimbursement] */
         $amazonEvents = $this->manager
                             ->getRepository(AmazonReimbursement::class)
                             ->findBy(['amazonOrderId' => $orderNumber]);

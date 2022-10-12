@@ -120,7 +120,7 @@ class AmzApiFinancial
 
     protected function checkIfWeImport(FinancialEventGroup $financialEventGroup): bool
     {
-        /** var array[\App\Entity\AmazonFinancialEventGroup] */
+        /** @var \App\Entity\AmazonFinancialEventGroup */
         $financialEventGroupDb = $this->manager
                                     ->getRepository(AmazonFinancialEventGroup::class)
                                     ->findOneBy([

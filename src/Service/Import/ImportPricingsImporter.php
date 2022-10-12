@@ -49,7 +49,7 @@ class ImportPricingsImporter
 
     public function importImportPricings()
     {
-        /** @var array[App\Entity\ImportPricing] */
+        /** @var array[\App\Entity\ImportPricing] */
         $importPricings = $this->manager
             ->getRepository(ImportPricing::class)
             ->findBy([
@@ -453,6 +453,7 @@ class ImportPricingsImporter
         $saleChannels = explode(",", $line['saleChannels']);
         $saleChannelsDb = [];
         foreach ($saleChannels as $saleChannel) {
+            /** @var \App\Entity\SaleChannel */
             $saleChannelDb = $this->manager->getRepository(SaleChannel::class)->findOneBy(['code'=>$saleChannel]);
             if (!$saleChannelDb) {
                 $this->addError($importPricing, 'No sale channel with code ' . $saleChannel. ' on line '.$lineNumber);
