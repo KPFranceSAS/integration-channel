@@ -196,7 +196,7 @@ abstract class UpdateStatusParent
                     $order->setStatus(WebOrder::STATE_INVOICED);
                 } 
             } else {
-                $this->addOnlyLogToOrderIfNotExists($order, 'Invoice ith number ' . $statusSaleOrder['InvoiceNo'].' is not yet accessible through API');
+                $this->addOnlyLogToOrderIfNotExists($order, 'Invoice n°' . $statusSaleOrder['InvoiceNo'].' is not yet accessible through API');
             }
         } else {
             $this->checkOrderIsLate($order);
