@@ -79,14 +79,14 @@ class ChannelAdvisorPricing
         $this->logger->info("start export pricing locally");
         $this->defaultStorage->write('pricings/'.$filename, $dataArray);
         $this->logger->info("start export pricing on channeladvisor");
-        /*
+        
         $this->channelAdvisorStorage->write('/accounts/12009934/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010023/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010024/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010025/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010026/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12044693/Inventory/Transform/'.$filename, $dataArray);
-        */
+        
     }
 
 

@@ -51,6 +51,7 @@ class AmzHistoryAggregator
 
     private function addAmazonFinancialEvents($orderNumber)
     {
+         /** @var array[\App\Entity\AmazonFinancialEvent] */
         $amazonEvents = $this->manager
                             ->getRepository(AmazonFinancialEvent::class)
                             ->findBy(['amazonOrderId' => $orderNumber]);
@@ -63,6 +64,7 @@ class AmzHistoryAggregator
 
     private function addAmazonReturnEvents($orderNumber)
     {
+        /** @var array[\App\Entity\AmazonReturn] */
         $amazonEvents = $this->manager
                             ->getRepository(AmazonReturn::class)
                             ->findBy(['orderId' => $orderNumber]);
