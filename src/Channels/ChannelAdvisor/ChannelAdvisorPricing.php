@@ -4,63 +4,45 @@ namespace App\Channels\ChannelAdvisor;
 
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
-use App\Entity\SaleChannel;
+use App\Helper\MailService;
+use App\Service\Aggregator\ApiAggregator;
+use App\Service\Aggregator\PriceParent;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 use stdClass;
 
-class ChannelAdvisorPricing
+class ChannelAdvisorPricing extends PriceParent
 {
     protected $logger;
     protected $defaultStorage;
     protected $channelAdvisorStorage;
-    protected $managerRegistry;
 
-
-    public function __construct(LoggerInterface $logger, FilesystemOperator $defaultStorage, FilesystemOperator $channelAdvisorStorage, ManagerRegistry $managerRegistry)
-    {
-        $this->logger = $logger;
+    public function __construct(
+        ManagerRegistry $manager,
+        LoggerInterface $logger,
+        MailService $mailer,
+        ApiAggregator $apiAggregator,
+        FilesystemOperator $defaultStorage,
+        FilesystemOperator $channelAdvisorStorage,
+    ) {
         $this->defaultStorage = $defaultStorage;
         $this->channelAdvisorStorage = $channelAdvisorStorage;
-        $this->managerRegistry = $managerRegistry->getManager();
+        parent::__construct($manager, $logger, $mailer, $apiAggregator);
     }
 
-    public function getIntegrationChannel()
+
+
+    public function getChannel(): string
     {
         return  IntegrationChannel::CHANNEL_CHANNELADVISOR;
     }
 
 
-    public function exportPricings()
-    {
-         /**
-         * @var \App\Entity\IntegrationChannel]
-         */
-        $integrationChannel = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy([
-            'name' => $this->getIntegrationChannel()
-        ]);
-
-        /**
-         * @var array[\App\Entity\SaleChannel]
-         */
-        $saleChannels = $this->managerRegistry->getRepository(SaleChannel::class)->findBy([
-            'integrationChannel' => $integrationChannel
-        ]);
-
-        /**
-         * @var array[\App\Entity\Product]
-         */
-        $products = $this->managerRegistry->getRepository(Product::class)->findAll();
-
-        $this->exportPricingSaleChannels($products, $saleChannels);
-        
-    }
 
 
 
-
-    public function exportPricingSaleChannels(array $products, array $saleChannels)
+    public function sendPrices(array $products, array $saleChannels)
     {
         $header = ['sku'];
         foreach ($saleChannels as $saleChannel) {
@@ -86,7 +68,6 @@ class ChannelAdvisorPricing
         $this->channelAdvisorStorage->write('/accounts/12010025/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010026/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12044693/Inventory/Transform/'.$filename, $dataArray);
-        
     }
 
 

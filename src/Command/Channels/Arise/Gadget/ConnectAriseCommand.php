@@ -25,6 +25,8 @@ class ConnectAriseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->updatePrice();
+        $this->updateStockLevel();
         return Command::SUCCESS;
     }
 
@@ -52,14 +54,14 @@ class ConnectAriseCommand extends Command
 
     private function updatePrice()
     {
-        $result = $this->ariseApi->updatePrice(1355778698378079, 2068482196806495, "MYSKU", 400);
+        $result = $this->ariseApi->updatePrice(1355779509600516, 2068482878177540, "X-W2040OV4N", 0);
         var_dump($result);
     }
 
 
     private function updateStockLevel()
     {
-        $result = $this->ariseApi->updateStockLevel(1355778698378079, 2068482196806495, "MYSKU", 2500);
+        $result = $this->ariseApi->updateStockLevel(1355779509600516, 2068482878177540, "X-W2040OV4N", 2500);
         var_dump($result);
     }
 

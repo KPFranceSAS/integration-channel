@@ -9,6 +9,8 @@ services:
     _instanceof:
         App\Service\Aggregator\StockParent:
             tags: ['app.stockupdater']
+        App\Service\Aggregator\PriceParent:
+            tags: ['app.priceupdater']    
         App\Service\Aggregator\UpdateStatusParent:
             tags: ['app.statusupdater']
         App\Service\Aggregator\ApiInterface:
@@ -37,6 +39,9 @@ services:
     App\Service\Aggregator\StockAggregator:
         arguments:
             - !tagged_iterator app.stockupdater
+    App\Service\Aggregator\PriceAggregator:
+        arguments:
+            - !tagged_iterator app.priceupdater
     App\BusinessCentral\Connector\BusinessCentralAggregator:
         arguments:
             - !tagged_iterator app.businesscentralconnector
