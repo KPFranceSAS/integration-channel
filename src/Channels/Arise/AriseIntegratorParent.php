@@ -6,8 +6,7 @@ use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\PostalAddress;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
-use App\Channels\Arise\AriseApi;
-use App\Entity\IntegrationChannel;
+use App\Channels\Arise\AriseApiParent;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\IntegratorParent;
 use App\Service\Aggregator\StockParent;
@@ -15,9 +14,9 @@ use DateTime;
 use Exception;
 use function Symfony\Component\String\u;
 
-class AriseIntegrator extends IntegratorParent
+abstract class AriseIntegratorParent extends IntegratorParent
 {
-    public const ARISE_CUSTOMER_NUMBER = "002355";
+    public const ARISE_CUSTOMER_NUMBER = "003307";
 
     /**
      * process all invocies directory
@@ -43,7 +42,7 @@ class AriseIntegrator extends IntegratorParent
     }
 
 
-    protected function getAriseApi():AriseApi
+    protected function getAriseApi():AriseApiParent
     {
         return $this->getApi();
     }
@@ -59,7 +58,7 @@ class AriseIntegrator extends IntegratorParent
 
     public function getCustomerBC($orderApi)
     {
-        return AriseIntegrator::ARISE_CUSTOMER_NUMBER;
+        return AriseIntegratorParent::ARISE_CUSTOMER_NUMBER;
     }
 
 
@@ -88,9 +87,7 @@ class AriseIntegrator extends IntegratorParent
             if (strlen($orderApi->{'address_'.$ariseVal}->address2) > 0) {
                 $adress .= ', ' . $orderApi->{'address_'.$ariseVal}->address2;
             }
-            if (strlen($orderApi->{'address_'.$ariseVal}->address3) > 0) {
-                $adress .= ', ' . $orderApi->{'address_'.$ariseVal}->address3;
-            }
+            
 
             $adress = $this->simplifyAddress($adress);
 
@@ -107,9 +104,10 @@ class AriseIntegrator extends IntegratorParent
             }
             
             $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = 'ES';
-            /*if (strlen($orderApi->{'address_'.$ariseVal}->province) > 0) {
-                $orderBC->{$bcVal . "PostalAddress"}->state = substr($orderApi->{'address_'.$ariseVal}->province, 0, 30);
-            }*/
+
+            if (strlen($orderApi->{'address_'.$ariseVal}->address3) > 0) {
+                $orderBC->{$bcVal . "PostalAddress"}->state = substr($orderApi->{'address_'.$ariseVal}->address3, 0, 30);
+            }
         }
 
 
@@ -136,19 +134,52 @@ class AriseIntegrator extends IntegratorParent
         }
 
 
-        $promotionsSeller = floatval($orderApi->voucher);
+        $discount = 0;
+        $discountPlatform = 0;
+        foreach ($orderApi->lines as $line) {
+            $promotionsSeller = floatval($line->voucher_seller);
+            if ($promotionsSeller> 0) {
+                $discount+= $promotionsSeller;
+            }
+
+            $promotionsPlateform = floatval($line->voucher_seller);
+            if ($promotionsPlateform> 0) {
+                $discountPlatform+= $promotionsPlateform;
+            }
+        }
 
         // add discount
-        if ($promotionsSeller > 0) {
+        if ($discount > 0) {
             $account = $this->getBusinessCentralConnector($company)->getAccountByNumber('7000005');
             $saleLineDelivery = new SaleOrderLine();
             $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;
             $saleLineDelivery->quantity = 1;
             $saleLineDelivery->accountId = $account['id'];
-            $saleLineDelivery->unitPrice = -$promotionsSeller;
+            $saleLineDelivery->unitPrice = -$discount;
             $saleLineDelivery->description = 'DISCOUNT '.$orderApi->voucher_code;
             $orderBC->salesLines[] = $saleLineDelivery;
         }
+
+        // add discount
+        if ($discount > 0) {
+            $account = $this->getBusinessCentralConnector($company)->getAccountByNumber('7000005');
+            $saleLineDelivery = new SaleOrderLine();
+            $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;
+            $saleLineDelivery->quantity = 1;
+            $saleLineDelivery->accountId = $account['id'];
+            $saleLineDelivery->unitPrice = -$discount;
+            $saleLineDelivery->description = 'DISCOUNT '.$orderApi->voucher_code;
+            $orderBC->salesLines[] = $saleLineDelivery;
+        }
+
+        if ($promotionsPlateform > 0) {
+            $saleLineDelivery = new SaleOrderLine();
+            $saleLineDelivery->lineType = SaleOrderLine::TYPE_COMMENT;
+            $saleLineDelivery->description = 'DISCOUNT ARISE // ' . round($promotionsPlateform, 2) . ' EUR';
+            $orderBC->salesLines[] = $saleLineDelivery;
+        }
+
+
         return $orderBC;
     }
 
@@ -203,15 +234,5 @@ class AriseIntegrator extends IntegratorParent
             $saleOrderLines[] = $saleLine;
         }
         return $saleOrderLines;
-    }
-
-    
-    /**
-     *
-     * @return mixed
-     */
-    public function getChannel()
-    {
-        return IntegrationChannel::CHANNEL_ARISE;
     }
 }

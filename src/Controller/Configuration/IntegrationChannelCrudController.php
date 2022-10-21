@@ -29,7 +29,7 @@ class IntegrationChannelCrudController extends AdminCrudController
     public function configureActions(Actions $actions): Actions
     {
         $actions = parent::configureActions($actions);
-        $actions->disable(Action::DELETE, Action::BATCH_DELETE, Action::NEW, Action::DETAIL);
+        $actions->disable(Action::DELETE, Action::BATCH_DELETE, Action::NEW);
         return $actions;
     }
 

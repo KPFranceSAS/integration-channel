@@ -34,11 +34,18 @@ class FlashledOrderCrudController extends WebOrderCrudController
         ];
     }
 
+    public function getChannels()
+    {
+        return  [
+            IntegrationChannel::CHANNEL_FLASHLED => IntegrationChannel::CHANNEL_FLASHLED,
+        ];
+    }
+
 
     public function getMarketplaces()
     {
         return [
-            'Flashled' => 'Flashled',
+            'Flashled.es' => 'Flashled.es',
         ];
     }
 }

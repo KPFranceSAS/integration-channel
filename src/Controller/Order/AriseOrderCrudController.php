@@ -11,19 +11,25 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 
-class FitbitExpressOrderCrudController extends WebOrderCrudController
+class AriseOrderCrudController extends WebOrderCrudController
 {
     public function getName(): string
     {
-        return "Fitbit Order";
+        return "Arise Order";
     }
 
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = $this->entityRepository->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
-        $qb->andWhere('entity.channel = :channel');
-        $qb->setParameter('channel', IntegrationChannel::CHANNEL_FITBITEXPRESS);
+        $qb->andWhere('entity.channel IN (:channels)');
+        $qb->setParameter(
+            'channels',
+            [
+                IntegrationChannel::CHANNEL_AMAZFIT_ARISE,
+                IntegrationChannel::CHANNEL_ARISE
+            ]
+        );
         return $qb;
     }
 
@@ -36,10 +42,19 @@ class FitbitExpressOrderCrudController extends WebOrderCrudController
     }
 
 
+    public function getChannels()
+    {
+        return  [
+            IntegrationChannel::CHANNEL_AMAZFIT_ARISE => IntegrationChannel::CHANNEL_AMAZFIT_ARISE,
+            IntegrationChannel::CHANNEL_ARISE => IntegrationChannel::CHANNEL_ARISE,
+        ];
+    }
+
+
     public function getMarketplaces()
     {
         return [
-            'AliExpress' => 'AliExpress',
+            'Arise' => 'Arise',
         ];
     }
 }

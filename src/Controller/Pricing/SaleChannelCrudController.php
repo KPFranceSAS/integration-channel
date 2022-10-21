@@ -9,6 +9,7 @@ use App\Entity\SaleChannel;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -64,12 +65,7 @@ class SaleChannelCrudController extends AdminCrudController
                 BusinessCentralConnector::KIT_PERSONALIZACION_SPORT => BusinessCentralConnector::KIT_PERSONALIZACION_SPORT,
                 BusinessCentralConnector::KP_FRANCE => BusinessCentralConnector::KP_FRANCE,
             ]),
-            ChoiceField::new('channel', 'Channel')->setChoices([
-                IntegrationChannel::CHANNEL_CHANNELADVISOR => IntegrationChannel::CHANNEL_CHANNELADVISOR,
-                IntegrationChannel::CHANNEL_ALIEXPRESS => IntegrationChannel::CHANNEL_ALIEXPRESS,
-                IntegrationChannel::CHANNEL_FLASHLED => IntegrationChannel::CHANNEL_FLASHLED,
-                IntegrationChannel::CHANNEL_FITBITCORPORATE => IntegrationChannel::CHANNEL_FITBITCORPORATE,
-            ]),
+            AssociationField::new('integrationChannel', 'Integration Channel'),
             ColorField::new('color', 'Color'),
         ];
     }

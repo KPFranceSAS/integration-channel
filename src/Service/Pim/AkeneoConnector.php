@@ -3,6 +3,7 @@
 namespace App\Service\Pim;
 
 use Akeneo\Pim\ApiClient\AkeneoPimClientBuilder;
+use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 
 class AkeneoConnector
 {
@@ -28,6 +29,12 @@ class AkeneoConnector
     public function getAllProducts()
     {
         return $this->client->getProductApi()->all();
+    }
+
+
+    public function getAllFiltreredProducts(SearchBuilder $searchFilters)
+    {
+        return $this->client->getProductApi()->all('50', ['search'=>$searchFilters->getFilters()]);
     }
 
     public function updateProduct($identifier, $values)

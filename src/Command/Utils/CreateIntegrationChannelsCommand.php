@@ -26,78 +26,15 @@ class CreateIntegrationChannelsCommand extends Command
     {
         $integrationChannels=[
             [
-                'code'=>IntegrationChannel::CHANNEL_CHANNELADVISOR, 
-                'name'=>'ChannelAdvisor',
-                'active'=>true,
-                'price'=>true,
-                'stock'=>false,
-                'product'=>false,
-                'order'=>true,
-            ],
-            [
-                'code'=>IntegrationChannel::CHANNEL_ALIEXPRESS, 
-                'name'=>'AliExpress (Gadget Iberia)',
-                'active'=>true,
-                'price'=>false,
-                'stock'=>true,
-                'product'=>false,
-                'order'=>true,
-            ],
-           
-            [
-                'code'=>IntegrationChannel::CHANNEL_ARISE, 
-                'name'=>'Arise',
+                'code'=>IntegrationChannel::CHANNEL_AMAZFIT_ARISE,
+                'name'=>'Amazfit Arise',
                 'active'=>false,
                 'price'=>false,
                 'stock'=>true,
                 'product'=>false,
                 'order'=>true,
             ],
-            [
-                'code'=>IntegrationChannel::CHANNEL_FITBITCORPORATE, 
-                'name'=>'Google & Fitbit',
-                'active'=>false,
-                'price'=>false,
-                'stock'=>true,
-                'product'=>false,
-                'order'=>true,
-            ],
-            [
-                'code'=>IntegrationChannel::CHANNEL_FITBITEXPRESS, 
-                'name'=>'AliExpress (Fitbit)',
-                'active'=>true,
-                'price'=>false,
-                'stock'=>true,
-                'product'=>false,
-                'order'=>true,
-            ],
-            [
-                'code'=>IntegrationChannel::CHANNEL_FLASHLED, 
-                'name'=>'Flashled',
-                'active'=>true,
-                'price'=>false,
-                'stock'=>true,
-                'product'=>false,
-                'order'=>true,
-            ],
-            [
-                'code'=>IntegrationChannel::CHANNEL_MINIBATT, 
-                'name'=>'Minibatt',
-                'active'=>true,
-                'price'=>false,
-                'stock'=>true,
-                'product'=>false,
-                'order'=>true,
-            ],
-            [
-                'code'=>IntegrationChannel::CHANNEL_OWLETCARE, 
-                'name'=>'Minibatt',
-                'active'=>true,
-                'price'=>false,
-                'stock'=>true,
-                'product'=>false,
-                'order'=>true,
-            ],         
+            
         ];
 
         foreach ($integrationChannels as $integrationChannelArr) {
@@ -114,12 +51,9 @@ class CreateIntegrationChannelsCommand extends Command
                         
                 $this->manager->persist($integrationChannel);
             }
-           
         }
         $this->manager->flush();
-
-
-    
+   
         return Command::SUCCESS;
     }
 }

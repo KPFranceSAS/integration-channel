@@ -25,6 +25,12 @@ class OwletCareOrderCrudController extends WebOrderCrudController
         return $qb;
     }
 
+    public function getName(): string
+    {
+        return "OwletCare Order";
+    }
+    
+
 
     public function getCompanies()
     {
@@ -37,7 +43,15 @@ class OwletCareOrderCrudController extends WebOrderCrudController
     public function getMarketplaces()
     {
         return [
-            'Owletcare' => 'Owletcare',
+            'Owletbaby.es' => 'Owletbaby.es',
+        ];
+    }
+
+
+    public function getChannels()
+    {
+        return  [
+            IntegrationChannel::CHANNEL_OWLETCARE => IntegrationChannel::CHANNEL_OWLETCARE,
         ];
     }
 }

@@ -15,7 +15,7 @@ class ChannelAdvisorOrderCrudController extends WebOrderCrudController
 {
     public function getName(): string
     {
-        return "Amazon Order";
+        return "ChannelAdvisor Order";
     }
 
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
@@ -35,13 +35,20 @@ class ChannelAdvisorOrderCrudController extends WebOrderCrudController
         ];
     }
 
+    public function getChannels()
+    {
+        return  [
+            IntegrationChannel::CHANNEL_CHANNELADVISOR => IntegrationChannel::CHANNEL_CHANNELADVISOR,
+        ];
+    }
+
 
 
     public function getMarketplaces()
     {
         return [
             'Amazon UK' => 'Amazon UK',
-            'Amazon IT'  => "Amazon Seller Central - IT",
+            'Amazon IT' => "Amazon Seller Central - IT",
             'Amazon DE' => "Amazon Seller Central - DE",
             'Amazon ES' => "Amazon Seller Central - ES",
             'Amazon FR' => 'Amazon Seller Central - FR',

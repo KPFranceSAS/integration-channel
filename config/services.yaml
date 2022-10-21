@@ -77,8 +77,11 @@ services:
 
             $ariseClientId :  '%env(resolve:ARISE_ID)%'
             $ariseClientSecret : '%env(resolve:ARISE_SECRET)%'
-            $ariseClientAccessToken : '%env(resolve:ARISE_ACCESS_TOKEN)%'
             $ariseClientRefreshToken : '%env(resolve:ARISE_REFRESH_TOKEN)%'
+
+            $amazfitClientId :  '%env(resolve:AMAZFIT_ARISE_ID)%'
+            $amazfitClientSecret : '%env(resolve:AMAZFIT_ARISE_SECRET)%'
+            $amazfitClientRefreshToken : '%env(resolve:AMAZFIT_ARISE_REFRESH_TOKEN)%'
 
             $fitbitExpressClientId :  '%env(resolve:FITBIT_EXPRESS_ID)%'
             $fitbitExpressClientSecret : '%env(resolve:FITBIT_EXPRESS_SECRET)%'

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Helper\Traits\TraitTimeUpdated;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -14,8 +16,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class IntegrationChannel
 {
-
-
     public const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
     public const CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
     public const CHANNEL_FITBITEXPRESS = 'FITBITEXPRESS';
@@ -24,6 +24,8 @@ class IntegrationChannel
     public const CHANNEL_FLASHLED = 'FLASHLED';
     public const CHANNEL_FITBITCORPORATE = 'FITBITCORPORATE';
     public const CHANNEL_ARISE = 'ARISE';
+
+    public const CHANNEL_AMAZFIT_ARISE='AMAZFIT_ARISE';
 
 
     use TraitTimeUpdated;
@@ -69,6 +71,16 @@ class IntegrationChannel
      * @ORM\Column(type="boolean")
      */
     private $productSync=false;
+
+    /**
+     * @ORM\OneToMany(targetEntity=SaleChannel::class, mappedBy="integrationChannel")
+     */
+    private $saleChannels;
+
+    public function __construct()
+    {
+        $this->saleChannels = new ArrayCollection();
+    }
 
 
     public function __toString()
@@ -161,6 +173,36 @@ class IntegrationChannel
     public function setProductSync(bool $productSync): self
     {
         $this->productSync = $productSync;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SaleChannel>
+     */
+    public function getSaleChannels(): Collection
+    {
+        return $this->saleChannels;
+    }
+
+    public function addSaleChannel(SaleChannel $saleChannel): self
+    {
+        if (!$this->saleChannels->contains($saleChannel)) {
+            $this->saleChannels[] = $saleChannel;
+            $saleChannel->setIntegrationChannel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSaleChannel(SaleChannel $saleChannel): self
+    {
+        if ($this->saleChannels->removeElement($saleChannel)) {
+            // set the owning side to null (unless already changed)
+            if ($saleChannel->getIntegrationChannel() === $this) {
+                $saleChannel->setIntegrationChannel(null);
+            }
+        }
 
         return $this;
     }

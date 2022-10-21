@@ -26,19 +26,42 @@ class ChannelAdvisorPricing
         $this->managerRegistry = $managerRegistry->getManager();
     }
 
+    public function getIntegrationChannel()
+    {
+        return  IntegrationChannel::CHANNEL_CHANNELADVISOR;
+    }
+
 
     public function exportPricings()
     {
+         /**
+         * @var \App\Entity\IntegrationChannel]
+         */
+        $integrationChannel = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy([
+            'name' => $this->getIntegrationChannel()
+        ]);
+
+        /**
+         * @var array[\App\Entity\SaleChannel]
+         */
         $saleChannels = $this->managerRegistry->getRepository(SaleChannel::class)->findBy([
-            'channel' => IntegrationChannel::CHANNEL_CHANNELADVISOR
+            'integrationChannel' => $integrationChannel
         ]);
 
         /**
          * @var array[\App\Entity\Product]
          */
         $products = $this->managerRegistry->getRepository(Product::class)->findAll();
-        
 
+        $this->exportPricingSaleChannels($products, $saleChannels);
+        
+    }
+
+
+
+
+    public function exportPricingSaleChannels(array $products, array $saleChannels)
+    {
         $header = ['sku'];
         foreach ($saleChannels as $saleChannel) {
             $code = $saleChannel->getCode().'-';
@@ -51,19 +74,19 @@ class ChannelAdvisorPricing
             $datasToExport[]=implode(';', array_values($productArray));
         }
 
-
         $dataArray = implode("\r\n", $datasToExport);
         $filename = 'pricing_'.date('Ymd_His').'.PRICE.csv';
         $this->logger->info("start export pricing locally");
         $this->defaultStorage->write('pricings/'.$filename, $dataArray);
         $this->logger->info("start export pricing on channeladvisor");
-
+        /*
         $this->channelAdvisorStorage->write('/accounts/12009934/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010023/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010024/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010025/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010026/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12044693/Inventory/Transform/'.$filename, $dataArray);
+        */
     }
 
 

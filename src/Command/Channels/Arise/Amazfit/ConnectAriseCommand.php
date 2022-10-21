@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Command\Channels\Arise;
+namespace App\Command\Channels\Arise\Amazfit;
 
-use App\Channels\Arise\AriseApi;
+use App\Channels\Arise\Amazfit\AmazfitApi;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConnectAriseCommand extends Command
 {
-    protected static $defaultName = 'app:arise-test';
-    protected static $defaultDescription = 'Connection to arise express';
+    protected static $defaultName = 'app:amazfit-test';
+    protected static $defaultDescription = 'Connection to Arise amazfit';
 
-    public function __construct(AriseApi $ariseApi)
+    public function __construct(AmazfitApi $ariseApi)
     {
         $this->ariseApi = $ariseApi;
         parent::__construct();
@@ -24,14 +24,14 @@ class ConnectAriseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->markOrderAsFulfill();
+        $this->getBrandProduct();
         return Command::SUCCESS;
     }
 
     
     private function getBrandProduct()
     {
-        $result = $this->ariseApi->getBrandProduct(1355778698378079);
+        $result = $this->ariseApi->getBrandProduct(1355781352423031);
         var_dump($result);
     }
 
@@ -52,14 +52,14 @@ class ConnectAriseCommand extends Command
 
     private function updatePrice()
     {
-        $result = $this->ariseApi->updatePrice(1355778698378079, 2068482196806495, "MYSKU", 400);
+        $result = $this->ariseApi->updatePrice(1355781352423031, 2068484754234999, "AMF-W2170OV6N", 239.9);
         var_dump($result);
     }
 
 
     private function updateStockLevel()
     {
-        $result = $this->ariseApi->updateStockLevel(1355778698378079, 2068482196806495, "MYSKU", 2500);
+        $result = $this->ariseApi->updateStockLevel(1355781352423031, 2068484754234999, "AMF-W2170OV6N", 2500);
         var_dump($result);
     }
 

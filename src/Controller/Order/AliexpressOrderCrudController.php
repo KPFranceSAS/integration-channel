@@ -22,8 +22,14 @@ class AliexpressOrderCrudController extends WebOrderCrudController
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = $this->entityRepository->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
-        $qb->andWhere('entity.channel = :channel');
-        $qb->setParameter('channel', IntegrationChannel::CHANNEL_ALIEXPRESS);
+        $qb->andWhere('entity.channel IN (:channels)');
+        $qb->setParameter(
+            'channels',
+            [
+                IntegrationChannel::CHANNEL_ALIEXPRESS,
+                IntegrationChannel::CHANNEL_FITBITEXPRESS
+            ]
+        );
         return $qb;
     }
 
@@ -32,6 +38,15 @@ class AliexpressOrderCrudController extends WebOrderCrudController
     {
         return  [
             BusinessCentralConnector::GADGET_IBERIA => BusinessCentralConnector::GADGET_IBERIA,
+        ];
+    }
+
+
+    public function getChannels()
+    {
+        return  [
+            IntegrationChannel::CHANNEL_ALIEXPRESS => IntegrationChannel::CHANNEL_ALIEXPRESS,
+            IntegrationChannel::CHANNEL_FITBITEXPRESS => IntegrationChannel::CHANNEL_FITBITEXPRESS,
         ];
     }
 

@@ -1,0 +1,9 @@
+{% extends '@!EasyAdmin/crud/index.html.twig' %}
+
+
+{% block content_title %}
+    {{parent()}}
+     <small>
+        <strong>{{paginator.numResults|format}}</strong> results
+    </small>
+{% endblock %}

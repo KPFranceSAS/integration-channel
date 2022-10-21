@@ -8,32 +8,31 @@ use App\Entity\IntegrationChannel;
 use App\Service\Aggregator\ApiInterface;
 use Psr\Log\LoggerInterface;
 
-class AriseApi implements ApiInterface
+abstract class AriseApiParent implements ApiInterface
 {
     protected $client;
 
     protected $logger;
 
-    public function getChannel()
-    {
-        return IntegrationChannel::CHANNEL_ARISE;
-    }
 
-
-    public function __construct(LoggerInterface $logger, AriseClient $client)
+    public function __construct(LoggerInterface $logger, $clientId, $clientSecret, $clientRefreshToken)
     {
-        $this->client = $client;
+        $this->client = new AriseClient();
+        $this->client->addParams($logger, $clientId, $clientSecret, $clientRefreshToken);
         $this->logger = $logger;
     }
 
+    public function getClient(): AriseClient
+    {
+        return $this->client;
+    }
 
-    
 
 
     /**
      * https://open.proyectoarise.com/apps/doc/api?path=%2Forders%2Fget
      */
-    private function getOrders(array $params = [])
+    public function getOrders(array $params = [])
     {
         $offset = 0;
         $max_page = 1;
@@ -68,7 +67,7 @@ class AriseApi implements ApiInterface
             'status' => 'ready_to_ship',
             'created_after' => '2022-09-01T09:00:00+08:00'
         ];
-        return $this->getAllOrders($params);
+        return $this->getOrders($params);
     }
 
 

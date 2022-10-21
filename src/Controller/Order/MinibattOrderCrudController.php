@@ -38,7 +38,14 @@ class MinibattOrderCrudController extends WebOrderCrudController
     public function getMarketplaces()
     {
         return [
-            'Minibatt' => 'Minibatt',
+            'Minibatt.com' => 'Minibatt.com',
+        ];
+    }
+
+    public function getChannels()
+    {
+        return  [
+            IntegrationChannel::CHANNEL_MINIBATT => IntegrationChannel::CHANNEL_MINIBATT,
         ];
     }
 }

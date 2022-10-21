@@ -39,6 +39,7 @@ class WebOrderCrudController extends AdminCrudController
     {
         $crud = parent::configureCrud($crud);
         $crud->overrideTemplate('crud/detail', 'admin/crud/order/detail.html.twig');
+        $crud->overrideTemplate('crud/index', 'admin/crud/order/index.html.twig');
 
         return $crud;
     }
@@ -153,8 +154,8 @@ class WebOrderCrudController extends AdminCrudController
                 })
                 ->addCssClass('btn')
                 ->linkToCrudAction('changeStatusToInvoiced');
-                $actions->add(Crud::PAGE_DETAIL, $changeStatusToInvoiced);
-        }        
+            $actions->add(Crud::PAGE_DETAIL, $changeStatusToInvoiced);
+        }
 
 
 
@@ -220,19 +221,32 @@ class WebOrderCrudController extends AdminCrudController
             'Amazon DE' => "Amazon Seller Central - DE",
             'Amazon ES' => "Amazon Seller Central - ES",
             'Amazon FR' => 'Amazon Seller Central - FR',
-            'OwletCare' => 'Owlet Care',
+            'Arise' => 'Arise',
+            'Flashled.es' => 'Flashled.es',
+            'Minibatt.com' => 'Minibatt.com',
+            'Owletbaby.es' => 'Owletbaby.es',
         ];
     }
 
 
     public function getChannels()
     {
-        return [
-            IntegrationChannel::CHANNEL_ALIEXPRESS => IntegrationChannel::CHANNEL_ALIEXPRESS,
-            IntegrationChannel::CHANNEL_FITBITEXPRESS => IntegrationChannel::CHANNEL_FITBITEXPRESS,
-            IntegrationChannel::CHANNEL_CHANNELADVISOR => IntegrationChannel::CHANNEL_CHANNELADVISOR,
-            IntegrationChannel::CHANNEL_OWLETCARE  => IntegrationChannel::CHANNEL_OWLETCARE
-        ];
+        $channels = $this->container->get('doctrine')
+                    ->getManager()
+                    ->getRepository(IntegrationChannel::class)
+                    ->findBy(
+                        [
+                        'active' => true
+                     ],
+                        [
+                            'code'=>'ASC'
+                        ]
+                    );
+        $channelArray=[];
+        foreach ($channels as $channel) {
+            $channelArray[$channel->getCode()] = $channel->getName();
+        }
+        return $channelArray;
     }
 
 

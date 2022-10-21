@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Controller\Configuration\ProductCrudController;
 use App\Controller\Fba\StockCrudController;
 use App\Controller\Order\AliexpressOrderCrudController;
+use App\Controller\Order\AriseOrderCrudController;
 use App\Controller\Order\ChannelAdvisorOrderCrudController;
 use App\Controller\Order\DeliveryOrderCrudController;
 use App\Controller\Order\ErrorOrderCrudController;
@@ -58,12 +59,12 @@ class DashboardController extends AbstractDashboardController
         return [
             MenuItem::subMenu('Orders', 'fa fa-shopping-cart')
                 ->setSubItems([
-                    MenuItem::linkToCrud('Amazon', 'fab fa-amazon', WebOrder::class)
+                    MenuItem::linkToCrud('ChannelAdvisor', 'fab fa-amazon', WebOrder::class)
                         ->setController(ChannelAdvisorOrderCrudController::class),
                     MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)
                         ->setController(AliexpressOrderCrudController::class),
-                    MenuItem::linkToCrud('Fitbitexpress', 'fas fa-heartbeat', WebOrder::class)
-                        ->setController(FitbitExpressOrderCrudController::class),
+                    MenuItem::linkToCrud('Arise', 'fas fa-sun', WebOrder::class)
+                        ->setController(AriseOrderCrudController::class),
                     MenuItem::linkToCrud('Owletcare', 'fas fa-baby', WebOrder::class)
                         ->setController(OwletCareOrderCrudController::class),
                     MenuItem::linkToCrud('Flashled', 'far fa-lightbulb', WebOrder::class)
@@ -113,12 +114,13 @@ class DashboardController extends AbstractDashboardController
             MenuItem::subMenu('Configuration', 'fas fa-cogs')
                 ->setSubItems([
                     MenuItem::linkToCrud(
-                        'Product', 
-                        'fas fa-barcode', 
-                        Product::class)->setController(ProductCrudController::class),
+                        'Product',
+                        'fas fa-barcode',
+                        Product::class
+                    )->setController(ProductCrudController::class),
                     MenuItem::linkToCrud(
-                        'Brand', 
-                        'far fa-registered', 
+                        'Brand',
+                        'far fa-registered',
                         Brand::class
                     ),
                     MenuItem::linkToCrud(

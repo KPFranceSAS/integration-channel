@@ -72,6 +72,11 @@ class SaleChannel
      */
     private $users;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=IntegrationChannel::class, inversedBy="saleChannels")
+     */
+    private $integrationChannel;
+
     
     public function __construct()
     {
@@ -240,6 +245,18 @@ class SaleChannel
         if ($this->users->removeElement($user)) {
             $user->removeSaleChannel($this);
         }
+
+        return $this;
+    }
+
+    public function getIntegrationChannel(): ?IntegrationChannel
+    {
+        return $this->integrationChannel;
+    }
+
+    public function setIntegrationChannel(?IntegrationChannel $integrationChannel): self
+    {
+        $this->integrationChannel = $integrationChannel;
 
         return $this;
     }

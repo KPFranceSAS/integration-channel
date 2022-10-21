@@ -36,14 +36,13 @@ class AriseClient
         return $this->appkey;
     }
 
-    public function __construct(LoggerInterface $loggerInterface, $ariseClientId, $ariseClientSecret, $ariseClientAccessToken, $ariseClientRefreshToken)
+
+    public function addParams(LoggerInterface $loggerInterface, $clientId, $clientSecret, $clientRefreshToken)
     {
         $this->gatewayUrl = 'https://api.proyectoarise.es/rest';
-        $this->appkey = $ariseClientId;
-        $this->secretKey = $ariseClientSecret;
-
-        $this->accessToken =  $ariseClientAccessToken;
-        $this->refreshToken = $ariseClientRefreshToken;
+        $this->appkey = $clientId;
+        $this->secretKey = $clientSecret;
+        $this->refreshToken = $clientRefreshToken;
         $this->logger = $loggerInterface;
     }
 
@@ -55,7 +54,11 @@ class AriseClient
             $request = new AriseRequest('/auth/token/refresh');
             $request->addApiParam('refresh_token', $this->refreshToken);
             $reponse = $this->execute($request, false);
-            $this->accessToken = $reponse->access_token;
+            if (property_exists($reponse, 'access_token')) {
+                $this->accessToken = $reponse->access_token;
+            } else {
+                throw new Exception("Error on getting access token ".json_encode($reponse));
+            }
         }
         return $this->accessToken;
     }
@@ -230,8 +233,7 @@ class AriseClient
         $sysParams["sign_method"] = $this->signMethod;
         $sysParams["timestamp"] = $this->msectime();
         if ($withToken) {
-            $sysParams["access_token"] = $this->accessToken;
-            //$sysParams["access_token"] = $this->getRefreshedToken();
+            $sysParams["access_token"] = $this->getRefreshedToken();
         }
 
         $apiParams = $request->udfParams;
@@ -271,24 +273,23 @@ class AriseClient
 
         $respObject = json_decode($resp);
         if (isset($respObject->code) && $respObject->code != "0") {
-            $this->logApiError($requestUrl, $respObject->code, $respObject->message);
+            $this->logApiError($requestUrl, $respObject->code, $respObject->message, 'error');
         } else {
             $this->logApiError($requestUrl, '', '');
         }
         return $respObject;
     }
 
-    protected function logApiError($requestUrl, $errorCode, $responseTxt)
+    protected function logApiError($requestUrl, $errorCode, $responseTxt, $type='info')
     {
         $logData = [
             date("Y-m-d H:i:s"),
-            $this->appkey,
-            $this->sdkVersion,
-            $requestUrl,
+            'KEY '.$this->appkey,
+            'URL '.$requestUrl,
             $errorCode,
             str_replace("\n", "", $responseTxt)
         ];
-        $this->logger->error(implode(',', $logData));
+        $this->logger->{$type}(implode(' -- ', $logData));
     }
 
     public function msectime()

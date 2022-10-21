@@ -2,20 +2,13 @@
 
 namespace App\Channels\Arise;
 
-use App\Channels\Arise\AriseApi;
-use App\Entity\IntegrationChannel;
+use App\Channels\Arise\AriseApiParent;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\StockParent;
 
-class AriseStock extends StockParent
+abstract class AriseStockParent extends StockParent
 {
-    public function getChannel()
-    {
-        return IntegrationChannel::CHANNEL_ARISE;
-    }
-
-
-    protected function getAriseApi(): AriseApi
+    protected function getAriseApi(): AriseApiParent
     {
         return $this->getApi();
     }
@@ -62,7 +55,7 @@ class AriseStock extends StockParent
             $this->logger->info('Check stock for ' . $name . ' / Id ' . $product->item_id);
             foreach ($product->skus as $sku) {
                 $this->logger->info('Sku ' . $sku->SellerSku);
-                if(!$this->isSkuExists($sku->SellerSku)){
+                if (!$this->isSkuExists($sku->SellerSku)) {
                     $errors[] = 'Sku '.$sku->SellerSku. ' do not exist in BC and no sku mappings have been done also.';
                 }
             }
