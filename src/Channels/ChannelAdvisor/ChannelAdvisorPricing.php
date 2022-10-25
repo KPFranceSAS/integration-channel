@@ -24,7 +24,7 @@ class ChannelAdvisorPricing extends PriceParent
         MailService $mailer,
         ApiAggregator $apiAggregator,
         FilesystemOperator $defaultStorage,
-        FilesystemOperator $channelAdvisorStorage,
+        FilesystemOperator $channelAdvisorStorage
     ) {
         $this->defaultStorage = $defaultStorage;
         $this->channelAdvisorStorage = $channelAdvisorStorage;
