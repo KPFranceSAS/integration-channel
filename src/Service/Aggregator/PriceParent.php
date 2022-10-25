@@ -32,7 +32,7 @@ abstract class PriceParent
         ManagerRegistry $manager,
         LoggerInterface $logger,
         MailService $mailer,
-        ApiAggregator $apiAggregator,
+        ApiAggregator $apiAggregator
     ) {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
