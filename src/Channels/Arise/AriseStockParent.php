@@ -22,7 +22,7 @@ abstract class AriseStockParent extends StockParent
      */
     public function sendStocks()
     {
-        $products = $this->getAriseApi()->getAllActiveProducts();
+        $products = $this->getAriseApi()->getAllProducts();
         foreach ($products as $product) {
             $this->sendStock($product);
         }
@@ -49,7 +49,7 @@ abstract class AriseStockParent extends StockParent
     public function checkStocks(): array
     {
         $errors=[];
-        $products = $this->getAriseApi()->getAllActiveProducts();
+        $products = $this->getAriseApi()->getAllProducts();
         foreach ($products as $product) {
             $name = (property_exists($product, 'attributes') && property_exists($product->attributes, 'name')) ? $product->attributes->name : null;
             $this->logger->info('Check stock for ' . $name . ' / Id ' . $product->item_id);

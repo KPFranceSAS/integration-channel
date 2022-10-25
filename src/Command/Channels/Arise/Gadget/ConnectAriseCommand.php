@@ -25,11 +25,16 @@ class ConnectAriseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->updatePrice();
-        $this->updateStockLevel();
+        $this->getSeller();
         return Command::SUCCESS;
     }
 
+
+    private function getSeller()
+    {
+        $result = $this->ariseApi->getSeller();
+        var_dump($result);
+    }
     
     private function getBrandProduct()
     {

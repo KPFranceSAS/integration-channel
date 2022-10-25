@@ -9,8 +9,6 @@ services:
     _instanceof:
         App\Service\Aggregator\StockParent:
             tags: ['app.stockupdater']
-        App\Service\Aggregator\PriceParent:
-            tags: ['app.priceupdater']    
         App\Service\Aggregator\UpdateStatusParent:
             tags: ['app.statusupdater']
         App\Service\Aggregator\ApiInterface:
@@ -19,6 +17,8 @@ services:
             tags: ['app.integrator']
         App\BusinessCentral\Connector\BusinessCentralConnector:
             tags: ['app.businesscentralconnector']
+        App\Service\Aggregator\PriceParent:
+            tags: ['app.priceupdater']
 
     App\:
         resource: '../src/'
@@ -46,7 +46,7 @@ services:
         arguments:
             - !tagged_iterator app.businesscentralconnector
             
-
+    
 
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.

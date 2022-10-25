@@ -5,7 +5,6 @@ namespace App\Channels\Arise;
 use App\Channels\Arise\AriseApiParent;
 use App\Service\Aggregator\PriceParent;
 
-
 abstract class ArisePriceParent extends PriceParent
 {
     protected function getAriseApi(): AriseApiParent
@@ -50,17 +49,16 @@ abstract class ArisePriceParent extends PriceParent
         $this->logger->info('Send price for ' . $name . ' / Id ' . $product->item_id);
         foreach ($product->skus as $sku) {
             $this->logger->info('Sku ' . $sku->SellerSku  . ' Brand ' . $brand);
-            if(array_key_exists($sku->SellerSku, $this->productMarketplaces)){
+            if (array_key_exists($sku->SellerSku, $this->productMarketplaces)) {
                 $productMarketplace = $this->productMarketplaces[$sku->SellerSku];
                 $price =  $productMarketplace->getPrice() ;
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 $promotionPrice = $promotion ? $promotion->getPromotionPrice() : 0;
-                $this->logger->info('Sku ' . $sku->SellerSku   . ' / price ' . $price . ' promotionPrice   ' . $promotionPrice);
-                $this->getAriseApi()->updatePrice($product->item_id, $sku->SkuId, $price, $promotionPrice);
+                $this->getAriseApi()->updatePrice($product->item_id, $sku->SkuId, $sku->SellerSku, $price, $promotionPrice);
             } else {
-                $this->getAriseApi()->updateStockLevel($product->item_id, $sku->SkuId,$sku->SellerSku, 0);
+                $this->logger->info('Descativate');
+                $this->getAriseApi()->updateStockLevel($product->item_id, $sku->SkuId, $sku->SellerSku, 0);
             }
-            
         }
         $this->logger->info('---------------');
     }

@@ -190,7 +190,7 @@ abstract class AriseApiParent implements ApiInterface
 
     public function updatePrice($itemId, $skuId, $sellerSku, $price, $salePrice=0)
     {
-        $this->logger->info('Send update price '.$sellerSku .' '.$price.' >> '.$salePrice == 0 ? $price : $salePrice);
+        $this->logger->info('Send update price '.$sellerSku .' '.$price.' >> '.$salePrice);
         $price = [
             'Price' => $price,
             'SalePrice' => $salePrice,
@@ -280,13 +280,14 @@ abstract class AriseApiParent implements ApiInterface
     {
         $this->logger->info('Get seller');
         $request = new AriseRequest('/seller/get', 'GET');
-        $reponse = $this->client->execute($request);
-        return $reponse->data;
+        return $this->client->execute($request);
     }
+
+
 
     public function getDbsShipmentProviders()
     {
-        $seller = $this->getSeller();
+        $seller = $this->getSeller()->data;
         $this->logger->info('Get Shipment providers');
         $request = new AriseRequest('/order/shipment/sof/providers/get', "GET");
         
