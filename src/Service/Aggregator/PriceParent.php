@@ -49,7 +49,7 @@ abstract class PriceParent
     {
         try {
             $integrationChannel = $this->manager->getRepository(IntegrationChannel::class)->findBy([
-                'name' => $this->getChannel()
+                'code' => $this->getChannel()
             ]);
 
             $saleChannels = $this->manager->getRepository(SaleChannel::class)->findBy([
