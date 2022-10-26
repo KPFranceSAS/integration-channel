@@ -18,8 +18,8 @@ class AmazfitApi extends AriseApiParent
         LoggerInterface $logger,
         $amazfitClientId,
         $amazfitClientSecret,
-        $amazfitClientRefreshToken
+        $amazfitClientAccessToken
     ) {
-        parent::__construct($logger, $amazfitClientId, $amazfitClientSecret, $amazfitClientRefreshToken);
+        parent::__construct($logger, $amazfitClientId, $amazfitClientSecret, $amazfitClientAccessToken);
     }
 }

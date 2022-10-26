@@ -26,8 +26,8 @@ class CreateIntegrationChannelsCommand extends Command
     {
         $integrationChannels=[
             [
-                'code'=>IntegrationChannel::CHANNEL_AMAZFIT_ARISE,
-                'name'=>'Amazfit Arise',
+                'code'=>IntegrationChannel::CHANNEL_SONOS_ARISE,
+                'name'=>'Sonos Arise',
                 'active'=>false,
                 'price'=>false,
                 'stock'=>true,

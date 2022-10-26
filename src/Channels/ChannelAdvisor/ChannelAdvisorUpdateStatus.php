@@ -4,6 +4,7 @@ namespace App\Channels\ChannelAdvisor;
 
 use App\Channels\ChannelAdvisor\ChannelAdvisorApi;
 use App\Entity\IntegrationChannel;
+use App\Entity\IntegrationFile;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\UpdateStatusParent;
 
@@ -27,6 +28,13 @@ class ChannelAdvisorUpdateStatus extends UpdateStatusParent
 
     protected function postUpdateStatusInvoice(WebOrder $order, $invoice)
     {
+        // to remove after integration all old
+        $integrationFile = $this->manager->getRepository(IntegrationFile::class)->findOneBy(['externalOrderId'=>$order->getExternalNumber()]);
+        if ($integrationFile) {
+            $this->addLogToOrder($order, 'Invoice has been already uploaded with old invoice number present in Navision ' . $integrationFile->getDocumentNumber());
+            return true;
+        }
+
         $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
         $this->addLogToOrder($order, 'Retrieve invoice content ' . $invoice['number']);
         $contentPdf  = $businessCentralConnector->getContentInvoicePdf($invoice['id']);

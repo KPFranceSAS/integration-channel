@@ -18,8 +18,8 @@ class GadgetApi extends AriseApiParent
         LoggerInterface $logger,
         $ariseClientId,
         $ariseClientSecret,
-        $ariseClientRefreshToken
+        $ariseClientAccessToken
     ) {
-        parent::__construct($logger, $ariseClientId, $ariseClientSecret, $ariseClientRefreshToken);
+        parent::__construct($logger, $ariseClientId, $ariseClientSecret, $ariseClientAccessToken);
     }
 }

@@ -105,7 +105,6 @@ class BuildHistoricCommand extends Command
                 $webOrder->setOrderErp($invoice['orderNumber']);
                 $orderApi->ShippingLastName = $invoice['shipToName'];
                 $orderApi->ShippingAddressLine1 = $invoice['shippingPostalAddress']["street"];
-                ;
                 $orderApi->ShippingCity = $invoice['shippingPostalAddress']["city"];
                 $orderApi->ShippingStateOrProvince =  $invoice['shippingPostalAddress']["state"];
                 $orderApi->ShippingStateOrProvinceName = $invoice['shippingPostalAddress']["state"];

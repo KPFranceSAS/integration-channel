@@ -15,10 +15,10 @@ abstract class AriseApiParent implements ApiInterface
     protected $logger;
 
 
-    public function __construct(LoggerInterface $logger, $clientId, $clientSecret, $clientRefreshToken)
+    public function __construct(LoggerInterface $logger, $clientId, $clientSecret, $clientAccessToken)
     {
         $this->client = new AriseClient();
-        $this->client->addParams($logger, $clientId, $clientSecret, $clientRefreshToken);
+        $this->client->addParams($logger, $clientId, $clientSecret, $clientAccessToken);
         $this->logger = $logger;
     }
 

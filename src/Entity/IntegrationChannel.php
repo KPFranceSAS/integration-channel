@@ -24,7 +24,7 @@ class IntegrationChannel
     public const CHANNEL_FLASHLED = 'FLASHLED';
     public const CHANNEL_FITBITCORPORATE = 'FITBITCORPORATE';
     public const CHANNEL_ARISE = 'ARISE';
-
+    public const CHANNEL_SONOS_ARISE='SONOS_ARISE';
     public const CHANNEL_AMAZFIT_ARISE='AMAZFIT_ARISE';
 
 

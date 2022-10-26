@@ -312,20 +312,28 @@ class WebOrder
             case IntegrationChannel::CHANNEL_FITBITEXPRESS:
             case IntegrationChannel::CHANNEL_ALIEXPRESS:
                 return 'https://gsp.aliexpress.com/apps/order/detail?orderId=' . $this->externalNumber;
+
             case IntegrationChannel::CHANNEL_CHANNELADVISOR:
                 return 'https://sellercentral.amazon.fr/orders-v3/order/' . $this->externalNumber;
+
             case IntegrationChannel::CHANNEL_OWLETCARE:
                 $order = $this->getOrderContent();
                 return 'https://owlet-spain.myshopify.com/admin/orders/' . $order['id'];
+
             case IntegrationChannel::CHANNEL_MINIBATT:
                 $order = $this->getOrderContent();
                 return 'https://minibattstore.myshopify.com/admin/orders/' . $order['id'];
+
             case IntegrationChannel::CHANNEL_FLASHLED:
                 $order = $this->getOrderContent();
                 return 'https://testflashled.myshopify.com/admin/orders/' . $order['id'];
+
             case IntegrationChannel::CHANNEL_FITBITCORPORATE:
                 $order = $this->getOrderContent();
                 return 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'];
+                
+            case IntegrationChannel::CHANNEL_AMAZFIT_ARISE:
+            case IntegrationChannel::CHANNEL_SONOS_ARISE:
             case IntegrationChannel::CHANNEL_ARISE:
                 return 'https://sellercenter.proyectoarise.es/apps/order/detail?tradeOrderId=' . $this->externalNumber;
         }
@@ -370,20 +378,37 @@ class WebOrder
         switch ($channel) {
             case IntegrationChannel::CHANNEL_ALIEXPRESS:
                 return WebOrder::createOneFromAliExpress($orderApi);
+
             case IntegrationChannel::CHANNEL_FITBITEXPRESS:
                 $webOrder = WebOrder::createOneFromAliExpress($orderApi);
                 $webOrder->setChannel(IntegrationChannel::CHANNEL_FITBITEXPRESS);
                 return $webOrder;
+
             case IntegrationChannel::CHANNEL_ARISE:
                 return WebOrder::createOneFromArise($orderApi);
+
+            case IntegrationChannel::CHANNEL_AMAZFIT_ARISE:
+                $webOrder = WebOrder::createOneFromArise($orderApi);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_AMAZFIT_ARISE);
+                return $webOrder;
+
+            case IntegrationChannel::CHANNEL_SONOS_ARISE:
+                $webOrder = WebOrder::createOneFromArise($orderApi);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_SONOS_ARISE);
+                return $webOrder;
+
             case IntegrationChannel::CHANNEL_CHANNELADVISOR:
                 return WebOrder::createOneFromChannelAdvisor($orderApi);
+                
             case IntegrationChannel::CHANNEL_OWLETCARE:
                 return WebOrder::createOneFromOwletcare($orderApi);
+
             case IntegrationChannel::CHANNEL_FLASHLED:
                 return WebOrder::createOneFromFlashled($orderApi);
+
             case IntegrationChannel::CHANNEL_MINIBATT:
                 return WebOrder::createOneFromMinibatt($orderApi);
+                
             case IntegrationChannel::CHANNEL_FITBITCORPORATE:
                 return WebOrder::createOneFromFitbitCorporate($orderApi);
         }

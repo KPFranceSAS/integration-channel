@@ -37,12 +37,12 @@ class AriseClient
     }
 
 
-    public function addParams(LoggerInterface $loggerInterface, $clientId, $clientSecret, $clientRefreshToken)
+    public function addParams(LoggerInterface $loggerInterface, $clientId, $clientSecret, $clientAccessToken)
     {
         $this->gatewayUrl = 'https://api.proyectoarise.es/rest';
         $this->appkey = $clientId;
         $this->secretKey = $clientSecret;
-        $this->refreshToken = $clientRefreshToken;
+        $this->accessToken = $clientAccessToken;
         $this->logger = $loggerInterface;
     }
 
