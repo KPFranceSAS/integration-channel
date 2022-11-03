@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  */
 class ProductSaleChannel
 {
-    public const TX_MARGIN = 20;
+    public const TX_MARGIN = 19;
 
     use TraitTimeUpdated;
 

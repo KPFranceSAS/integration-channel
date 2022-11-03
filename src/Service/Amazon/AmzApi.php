@@ -4,6 +4,8 @@ namespace App\Service\Amazon;
 
 use AmazonPHP\SellingPartner\Configuration;
 use AmazonPHP\SellingPartner\Marketplace;
+use AmazonPHP\SellingPartner\Model\FulfillmentInbound\CreateInboundShipmentPlanRequest;
+use AmazonPHP\SellingPartner\Model\FulfillmentInbound\InboundShipmentRequest;
 use AmazonPHP\SellingPartner\Model\Reports\CreateReportSpecification;
 use AmazonPHP\SellingPartner\Regions;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
@@ -98,6 +100,64 @@ class AmzApi
             Regions::EUROPE
         );
     }
+
+
+
+    public function createInboundPlan(CreateInboundShipmentPlanRequest $request)
+    {
+        return  $this->sdk->fulfillmentInbound()->createInboundShipmentPlan($this->getAccessToken(), Regions::EUROPE, $request);
+    }
+
+
+
+    public function getShipmentSent()
+    {
+        return $this->sdk->fulfillmentInbound()->getShipments(
+            $this->getAccessToken(),
+            Regions::EUROPE,
+            'SHIPMENT',
+            Marketplace::GB()->id(),
+            ['SHIPPED']
+        );
+    }
+
+
+    public function getShipmentItems($shipmentId)
+    {
+        return $this->sdk->fulfillmentInbound()->getShipmentItemsByShipmentId(
+            $this->getAccessToken(),
+            Regions::EUROPE,
+            $shipmentId,
+            Marketplace::GB()->id(),
+        );
+    }
+
+
+
+    public function getLabels($shipmentId)
+    {
+        return $this->sdk->fulfillmentInbound()->getLabels(
+            $this->getAccessToken(),
+            Regions::EUROPE,
+            $shipmentId,
+            'PackageLabel_Thermal',
+            'PALLET',
+        );
+    }
+
+
+    public function createInbound($shipmentId, InboundShipmentRequest $inboundShipmentRequest)
+    {
+        return $this->sdk->fulfillmentInbound()->createInboundShipment(
+            $this->getAccessToken(),
+            Regions::EUROPE,
+            $shipmentId,
+            $inboundShipmentRequest
+        );
+    }
+
+
+    
 
 
 

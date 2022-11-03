@@ -64,6 +64,10 @@ abstract class BusinessCentralConnector
 
     public const EP_PURCHASES_ORDERS = "purchaseOrders";
 
+    public const EP_TRANSFER_ORDERS = "transferOrders";
+
+    
+
 
     protected $logger;
 
@@ -541,6 +545,14 @@ abstract class BusinessCentralConnector
             'number',
             ['$expand' => 'salesInvoiceLines,customer']
         );
+    }
+
+
+
+    public function getTransfersOrderToFba(): array
+    {
+        $filters = "status eq 'Lanzado' and transferToCode eq 'AMAZON'";
+        return $this->getElementsByArray(self::EP_TRANSFER_ORDERS, $filters, true, ['$expand' => 'transferOrderLines']);
     }
 
 

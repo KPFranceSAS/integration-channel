@@ -5,6 +5,7 @@ namespace App\Command\Amazon;
 use App\Helper\Utils\ExchangeRateCalculator;
 use App\Service\Amazon\AmzApi;
 use App\Service\Amazon\AmzApiFinancial;
+use App\Service\Amazon\AmzApiInbound;
 use App\Service\Amazon\Report\AmzApiImportReimbursement;
 use DateTime;
 use Symfony\Component\Console\Command\Command;
@@ -16,10 +17,10 @@ class ConnectAmzCommand extends Command
     protected static $defaultName = 'app:amz-test';
     protected static $defaultDescription = 'Add a short description for your command';
 
-    public function __construct(AmzApi $api, ExchangeRateCalculator $caluclator, AmzApiImportReimbursement $amzApiImportReimbursement, AmzApiFinancial $financial)
+    public function __construct(AmzApi $api, ExchangeRateCalculator $caluclator, AmzApiInbound $amzApiInbound, AmzApiFinancial $financial)
     {
         $this->api = $api;
-        $this->amzApiImportReimbursement = $amzApiImportReimbursement;
+        $this->amzApiInbound = $amzApiInbound;
         $this->caluclator = $caluclator;
         $this->fincancial = $financial;
         parent::__construct();
@@ -29,13 +30,17 @@ class ConnectAmzCommand extends Command
 
     private $fincancial;
 
-    private $amzApiImportReimbursement;
+    private $amzApiInbound;
 
     private $caluclator;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->getFinancialEvents();
+        $this->amzApiInbound->sendInbounds();
+
+        //dump($this->amzApiInbound->getLabels('FBA15GDH8SLH'));
+
+        //$this->getFinancialEvents();
         //$this->getFinancialsGroup();
 
         return Command::SUCCESS;
