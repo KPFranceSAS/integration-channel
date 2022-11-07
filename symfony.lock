@@ -551,6 +551,15 @@
     "symfony/intl": {
         "version": "v5.3.0"
     },
+    "symfony/mailchimp-mailer": {
+        "version": "5.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.4",
+            "ref": "1be490e068472fc87e226cf54bc95fb6f2e49117"
+        }
+    },
     "symfony/mailer": {
         "version": "5.4",
         "recipe": {
@@ -562,6 +571,15 @@
         "files": [
             "config/packages/mailer.yaml"
         ]
+    },
+    "symfony/mailgun-mailer": {
+        "version": "5.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.4",
+            "ref": "addcb559b32d9dbb4843826b063565e1b15a2a57"
+        }
     },
     "symfony/maker-bundle": {
         "version": "1.0",

@@ -24,7 +24,7 @@ class ProductSaleChannel
     public const TX_MARGIN = 19;
 
     use TraitTimeUpdated;
-
+  
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
