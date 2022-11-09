@@ -351,26 +351,6 @@ class ProductSaleChannel
      */
     public function validate(ExecutionContextInterface $context, $payload)
     {
-        /*$dates=[];
-        foreach ($this->promotions as $promotion) {
-            if ($promotion->getBeginDate() &&  $promotion->getEndDate()) {
-                foreach ($dates as $date) {
-                    if ($promotion->getBeginDate()->format('YmdHi')< $date['end'] && $promotion->getEndDate()->format('YmdHi') > $date['start']) {
-
-                        $context->buildViolation('2 promotions for sale channel '.$this.' are together ('.$promotion->getBeginDate()->format('d-m-Y H:i').'-'.$promotion->getEndDate()->format('d-m-Y H:i').') and ('.$date['startHuman'].'-'.$date['endHuman'].')')
-                            ->atPath('promotions')
-                            ->addViolation();
-                    }
-                }
-                $dates[]=[
-                    'start' =>$promotion->getBeginDate()->format('YmdHi'),
-                    'startHuman' =>$promotion->getBeginDate()->format('d-m-Y H:i'),
-                    'end' =>$promotion->getEndDate()->format('YmdHi'),
-                    'endHuman' =>$promotion->getBeginDate()->format('d-m-Y H:i'),
-                ];
-            }
-        }*/
-       
         if ($this->price && $this->price < ((100 + self::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {
             $context->buildViolation('You do a selling price which is only '.self::TX_MARGIN.'% more than product cost '.$this->getProduct()->getUnitCost().'€')
                         ->atPath('price')

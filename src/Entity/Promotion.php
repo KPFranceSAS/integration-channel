@@ -136,6 +136,12 @@ class Promotion
      */
     private $endHour;
 
+    /**
+     * @Gedmo\Versioned
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $overrided=false;
+
 
        
 
@@ -358,23 +364,28 @@ class Promotion
                 ->atPath($path)
                 ->addViolation();
             } else {
-                if ($this->isFixedType()) {
-                    $price = $this->productSaleChannel->getPrice();
-                    $discountPrice = $this->getPromotionPrice();
-                    $discount = ($price-$discountPrice)/$price;
-                    if ($discount>0.5) {
-                        $context->buildViolation('You do promotion of 50% and more on '.$this->productSaleChannel)
-                        ->atPath($path)
-                        ->addViolation();
+                if ($this->overrided === true) {
+                } else {
+                    if ($this->isFixedType()) {
+                        $price = $this->productSaleChannel->getPrice();
+                        $discountPrice = $this->getPromotionPrice();
+                        $discount = ($price-$discountPrice)/$price;
+                        if ($discount>0.5) {
+                            $context->buildViolation('You do promotion of 50% and more on '.$this->productSaleChannel)
+                            ->atPath($path)
+                            ->addViolation();
+                        }
                     }
                 }
             }
 
-
-            if ($this->getPromotionPrice() && $this->getPromotionPrice() < ((100 + ProductSaleChannel::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {
-                $context->buildViolation('You do promotion on final price '.$this->getPromotionPrice().' where result have only '.ProductSaleChannel::TX_MARGIN.'% more than product cost ('.$this->getProduct()->getUnitCost().')')
-                            ->atPath($path)
-                            ->addViolation();
+            if ($this->overrided === true) {
+            } else {
+                if ($this->getPromotionPrice() && $this->getPromotionPrice() < ((100 + ProductSaleChannel::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {
+                    $context->buildViolation('You do promotion on final price '.$this->getPromotionPrice().' where result have only '.ProductSaleChannel::TX_MARGIN.'% more than product cost ('.$this->getProduct()->getUnitCost().')')
+                                ->atPath($path)
+                                ->addViolation();
+                }
             }
         }
 
@@ -579,6 +590,18 @@ class Promotion
     public function setEndHour(?DateTimeInterface $endHour): self
     {
         $this->endHour = $endHour;
+
+        return $this;
+    }
+
+    public function isOverrided(): ?bool
+    {
+        return $this->overrided;
+    }
+
+    public function setOverrided(?bool $overrided): self
+    {
+        $this->overrided = $overrided;
 
         return $this;
     }

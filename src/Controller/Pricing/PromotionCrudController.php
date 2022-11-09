@@ -144,6 +144,9 @@ public function createEntity(string $entityFqcn)
             NumberField::new('fixedAmount')
                 ->onlyOnForms()
                 ->setColumns(3),
+            BooleanField::new('overrided')
+                ->renderAsSwitch(false)
+                ->setHelp("Check it if you need to define a price with no consideration of unit cost"),
             FormField::addRow(),
             ChoiceField::new('frequency')
                 ->setChoices(
