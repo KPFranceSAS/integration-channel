@@ -64,7 +64,7 @@ abstract class AriseApiParent implements ApiInterface
     public function getAllOrdersToSend()
     {
         $params = [
-            'status' => 'ready_to_ship',
+            'status' => 'pending',
             'created_after' => '2022-09-01T09:00:00+08:00'
         ];
         return $this->getOrders($params);
