@@ -65,8 +65,7 @@ class ConnectAriseCommand extends Command
 
     private function updateStockLevel()
     {
-        $result = $this->ariseApi->updateStockLevel(1355781352423031, 2068484754234999, "AMF-W2170OV6N", 2500);
-        var_dump($result);
+        $this->ariseApi->updateStockLevel(1355781352423031, 2068484754234999, "AMF-W2170OV6N", 2500);
     }
 
 

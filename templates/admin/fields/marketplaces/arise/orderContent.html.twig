@@ -68,7 +68,7 @@
 						<strong>Total</strong>
 					</td>
 					<td colspan="" data-label="Total price" class="text-left field-text">
-					{% set total = field.value.price - field.value.voucher %}
+					{% set total = field.value.price + field.value.shipping_fee - field.value.voucher %}
 						{{total}}
 						EUR
 					</td>

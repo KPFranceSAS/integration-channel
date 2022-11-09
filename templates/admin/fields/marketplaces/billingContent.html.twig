@@ -9,6 +9,6 @@
 	{% include "admin/fields/marketplaces/shopify/billingContent.html.twig" with {'field': field} %}
 {% endif %}
 
-{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ARISE')  %}
+{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ARISE')  or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_AMAZFIT_ARISE')   or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_SONOS_ARISE')  %}
 	{% include "admin/fields/marketplaces/arise/billingContent.html.twig" with {'field': field} %}
 {% endif %}

@@ -77,10 +77,17 @@ abstract class AriseIntegratorParent extends IntegratorParent
         $datePayment->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
         $orderBC->locationCode = $this->checkLocationCode($orderApi);
-        $orderBC->billToName = $orderApi->address_billing->last_name." ".$orderApi->address_billing->first_name;
-        $orderBC->shipToName = $orderApi->address_shipping->lastName." ".$orderApi->address_shipping->firstName;
 
-        $valuesAddress = ['selling'=>'billing', 'shipping'=>'shipping'];
+        $bilingIndex= (strlen($orderApi->address_billing->city)==0) ? 'shipping' : 'billing';
+        $orderBC->shipToName = $orderApi->address_shipping->lastName." ".$orderApi->address_shipping->firstName;
+        if ($bilingIndex == 'billing') {
+            $orderBC->billToName = $orderApi->{"address_".$bilingIndex}->last_name." ".$orderApi->{"address_".$bilingIndex}->first_name;
+        } else {
+            $orderBC->billToName  = $orderBC->shipToName;
+        }
+        
+
+        $valuesAddress = ['selling'=>$bilingIndex, 'shipping'=>'shipping'];
 
         foreach ($valuesAddress as $bcVal => $ariseVal) {
             $adress =  $orderApi->{'address_'.$ariseVal}->address1;

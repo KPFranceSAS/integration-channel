@@ -8,6 +8,6 @@
 {% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_OWLETCARE')  or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MINIBATT')   or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_FLASHLED')  %}
 	{% include "admin/fields/marketplaces/shopify/orderContent.html.twig" with {'field': field} %}
 {% endif %}
-{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ARISE')  %}
+{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ARISE') or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_AMAZFIT_ARISE')  or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_SONOS_ARISE')  %}
 	{% include "admin/fields/marketplaces/arise/orderContent.html.twig" with {'field': field} %}
 {% endif %}
