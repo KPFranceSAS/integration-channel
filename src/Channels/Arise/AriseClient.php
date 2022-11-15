@@ -39,7 +39,7 @@ class AriseClient
 
     public function addParams(LoggerInterface $loggerInterface, $clientId, $clientSecret, $clientAccessToken)
     {
-        $this->gatewayUrl = 'https://api.proyectoarise.es/rest';
+        $this->gatewayUrl = 'https://api.miravia.es/rest';
         $this->appkey = $clientId;
         $this->secretKey = $clientSecret;
         $this->accessToken = $clientAccessToken;

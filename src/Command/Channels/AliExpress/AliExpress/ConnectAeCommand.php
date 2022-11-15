@@ -36,6 +36,7 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->transformeOrder();
         return Command::SUCCESS;
     }
 
@@ -66,10 +67,10 @@ class ConnectAeCommand extends Command
 
     private function transformeOrder()
     {
-        $order = $this->aliExpress->getOrder("8143448047401326");
+        $order = $this->aliExpress->getOrder("3019315625910878");
 
         $transforme =  $this->aliExpressIntegrateOrder->transformToAnBcOrder($order);
-
+        dump($transforme->transformToArray());
         $orderIntegrate = $this->gadgetIberiaConnector->createSaleOrder($transforme->transformToArray());
         $orderIntegrate = $this->gadgetIberiaConnector->getFullSaleOrder($orderIntegrate['id']);
         var_dump($orderIntegrate);

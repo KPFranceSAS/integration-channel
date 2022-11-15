@@ -77,7 +77,6 @@ abstract class AliExpressApiParent implements ApiInterface
             $req->setParam0(json_encode($param));
             $this->logger->info('Get batch n°' . $current_page . ' / ' . $max_page . ' >>' . json_encode($param));
             $reponse = $this->client->execute($req, $this->clientAccessToken);
-
             if ($reponse->result->total_count > 0) {
                 $orders = array_merge($orders, $reponse->result->target_list->order_dto);
             }
