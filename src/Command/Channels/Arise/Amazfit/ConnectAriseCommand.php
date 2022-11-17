@@ -86,8 +86,8 @@ class ConnectAriseCommand extends Command
 
     private function getOrders()
     {
-        $orders = $this->ariseApi->getAllOrdersToSend();
-        //dump($orders);
+        $orders = $this->ariseApi->getAllOrders();
+        
 
         foreach ($orders as $order) {
             $order =  $this->ariseApi->getOrder($order->order_id);

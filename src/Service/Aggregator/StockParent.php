@@ -29,12 +29,6 @@ abstract class StockParent
     protected $productStockFinder;
 
 
-
-    public static function getBrandsFromMadrid()
-    {
-        return ['ECOFLOW', 'AUTELROBOTICS', 'DJI', 'PGYTECH', 'TRIDENT'];
-    }
-
     public function __construct(
         ManagerRegistry $manager,
         LoggerInterface $logger,
@@ -73,7 +67,7 @@ abstract class StockParent
     {
         try {
             $errors = $this->checkStocks();
-            if(count($errors)>0){
+            if (count($errors)>0) {
                 $this->mailer->sendEmailChannel($this->getChannel(), 'SKU errors', implode('<br/>', $errors));
             }
         } catch (\Exception $e) {
@@ -94,14 +88,8 @@ abstract class StockParent
     {
         $skuFinal = $this->getProductCorrelationSku($sku);
         $stock = $this->productStockFinder->getRealStockProductWarehouse($skuFinal, $depot);
-        if ($stock > 0) {
-            if ($depot == WebOrder::DEPOT_LAROCA) {
-                if ($stock >= 5) {
-                    return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
-                }
-            } elseif ($depot == WebOrder::DEPOT_MADRID) {
-                return $stock;
-            }
+        if ($stock >= 5) {
+            return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
         }
         return 0;
     }
@@ -110,7 +98,6 @@ abstract class StockParent
 
     public function isSkuExists($sku): int
     {
-        $skuFinal = $this->getProductCorrelationSku($sku);
         $connector = $this->getBusinessCentralConnector(BusinessCentralConnector::KIT_PERSONALIZACION_SPORT);
         $item = $connector->getItemByNumber($sku);
         return $item!=null;

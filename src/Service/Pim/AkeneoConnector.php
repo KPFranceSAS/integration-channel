@@ -25,11 +25,30 @@ class AkeneoConnector
         );
     }
 
+    public function getFamily($family)
+    {
+        return $this->client->getFamilyApi()->get($family);
+    }
+
+    
+    public function getProductModel($productModel)
+    {
+        return $this->client->getProductModelApi()->get($productModel);
+    }
+
 
     public function getAllProducts()
     {
         return $this->client->getProductApi()->all();
     }
+
+
+    public function searchProducts(SearchBuilder $searchBuilder, $scope)
+    {
+        $searchFilters = $searchBuilder->getFilters();
+        return $this->client->getProductApi()->all(50, ['search' => $searchFilters, 'scope' => $scope]);
+    }
+
 
 
     public function getAllFiltreredProducts(SearchBuilder $searchFilters)

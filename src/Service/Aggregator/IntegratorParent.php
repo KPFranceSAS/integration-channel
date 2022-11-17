@@ -168,6 +168,7 @@ abstract class IntegratorParent
                     $this->addLogToOrder($webOrder, $errorLength);
                     $this->addError($errorLength);
                 }
+                $this->checkAfterIntegration($webOrder, $order);
             } catch (Exception $e) {
                 $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
                 $webOrder->addError($message);
@@ -185,6 +186,10 @@ abstract class IntegratorParent
 
 
     protected function checkAfterPersist(WebOrder $order, $orderApi)
+    {
+    }
+
+    protected function checkAfterIntegration(WebOrder $order, $orderApi)
     {
     }
 
@@ -247,6 +252,7 @@ abstract class IntegratorParent
                 $this->addLogToOrder($order, $errorLength);
                 $this->addError($errorLength);
             }
+            $this->checkAfterIntegration($order, $orderApi);
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
             $order->addError($message);

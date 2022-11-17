@@ -4,9 +4,9 @@ namespace App\Command\Channels\Shopify\Flashled;
 
 use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use App\BusinessCentral\Model\CustomerPayment;
-use App\Helper\Utils\DatetimeUtils;
 use App\Channels\Shopify\Flashled\FlashledApi;
 use App\Channels\Shopify\Flashled\FlashledIntegrateOrder;
+use App\Helper\Utils\DatetimeUtils;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -59,7 +59,6 @@ class ExportFlashledTransactionCommand extends Command
     private function getCustomerPayment($transaction, $order): ?CustomerPayment
     {
         if ($transaction['status']!='success' && $transaction['kind']!='sale') {
-            dump($transaction);
             return null;
         }
 

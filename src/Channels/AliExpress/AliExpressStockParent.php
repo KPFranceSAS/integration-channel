@@ -38,13 +38,10 @@ abstract class AliExpressStockParent extends StockParent
             $this->logger->error('No product info');
             return;
         }
-        $brand = $this->extractBrandFromResponse($productInfo);
-        $stockTocHeck = $this->defineStockBrand($brand);
-
+        $stockTocHeck = WebOrder::DEPOT_LAROCA;
 
         $skus = $this->extractSkuFromResponse($productInfo);
         foreach ($skus as $skuCode) {
-            $this->logger->info('Sku ' . $skuCode  . ' Brand ' . $brand);
             $stockBC = $this->getStockProductWarehouse($skuCode, $stockTocHeck);
             $this->logger->info('Sku ' . $skuCode  . ' / stock BC ' . $stockBC . ' units in ' . $stockTocHeck);
             $this->getAliExpressApi()->updateStockLevel($product->product_id, $skuCode, $stockBC);
@@ -67,11 +64,10 @@ abstract class AliExpressStockParent extends StockParent
             $this->logger->info('Check skus for ' . $product->subject . ' / Id ' . $product->product_id);
             $productInfo = $this->getProductInfo($product->product_id);
             if ($productInfo) {
-                
                 $skus = $this->extractSkuFromResponse($productInfo);
                 foreach ($skus as $skuCode) {
                     $this->logger->info('Sku ' . $skuCode);
-                    if(!$this->isSkuExists($skuCode)){
+                    if (!$this->isSkuExists($skuCode)) {
                         $errors[] = 'Sku '.$skuCode. ' do not exist in BC and no sku mappings have been done also.';
                     }
                 }
@@ -81,10 +77,6 @@ abstract class AliExpressStockParent extends StockParent
         }
         return $errors;
     }
-
-
-
-
 
 
 
@@ -102,15 +94,6 @@ abstract class AliExpressStockParent extends StockParent
     }
 
 
-    public function defineStockBrand($brand)
-    {
-        if ($brand && in_array($brand, StockParent::getBrandsFromMadrid())) {
-            return WebOrder::DEPOT_MADRID;
-        }
-        return WebOrder::DEPOT_LAROCA;
-    }
-
-
     protected function cleanString(string $string)
     {
         return strtoupper(trim(str_replace(' ', '', $string)));
@@ -121,17 +104,6 @@ abstract class AliExpressStockParent extends StockParent
     {
         return $this->cleanString($string1) == $this->cleanString($string2);
     }
-
-    protected function extractBrandFromResponse($productInfo)
-    {
-        foreach ($productInfo->aeop_ae_product_propertys->global_aeop_ae_product_property as $property) {
-            if ($this->checkIfEgalString($property->attr_name, 'Brand Name')) {
-                return $this->cleanString($property->attr_value);
-            }
-        }
-        return null;
-    }
-
 
 
     protected function extractSkuFromResponse($productInfo)

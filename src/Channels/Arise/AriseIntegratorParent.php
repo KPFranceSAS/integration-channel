@@ -17,7 +17,7 @@ use function Symfony\Component\String\u;
 abstract class AriseIntegratorParent extends IntegratorParent
 {
     public const ARISE_CUSTOMER_NUMBER = "003307";
-
+    
     /**
      * process all invocies directory
      *
@@ -76,7 +76,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->created_at, 0, 10));
         $datePayment->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
-        $orderBC->locationCode = $this->checkLocationCode($orderApi);
+        $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
 
         $bilingIndex= (strlen($orderApi->address_billing->city)==0) ? 'shipping' : 'billing';
         $orderBC->shipToName = $orderApi->address_shipping->lastName." ".$orderApi->address_shipping->firstName;
@@ -85,6 +85,10 @@ abstract class AriseIntegratorParent extends IntegratorParent
         } else {
             $orderBC->billToName  = $orderBC->shipToName;
         }
+
+        
+
+       
         
 
         $valuesAddress = ['selling'=>$bilingIndex, 'shipping'=>'shipping'];
@@ -117,6 +121,11 @@ abstract class AriseIntegratorParent extends IntegratorParent
             }
         }
 
+
+        if ($this->checkIsAriseFulfilled($orderApi)) {
+            $orderBC->shippingAgent = 'ARISE';
+            $orderBC->shippingAgentService = 'STANDARD';
+        }
 
         $this->checkAdressPostal($orderBC->shippingPostalAddress);
 
@@ -186,10 +195,21 @@ abstract class AriseIntegratorParent extends IntegratorParent
             $orderBC->salesLines[] = $saleLineDelivery;
         }
 
-
         return $orderBC;
     }
 
+    public function checkIsAriseFulfilled($orderApi)
+    {
+        $isFulfilledByArise = false;
+        foreach ($orderApi->lines as $line) {
+            if ($line->delivery_option_sof==1) {
+                $isFulfilledByArise = false;
+            } else {
+                $isFulfilledByArise = true;
+            }
+        }
+        return  $isFulfilledByArise;
+    }
 
 
     public function checkAdressPostal(PostalAddress $postalAddress)
@@ -203,27 +223,15 @@ abstract class AriseIntegratorParent extends IntegratorParent
 
 
 
-    public function checkLocationCode($orderApi)
+    protected function checkAfterIntegration(WebOrder $order, $orderApi)
     {
-        $brands = [];
-        foreach ($orderApi->lines as $line) {
-            $brand = $this->getAriseApi()->getBrandProduct($line->product_id);
-            if ($brand) {
-                $this->logger->info('Brand ' . $brand);
-                $brands[] = $brand;
-            }
+        if ($order->isFulfiledBySeller()==false) {
+            $this->addLogToOrder($order, 'Creation of the label for printing');
+            $pdfLink = $this->getAriseApi()->createLabel($orderApi->order_id);
+            $this->addLogToOrder($order, 'Get content of the label for '.$pdfLink);
+            $pdfContent = base64_decode(file_get_contents($pdfLink));
+            file_put_contents($orderApi->order_id.'.pdf', $pdfContent);
         }
-        return $this->defineStockBrand($brands);
-    }
-
-    public function defineStockBrand($brands)
-    {
-        foreach ($brands as $brand) {
-            if (in_array($brand, StockParent::getBrandsFromMadrid())) {
-                return WebOrder::DEPOT_MADRID;
-            }
-        }
-        return WebOrder::DEPOT_LAROCA;
     }
 
 

@@ -23,6 +23,7 @@ class FitbitCorporateProductSyncCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->fitbitCorporateSyncProduct->syncProducts();
         return Command::SUCCESS;
     }
 }

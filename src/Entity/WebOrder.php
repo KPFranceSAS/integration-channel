@@ -507,7 +507,17 @@ class WebOrder
         $datePurchase = DatetimeUtils::createDateTimeFromDateWithDelay(substr($orderApi->created_at, 0, 19));
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
-        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+        
+        
+        foreach ($orderApi->lines as $line) {
+            if ($line->delivery_option_sof==1) {
+                $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+            } else {
+                $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_EXTERNAL);
+            }
+        }
+        
+
         $webOrder->addLog('Retrieved from Arise');
         $webOrder->setContent($orderApi);
         return $webOrder;

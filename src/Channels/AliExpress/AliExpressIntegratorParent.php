@@ -89,9 +89,9 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
         $orderBC = new SaleOrder();
         $orderBC->customerNumber = $this->getClientNumber();
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->gmt_pay_success, 0, 10));
-        $datePayment->add(new \DateInterval('P3D'));
+        $datePayment->add(new DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
-        $orderBC->locationCode = $this->checkLocationCode($orderApi);
+        $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
         $orderBC->billToName = $orderApi->receipt_address->contact_person;
         $orderBC->shipToName = $orderApi->receipt_address->contact_person;
 
@@ -196,33 +196,7 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
 
 
 
-    public function checkLocationCode($orderApi): string
-    {
-        $brands = [];
-        foreach ($orderApi->child_order_list->global_aeop_tp_child_order_dto as $line) {
-            $brand = $this->getAliExpressApi()->getBrandProduct($line->product_id);
-            if ($brand) {
-                $this->logger->info('Brand ' . $brand);
-                $brands[] = $brand;
-            }
-        }
-        return $this->defineStockBrand($brands);
-    }
-
-
-
-
-
-    public function defineStockBrand($brands)
-    {
-        foreach ($brands as $brand) {
-            if (in_array($brand, StockParent::getBrandsFromMadrid())) {
-                return WebOrder::DEPOT_MADRID;
-            }
-        }
-        return WebOrder::DEPOT_LAROCA;
-    }
-
+   
 
 
     protected function getTotalDiscountByAliExpress($saleLineApis)

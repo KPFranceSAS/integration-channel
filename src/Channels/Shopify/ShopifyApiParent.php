@@ -55,13 +55,13 @@ abstract class ShopifyApiParent implements ApiInterface
     }
 
 
-    public function getAllOrdersToSend()
+    public function getAllOrdersToSend(): array
     {
         return $this->getAllOrders("open", "paid", "unfulfilled");
     }
 
 
-    public function getAllOrders($status = 'any', $financialStatus = 'any', $fulfillmentStatus = 'any')
+    public function getAllOrders($status = 'any', $financialStatus = 'any', $fulfillmentStatus = 'any'): array
     {
         return $this->getPaginatedElements(
             'orders',
@@ -76,7 +76,19 @@ abstract class ShopifyApiParent implements ApiInterface
 
 
 
-    public function getAllTransactions(string $orderNumber)
+    public function getAllShopifyPaiements(): array
+    {
+        return $this->getPaginatedElements(
+            "shopify_payments/balance/transactions",
+            [],
+            [],
+            'transactions'
+        );
+    }
+
+
+
+    public function getAllTransactions(string $orderNumber): array
     {
         return $this->getPaginatedElements(
             "orders/$orderNumber/transactions",
@@ -102,19 +114,19 @@ abstract class ShopifyApiParent implements ApiInterface
     
 
 
-    public function getAllProducts()
+    public function getAllProducts(): array
     {
         return $this->getPaginatedElements('products');
     }
 
 
-    public function getAllInventoryLevels($location)
+    public function getAllInventoryLevels($location): array
     {
         return $this->getPaginatedElements('inventory_levels', [], ['location_ids' => $location]);
     }
 
 
-    public function getLocations()
+    public function getLocations(): array
     {
         return $this->getPaginatedElements('locations');
     }
@@ -132,7 +144,7 @@ abstract class ShopifyApiParent implements ApiInterface
     }
 
 
-    public function getLevelStocksBySku(int $locationId)
+    public function getLevelStocksBySku(int $locationId): array
     {
         $inventoryItemIds = [];
         $inventoryLevels = $this->getInventoryLevels($locationId);
@@ -154,7 +166,7 @@ abstract class ShopifyApiParent implements ApiInterface
 
 
 
-    public function getAllInventoryLevelsFromProduct()
+    public function getAllInventoryLevelsFromProduct(): array
     {
         $inventoryLevels = [];
         $products = $this->getAllProducts();
@@ -169,13 +181,13 @@ abstract class ShopifyApiParent implements ApiInterface
         return $inventoryLevels;
     }
 
-    public function getInventoryItems(array $inventoryItemIds)
+    public function getInventoryItems(array $inventoryItemIds): array
     {
         return $this->getPaginatedElements('inventory_items', [], ['ids' => implode(',', $inventoryItemIds)]);
     }
 
 
-    public function getInventoryLevels($locationId)
+    public function getInventoryLevels($locationId): array
     {
         return $this->getPaginatedElements('inventory_levels', [], ['location_ids' => $locationId]);
     }
@@ -241,7 +253,7 @@ abstract class ShopifyApiParent implements ApiInterface
     }
 
 
-    protected function getPaginatedElements($endPoint, $headers = [], $query = [], $associativeIndex =null)
+    protected function getPaginatedElements($endPoint, $headers = [], $query = [], $associativeIndex =null): array
     {
         $nextToken = null;
         $elements = [];
@@ -270,4 +282,18 @@ abstract class ShopifyApiParent implements ApiInterface
         } while ($nextToken != null);
         return $elements;
     }
+
+
+
+    public function createProduct(array $product){
+       return $this->client->post('products', ['product' => $product]);
+    }
+
+    public function updateProduct($idProduct, array $product){
+        return $this->client->put('products/'.$idProduct, ['product' => $product]);
+     }
+ 
+    
+
+
 }

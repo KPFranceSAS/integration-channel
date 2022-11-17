@@ -4,7 +4,6 @@ namespace App\Channels\Arise;
 
 use AmazonPHP\SellingPartner\Exception\Exception;
 use App\Channels\Arise\AriseClient;
-use App\Entity\IntegrationChannel;
 use App\Service\Aggregator\ApiInterface;
 use Psr\Log\LoggerInterface;
 
@@ -287,8 +286,9 @@ abstract class AriseApiParent implements ApiInterface
 
     public function getDbsShipmentProviders()
     {
-        $seller = $this->getSeller()->data;
         $this->logger->info('Get Shipment providers');
+        $seller = $this->getSeller()->data;
+        
         $request = new AriseRequest('/order/shipment/sof/providers/get', "GET");
         
         $request->addApiParam('getDBSShipmentProviderReq', json_encode(["sellerId"=> $seller->seller_id]));
@@ -298,6 +298,7 @@ abstract class AriseApiParent implements ApiInterface
 
     public function getSupplierCode($supplierName) : string
     {
+        $this->logger->info('Get supplier code');
         $suppliers = $this->getDbsShipmentProviders();
         foreach ($suppliers as $supplier) {
             if ($supplier->name == $supplierName) {
@@ -356,6 +357,41 @@ abstract class AriseApiParent implements ApiInterface
         $reponse = $this->client->execute($request);
         return $reponse->result;
     }
+
+
+    public function getPrintLabel($packageId)
+    {
+        $this->logger->info('Ask for print label');
+        $request = new AriseRequest('/order/package/document/get');
+        $label= [
+            "doc_type" => 'PDF',
+            'packages'=> [[
+                 'package_id'=> $packageId,
+            ]]
+         ];
+        $request->addApiParam("getDocumentReq", json_encode($label));
+        $reponse = $this->client->execute($request);
+        return $reponse->result;
+    }
+
+    public function createLabel($orderId): string
+    {
+        try {
+            $order = $this->getOrder($orderId);
+            $packId = $this->createPackForOrder($order);
+            $label = $this->getPrintLabel($packId);
+            
+            return $label->pdf_url;
+        } catch(Exception $e) {
+            $this->logger->critical($e->getMessage());
+            return '';
+        }
+    }
+
+
+
+
+
 
 
     public function markOrderAsFulfill($orderId, $carrierName, $trackingNumber)
