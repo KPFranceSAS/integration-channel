@@ -35,7 +35,7 @@ class ChannelAdvisorProduct
         LoggerInterface $logger,
         MailService $mailer,
         FilesystemOperator $defaultStorage,
-        FilesystemOperator $channelAdvisorStorage,
+        FilesystemOperator $channelAdvisorStorage
     ) {
         $this->defaultStorage = $defaultStorage;
         $this->channelAdvisorStorage = $channelAdvisorStorage;
