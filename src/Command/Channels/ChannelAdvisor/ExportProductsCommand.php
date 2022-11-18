@@ -2,24 +2,23 @@
 
 namespace App\Command\Channels\ChannelAdvisor;
 
-use App\Channels\ChannelAdvisor\ChannelAdvisorApi;
-use App\Channels\ChannelAdvisor\ChannelAdvisorPricing;
+use App\Channels\ChannelAdvisor\ChannelAdvisorProduct;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ExportPricingsCommand extends Command
+class ExportProductsCommand extends Command
 {
-    protected static $defaultName = 'app:channel-export-pricings';
-    protected static $defaultDescription = 'Export pricings';
+    protected static $defaultName = 'app:channel-export-product';
+    protected static $defaultDescription = 'Export product to Channel';
 
-    public function __construct(ChannelAdvisorPricing $channelAdvisorPricing)
+    public function __construct(ChannelAdvisorProduct $channelAdvisorProduct)
     {
-        $this->channelAdvisorPricing = $channelAdvisorPricing;
+        $this->channelAdvisorProduct = $channelAdvisorProduct;
         parent::__construct();
     }
 
-    private $channelAdvisorPricing;
+    private $channelAdvisorProduct;
 
 
    
@@ -31,7 +30,7 @@ class ExportPricingsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->channelAdvisorPricing->exportPricings();
+        $this->channelAdvisorProduct->synchronizeProducts();
         return Command::SUCCESS;
     }
 }

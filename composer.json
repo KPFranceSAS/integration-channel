@@ -23,6 +23,7 @@
         "illuminate/support": "^8.73",
         "kps/aliexpress": "dev-master",
         "kriswallsmith/buzz": "^1.2",
+        "league/csv": "^9.8",
         "league/flysystem-async-aws-s3": "^2.0",
         "league/flysystem-aws-s3-v3": "^2.0",
         "league/flysystem-bundle": "^2.0",

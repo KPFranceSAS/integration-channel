@@ -30,6 +30,23 @@ class AkeneoConnector
         return $this->client->getFamilyApi()->get($family);
     }
 
+    public function getFamilyVariant($family, $familyVariant)
+    {
+        return $this->client->getFamilyVariantApi()->get($family, $familyVariant);
+    }
+
+
+    public function getAttribute($code)
+    {
+        return $this->client->getAttributeApi()->get($code);
+    }
+
+
+    public function getAttributeOption($attributeCode, $code)
+    {
+        return $this->client->getAttributeOptionApi()->get($attributeCode, $code);
+    }
+
     
     public function getProductModel($productModel)
     {

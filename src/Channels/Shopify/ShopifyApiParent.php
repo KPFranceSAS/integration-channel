@@ -291,7 +291,24 @@ abstract class ShopifyApiParent implements ApiInterface
 
     public function updateProduct($idProduct, array $product){
         return $this->client->put('products/'.$idProduct, ['product' => $product]);
+    }
+
+
+    public function createImagesProduct($idProduct, array $productImages){
+        return $this->client->post('products/'.$idProduct.'/images', ['image' => $productImages]);
      }
+
+    public function createVariantProduct($idProduct, array $productVariant){
+        return $this->client->post('products/'.$idProduct.'/variants', ['variant' => $productVariant]);
+     }
+ 
+     public function updateProductVariant($idVariant, array $productVariant){
+         return $this->client->put('variants/'.$idVariant, ['variant' => $productVariant]);
+     }
+            
+
+
+     
  
     
 
