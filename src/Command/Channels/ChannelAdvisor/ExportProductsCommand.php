@@ -30,7 +30,7 @@ class ExportProductsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->channelAdvisorProduct->synchronizeProducts();
+        $this->channelAdvisorProduct->syncProducts();
         return Command::SUCCESS;
     }
 }

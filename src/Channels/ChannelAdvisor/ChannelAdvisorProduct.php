@@ -3,11 +3,12 @@
 namespace App\Channels\ChannelAdvisor;
 
 use Akeneo\Pim\ApiClient\Search\SearchBuilder;
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Entity\IntegrationChannel;
 use App\Helper\MailService;
+use App\Service\Aggregator\ApiAggregator;
+use App\Service\Aggregator\ProductSyncParent;
 use App\Service\Pim\AkeneoConnector;
-use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
-use Doctrine\Persistence\ManagerRegistry;
 use League\Csv\Writer;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
@@ -16,46 +17,37 @@ use Psr\Log\LoggerInterface;
  * Services that will get through the API the order from ChannelAdvisor
  *
  */
-class ChannelAdvisorProduct
+class ChannelAdvisorProduct extends ProductSyncParent
 {
-    protected $logger;
     protected $defaultStorage;
     protected $channelAdvisorStorage;
-
-    protected $akeneoConnector;
-
-    protected $errors;
-
-    protected $mailer;
-
-
+    
     public function __construct(
         AkeneoConnector $akeneoConnector,
-        ManagerRegistry $manager,
         LoggerInterface $logger,
         MailService $mailer,
         FilesystemOperator $defaultStorage,
-        FilesystemOperator $channelAdvisorStorage
+        FilesystemOperator $channelAdvisorStorage,
+        BusinessCentralAggregator $businessCentralAggregator,
+        ApiAggregator $apiAggregator
     ) {
         $this->defaultStorage = $defaultStorage;
         $this->channelAdvisorStorage = $channelAdvisorStorage;
-        $this->logger = $logger;
-        $this->mailer = $mailer;
-        $this->akeneoConnector = $akeneoConnector;
+        parent::__construct($logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
     }
 
 
-    public function synchronizeProducts()
+    public function syncProducts()
     {
         $products = $this->getProductsEnabledOnChannel();
-        $productToArrays=[]; 
+        $productToArrays=[];
         $base = ['sku', 'categories' ,'enabled' ,'family', 'parent','created','updated'];
         $header = [];
         foreach ($products as $product) {
             $productToArray = $this->flatProduct($product);
             $headerProduct = array_keys($productToArray);
-            foreach($headerProduct as $headerP){
-                if(!in_array($headerP,$header ) && !in_array($headerP,$base )){
+            foreach ($headerProduct as $headerP) {
+                if (!in_array($headerP, $header) && !in_array($headerP, $base)) {
                     $header[] = $headerP;
                 }
             }
@@ -75,7 +67,6 @@ class ChannelAdvisorProduct
 
     public function flatProduct(array $product):array
     {
-
         $this->logger->info('Flat product '.$product['identifier']);
         $flatProduct = [
             'sku' => $product['identifier'],
@@ -91,16 +82,16 @@ class ChannelAdvisorProduct
             foreach ($value as $val) {
                 $nameColumn = $this->getAttributeColumnName($attribute, $val);
                 $data = $val['data'];
-                if($this->isMetric($data)){
+                if ($this->isMetric($data)) {
                     $flatProduct[$nameColumn] = $data['amount'];
                     $flatProduct[$nameColumn.'-unit'] = $data['unit'];
                 } elseif ($this->isCurrency($data)) {
-                    foreach($data as $subData){
+                    foreach ($data as $subData) {
                         $flatProduct[$nameColumn.'-'.$subData['currency']] = $subData['amount'];
                     }
-                } elseif (is_array($data)){
+                } elseif (is_array($data)) {
                     $flatProduct[$nameColumn] = implode(',', $data);
-                } elseif (is_bool($data)){
+                } elseif (is_bool($data)) {
                     $flatProduct[$nameColumn] = (int)$data;
                 } else {
                     $flatProduct[$nameColumn] = $data;
@@ -111,16 +102,19 @@ class ChannelAdvisorProduct
     }
 
 
-    public function isMetric($val){
+    public function isMetric($val)
+    {
         return is_array($val) && array_key_exists("unit", $val);
     }
 
-    public function isCurrency($val){
+    public function isCurrency($val)
+    {
         return is_array($val) && is_array($val[0]);
     }
 
 
-    public function getAttributeColumnName($attribute, $val){
+    public function getAttributeColumnName($attribute, $val)
+    {
         $nameAttribute=$attribute;
         if ($val['locale']) {
             $nameAttribute .= '-'. $val['locale'];
@@ -128,7 +122,7 @@ class ChannelAdvisorProduct
         if ($val['scope']) {
             $nameAttribute .= '-'. $val['scope'];
         }
-        return $nameAttribute;        
+        return $nameAttribute;
     }
 
 
@@ -160,7 +154,7 @@ class ChannelAdvisorProduct
         $this->logger->info("start export products locally");
         $this->defaultStorage->write('products/'.$filename, $csvContent);
         $this->logger->info("start export products on channeladvisor");
-        $this->channelAdvisorStorage->write('/accounts/12044693/Products/'.$filename,$csvContent);
+        $this->channelAdvisorStorage->write('/accounts/12044693/Products/'.$filename, $csvContent);
     }
 
 

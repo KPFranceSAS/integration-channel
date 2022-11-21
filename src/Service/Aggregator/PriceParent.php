@@ -2,19 +2,13 @@
 
 namespace App\Service\Aggregator;
 
-use App\BusinessCentral\Connector\BusinessCentralAggregator;
-use App\BusinessCentral\Connector\BusinessCentralConnector;
-use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
-use App\BusinessCentral\ProductStockFinder;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
-use App\Entity\ProductCorrelation;
 use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
 use Doctrine\Persistence\ManagerRegistry;
-use function Symfony\Component\String\u;
 use Psr\Log\LoggerInterface;
 
 abstract class PriceParent
