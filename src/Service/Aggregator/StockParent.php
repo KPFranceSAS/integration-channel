@@ -96,6 +96,12 @@ abstract class StockParent
 
 
 
+   
+
+
+
+
+
     public function isSkuExists($sku): int
     {
         $connector = $this->getBusinessCentralConnector(BusinessCentralConnector::KIT_PERSONALIZACION_SPORT);

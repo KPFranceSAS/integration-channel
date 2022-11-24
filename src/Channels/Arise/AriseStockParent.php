@@ -3,6 +3,9 @@
 namespace App\Channels\Arise;
 
 use App\Channels\Arise\AriseApiParent;
+use App\Entity\IntegrationChannel;
+use App\Entity\Product;
+use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\StockParent;
 
@@ -38,10 +41,41 @@ abstract class AriseStockParent extends StockParent
         foreach ($product->skus as $sku) {
             $stockBC = $this->getStockProductWarehouse($sku->SellerSku, $stockTocHeck);
             $this->logger->info('Sku ' . $sku->SellerSku   . ' / stock BC ' . $stockBC . ' units in ' . $stockTocHeck);
-            $this->getAriseApi()->updateStockLevel($product->item_id, $sku->SkuId, $sku->SellerSku, $stockBC);
+            if ($this->checkIfProductSellableOnChannel($sku->SellerSku)) {
+                $this->getAriseApi()->updateStockLevel($product->item_id, $sku->SkuId, $sku->SellerSku, $stockBC);
+            } else {
+                $this->logger->info('Sku ' . $sku->SellerSku   . ' is disabled ');
+                $this->getAriseApi()->updateStockLevel($product->item_id, $sku->SkuId, $sku->SellerSku, 0);
+            }
         }
         $this->logger->info('---------------');
     }
+
+
+
+    public function checkIfProductSellableOnChannel($sku): bool
+    {
+        $skuFinal = $this->getProductCorrelationSku($sku);
+        $integrationChannel = $this->manager->getRepository(IntegrationChannel::class)->findBy([
+            'code' => $this->getChannel()
+        ]);
+
+        $saleChannels = $this->manager->getRepository(SaleChannel::class)->findBy([
+            'integrationChannel' => $integrationChannel
+        ]);
+
+        $product = $this->manager->getRepository(Product::class)->findOneBySku($skuFinal);
+
+        foreach ($saleChannels as $saleChannel) {
+            $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
+            if ($productMarketplace->getEnabled()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
 
     public function checkStocks(): array

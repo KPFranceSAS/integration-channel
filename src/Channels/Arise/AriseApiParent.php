@@ -229,6 +229,32 @@ abstract class AriseApiParent implements ApiInterface
     }
 
 
+
+    
+
+
+    public function desactivateProduct($itemId, $sellerSku)
+    {
+        $this->logger->info('Desactivate product '.$sellerSku .' '.$itemId);
+        $payload = [
+            'Request'=> [
+                "Product"=> [
+                    "ItemId"=> $itemId,
+                    "Skus" => [
+                        'SellerSku' => $sellerSku
+                    ]
+                ]
+            ]
+        ];
+
+        $request = new AriseRequest('/product/deactivate');
+        $request->addApiParam('payload', json_encode($payload));
+        
+        return $this->client->execute($request);
+    }
+
+
+
     public function getBrandProduct($productId)
     {
         $this->logger->info('Get Brand  ' . $productId);
