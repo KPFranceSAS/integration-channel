@@ -33,7 +33,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
         MailService $mailer,
         BusinessCentralAggregator $businessCentralAggregator, 
         ApiAggregator $apiAggregator,
-        FilesystemOperator $ariseLabelStorage,
+        FilesystemOperator $ariseLabelStorage
     )
     {
         parent::__construct($productTaxFinder, $manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator);
