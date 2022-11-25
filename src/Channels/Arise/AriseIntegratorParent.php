@@ -2,21 +2,47 @@
 
 namespace App\Channels\Arise;
 
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\PostalAddress;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
+use App\BusinessCentral\ProductTaxFinder;
 use App\Channels\Arise\AriseApiParent;
 use App\Entity\WebOrder;
+use App\Helper\MailService;
+use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\IntegratorParent;
 use App\Service\Aggregator\StockParent;
 use DateTime;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use function Symfony\Component\String\u;
+use League\Flysystem\FilesystemOperator;
+use Psr\Log\LoggerInterface;
 
 abstract class AriseIntegratorParent extends IntegratorParent
 {
     public const ARISE_CUSTOMER_NUMBER = "003307";
+
+
+    public function __construct(
+        ProductTaxFinder $productTaxFinder, 
+        ManagerRegistry $manager, 
+        LoggerInterface $logger, 
+        MailService $mailer,
+        BusinessCentralAggregator $businessCentralAggregator, 
+        ApiAggregator $apiAggregator,
+        FilesystemOperator $ariseLabelStorage,
+    )
+    {
+        parent::__construct($productTaxFinder, $manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator);
+        $this->ariseLabelStorage = $ariseLabelStorage;
+    }
+
+
+    protected $ariseLabelStorage;
+
     
     /**
      * process all invocies directory
@@ -85,11 +111,6 @@ abstract class AriseIntegratorParent extends IntegratorParent
         } else {
             $orderBC->billToName  = $orderBC->shipToName;
         }
-
-        
-
-       
-        
 
         $valuesAddress = ['selling'=>$bilingIndex, 'shipping'=>'shipping'];
 
@@ -230,7 +251,20 @@ abstract class AriseIntegratorParent extends IntegratorParent
             $pdfLink = $this->getAriseApi()->createLabel($orderApi->order_id);
             $this->addLogToOrder($order, 'Get content of the label for '.$pdfLink);
             $pdfContent = base64_decode(file_get_contents($pdfLink));
-            file_put_contents($orderApi->order_id.'.pdf', $pdfContent);
+
+            
+            $filename = str_replace("/", "-", $order->getOrderErp()).'_'.$orderApi->order_id.'_'.date('YmdHis').'.pdf';
+            $this->ariseLabelStorage->write($filename, $pdfContent);
+            $link = "https://marketplace.kps-group.com/labels/".$filename;
+            $this->addLogToOrder($order, 'Publish label on '.$link);
+            $this->addLogToOrder($order, 'Update sale order adding the label for printing');
+
+            $company = $this->getCompanyIntegration($orderApi);
+            $bcConnector = $this->getBusinessCentralConnector($company);
+            
+            //$saleOrderBc = $bcConnector->getSaleOrderByNumber($order->getOrderErp());
+            //$bcConnector->updateSaleOrder($saleOrderBc['id'], $saleOrderBc['@odata.etag'], ["URLEtiqueta" => $link]);
+            $this->addLogToOrder($order, 'Updated sale order adding the label for printing');
         }
     }
 

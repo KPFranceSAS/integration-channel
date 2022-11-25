@@ -24,19 +24,11 @@ class ConnectSonosCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->activateProduct();
+        $this->desactivateProduct();
         return Command::SUCCESS;
     }
 
     
-    
-
-
-    private function activateProduct()
-    {
-        $result =$this->ariseApi->activateProduct(1355784635873743, "SNS-ARCG1EU1");
-        var_dump($result);
-    }
 
     private function desactivateProduct()
     {

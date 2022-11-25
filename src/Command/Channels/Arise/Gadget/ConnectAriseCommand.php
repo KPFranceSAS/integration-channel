@@ -25,7 +25,7 @@ class ConnectAriseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->getSeller();
+        $this->getOrders();
         return Command::SUCCESS;
     }
 

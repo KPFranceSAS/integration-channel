@@ -21,7 +21,11 @@ flysystem:
         kpssport.storage:        
             adapter: 'local'
             options:
-                directory: '%kernel.project_dir%/public/report' 
+                directory: '%kernel.project_dir%/public/report'
+        ariseLabel.storage:        
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/public/labels' 
         dhl.storage:
             adapter: 'sftp'
             options:
