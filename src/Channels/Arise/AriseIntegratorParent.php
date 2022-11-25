@@ -129,11 +129,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
                 $orderBC->{$bcVal . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
             }
             $orderBC->{$bcVal . "PostalAddress"}->city = substr($orderApi->{'address_'.$ariseVal}->city, 0, 100);
-            if ($ariseVal=='billing') {
-                $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi->{'address_'.$ariseVal}->post_code;
-            } else {
-                $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi->{'address_'.$ariseVal}->postCode;
-            }
+            $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi->{'address_'.$ariseVal}->post_code;
             
             $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = 'ES';
 
