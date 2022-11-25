@@ -105,7 +105,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
         $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
 
         $bilingIndex= (strlen($orderApi->address_billing->city)==0) ? 'shipping' : 'billing';
-        $orderBC->shipToName = $orderApi->address_shipping->lastName." ".$orderApi->address_shipping->firstName;
+        $orderBC->shipToName = $orderApi->address_shipping->last_name." ".$orderApi->address_shipping->first_name;
         if ($bilingIndex == 'billing') {
             $orderBC->billToName = $orderApi->{"address_".$bilingIndex}->last_name." ".$orderApi->{"address_".$bilingIndex}->first_name;
         } else {
