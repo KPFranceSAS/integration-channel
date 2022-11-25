@@ -4,6 +4,7 @@ namespace App\Command\Channels\Arise\Gadget;
 
 use App\Channels\Arise\AriseApi;
 use App\Channels\Arise\Gadget\GadgetApi;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,23 +14,36 @@ class ConnectAriseCommand extends Command
     protected static $defaultName = 'app:arise-test';
     protected static $defaultDescription = 'Connection to Gadget express';
 
-    public function __construct(GadgetApi $ariseApi)
+    public function __construct(GadgetApi $ariseApi, FilesystemOperator $ariseLabelStorage)
     {
         $this->ariseApi = $ariseApi;
+        $this->ariseLabelStorage = $ariseLabelStorage;
         parent::__construct();
     }
 
     private $ariseApi;
 
+    private $ariseLabelStorage;
+
   
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->getOrders();
+        $this->printLabel();
         return Command::SUCCESS;
     }
 
 
+    protected function printLabel(){
+        $pdfLink = $this->ariseApi->getPrintLabel("FP0938511163");
+        dump($pdfLink);
+        $pdfContent =file_get_contents($pdfLink);
+            
+        $filename = "WPV21-01304_67031224042_".date('YmdHis').'.pdf';
+        $this->ariseLabelStorage->write($filename, $pdfContent);
+        $link = "https://marketplace.kps-group.com/labels/".$filename;
+        dump($link);
+    }
     private function getSeller()
     {
         $result = $this->ariseApi->getSeller();

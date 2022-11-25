@@ -246,7 +246,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
             $this->addLogToOrder($order, 'Creation of the label for printing');
             $pdfLink = $this->getAriseApi()->createLabel($orderApi->order_id);
             $this->addLogToOrder($order, 'Get content of the label for '.$pdfLink);
-            $pdfContent = base64_decode(file_get_contents($pdfLink));
+            $pdfContent = file_get_contents($pdfLink);
 
             
             $filename = str_replace("/", "-", $order->getOrderErp()).'_'.$orderApi->order_id.'_'.date('YmdHis').'.pdf';

@@ -388,7 +388,7 @@ abstract class AriseApiParent implements ApiInterface
     public function getPrintLabel($packageId)
     {
         $this->logger->info('Ask for print label');
-        $request = new AriseRequest('/order/package/document/get');
+        $request = new AriseRequest('/order/package/document/get', 'GET');
         $label= [
             "doc_type" => 'PDF',
             'packages'=> [[
@@ -397,21 +397,16 @@ abstract class AriseApiParent implements ApiInterface
          ];
         $request->addApiParam("getDocumentReq", json_encode($label));
         $reponse = $this->client->execute($request);
-        return $reponse->result;
+        return $reponse->result->data->pdf_url;
     }
 
     public function createLabel($orderId): string
     {
-        try {
             $order = $this->getOrder($orderId);
             $packId = $this->createPackForOrder($order);
             $label = $this->getPrintLabel($packId);
             
-            return $label->pdf_url;
-        } catch(Exception $e) {
-            $this->logger->critical($e->getMessage());
-            return '';
-        }
+            return $label;
     }
 
 
