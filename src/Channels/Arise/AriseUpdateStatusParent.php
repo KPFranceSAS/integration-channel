@@ -16,30 +16,33 @@ abstract class AriseUpdateStatusParent extends UpdateStatusParent
 
     protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber)
     {
-        if($order->isFulfiledBySeller()){
-            $result = $this->getAriseApi()->markOrderAsFulfill($order->getExternalNumber(), "DHL", $trackingNumber);
-            if ($result) {
-                $this->addLogToOrder($order, 'Mark as fulfilled on Arise');
-                return true;
-            } else {
-                $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting tracking number ' . $trackingNumber);
-                return false;
-            }
-        } else  {
-            $orderArise = $this->getAriseApi()->getOrder($order->getExternalNumber());
-            $packageId= null;
-            foreach($orderArise->lines as $line){
-                $packageId = $line->package_id;
-            } 
+        $result = $this->getAriseApi()->markOrderAsFulfill($order->getExternalNumber(), "DHL", $trackingNumber);
+        if ($result) {
+            $this->addLogToOrder($order, 'Mark as fulfilled on Arise');
+            return true;
+        } else {
+            $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting tracking number ' . $trackingNumber);
+            return false;
+        }
+    }
 
-            $result = $this->getAriseApi()->markAsReadyToShip($packageId);
-            if ($result) {
-                $this->addLogToOrder($order, 'Mark as ready to ship to Arise');
-                return true;
-            } else{
-                $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting Ready to ship');
-                return false;
-            }
+
+
+    protected function postUpdateStatusInvoice(WebOrder $order, $invoice)
+    {
+        $orderArise = $this->getAriseApi()->getOrder($order->getExternalNumber());
+        $packageId= null;
+        foreach ($orderArise->lines as $line) {
+            $packageId = $line->package_id;
+        }
+
+        $result = $this->getAriseApi()->markAsReadyToShip($packageId);
+        if ($result) {
+            $this->addLogToOrder($order, 'Mark as ready to ship to Arise');
+            return true;
+        } else {
+            $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting Ready to ship');
+            return false;
         }
     }
 }
