@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Channels\Shopify\MinibattPrice;
+namespace App\Channels\Shopify\Minibatt;
 
 use App\Channels\Shopify\ShopifyPriceParent;
 use App\Entity\IntegrationChannel;
