@@ -143,6 +143,8 @@ class PricingCrudController extends AdminCrudController
         foreach ($saleChannels as $saleChannel) {
             $header[]=$saleChannel->getCode().'-enabled';
             $header[]=$saleChannel->getCode().'-price';
+            $header[]=$saleChannel->getCode().'-promoprice';
+            $header[]=$saleChannel->getCode().'-promodescription';
         }
         $writer = $this->createWriterArray($header, $directory . $fileName);
 
@@ -157,6 +159,11 @@ class PricingCrudController extends AdminCrudController
             foreach ($result->getProductSaleChannels() as $productSaleChannel) {
                 $productArray[$productSaleChannel->getSaleChannel()->getCode().'-enabled']=(int)$productSaleChannel->getEnabled();
                 $productArray[$productSaleChannel->getSaleChannel()->getCode().'-price']= $productSaleChannel->getPrice() ? $productSaleChannel->getPrice()  :'';
+                $promotion = $productSaleChannel->getBestPromotionForNow();
+                if ($promotion) {
+                    $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promoprice'] =  $promotion->getPromotionPrice();
+                    $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promodescription'] =  $promotion->getPromotionDescriptionFrequency();
+                }
             }
             $singleRowData = WriterEntityFactory::createRowFromArray($productArray);
             $writer->addRow($singleRowData);
