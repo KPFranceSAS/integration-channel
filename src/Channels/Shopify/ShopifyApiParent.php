@@ -285,32 +285,44 @@ abstract class ShopifyApiParent implements ApiInterface
 
 
 
-    public function createProduct(array $product){
-       return $this->client->post('products', ['product' => $product]);
+    public function createProduct(array $product)
+    {
+        return $this->client->post('products', ['product' => $product]);
     }
 
-    public function updateProduct($idProduct, array $product){
+    public function updateProduct($idProduct, array $product)
+    {
         return $this->client->put('products/'.$idProduct, ['product' => $product]);
     }
 
 
-    public function createImagesProduct($idProduct, array $productImages){
+    public function createImagesProduct($idProduct, array $productImages)
+    {
         return $this->client->post('products/'.$idProduct.'/images', ['image' => $productImages]);
-     }
+    }
 
-    public function createVariantProduct($idProduct, array $productVariant){
+    public function createVariantProduct($idProduct, array $productVariant)
+    {
         return $this->client->post('products/'.$idProduct.'/variants', ['variant' => $productVariant]);
-     }
+    }
  
-     public function updateProductVariant($idVariant, array $productVariant){
+     public function updateProductVariant($idVariant, array $productVariant)
+     {
          return $this->client->put('variants/'.$idVariant, ['variant' => $productVariant]);
      }
-            
 
 
-     
- 
-    
-
-
+     public function updateVariantPrice($idVariant, $priceVariant, $promotionPriceVariant=null)
+     {
+         $productVariant = [
+             'id' => $idVariant,
+         ];
+         if ($promotionPriceVariant) {
+             $productVariant['compare_at_price']=$priceVariant;
+             $productVariant['price']=$promotionPriceVariant;
+         } else {
+             $productVariant['price']=$priceVariant;
+         }
+         return $this->updateProductVariant($idVariant, $productVariant);
+     }
 }

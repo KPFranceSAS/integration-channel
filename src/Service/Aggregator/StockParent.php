@@ -6,7 +6,10 @@ use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use App\BusinessCentral\ProductStockFinder;
+use App\Entity\IntegrationChannel;
+use App\Entity\Product;
 use App\Entity\ProductCorrelation;
+use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
@@ -23,6 +26,8 @@ abstract class StockParent
     protected $mailer;
 
     protected $apiAggregator;
+
+    protected $integrationChannel;
 
     protected $businessCentralAggregator;
 
@@ -55,6 +60,11 @@ abstract class StockParent
     public function send()
     {
         try {
+            /** @var \App\Entity\IntegrationChannel */
+            $this->integrationChannel = $this->manager->getRepository(IntegrationChannel::class)->findOneBy([
+                'code' => $this->getChannel()
+            ]);
+
             $this->sendStocks();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
@@ -96,10 +106,29 @@ abstract class StockParent
 
 
 
-   
+    public function checkIfProductSellableOnChannel($sku): bool
+    {
+        if ($this->integrationChannel->isPriceSync()===false) {
+            return true;
+        }
 
+        $skuFinal = $this->getProductCorrelationSku($sku);
 
+        $saleChannels = $this->manager->getRepository(SaleChannel::class)->findBy([
+            'integrationChannel' => $this->integrationChannel
+        ]);
 
+        $product = $this->manager->getRepository(Product::class)->findOneBySku($skuFinal);
+
+        foreach ($saleChannels as $saleChannel) {
+            $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
+            if ($productMarketplace->getEnabled()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 
     public function isSkuExists($sku): int

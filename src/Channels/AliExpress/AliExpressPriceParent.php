@@ -2,7 +2,7 @@
 
 namespace App\Channels\AliExpress;
 
-use App\Channels\Arise\AriseApiParent;
+use App\Channels\AliExpress\AliExpressApiParent;
 use App\Service\Aggregator\PriceParent;
 
 abstract class AliExpressPriceParent extends PriceParent
@@ -21,21 +21,6 @@ abstract class AliExpressPriceParent extends PriceParent
         }
     }
 
-    protected $productMarketplaces;
-
-    protected function organisePriceSaleChannel($products, $saleChannels)
-    {
-        $this->productMarketplaces = [];
-
-        foreach ($products as $product) {
-            foreach ($saleChannels as $saleChannel) {
-                $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
-                if ($productMarketplace->getEnabled()) {
-                    $this->productMarketplaces[$product->getSku()]=$productMarketplace;
-                }
-            }
-        }
-    }
 
 
     public function sendPrice($product)

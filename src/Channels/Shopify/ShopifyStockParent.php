@@ -21,8 +21,14 @@ abstract class ShopifyStockParent extends StockParent
         foreach ($inventoLevelies as $inventoLeveli) {
             $sku = $inventoLeveli['sku'];
             if ($this->isNotBundle($sku)) {
-                $stockLevel = $this->getStockProductWarehouse($sku);
-                $this->logger->info('Update modified ' . $sku  . ' >>> ' . $stockLevel);
+                if ($this->checkIfProductSellableOnChannel($sku)) {
+                    $stockLevel = $this->getStockProductWarehouse($sku);
+                    $this->logger->info('Update modified ' . $sku  . ' >>> ' . $stockLevel);
+                } else {
+                    $stockLevel = 0;
+                    $this->logger->info('SHould be desactivated ' . $sku);
+                }
+
                 $this->getShopifyApi()->setInventoryLevel(
                     $mainLocation['id'],
                     $inventoLeveli['inventory_item_id'],
@@ -43,7 +49,7 @@ abstract class ShopifyStockParent extends StockParent
         foreach ($inventoLevelies as $inventoLeveli) {
             $sku = $inventoLeveli['sku'];
             if ($this->isNotBundle($sku)) {
-                if(!$this->isSkuExists($sku)){
+                if (!$this->isSkuExists($sku)) {
                     $errors[] = 'Sku '.$sku. ' do not exist in BC and no sku mappings have been done also.';
                 }
             } else {

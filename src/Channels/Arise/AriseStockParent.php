@@ -53,28 +53,7 @@ abstract class AriseStockParent extends StockParent
 
 
 
-    public function checkIfProductSellableOnChannel($sku): bool
-    {
-        $skuFinal = $this->getProductCorrelationSku($sku);
-        $integrationChannel = $this->manager->getRepository(IntegrationChannel::class)->findBy([
-            'code' => $this->getChannel()
-        ]);
-
-        $saleChannels = $this->manager->getRepository(SaleChannel::class)->findBy([
-            'integrationChannel' => $integrationChannel
-        ]);
-
-        $product = $this->manager->getRepository(Product::class)->findOneBySku($skuFinal);
-
-        foreach ($saleChannels as $saleChannel) {
-            $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
-            if ($productMarketplace->getEnabled()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
+   
 
 
 

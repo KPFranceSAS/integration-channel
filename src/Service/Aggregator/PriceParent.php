@@ -54,9 +54,25 @@ abstract class PriceParent
             $this->sendPrices($products, $saleChannels);
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmailChannel($this->getChannel(), 'Update prices Error class'. get_class($this), $e->getMessage());
+            $this->mailer->sendEmailChannel($this->getChannel(), 'Update prices Error class '. get_class($this), $e->getMessage());
         }
     }
+
+    protected $productMarketplaces;
+
+    protected function organisePriceSaleChannel($products, $saleChannels)
+    {
+        $this->productMarketplaces = [];
+        foreach ($products as $product) {
+            foreach ($saleChannels as $saleChannel) {
+                $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
+                if ($productMarketplace->getEnabled()) {
+                    $this->productMarketplaces[$product->getSku()]=$productMarketplace;
+                }
+            }
+        }
+    }
+
 
     public function getApi()
     {

@@ -21,27 +21,6 @@ abstract class ArisePriceParent extends PriceParent
         }
     }
 
-    protected $productMarketplaces;
-
-    protected function organisePriceSaleChannel($products, $saleChannels)
-    {
-        $this->productMarketplaces = [];
-
-        foreach ($products as $product) {
-            foreach ($saleChannels as $saleChannel) {
-                $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
-                if ($productMarketplace->getEnabled()) {
-                    $this->productMarketplaces[$product->getSku()]=$productMarketplace;
-                }
-            }
-        }
-    }
-
-
-
-
-
-
     public function sendPrice($product)
     {
         $name = (property_exists($product, 'attributes') && property_exists($product->attributes, 'name')) ? $product->attributes->name : null;
@@ -56,7 +35,7 @@ abstract class ArisePriceParent extends PriceParent
                 $promotionPrice = $promotion ? $promotion->getPromotionPrice() : 0;
                 $this->getAriseApi()->updatePrice($product->item_id, $sku->SkuId, $sku->SellerSku, $price, $promotionPrice);
             } else {
-                $this->logger->info('Descativate');
+                $this->logger->info('Desactivate and put level to 0');
                 $this->getAriseApi()->updateStockLevel($product->item_id, $sku->SkuId, $sku->SellerSku, 0);
             }
         }

@@ -3,7 +3,6 @@
 namespace App\Channels\AliExpress;
 
 use App\Channels\AliExpress\AliExpressApiParent;
-use App\Entity\WebOrder;
 use App\Service\Aggregator\StockParent;
 
 abstract class AliExpressStockParent extends StockParent
@@ -38,15 +37,19 @@ abstract class AliExpressStockParent extends StockParent
             $this->logger->error('No product info');
             return;
         }
-        $stockTocHeck = WebOrder::DEPOT_LAROCA;
 
         $skus = $this->extractSkuFromResponse($productInfo);
         foreach ($skus as $skuCode) {
-            $stockBC = $this->getStockProductWarehouse($skuCode, $stockTocHeck);
-            $this->logger->info('Sku ' . $skuCode  . ' / stock BC ' . $stockBC . ' units in ' . $stockTocHeck);
+            if ($this->checkIfProductSellableOnChannel($skuCode)) {
+                $stockBC = $this->getStockProductWarehouse($skuCode);
+                $this->logger->info('Sku ' . $skuCode  . ' / stock BC ' . $stockBC . ' units ');
+            } else {
+                $stockBC = 0;
+                $this->logger->info('Sku ' . $skuCode  . ' should be desactivated');
+            }
+            
             $this->getAliExpressApi()->updateStockLevel($product->product_id, $skuCode, $stockBC);
         }
-
 
         $this->logger->info('---------------');
     }

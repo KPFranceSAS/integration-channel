@@ -14,9 +14,6 @@ class FitbitCorporateSyncProduct extends ShopifySyncProductParent
     }
 
 
-    
-
-
     protected function getProductsEnabledOnChannel()
     {
         $searchBuilder = new SearchBuilder();
