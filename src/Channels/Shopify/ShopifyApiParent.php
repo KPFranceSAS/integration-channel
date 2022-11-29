@@ -318,10 +318,13 @@ abstract class ShopifyApiParent implements ApiInterface
              'id' => $idVariant,
          ];
          if ($promotionPriceVariant) {
+             $this->logger->info('Update variant ' . $idVariant . 'regular price >> ' . $priceVariant . ' && discount price >>> ' . $promotionPriceVariant);
              $productVariant['compare_at_price']=$priceVariant;
              $productVariant['price']=$promotionPriceVariant;
          } else {
+             $this->logger->info('Update variant ' . $idVariant . 'regular price >> ' . $priceVariant);
              $productVariant['price']=$priceVariant;
+             $productVariant['compare_at_price']=null;
          }
          return $this->updateProductVariant($idVariant, $productVariant);
      }
