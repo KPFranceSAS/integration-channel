@@ -215,6 +215,9 @@ class AriseClient
         $errno = curl_errno($ch);
         if ($errno) {
             curl_close($ch);
+            if ($errno == 28) {
+                throw new Exception("Arise has some timeout to respond CURLE_OPERATION_TIMEDOUT", 0);
+            }
             throw new Exception($errno, 0);
         } else {
             $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

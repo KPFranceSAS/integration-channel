@@ -98,7 +98,9 @@ class MailService
             'Client error:',
             'stock files published',
             'Server error:',
-            'Unable to authenticate using a private key'
+            'Unable to authenticate using a private key',
+            'CURLE_OPERATION_TIMEDOUT',
+            '28'
         ];
         if (s($titre)->containsAny($stringForbiddens)) {
             return true;
