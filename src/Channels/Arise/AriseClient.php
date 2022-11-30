@@ -57,6 +57,7 @@ class AriseClient
             if (property_exists($reponse, 'access_token')) {
                 $this->accessToken = $reponse->access_token;
             } else {
+                $this->logger->critical("Error on getting access token ".json_encode($reponse));
                 throw new Exception("Error on getting access token ".json_encode($reponse));
             }
         }
@@ -130,11 +131,17 @@ class AriseClient
 
         if ($errno) {
             curl_close($ch);
+            $this->logger->critical("Curl error code ".$errno);
+            if ($errno == 28) {
+                throw new Exception("Arise has some timeout to respond CURLE_OPERATION_TIMEDOUT", 0);
+            }
+            $this->logger->critical("Curl error line 138 code ".$errno);
             throw new Exception($errno, 0);
         } else {
             $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
             if (200 !== $httpStatusCode) {
+                $this->logger->critical("Http error line 143 code ".$output);
                 throw new Exception($output, $httpStatusCode);
             }
         }
@@ -218,11 +225,13 @@ class AriseClient
             if ($errno == 28) {
                 throw new Exception("Arise has some timeout to respond CURLE_OPERATION_TIMEDOUT", 0);
             }
+            $this->logger->critical("Curl error line 228 code ".$errno);
             throw new Exception($errno, 0);
         } else {
             $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
             if (200 !== $httpStatusCode) {
+                $this->logger->critical("Http error line 234 code ".$errno);
                 throw new Exception($response, $httpStatusCode);
             }
         }
