@@ -20,9 +20,9 @@ class AriseClient
 
     public $gatewayUrl;
 
-    public $connectTimeout=10;
+    public $connectTimeout=20;
 
-    public $readTimeout=10;
+    public $readTimeout=20;
 
     protected $signMethod = "sha256";
 
@@ -133,7 +133,7 @@ class AriseClient
             curl_close($ch);
             $this->logger->critical("Curl error code ".$errno);
             if ($errno == 28) {
-                throw new Exception("Arise has some timeout to respond CURLE_OPERATION_TIMEDOUT", 0);
+                throw new Exception("Arise has some timeout to respond on get CURLE_OPERATION_TIMEDOUT", 0);
             }
             $this->logger->critical("Curl error line 138 code ".$errno);
             throw new Exception($errno, 0);
@@ -223,7 +223,7 @@ class AriseClient
         if ($errno) {
             curl_close($ch);
             if ($errno == 28) {
-                throw new Exception("Arise has some timeout to respond CURLE_OPERATION_TIMEDOUT", 0);
+                throw new Exception("Arise has some timeout to respond on post CURLE_OPERATION_TIMEDOUT", 0);
             }
             $this->logger->critical("Curl error line 228 code ".$errno);
             throw new Exception($errno, 0);
