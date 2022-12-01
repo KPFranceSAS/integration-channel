@@ -24,19 +24,18 @@ use Psr\Log\LoggerInterface;
 
 abstract class AriseIntegratorParent extends IntegratorParent
 {
-    public const ARISE_CUSTOMER_NUMBER = AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER; //"003307";
+    public const ARISE_CUSTOMER_NUMBER = "003307";
 
 
     public function __construct(
-        ProductTaxFinder $productTaxFinder, 
-        ManagerRegistry $manager, 
-        LoggerInterface $logger, 
+        ProductTaxFinder $productTaxFinder,
+        ManagerRegistry $manager,
+        LoggerInterface $logger,
         MailService $mailer,
-        BusinessCentralAggregator $businessCentralAggregator, 
+        BusinessCentralAggregator $businessCentralAggregator,
         ApiAggregator $apiAggregator,
         FilesystemOperator $ariseLabelStorage
-    )
-    {
+    ) {
         parent::__construct($productTaxFinder, $manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator);
         $this->ariseLabelStorage = $ariseLabelStorage;
     }
