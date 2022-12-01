@@ -40,7 +40,7 @@ abstract class AliExpressPriceParent extends PriceParent
                 $price =  $productMarketplace->getPrice() ;
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 $promotionPrice = $promotion ? $promotion->getPromotionPrice() : 0;
-                $this->getAliExpressApi()->updatePrice($product->item_id, $skuCode, $price, $promotionPrice);
+                $this->getAliExpressApi()->updatePrice($product->product_id, $skuCode, $price, $promotionPrice);
             } else {
                 $this->logger->info('Descativate');
                 $this->getAliExpressApi()->updateStockLevel($product->product_id, $skuCode, 0);

@@ -8,6 +8,7 @@ use App\BusinessCentral\Model\PostalAddress;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\BusinessCentral\ProductTaxFinder;
+use App\Channels\AliExpress\AliExpress\AliExpressIntegrateOrder;
 use App\Channels\Arise\AriseApiParent;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
@@ -23,7 +24,7 @@ use Psr\Log\LoggerInterface;
 
 abstract class AriseIntegratorParent extends IntegratorParent
 {
-    public const ARISE_CUSTOMER_NUMBER = "003307";
+    public const ARISE_CUSTOMER_NUMBER = AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER; //"003307";
 
 
     public function __construct(
@@ -175,7 +176,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
                 $discount+= $promotionsSeller;
             }
 
-            $promotionsPlateform = floatval($line->voucher_seller);
+            $promotionsPlateform = floatval($line->voucher_platform);
             if ($promotionsPlateform> 0) {
                 $discountPlatform+= $promotionsPlateform;
             }
@@ -189,21 +190,10 @@ abstract class AriseIntegratorParent extends IntegratorParent
             $saleLineDelivery->quantity = 1;
             $saleLineDelivery->accountId = $account['id'];
             $saleLineDelivery->unitPrice = -$discount;
-            $saleLineDelivery->description = 'DISCOUNT '.$orderApi->voucher_code;
+            $saleLineDelivery->description = 'DISCOUNT SELLER '.$orderApi->voucher_code_seller;
             $orderBC->salesLines[] = $saleLineDelivery;
         }
 
-        // add discount
-        if ($discount > 0) {
-            $account = $this->getBusinessCentralConnector($company)->getAccountByNumber('7000005');
-            $saleLineDelivery = new SaleOrderLine();
-            $saleLineDelivery->lineType = SaleOrderLine::TYPE_GLACCOUNT;
-            $saleLineDelivery->quantity = 1;
-            $saleLineDelivery->accountId = $account['id'];
-            $saleLineDelivery->unitPrice = -$discount;
-            $saleLineDelivery->description = 'DISCOUNT '.$orderApi->voucher_code;
-            $orderBC->salesLines[] = $saleLineDelivery;
-        }
 
         if ($promotionsPlateform > 0) {
             $saleLineDelivery = new SaleOrderLine();

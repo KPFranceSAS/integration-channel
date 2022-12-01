@@ -54,6 +54,7 @@
 						EUR
 					</td>
 				</tr>
+				{% if field.value.voucher > 0 %}
 				<tr >
 					<td colspan="4" class="tfoot-col-label">
 						<strong>Voucher {{field.value.voucher_code}}</strong>
@@ -63,9 +64,11 @@
 						EUR
 					</td>
 				</tr>
+				{% endif %}
+				
 				<tr >
 					<td colspan="4" class="tfoot-col-label">
-						<strong>Total</strong>
+						<strong>Total paid</strong>
 					</td>
 					<td colspan="" data-label="Total price" class="text-left field-text">
 					{% set total = field.value.price + field.value.shipping_fee - field.value.voucher %}

@@ -400,6 +400,7 @@ abstract class IntegratorParent
             "PLAZA" => "PZA",
             "POBLACIóN" => "POBL",
             "POBLACION" => "POBL",
+            "PORTAL" => "POR",
             "PUERTO" => "PTO",
             "PUERTA" => "PTA",
             "PRESIDENTE" => "PDTE",
