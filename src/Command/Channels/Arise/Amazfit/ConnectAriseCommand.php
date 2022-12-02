@@ -24,7 +24,7 @@ class ConnectAriseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->getOrders();
+        $this->markOrderAsFulfill();
         return Command::SUCCESS;
     }
 
@@ -72,7 +72,10 @@ class ConnectAriseCommand extends Command
 
     private function markOrderAsFulfill()
     {
-        $result = $this->ariseApi->markOrderAsFulfill(46301516006, "DHL", "0837682350");
+        $result = $this->ariseApi->markOrderAsFulfill(62109016890, "DHL", "0837729070");
+        
+
+        //$result = $this->ariseApi->markOrderAsFulfill(62102524945, "DHL", "0837729060");
         var_dump($result);
     }
 
@@ -81,6 +84,20 @@ class ConnectAriseCommand extends Command
     {
         $products = $this->ariseApi->getAllProducts();
         dump($products);
+    }
+
+
+    private function markOrder()
+    {
+        //$order =  $this->ariseApi->getOrder("61172616227");
+
+        
+
+
+        $response  = $this->ariseApi->markAsDelivered('FP0739538250');
+        
+
+        dump($response);
     }
 
 

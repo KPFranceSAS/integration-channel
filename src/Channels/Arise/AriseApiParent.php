@@ -270,6 +270,10 @@ abstract class AriseApiParent implements ApiInterface
         $this->logger->info('Create pack for order Id >> '.$order->order_id);
         $orderItemIds = [];
         foreach ($order->lines as $line) {
+            if (property_exists($line, "package_id") && strlen($line->package_id)) {
+                $this->logger->info('Pack already created '.$line->package_id.' for order Id >> '.$order->order_id);
+                return $line->package_id;
+            }
             if ($line->status == 'pending') {
                 $orderItemIds[]=$line->order_item_id;
             }
@@ -354,7 +358,7 @@ abstract class AriseApiParent implements ApiInterface
 
     public function markAsReadyToShip($packageId)
     {
-        $this->logger->info('Ready to ship');
+        $this->logger->info('Ready to ship '.$packageId);
         $request = new AriseRequest('/order/package/rts');
 
         $tracking= [
@@ -364,7 +368,16 @@ abstract class AriseApiParent implements ApiInterface
         ];
         $request->addApiParam('readyToShipReq', json_encode($tracking));
         $reponse = $this->client->execute($request);
-        return $reponse->result;
+        $result = $reponse->result;
+        if ($result->success ==true) {
+            foreach ($result->data->packages as $package) {
+                if ($package->package_id == $packageId && $package->retry == false) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 
@@ -381,7 +394,17 @@ abstract class AriseApiParent implements ApiInterface
         ];
         $request->addApiParam("dbsDeliveryReq", json_encode($tracking));
         $reponse = $this->client->execute($request);
-        return $reponse->result;
+       
+        $result = $reponse->result;
+        if ($result->success ==true) {
+            foreach ($result->data->packages as $package) {
+                if ($package->package_id == $packageId && $package->retry == false) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 
@@ -402,11 +425,11 @@ abstract class AriseApiParent implements ApiInterface
 
     public function createLabel($orderId): string
     {
-            $order = $this->getOrder($orderId);
-            $packId = $this->createPackForOrder($order);
-            $label = $this->getPrintLabel($packId);
+        $order = $this->getOrder($orderId);
+        $packId = $this->createPackForOrder($order);
+        $label = $this->getPrintLabel($packId);
             
-            return $label;
+        return $label;
     }
 
 
@@ -419,16 +442,21 @@ abstract class AriseApiParent implements ApiInterface
     {
         try {
             $order = $this->getOrder($orderId);
-            if ($this->checkIfOrderIsNotMarkedAsShipped($order)) {
-                $this->logger->info('Order id marked as sent');
+            
+            $this->logger->info('Order id marked as sent');
 
-                $packId = $this->createPackForOrder($order);
-                $supplierCode = $this->getSupplierCode($carrierName);
-                $this->updateTrackingInfo($trackingNumber, $packId, $supplierCode);
-                $this->markAsReadyToShip($packId);
-                $this->markAsDelivered($packId);
-            } else {
-                $this->logger->info('Order id already marked as sent');
+            $packId = $this->createPackForOrder($order);
+            $supplierCode = $this->getSupplierCode($carrierName);
+            $this->updateTrackingInfo($trackingNumber, $packId, $supplierCode);
+            $wasMarkAsreday =  $this->markAsReadyToShip($packId);
+            if (!$wasMarkAsreday) {
+                $this->logger->info('Order was not mark as ready to ship');
+                return false;
+            }
+            $wasMarkAsDelivered = $this->markAsDelivered($packId);
+            if (!$wasMarkAsDelivered) {
+                $this->logger->info('Order was not mark as delivered');
+                return false;
             }
             return true;
         } catch(Exception $e) {
@@ -436,6 +464,11 @@ abstract class AriseApiParent implements ApiInterface
             return false;
         }
     }
+
+
+
+
+
 
 
     public function checkIfOrderIsNotMarkedAsShipped($order): bool

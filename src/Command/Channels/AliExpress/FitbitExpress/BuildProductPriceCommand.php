@@ -3,22 +3,17 @@
 namespace App\Command\Channels\AliExpress\FitbitExpress;
 
 use App\BusinessCentral\Connector\GadgetIberiaConnector;
-use App\Channels\AliExpress\FitbitExpress\AliExpressApi;
 use App\Channels\AliExpress\FitbitExpress\FitbitExpressApi;
 use App\Entity\Brand;
-use App\Entity\IntegrationChannel;
 use App\Entity\Product;
 use App\Entity\ProductSaleChannel;
 use App\Entity\Promotion;
 use App\Entity\SaleChannel;
-use App\Entity\WebOrder;
 use DateInterval;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
-use OrderQuery;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
