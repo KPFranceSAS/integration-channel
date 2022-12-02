@@ -143,7 +143,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
 
         $productToCreate = [
             'body_html' => $this->getDescription($productModel),
-            'title' => $this->getTitle($productModel),
+            'title' => $this->getTitle($productModel, true),
             'handle' =>  $parent['code'],
             'product_type' => $this->getFamilyApi($parent['family'], $this->getLocale()),
             'variants' => [
@@ -340,8 +340,17 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
 
 
 
-    protected function getTitle($productPim)
+    protected function getTitle($productPim, $isModel=false)
     {
+        if ($isModel) {
+            $parentTitle = $this->getAttributeSimple($productPim, 'parent_name', $this->getLocale());
+            if ($parentTitle) {
+                return $parentTitle;
+            }
+        }
+        
+
+
         $title = $this->getAttributeSimple($productPim, 'article_name', $this->getLocale());
         if ($title) {
             return $title;
