@@ -21,7 +21,7 @@ abstract class AriseUpdateStatusParent extends UpdateStatusParent
             $this->addLogToOrder($order, 'Mark as fulfilled on Arise');
             return true;
         } else {
-            $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting tracking number ' . $trackingNumber);
+            $this->addLogToOrder($order, 'Error posting tracking number ' . $trackingNumber);
             return false;
         }
     }
@@ -41,7 +41,7 @@ abstract class AriseUpdateStatusParent extends UpdateStatusParent
             $this->addLogToOrder($order, 'Mark as ready to ship to Arise');
             return true;
         } else {
-            $this->addOnlyErrorToOrderIfNotExists($order, 'Error posting Ready to ship');
+            $this->addLogToOrder($order, 'Error posting Ready to ship');
             return false;
         }
     }
