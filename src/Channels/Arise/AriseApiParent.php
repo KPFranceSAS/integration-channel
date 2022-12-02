@@ -448,6 +448,7 @@ abstract class AriseApiParent implements ApiInterface
             $packId = $this->createPackForOrder($order);
             $supplierCode = $this->getSupplierCode($carrierName);
             $this->updateTrackingInfo($trackingNumber, $packId, $supplierCode);
+            sleep(5);
             $wasMarkAsreday =  $this->markAsReadyToShip($packId);
             if (!$wasMarkAsreday) {
                 $this->logger->info('Order was not mark as ready to ship');
