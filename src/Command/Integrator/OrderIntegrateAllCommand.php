@@ -5,6 +5,7 @@ namespace App\Command\Integrator;
 use App\Entity\IntegrationChannel;
 use App\Helper\MailService;
 use App\Service\Aggregator\IntegratorAggregator;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -18,7 +19,7 @@ class OrderIntegrateAllCommand extends Command
     protected static $defaultName = 'app:integrate-orders-all';
     protected static $defaultDescription = 'Integrates all orders from all sale channels';
 
-    public function __construct(IntegratorAggregator $integrateAggregator,ManagerRegistry $managerRegistry, LoggerInterface $logger, MailService $mailService)
+    public function __construct(IntegratorAggregator $integrateAggregator, ManagerRegistry $managerRegistry, LoggerInterface $logger, MailService $mailService)
     {
         $this->integrateAggregator = $integrateAggregator;
         $this->logger = $logger;
@@ -45,6 +46,15 @@ class OrderIntegrateAllCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $dateTime = new DateTime();
+        $dateTimeFormat = $dateTime->format('H:i');
+        
+        if ($dateTimeFormat < '06:30' && $dateTimeFormat > '03:30') {
+            $this->logger->info('Out of service '.$dateTimeFormat);
+            return Command::SUCCESS;
+        }
+
+
         $channels = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
             [
                 "active"=>true,
