@@ -49,7 +49,7 @@ class OrderIntegrateAllCommand extends Command
         $dateTime = new DateTime();
         $dateTimeFormat = $dateTime->format('H:i');
         
-        if ($dateTimeFormat < '06:30' && $dateTimeFormat > '03:30') {
+        if ($dateTimeFormat < '06:30' && $dateTimeFormat > '02:00') {
             $this->logger->info('Out of service '.$dateTimeFormat);
             return Command::SUCCESS;
         }
