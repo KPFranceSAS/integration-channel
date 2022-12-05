@@ -165,6 +165,9 @@ class ImportPricingsImporter
             }
             $this->manager->detach($productDb);
             foreach ($productDb->getProductSaleChannels() as $productSaleChannel) {
+                foreach ($productSaleChannel->getPromotions() as $promotion) {
+                    $this->manager->detach($promotion);
+                }
                 $this->manager->detach($productSaleChannel);
             }
             return false;
