@@ -20,24 +20,48 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     protected $apiAggregator;
 
     protected $productsApi;
+
+    protected $categoriesApi;
     
 
 
     abstract protected function getLocale();
 
-    
+    abstract protected function getCategoryTree();
 
     abstract protected function getNbLevels();
 
- 
+
+    
     protected function getShopifyApi(): ShopifyApiParent
     {
         return $this->getApi();
     }
 
+    protected $categoriesPim;
+
+    protected $categoriesProducts;
+
+    public function retrievAllChildren($parent)
+    {
+        $categories = $this->akeneoConnector->getAllChildrenCategoriesByParent($parent);
+        foreach ($categories as $category) {
+            $this->categoriesPim[$category['code']] = $category;
+            $this->retrievAllChildren($category['code']);
+        }
+    }
+
+
 
     public function syncProducts()
     {
+        $this->logger->info('Get all categories for main category');
+        $this->categoriesPim=[];
+        $this->categoriesProducts=[];
+        $this->retrievAllChildren($this->getCategoryTree());
+        $this->logger->info('Retrieved '.count($this->categoriesPim).' categories for main category');
+        
+        $this->logger->info('Get all products');
         $products = $this->getProductsEnabledOnChannel();
         $productSimples = [];
         $productVariants = [];
@@ -50,9 +74,16 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
                 if (!array_key_exists($parent['code'], $productVariants)) {
                     $productVariants[$parent['code']]=[
                         'parent'=> $parent,
+                        'categories'=> $parent['categories'],
                         'variants' => [],
                         'parents' => []
                     ];
+
+                    foreach ($parent['categories'] as $category) {
+                        if (array_key_exists($category, $this->categoriesPim) && !array_key_exists($category, $this->categoriesProducts)) {
+                            $this->categoriesProducts[$category] = $this->categoriesPim[$category];
+                        }
+                    }
                 }
                 if ($product['parent']!=$parent["code"]) {
                     $productVariants[$parent['code']]["parents"][]=$this->akeneoConnector->getProductModel($product['parent']);
@@ -60,7 +91,11 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
                 $productVariants[$parent['code']]["variants"][]=$product;
             }
         }
-
+        $this->logger->info('End organise products');
+        foreach ($this->categoriesProducts as $categoryProduct) {
+            $this->integrateCategory($categoryProduct);
+        }
+        $this->cleanCategories($this->categoriesProducts);
 
         foreach ($productSimples as $productSimple) {
             $this->integrateProductSimple($productSimple);
@@ -70,19 +105,52 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         foreach ($productVariants as $productVariant) {
             $this->integrateProductVariant($productVariant);
         }
+
+
+
+        
+
+
+
     }
+
+
+
+    public function integrateCategory(array $category)
+    {
+        $categoryShopify = $this->checkIfCategoryPresent($category['code']);
+        if (!$categoryShopify) {
+            $this->createCategory($category);
+        } else {
+            $this->updateCategory($categoryShopify, $category);
+        }
+    }
+
+
+    public function cleanCategories(array $categories)
+    {
+        $this->categoriesApi  =  $this->getShopifyApi()->getAllCustomCategory();
+        foreach($this->categoriesApi as $categoryApi){
+            if(!array_key_exists($categoryApi['handle'], $categories)){
+               $deletion =  $this->getShopifyApi()->deleteCustomCategory($categoryApi['id']);
+            }
+        }
+    }
+
+    
 
 
 
     public function integrateProductVariant(array $product)
     {
-        $productShopify = $this->checkIfParentPresent($product['parent']['code']);
+        $productShopify = $this->checkIfProductPresent($product['parent']['code']);
 
         if (!$productShopify) {
-            $this->createProductVariant($product);
+            $productShopify = $this->createProductVariant($product);
         } else {
-            $this->updateProductVariant($productShopify, $product);
+            $productShopify = $this->updateProductVariant($productShopify, $product);
         }
+        $this->associateProductCollection($productShopify, $product['categories']);
     }
 
 
@@ -108,8 +176,54 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
 
    
 
+    
+    protected function checkIfCategoryPresent($code)
+    {
+        if (!$this->categoriesApi) {
+            $categoriesApi =  $this->getShopifyApi()->getAllCustomCategory();
+            $this->categoriesApi = $categoriesApi ? $categoriesApi : [];
+        }
+        
 
-    protected function checkIfParentPresent($sku)
+        foreach ($this->categoriesApi as $categoryApi) {
+            if ($categoryApi['handle']== strtolower($code)) {
+                return $categoryApi;
+            }
+        }
+
+        return null;
+    }
+
+
+
+    protected function createCategory(array $category)
+    {
+        $this->logger->info('Create category '.$category['code']);
+        $categoryToCreate = [
+            'body_html' => $category['descriptions'][$this->getLocale()],
+            'title' => $category['labels'][$this->getLocale()],
+            'handle' =>  $category['code'],
+        ];
+        $response = $this->getShopifyApi()->createCustomCategory($categoryToCreate);
+        return $response->getDecodedBody();
+    }
+
+
+    protected function updateCategory(array $categoryShopify, array $category)
+    {
+        $this->logger->info('Update category '.$category['code']);
+        $categoryToUpdate = [
+            'body_html' => $category['descriptions'][$this->getLocale()],
+            'title' => $category['labels'][$this->getLocale()],
+        ];
+        $response = $this->getShopifyApi()->updateCustomCategory($categoryShopify['id'], $categoryToUpdate);
+        return $response->getDecodedBody();
+    }
+
+
+
+
+    protected function checkIfProductPresent($sku)
     {
         if (!$this->productsApi) {
             $productsApi =  $this->getShopifyApi()->getAllProducts();
@@ -125,13 +239,6 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
 
         return null;
     }
-
-
-  
-
-
-
-
 
     protected function createProductVariant($product)
     {
@@ -204,9 +311,6 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         $body = $response->getDecodedBody();
         $productCreated = $body['product'];
 
-
-            
-
         $mainImageFound = false;
 
         foreach ($imageUrlsVariants as $sku => $url) {
@@ -229,6 +333,8 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
                 }
             }
         }
+
+        return $productCreated;
     }
 
 
@@ -245,7 +351,8 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
             'product_type' => $this->getFamilyApi($productModel['family'], $this->getLocale()),
         ];
         $response = $this->getShopifyApi()->updateProduct($productShopify['id'], $productToUpdate);
-        return $response->getDecodedBody();
+        $body = $response->getDecodedBody();
+        return $body['product'];
     }
 
 
@@ -267,13 +374,59 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
 
     protected function integrateProductSimple(array $product)
     {
-        $productShopify = $this->checkIfParentPresent($product['identifier']);
+        $productShopify = $this->checkIfProductPresent($product['identifier']);
         if ($productShopify) {
-            $this->updateProductSimple($productShopify, $product);
+            $productShopify = $this->updateProductSimple($productShopify, $product);
         } else {
-            $this->createProductSimple($product);
+            $productShopify = $this->createProductSimple($product);
         }
+        $this->associateProductCollection($productShopify, $product['categories']);
     }
+
+
+
+
+    protected function associateProductCollection(array $productShopify, array $categories)
+    {
+        $collectProductShopify = $this->getShopifyApi()->getAllCollectsByProduct($productShopify['id']);
+        foreach($categories as $categorie){
+            $this->logger->info('Association with collection '.$categorie);
+            if(array_key_exists($categorie, $this->categoriesProducts)){
+                $this->logger->info('Corresponding with tree '.$categorie);
+                $found= false;
+                $catgeoryShopify = $this->checkIfCategoryPresent($categorie);
+                foreach($collectProductShopify as $key => $collect){
+                    if($collect['collection_id'] == $catgeoryShopify['id']){
+                        $this->logger->info('Link created with collection '.$catgeoryShopify['handle']);
+                        unset($collectProductShopify[$key]);
+                        $found = true;
+                    }
+                }
+
+                if($found===false){
+                   $this->logger->info('Create Link with collection '.$catgeoryShopify['handle']);
+                   $reponse = $this->getShopifyApi()->createCollect(
+                        [
+                            'collection_id'=> $catgeoryShopify["id"],
+                            'product_id'=> $productShopify["id"],
+                    ]);
+                 }
+            } else {
+                $this->logger->info('Not corresponding with tree '.$categorie);
+            }
+            
+        }
+
+        foreach($collectProductShopify as $collectProduct ){
+            $this->getShopifyApi()->deleteCollect($collectProduct['id']);
+        }
+        
+    }
+
+
+
+
+
 
 
 
@@ -306,7 +459,8 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         }
 
         $response = $this->getShopifyApi()->createProduct($productToCreate);
-        return $response->getDecodedBody();
+        $body = $response->getDecodedBody();
+        return $body['product'];
     }
 
 
@@ -336,17 +490,9 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
             $productToUpdate['images'] = $imagesPim;
         }
         $response = $this->getShopifyApi()->updateProduct($productShopify['id'], $productToUpdate);
-        return $response->getDecodedBody();
+        $body = $response->getDecodedBody();
+        return $body['product'];
     }
-
-
-
-
-
-
-
-
-
 
 
     protected function getTitle($productPim, $isModel=false)

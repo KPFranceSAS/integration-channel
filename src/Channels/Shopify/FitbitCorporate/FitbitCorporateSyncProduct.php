@@ -13,6 +13,11 @@ class FitbitCorporateSyncProduct extends ShopifySyncProductParent
         return 2;
     }
 
+    protected function getCategoryTree()
+    {
+        return 'fitbit';
+    }
+
 
     protected function getProductsEnabledOnChannel()
     {
@@ -29,8 +34,6 @@ class FitbitCorporateSyncProduct extends ShopifySyncProductParent
     {
         return IntegrationChannel::CHANNEL_FITBITCORPORATE;
     }
-
-
 
     protected function getLocale()
     {

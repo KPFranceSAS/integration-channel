@@ -271,9 +271,9 @@ abstract class ShopifyApiParent implements ApiInterface
             );
             $responseArray = $response->getDecodedBody();
             if (array_key_exists($indexKey, $responseArray)) {
-                $this->logger->info('Fetch ' . count($responseArray[$indexKey ]) . " new elements");
+                $this->logger->info('Fetch ' . count($responseArray[$indexKey ]) . " new elements > ".$endPoint );
                 $elements = array_merge($elements, $responseArray[$indexKey ]);
-                $this->logger->info('Fetch ' . count($elements) . " elements");
+                $this->logger->info('Fetch ' . count($elements) . " elements > ".$indexKey);
                 
                 $nextToken = $this->extractLinkNext($response->getHeader('Link'));
             } else {
@@ -294,6 +294,44 @@ abstract class ShopifyApiParent implements ApiInterface
     {
         return $this->client->put('products/'.$idProduct, ['product' => $product]);
     }
+
+
+    public function getAllCollectsByProduct($productId): array
+    {
+        return $this->getPaginatedElements('collects', [], ['product_id' => $productId]);
+    }
+
+    public function createCollect(array $collect)
+    {
+        return $this->client->post('collects', ['collect' => $collect]);
+    }
+
+    public function deleteCollect($collectId): array
+    {
+        return $this->$this->client->delete('collects/'.$collectId);
+    }
+
+    public function getAllCustomCategory(): array
+    {
+        return $this->getPaginatedElements('custom_collections');
+    }
+    
+    public function createCustomCategory(array $category)
+    {
+        return $this->client->post('custom_collections', ['custom_collection' => $category]);
+    }
+
+    public function updateCustomCategory($idCategory, array $category)
+    {
+        return $this->client->put('custom_collections/'.$idCategory, ['custom_collection' => $category]);
+    }
+
+    public function deleteCustomCategory($idCategory)
+    {
+        return $this->client->delete('custom_collections/'.$idCategory);
+    }
+
+    
 
 
     public function createImagesProduct($idProduct, array $productImages)

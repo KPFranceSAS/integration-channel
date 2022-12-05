@@ -60,6 +60,8 @@ class AkeneoConnector
     }
 
 
+  
+
     public function searchProducts(SearchBuilder $searchBuilder, $scope)
     {
         $searchFilters = $searchBuilder->getFilters();
@@ -77,6 +79,23 @@ class AkeneoConnector
     {
         return $this->client->getProductApi()->upsert($identifier, $values);
     }
+
+
+
+    public function getAllCategories()
+    {
+        return $this->client->getCategoryApi()->all();
+    }
+
+
+    public function getAllChildrenCategoriesByParent($parentCode)
+    {
+        $searchFilters = new SearchBuilder();
+        $searchFilters->addFilter('parent', '=', $parentCode);
+        
+        return $this->client->getCategoryApi()->all('50', ['search'=>$searchFilters->getFilters()]);
+    }
+
 
 
     public function getClient()
