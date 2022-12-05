@@ -236,8 +236,16 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     protected function updateProductVariant(array $productShopify, array $product)
     {
         $parent = $product['parent'];
+        $productModel = $product['variants'][0];
         $this->logger->info('Update product variant '.$parent['code']);
-        return true;
+        $productToUpdate = [
+            'body_html' => $this->getDescription($productModel),
+            'title' => $this->getTitle($productModel, true),
+            'id' => $productShopify['id'],
+            'product_type' => $this->getFamilyApi($productModel['family'], $this->getLocale()),
+        ];
+        $response = $this->getShopifyApi()->updateProduct($productShopify['id'], $productToUpdate);
+        return $response->getDecodedBody();
     }
 
 
@@ -309,6 +317,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
             'body_html' => $this->getDescription($product),
             'title' => $this->getTitle($product),
             'id' => $productShopify['id'],
+            'product_type' => $this->getFamilyApi($product['family'], $this->getLocale()),
         ];
 
         $nbImageShopifys = count($productShopify['images']);

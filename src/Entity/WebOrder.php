@@ -8,6 +8,7 @@ use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
 use DateTime;
 use DateTimeInterface;
+use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -504,7 +505,8 @@ class WebOrder
         $webOrder->setChannel(IntegrationChannel::CHANNEL_ARISE);
         $webOrder->setSubchannel('Arise');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $datePurchase = DatetimeUtils::createDateTimeFromDateWithDelay(substr($orderApi->created_at, 0, 19));
+        $datePurchase = new DateTime($orderApi->created_at, new DateTimeZone('Europe/London'));
+        $datePurchase->setTimezone(new DateTimeZone('Europe/Paris'));
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
         
