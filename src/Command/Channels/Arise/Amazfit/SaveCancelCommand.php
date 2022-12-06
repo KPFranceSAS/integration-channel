@@ -3,12 +3,10 @@
 namespace App\Command\Channels\Arise\Amazfit;
 
 use App\BusinessCentral\Connector\GadgetIberiaConnector;
-use App\Channels\AliExpress\AliExpressApiParent;
 use App\Channels\Arise\AriseApiParent;
 use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
-use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\ApiAggregator;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -115,8 +113,8 @@ class SaveCancelCommand extends Command
                 $this->addLog($webOrder, 'Sale order ' . $webOrder->getOrderErp() . ' have been deleted');
                 $this->errors[] = 'Sale order ' . $webOrder->getOrderErp() . ' have been deleted';
             } catch (Exception $e) {
-                $this->errors[] = 'Deleting the sale order ' . $webOrder->getOrderErp()
-                                    . ' did not succeeded ' . $e->getMessage();
+                $this->errors[] = 'Deleting the sale order ' . $webOrder->getOrderErp() . ' did not succeeded because a shipment should be processing.';
+                $this->errors[] = 'You need to advise warehouse to stop shipment.';
             }
         } else {
             $this->addLog($webOrder, 'Sale order ' . $webOrder->getOrderErp() . ' have already been deleted');
@@ -125,7 +123,7 @@ class SaveCancelCommand extends Command
 
         $saleInvoice = $this->gadgetIberiaConnector->getSaleInvoiceByOrderNumber($webOrder->getOrderErp());
         if ($saleInvoice) {
-            $invoiceCreationProblem = 'Invoice ' . $saleInvoice['number'].' has been created. Check with warehouse the state of the shipment';
+            $invoiceCreationProblem = 'Invoice ' . $saleInvoice['number'].' has been created. Check with warehouse the state of the shipment and to stop it.';
             $this->errors[] = $invoiceCreationProblem;
             $this->addLog($webOrder, $invoiceCreationProblem);
         } else {
