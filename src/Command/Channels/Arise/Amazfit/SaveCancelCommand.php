@@ -17,7 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SaveCancelCommand extends Command
 {
-    protected static $defaultName = 'app:amazfit-cancel-orders';
+    protected static $defaultName = 'app:arise-amazfit-cancel-orders';
     protected static $defaultDescription = 'Retrieve all Amazfit orders cancelled online';
 
 

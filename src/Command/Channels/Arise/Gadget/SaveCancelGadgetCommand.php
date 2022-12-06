@@ -7,7 +7,7 @@ use App\Entity\IntegrationChannel;
 
 class SaveCancelGadgetCommand extends SaveCancelCommand
 {
-    protected static $defaultName = 'app:arise-cancel-orders';
+    protected static $defaultName = 'app:arise-gadget-cancel-orders';
     protected static $defaultDescription = 'Retrieve all arise orders cancelled online';
 
 
