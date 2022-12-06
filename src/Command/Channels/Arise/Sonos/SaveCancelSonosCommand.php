@@ -2,10 +2,10 @@
 
 namespace App\Command\Channels\Arise\Sonos;
 
-use App\Command\Channels\Arise\Amazfit\SaveCancelCommand;
+use App\Command\Channels\Arise\AriseSaveCancelCommand;
 use App\Entity\IntegrationChannel;
 
-class SaveCancelSonosCommand extends SaveCancelCommand
+class SaveCancelSonosCommand extends AriseSaveCancelCommand
 {
     protected static $defaultName = 'app:arise-sonos-cancel-orders';
     protected static $defaultDescription = 'Retrieve all sonos arise orders cancelled online';

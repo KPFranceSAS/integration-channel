@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Command\Channels\Arise\Amazfit;
+namespace App\Command\Integrator;
 
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\Connector\GadgetIberiaConnector;
 use App\Channels\Arise\AriseApiParent;
 use App\Entity\IntegrationChannel;
@@ -15,36 +16,32 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class SaveCancelCommand extends Command
+abstract class SaveCancelCommand extends Command
 {
-    protected static $defaultName = 'app:arise-amazfit-cancel-orders';
-    protected static $defaultDescription = 'Retrieve all Amazfit orders cancelled online';
-
-
     public function __construct(
         ManagerRegistry $manager,
         ApiAggregator $apiAggregator,
         LoggerInterface $logger,
         MailService $mailService,
-        GadgetIberiaConnector $gadgetIberiaConnector
+        BusinessCentralAggregator $businessCentralAggregator
     ) {
         parent::__construct();
         $this->apiAggregator = $apiAggregator;
         $this->logger = $logger;
-        $this->gadgetIberiaConnector = $gadgetIberiaConnector;
+        $this->businessCentralAggregator = $businessCentralAggregator;
         $this->manager = $manager->getManager();
         $this->mailService = $mailService;
     }
 
 
-    protected function getApi(): AriseApiParent
+    protected function getApi()
     {
         return $this->apiAggregator->getApi($this->getChannel());
     }
 
     protected $manager;
 
-    protected $gadgetIberiaConnector;
+    protected $businessCentralAggregator;
 
     protected $apiAggregator;
 
@@ -74,7 +71,7 @@ class SaveCancelCommand extends Command
         $this->manager->flush();
 
         if (count($this->errors) > 0) {
-            $this->mailService->sendEmailChannel($this->getChannel(), 'Order Cancelation  Error', implode("<br/>", $this->errors));
+            $this->mailService->sendEmailChannel($this->getChannel(), 'Order Cancelation Report', implode("<br/>", $this->errors));
         }
 
 
@@ -82,34 +79,24 @@ class SaveCancelCommand extends Command
     }
 
 
-    protected function getChannel()
-    {
-        return IntegrationChannel::CHANNEL_AMAZFIT_ARISE;
-    }
+    abstract protected function getChannel();
 
 
-    protected function checkOrderStatus(WebOrder $webOrder)
-    {
-        $orderArise = $this->getApi()->getOrder($webOrder->getExternalNumber());
-        foreach ($orderArise->lines as $line) {
-            if ($line->status == 'canceled') {
-                $this->cancelSaleOrder($webOrder, $line->cancel_return_initiator. '>'.$line->reason);
-                return;
-            }
-        }
-    }
-
+    abstract protected function checkOrderStatus(WebOrder $webOrder);
+   
 
     protected function cancelSaleOrder(WebOrder $webOrder, $reason)
     {
+        $bcConnector = $this->businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
+
         $this->addLog($webOrder, $reason);
         $this->errors[] = $webOrder . '  has been cancelled for the following reason : '.$reason;
 
         $webOrder->setStatus(WebOrder::STATE_CANCELLED);
-        $saleOrder = $this->gadgetIberiaConnector->getSaleOrderByNumber($webOrder->getOrderErp());
+        $saleOrder = $bcConnector->getSaleOrderByNumber($webOrder->getOrderErp());
         if ($saleOrder) {
             try {
-                $result = $this->gadgetIberiaConnector->deleteSaleOrder($saleOrder['id']);
+                $result = $bcConnector->deleteSaleOrder($saleOrder['id']);
                 $this->addLog($webOrder, 'Sale order ' . $webOrder->getOrderErp() . ' have been deleted');
                 $this->errors[] = 'Sale order ' . $webOrder->getOrderErp() . ' have been deleted';
             } catch (Exception $e) {
@@ -117,11 +104,11 @@ class SaveCancelCommand extends Command
                 $this->errors[] = 'You need to advise warehouse to stop shipment.';
             }
         } else {
-            $this->addLog($webOrder, 'Sale order ' . $webOrder->getOrderErp() . ' have already been deleted');
+            $this->addLog($webOrder, 'Sale order ' . $webOrder->getOrderErp() . ' is not present');
         }
 
 
-        $saleInvoice = $this->gadgetIberiaConnector->getSaleInvoiceByOrderNumber($webOrder->getOrderErp());
+        $saleInvoice = $bcConnector->getSaleInvoiceByOrderNumber($webOrder->getOrderErp());
         if ($saleInvoice) {
             $invoiceCreationProblem = 'Invoice ' . $saleInvoice['number'].' has been created. Check with warehouse the state of the shipment and to stop it.';
             $this->errors[] = $invoiceCreationProblem;
