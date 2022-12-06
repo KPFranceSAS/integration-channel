@@ -139,7 +139,7 @@ class PricingCrudController extends AdminCrudController
         $fields = $this->getFieldsExport();
 
         $saleChannels = $this->container->get('doctrine')->getManager()->getRepository(SaleChannel::class)->findAll();
-        $header = ['sku'];
+        $header = ['sku', 'unitCost'];
         foreach ($saleChannels as $saleChannel) {
             $header[]=$saleChannel->getCode().'-enabled';
             $header[]=$saleChannel->getCode().'-price';
@@ -156,6 +156,7 @@ class PricingCrudController extends AdminCrudController
         foreach ($results as $result) {
             $productArray = array_fill_keys($header, null);
             $productArray['sku'] = $result->getSku();
+            $productArray['unitCost'] = $result->getUnitCost();
             foreach ($result->getProductSaleChannels() as $productSaleChannel) {
                 $productArray[$productSaleChannel->getSaleChannel()->getCode().'-enabled']=(int)$productSaleChannel->getEnabled();
                 $productArray[$productSaleChannel->getSaleChannel()->getCode().'-price']= $productSaleChannel->getPrice() ? $productSaleChannel->getPrice()  :'';

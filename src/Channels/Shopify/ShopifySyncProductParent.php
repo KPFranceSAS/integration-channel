@@ -42,6 +42,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
 
     protected $categoriesProducts;
 
+    
     public function retrievAllChildren($parent)
     {
         $categories = $this->akeneoConnector->getAllChildrenCategoriesByParent($parent);
@@ -101,17 +102,9 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
             $this->integrateProductSimple($productSimple);
         }
 
-
         foreach ($productVariants as $productVariant) {
             $this->integrateProductVariant($productVariant);
         }
-
-
-
-        
-
-
-
     }
 
 
@@ -130,9 +123,9 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     public function cleanCategories(array $categories)
     {
         $this->categoriesApi  =  $this->getShopifyApi()->getAllCustomCategory();
-        foreach($this->categoriesApi as $categoryApi){
-            if(!array_key_exists($categoryApi['handle'], $categories)){
-               $deletion =  $this->getShopifyApi()->deleteCustomCategory($categoryApi['id']);
+        foreach ($this->categoriesApi as $categoryApi) {
+            if (!array_key_exists($categoryApi['handle'], $categories)) {
+                $deletion =  $this->getShopifyApi()->deleteCustomCategory($categoryApi['id']);
             }
         }
     }
@@ -389,38 +382,37 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     protected function associateProductCollection(array $productShopify, array $categories)
     {
         $collectProductShopify = $this->getShopifyApi()->getAllCollectsByProduct($productShopify['id']);
-        foreach($categories as $categorie){
+        foreach ($categories as $categorie) {
             $this->logger->info('Association with collection '.$categorie);
-            if(array_key_exists($categorie, $this->categoriesProducts)){
+            if (array_key_exists($categorie, $this->categoriesProducts)) {
                 $this->logger->info('Corresponding with tree '.$categorie);
                 $found= false;
                 $catgeoryShopify = $this->checkIfCategoryPresent($categorie);
-                foreach($collectProductShopify as $key => $collect){
-                    if($collect['collection_id'] == $catgeoryShopify['id']){
+                foreach ($collectProductShopify as $key => $collect) {
+                    if ($collect['collection_id'] == $catgeoryShopify['id']) {
                         $this->logger->info('Link created with collection '.$catgeoryShopify['handle']);
                         unset($collectProductShopify[$key]);
                         $found = true;
                     }
                 }
 
-                if($found===false){
-                   $this->logger->info('Create Link with collection '.$catgeoryShopify['handle']);
-                   $reponse = $this->getShopifyApi()->createCollect(
+                if ($found===false) {
+                    $this->logger->info('Create Link with collection '.$catgeoryShopify['handle']);
+                    $reponse = $this->getShopifyApi()->createCollect(
                         [
                             'collection_id'=> $catgeoryShopify["id"],
                             'product_id'=> $productShopify["id"],
-                    ]);
-                 }
+                        ]
+                    );
+                }
             } else {
                 $this->logger->info('Not corresponding with tree '.$categorie);
             }
-            
         }
 
-        foreach($collectProductShopify as $collectProduct ){
+        foreach ($collectProductShopify as $collectProduct) {
             $this->getShopifyApi()->deleteCollect($collectProduct['id']);
         }
-        
     }
 
 
@@ -535,9 +527,6 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     }
 
 
-
-
-
     protected function getDescription($productPim)
     {
         $description = $this->getAttributeSimple($productPim, 'description', $this->getLocale());
@@ -551,38 +540,5 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         }
 
         return null;
-    }
-
-
-    protected function getAttributeSimple($productPim, $nameAttribute, $locale=null)
-    {
-        if (array_key_exists($nameAttribute, $productPim['values'])) {
-            if ($locale) {
-                foreach ($productPim['values'][$nameAttribute] as $attribute) {
-                    if ($attribute['locale']==$locale) {
-                        return $attribute['data'];
-                    }
-                }
-            } else {
-                return  $productPim['values'][$nameAttribute][0]["data"];
-            }
-        }
-        return null;
-    }
-
-
-    protected function getTranslationLabel($nameAttribute, $locale)
-    {
-        $attribute = $this->akeneoConnector->getAttribute($nameAttribute);
-        return array_key_exists($locale, $attribute['labels']) ? $attribute['labels'][$locale] : $nameAttribute;
-    }
-
-
-   
-
-    protected function getTranslationOption($attributeCode, $code, $locale)
-    {
-        $attribute = $this->akeneoConnector->getAttributeOption($attributeCode, $code);
-        return array_key_exists($locale, $attribute['labels']) ? $attribute['labels'][$locale] : $code;
     }
 }

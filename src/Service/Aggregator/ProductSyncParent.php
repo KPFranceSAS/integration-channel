@@ -60,4 +60,41 @@ abstract class ProductSyncParent
     {
         return $this->apiAggregator->getApi($this->getChannel());
     }
+
+
+
+
+
+
+    protected function getAttributeSimple($productPim, $nameAttribute, $locale=null)
+    {
+        if (array_key_exists($nameAttribute, $productPim['values'])) {
+            if ($locale) {
+                foreach ($productPim['values'][$nameAttribute] as $attribute) {
+                    if ($attribute['locale']==$locale) {
+                        return $attribute['data'];
+                    }
+                }
+            } else {
+                return  $productPim['values'][$nameAttribute][0]["data"];
+            }
+        }
+        return null;
+    }
+
+
+    protected function getTranslationLabel($nameAttribute, $locale)
+    {
+        $attribute = $this->akeneoConnector->getAttribute($nameAttribute);
+        return array_key_exists($locale, $attribute['labels']) ? $attribute['labels'][$locale] : $nameAttribute;
+    }
+
+
+   
+
+    protected function getTranslationOption($attributeCode, $code, $locale)
+    {
+        $attribute = $this->akeneoConnector->getAttributeOption($attributeCode, $code);
+        return array_key_exists($locale, $attribute['labels']) ? $attribute['labels'][$locale] : $code;
+    }
 }
