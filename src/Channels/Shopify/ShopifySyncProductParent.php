@@ -7,23 +7,13 @@ use App\Service\Aggregator\ProductSyncParent;
 
 abstract class ShopifySyncProductParent extends ProductSyncParent
 {
-    protected $logger;
-
-    protected $akeneoConnector;
-
-    protected $errors;
-
-    protected $mailer;
-
-    protected $businessCentralAggregator;
-
-    protected $apiAggregator;
-
     protected $productsApi;
 
+    protected $productsPim;
     protected $categoriesApi;
-    
+    protected $categoriesPim;
 
+    protected $categoriesProducts;
 
     abstract protected function getLocale();
 
@@ -38,9 +28,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         return $this->getApi();
     }
 
-    protected $categoriesPim;
 
-    protected $categoriesProducts;
 
     
     public function retrievAllChildren($parent)
@@ -53,21 +41,34 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     }
 
 
-
     public function syncProducts()
     {
-        $this->logger->info('Get all categories for main category');
-        $this->categoriesPim=[];
-        $this->categoriesProducts=[];
-        $this->retrievAllChildren($this->getCategoryTree());
-        $this->logger->info('Retrieved '.count($this->categoriesPim).' categories for main category');
-        
-        $this->logger->info('Get all products');
+        $this->getAllProducts();
+        $this->syncAllCategorys();
+        $this->syncAllProducts();
+    }
+
+
+    protected function getAllProducts()
+    {
+        $this->logger->info('Retrieve products from PIM');
         $products = $this->getProductsEnabledOnChannel();
+        $this->productsPim = [];
+        foreach ($products as $product) {
+            $this->productsPim[]=$product;
+        }
+        $this->logger->info('Found '.count($this->productsPim).' products from PIM');
+    }
+
+
+    protected function syncAllProducts()
+    {
+        $this->logger->info('Sync all products');
         $productSimples = [];
         $productVariants = [];
 
-        foreach ($products as $product) {
+        $this->logger->info('Organise products');
+        foreach ($this->productsPim as $product) {
             if ($product['parent']==null) {
                 $productSimples[] = $product;
             } else {
@@ -79,12 +80,6 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
                         'variants' => [],
                         'parents' => []
                     ];
-
-                    foreach ($parent['categories'] as $category) {
-                        if (array_key_exists($category, $this->categoriesPim) && !array_key_exists($category, $this->categoriesProducts)) {
-                            $this->categoriesProducts[$category] = $this->categoriesPim[$category];
-                        }
-                    }
                 }
                 if ($product['parent']!=$parent["code"]) {
                     $productVariants[$parent['code']]["parents"][]=$this->akeneoConnector->getProductModel($product['parent']);
@@ -93,11 +88,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
             }
         }
         $this->logger->info('End organise products');
-        foreach ($this->categoriesProducts as $categoryProduct) {
-            $this->integrateCategory($categoryProduct);
-        }
-        $this->cleanCategories($this->categoriesProducts);
-
+        
         foreach ($productSimples as $productSimple) {
             $this->integrateProductSimple($productSimple);
         }
@@ -109,7 +100,39 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
 
 
 
-    public function integrateCategory(array $category)
+
+    protected function syncAllCategorys()
+    {
+        $this->logger->info('Get all categories for main category');
+        $this->categoriesPim=[];
+        $this->categoriesProducts=[];
+        $this->retrievAllChildren($this->getCategoryTree());
+        $this->logger->info('Retrieved '.count($this->categoriesPim).' categories for main category');
+        
+        $this->logger->info('Get all product categorys');
+        
+        
+        foreach ($this->productsPim as $product) {
+            foreach ($product['categories'] as $category) {
+                if (array_key_exists($category, $this->categoriesPim) && !array_key_exists($category, $this->categoriesProducts)) {
+                    $this->categoriesProducts[$category] = $this->categoriesPim[$category];
+                }
+            }
+        }
+        $this->logger->info('End categories');
+
+        foreach ($this->categoriesProducts as $categoryProduct) {
+            $this->integrateCategory($categoryProduct);
+        }
+        $this->cleanCategories($this->categoriesProducts);
+    }
+
+
+
+
+
+
+    protected function integrateCategory(array $category)
     {
         $categoryShopify = $this->checkIfCategoryPresent($category['code']);
         if (!$categoryShopify) {
@@ -120,7 +143,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     }
 
 
-    public function cleanCategories(array $categories)
+    protected function cleanCategories(array $categories)
     {
         $this->categoriesApi  =  $this->getShopifyApi()->getAllCustomCategory();
         foreach ($this->categoriesApi as $categoryApi) {
@@ -134,7 +157,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
 
 
 
-    public function integrateProductVariant(array $product)
+    protected function integrateProductVariant(array $product)
     {
         $productShopify = $this->checkIfProductPresent($product['parent']['code']);
 
@@ -146,8 +169,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         $this->associateProductCollection($productShopify, $product['categories']);
     }
 
-
-    public function getParentProduct($productModelSku)
+    protected function getParentProduct($productModelSku)
     {
         $parent = $this->akeneoConnector->getProductModel($productModelSku);
         if ($this->getNbLevels()==1) {
@@ -157,19 +179,6 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         }
     }
 
-
-
-
-    public function getFamilyApi($identifier, $langage)
-    {
-        $family =  $this->akeneoConnector->getFamily($identifier);
-        return array_key_exists($langage, $family['labels']) ? $family['labels'][$langage] : $identifier;
-    }
-
-
-   
-
-    
     protected function checkIfCategoryPresent($code)
     {
         if (!$this->categoriesApi) {
@@ -242,10 +251,10 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         $productModel = $product['variants'][0];
 
         $productToCreate = [
-            'body_html' => $this->getDescription($productModel),
-            'title' => $this->getTitle($productModel, true),
+            'body_html' => $this->getDescription($productModel, $this->getLocale()),
+            'title' => $this->getTitle($productModel, $this->getLocale(), true),
             'handle' =>  $parent['code'],
-            'product_type' => $this->getFamilyApi($parent['family'], $this->getLocale()),
+            'product_type' => $this->getFamilyName($parent['family'], $this->getLocale()),
             'variants' => [
                     
             ],
@@ -338,10 +347,10 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         $productModel = $product['variants'][0];
         $this->logger->info('Update product variant '.$parent['code']);
         $productToUpdate = [
-            'body_html' => $this->getDescription($productModel),
-            'title' => $this->getTitle($productModel, true),
+            'body_html' => $this->getDescription($productModel, $this->getLocale()),
+            'title' => $this->getTitle($productModel, $this->getLocale(), true),
             'id' => $productShopify['id'],
-            'product_type' => $this->getFamilyApi($productModel['family'], $this->getLocale()),
+            'product_type' => $this->getFamilyName($productModel['family'], $this->getLocale()),
         ];
         $response = $this->getShopifyApi()->updateProduct($productShopify['id'], $productToUpdate);
         $body = $response->getDecodedBody();
@@ -385,19 +394,19 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         foreach ($categories as $categorie) {
             $this->logger->info('Association with collection '.$categorie);
             if (array_key_exists($categorie, $this->categoriesProducts)) {
-                $this->logger->info('Corresponding with tree '.$categorie);
+                $this->logger->info('|__Corresponding with tree '.$categorie);
                 $found= false;
                 $catgeoryShopify = $this->checkIfCategoryPresent($categorie);
                 foreach ($collectProductShopify as $key => $collect) {
                     if ($collect['collection_id'] == $catgeoryShopify['id']) {
-                        $this->logger->info('Link created with collection '.$catgeoryShopify['handle']);
+                        $this->logger->info('|__Link created with collection '.$catgeoryShopify['handle']);
                         unset($collectProductShopify[$key]);
                         $found = true;
                     }
                 }
 
                 if ($found===false) {
-                    $this->logger->info('Create Link with collection '.$catgeoryShopify['handle']);
+                    $this->logger->info('|__Create Link with collection '.$catgeoryShopify['handle']);
                     $reponse = $this->getShopifyApi()->createCollect(
                         [
                             'collection_id'=> $catgeoryShopify["id"],
@@ -406,7 +415,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
                     );
                 }
             } else {
-                $this->logger->info('Not corresponding with tree '.$categorie);
+                $this->logger->info('|__Not corresponding with tree '.$categorie);
             }
         }
 
@@ -415,21 +424,14 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         }
     }
 
-
-
-
-
-
-
-
     protected function createProductSimple(array $product)
     {
         $this->logger->info('Create product simple '.$product['identifier']);
         $productToCreate = [
-            'body_html' => $this->getDescription($product),
-            'title' => $this->getTitle($product),
+            'body_html' => $this->getDescription($product, $this->getLocale()),
+            'title' => $this->getTitle($product, $this->getLocale()),
             'handle' =>  $product['identifier'],
-            'product_type' => $this->getFamilyApi($product['family'], $this->getLocale()),
+            'product_type' => $this->getFamilyName($product['family'], $this->getLocale()),
             'variants' => [
                 [
                     "sku" => $product['identifier'],
@@ -460,10 +462,10 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     {
         $this->logger->info('Update product simple '.$product['identifier']);
         $productToUpdate = [
-            'body_html' => $this->getDescription($product),
-            'title' => $this->getTitle($product),
+            'body_html' => $this->getDescription($product, $this->getLocale()),
+            'title' => $this->getTitle($product, $this->getLocale()),
             'id' => $productShopify['id'],
-            'product_type' => $this->getFamilyApi($product['family'], $this->getLocale()),
+            'product_type' => $this->getFamilyName($product['family'], $this->getLocale()),
         ];
 
         $nbImageShopifys = count($productShopify['images']);
@@ -484,61 +486,5 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         $response = $this->getShopifyApi()->updateProduct($productShopify['id'], $productToUpdate);
         $body = $response->getDecodedBody();
         return $body['product'];
-    }
-
-
-    protected function getTitle($productPim, $isModel=false)
-    {
-        if ($isModel) {
-            $parentTitle = $this->getAttributeSimple($productPim, 'parent_name', $this->getLocale());
-            if ($parentTitle) {
-                return $parentTitle;
-            }
-        }
-        
-
-
-        $title = $this->getAttributeSimple($productPim, 'article_name', $this->getLocale());
-        if ($title) {
-            return $title;
-        }
-
-        $titleDefault = $this->getAttributeSimple($productPim, 'article_name_defaut', $this->getLocale());
-        if ($titleDefault) {
-            return $titleDefault;
-        }
-
-        return $this->getAttributeSimple($productPim, 'erp_name');
-    }
-
-
-    protected function getAttributePrice($productPim, $nameAttribute, $currency)
-    {
-        $valueAttribute = $this->getAttributeSimple($productPim, $nameAttribute);
-        if ($valueAttribute) {
-            foreach ($valueAttribute as $value) {
-                if ($value['currency']==$currency) {
-                    return $value["amount"];
-                }
-            }
-        }
-
-        return null;
-    }
-
-
-    protected function getDescription($productPim)
-    {
-        $description = $this->getAttributeSimple($productPim, 'description', $this->getLocale());
-        if ($description) {
-            return $description;
-        }
-
-        $decriptionDefault = $this->getAttributeSimple($productPim, 'description_defaut', $this->getLocale());
-        if ($decriptionDefault) {
-            return '<p>'.$decriptionDefault.'</p>';
-        }
-
-        return null;
     }
 }

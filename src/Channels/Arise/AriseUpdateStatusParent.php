@@ -16,7 +16,7 @@ abstract class AriseUpdateStatusParent extends UpdateStatusParent
 
     protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber)
     {
-        $result = $this->getAriseApi()->markOrderAsFulfill($order->getExternalNumber(), "DHL", $trackingNumber);
+        $result = $this->getAriseApi()->markOrderAsFulfill($order->getExternalNumber(), "DHL Parcel Spain", $trackingNumber);
         if ($result) {
             $this->addLogToOrder($order, 'Mark as fulfilled on Arise');
             return true;
