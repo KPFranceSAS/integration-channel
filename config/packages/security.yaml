@@ -40,6 +40,7 @@ security:
 
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/invoice/aliexpress, roles: PUBLIC_ACCESS }
+        - { path: ^/invoice/miravia, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: ROLE_USER }
 
 when@test:
