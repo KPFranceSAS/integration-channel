@@ -147,8 +147,9 @@ abstract class AriseIntegratorParent extends IntegratorParent
         $this->checkAdressPostal($orderBC->shippingPostalAddress);
 
         $orderBC->phoneNumber = $orderApi->address_shipping->phone;
+        $orderBC->email = $this->getEmailAddress($orderApi);
         $orderBC->externalDocumentNumber = (string)$orderApi->order_id;
-        $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
+        $orderBC->pricesIncludeTax = true;
 
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
         $livraisonFees = floatval($orderApi->shipping_fee);
@@ -215,6 +216,19 @@ abstract class AriseIntegratorParent extends IntegratorParent
             }
         }
         return  $isFulfilledByArise;
+    }
+
+
+
+    public function getEmailAddress($orderApi)
+    {
+        
+        foreach ($orderApi->lines as $line) {
+            if (strlen($line->digital_delivery_info)>0) {
+                return $line->digital_delivery_info;
+            }
+        }
+        return  null;
     }
 
 

@@ -4,6 +4,7 @@ namespace App\Channels\Arise;
 
 use App\Channels\Arise\AriseApiParent;
 use App\Service\Aggregator\ProductSyncParent;
+use stdClass;
 
 abstract class AriseSyncProductParent extends ProductSyncParent
 {
@@ -12,10 +13,15 @@ abstract class AriseSyncProductParent extends ProductSyncParent
 
     abstract protected function getLocale();
 
-    
     protected function getAriseApi(): AriseApiParent
     {
         return $this->getApi();
+    }
+
+
+    protected function getNbLevels()
+    {
+      return 1;
     }
 
 
@@ -52,7 +58,7 @@ abstract class AriseSyncProductParent extends ProductSyncParent
         }
         $this->logger->info('Process variant products '.count($productVariants));
         foreach ($productVariants as $productVariant) {
-            //$this->integrateProductVariant($productVariant);
+            $this->integrateProductVariant($productVariant);
         }
     }
 
@@ -63,13 +69,13 @@ abstract class AriseSyncProductParent extends ProductSyncParent
 
     public function integrateProductVariant(array $product)
     {
-        $productShopify = $this->checkIfProductPresent($product['parent']['code']);
-
-        if (!$productShopify) {
-            $productShopify = $this->createProductVariant($product);
+        $productArise = $this->checkIfProductPresent($product['parent']['code']);
+        if (!$productArise) {
+            $productResult = $this->createProductVariant($product);
         } else {
-            $productShopify = $this->updateProductVariant($productShopify, $product);
+            $productResult = $this->updateProductVariant($productArise, $product);
         }
+        dump($productResult);
     }
 
 
@@ -89,8 +95,7 @@ abstract class AriseSyncProductParent extends ProductSyncParent
 
         foreach ($this->productsApi as $productApi) {
             foreach ($productApi->skus as $sku) {
-                
-                if ($sku->SellerSku == strtolower($skuProduct)) {
+                if ($sku->SellerSku == $skuProduct) {
                     return $productApi;
                 }
             }
@@ -105,93 +110,46 @@ abstract class AriseSyncProductParent extends ProductSyncParent
         $this->logger->info('Create product variant '.$parent['code']);
         $axesVariations = $this->getAxesVariation($parent['family'], $parent['family_variant']);
         $productModel = $product['variants'][0];
-
-        $productToCreate = [
-            'body_html' => $this->getDescription($productModel, $this->getLocale()),
-            'title' => $this->getTitle($productModel, $this->getLocale(), true),
-            'handle' =>  $parent['code'],
-            'variants' => [
-            ],
-            'images' => []
-        ];
+        
+        $productToCreate = $this->getArrayProductGlobal($productModel, true);
+        $productToCreate['images'] = $this->getTransferedUrlImages($productModel);
 
         $valueVariants = [];
         foreach ($axesVariations as $key => $axeVariation) {
-            $valueVariants[] = [
-                                'name'=> $this->getTranslationLabel($axeVariation, $this->getLocale()) ,
-                                "values" => []
-                                ];
+            $i = $key+1;
+            $valueVariants["Variation".$i] = [
+                                'name'=> $axeVariation ,
+                                
+                                'hasImage' =>true,
+                                "customize" => false,
+                                "options" => [
+                                    'option' => []
+                                ]
+             ];
         }
 
-        for ($i=2;$i<10;$i++) {
-            $imageUrl = $this->getAttributeSimple($productModel, 'image_url_'.$i);
-            if ($imageUrl) {
-                $productToCreate['images'][]=[
-                    'src' => $imageUrl
-                ];
-            }
-        }
-
-        $imageUrlsVariants = [];
         foreach ($product['variants'] as $variant) {
             $this->logger->info('Add  variant '.$variant['identifier']);
-            $variantToCreate = [
-                "sku" => $variant['identifier'],
-                "barcode" => $this->getAttributeSimple($variant, 'ean'),
-                "inventory_management" => 'shopify',
-                "price" => $this->getAttributePrice($variant, 'msrp', 'EUR'),
-            ];
-
-            $imageUrl = $this->getAttributeSimple($variant, 'image_url_1');
-            if ($imageUrl) {
-                $imageUrlsVariants[$variant['identifier']] = $imageUrl;
-            }
+            $variantToCreate=$this->getArrayProductSku($variant);
+            $variantToCreate['Images']['Image']= $this->getTransferedUrlImages($variant, 1);
+           
 
             foreach ($axesVariations as $key => $axeVariation) {
                 $i = $key+1;
                 $value = $this->getAttributeSimple($variant, $axeVariation);
                 $translatedValue = $this->getTranslationOption($axeVariation, $value, $this->getLocale());
-                $variantToCreate['option'.$i] = $translatedValue;
-                if (!in_array($translatedValue, $valueVariants[$key]['values'])) {
-                    $valueVariants[$key]['values'][]=$translatedValue;
+                $variantToCreate[$axeVariation] = $translatedValue;
+                if (!in_array($translatedValue, $valueVariants["Variation".$i]['options']['option'])) {
+                    $valueVariants["Variation".$i]['options']['option'][]=$translatedValue;
                 }
             }
 
-            $productToCreate['variants'][]=$variantToCreate;
+            $productToCreate['Skus']['Sku'][]=$variantToCreate;
         }
+        $productToCreate['Variation']=$valueVariants;
 
-            
-        $productToCreate['options']=$valueVariants;
-
-        $response =  $this->getAriseApi()->createProduct($productToCreate);
-        $body = $response->getDecodedBody();
-        $productCreated = $body['product'];
-
-
-        $mainImageFound = false;
-
-        foreach ($imageUrlsVariants as $sku => $url) {
-            foreach ($productCreated["variants"] as $variationCreated) {
-                if ($variationCreated['sku'] == $sku) {
-                    $this->logger->info('Add product variant image '.$sku);
-                    $imageCreated = [
-                        'src' => $url,
-                        'product_id' => $productCreated['id'],
-                        "variant_ids" => [
-                            $variationCreated['id']
-                        ]
-                    ];
-                    if (!$mainImageFound) {
-                        $mainImageFound= true;
-                        $imageCreated['position'] = 1;
-                    }
-
-                    $response = $this->getAriseApi()->createImagesProduct($productCreated['id'], $imageCreated);
-                }
-            }
-        }
-
-        return $productCreated;
+        dump($productToCreate);
+        return  $this->getAriseApi()->createProduct($productToCreate);
     }
 
 
@@ -202,11 +160,11 @@ abstract class AriseSyncProductParent extends ProductSyncParent
         $productModel = $product['variants'][0];
         $this->logger->info('Update product variant '.$parent['code']);
         $productToUpdate = [
-            'body_html' => $this->getDescription($productModel),
-            'title' => $this->getTitle($productModel, true),
+            'body_html' => $this->getDescription($productModel, $this->getLocale()),
+            'title' => $this->getTitle($productModel, $this->getLocale(), true),
             'id' => $productShopify['id'],
         ];
-        $response = $this->getAriseApi()->updateProduct($productShopify['id'], $productToUpdate);
+        $response = $this->getAriseApi()->updateProduct($productToUpdate);
         $body = $response->getDecodedBody();
         return $body['product'];
     }
@@ -230,77 +188,122 @@ abstract class AriseSyncProductParent extends ProductSyncParent
     protected function createProductSimple(array $product)
     {
         $this->logger->info('Create product simple '.$product['identifier']);
+        $images = $this->getTransferedUrlImages($product);
+        $productToCreate = $this->getArrayProductGlobal($product);
+        $productToCreate['Skus']['Sku'][]=$this->getArrayProductSku($product);
+        
+        if (count($images)>0) {
+            $productToCreate['images'] = $images;
+        }
+        return $this->getAriseApi()->createProduct($productToCreate);
+    }
 
+
+
+    protected function getTransferedUrlImages(array $product, $nbImages=9){
         $images = [];
-
-        for ($i=1;$i<10;$i++) {
+        for ($i=1;$i<=$nbImages;$i++) {
             $imageUrl = $this->getAttributeSimple($product, 'image_url_'.$i);
             if ($imageUrl) {
-                $images[$imageUrl]=[
-                    'src' => $imageUrl
-                ];
+                $imageMigrated = $this->getAriseApi()->migrateImage($imageUrl);
+                if ($imageMigrated) {
+                    $images[]=$imageMigrated;
+                }
             }
         }
+        return $images;
+    }
 
 
-        $productToCreate = [
-            "PrimaryCategory" => (int)$this->getAttributeSimple($product, 'arise_category_id'),
+
+
+
+
+    protected function getArrayProductGlobal(array $product, $isModel=false)
+    {
+        return [
+            "PrimaryCategory" => (int) $this->getAttributeSimple($product, 'arise_category_id'),
             "Attributes" => [
-                'name' => $this->getTitle($product, $this->getLocale()),
+                'name' => $this->getTitle($product, $this->getLocale(), $isModel),
                 'description' => $this->getDescription($product, $this->getLocale()),
+                'short_description' => $this->getAttributeSimple($product, 'short_description', $this->getLocale()),
+                'brand' => $this->getAttributeChoice($product, 'brand', $this->getLocale()),
+                "delivery_option_sof" => "No",
+                "delivery_option_standard" => "No",
+                "delivery_option_express" => "Yes",
+                "Hazmat" => "None",
             ],
             'Skus' => [
-                'Sku' => [
-                    [
-                        "sku" => $product['identifier'],
-                        "ean_code" => $this->getAttributeSimple($product, 'ean'),
-                        "quantity" => 0,
-                        "price" => $this->getAttributePrice($product, 'msrp', 'EUR'),
-                        "package_length" => $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER'),
-                        "package_width" => $this->getAttributeUnit($product, 'package_width', 'CENTIMETER'),
-                        "package_height" => $this->getAttributeUnit($product, 'package_height', 'CENTIMETER'),
-                        "package_weight" => $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM'),
-                    ]
-                ]
-            ],
-            'images' => [],
+                'Sku' => []
+            ]
         ];
-
-        dump($productToCreate);
-
-        //$response = $this->getAriseApi()->createProduct($productToCreate);
-        //$body = $response->getDecodedBody();
-        //return $body['product'];
     }
+
+
+    protected function getArrayProductSku(array $product)
+    {
+        return [
+            "SellerSku" => $product['identifier'],
+            "ean_code" => $this->getAttributeSimple($product, 'ean'),
+            "quantity" => 0,
+            "price" => $this->getAttributePrice($product, 'msrp', 'EUR'),
+            "package_length" => (int) $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER'),
+            "package_width" => (int) $this->getAttributeUnit($product, 'package_width', 'CENTIMETER'),
+            "package_height" => (int) $this->getAttributeUnit($product, 'package_height', 'CENTIMETER'),
+            "package_weight" => $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM'),
+        ];
+    }
+
+
+
 
 
     protected function updateProductSimple(stdClass $productArise, array $product)
     {
         $this->logger->info('Update product simple '.$product['identifier']);
-        $productToUpdate = [
-            'body_html' => $this->getDescription($product, $this->getLocale()),
-            'title' => $this->getTitle($product, $this->getLocale()),
-            'id' => $productShopify['id'],
-            'product_type' => $this->getFamilyName($product['family'], $this->getLocale()),
-        ];
-
-        $nbImageShopifys = count($productShopify['images']);
+        $nbImagesArise = count($productArise->images);
         $imagesPim = [];
 
         for ($i=1;$i<10;$i++) {
             $imageUrl = $this->getAttributeSimple($product, 'image_url_'.$i);
             if ($imageUrl) {
-                $imagesPim[]=[
-                    'src' => $imageUrl
-                ];
+                $imagesPim[]=$imageUrl;
             }
         }
 
-        if (count($imagesPim)!=$nbImageShopifys) {
-            $productToUpdate['images'] = $imagesPim;
+        
+
+        $images=[];
+
+        if (count($imagesPim)!=$nbImagesArise) {
+            foreach ($imagesPim as $imagePim) {
+                $imageMigrated = $this->getAriseApi()->migrateImage($imagePim);
+                if ($imageMigrated) {
+                    $images[]=$imageMigrated;
+                }
+            }
         }
-        $response = $this->getAriseApi()->updateProduct($productShopify['id'], $productToUpdate);
-        $body = $response->getDecodedBody();
-        return $body['product'];
+
+        $productToUpdate = [
+            "ItemId" => $productArise->item_id,
+            "Attributes" => [
+                'name' => $this->getTitle($product, $this->getLocale()),
+                'description' => $this->getDescription($product, $this->getLocale()),
+                'short_description' =>$this->getAttributeSimple($product, 'short_description', $this->getLocale()),
+            ],
+            'Skus' => [
+                "Sku" => [
+                    [
+                        "SellerSku" =>$product['identifier']
+                    ]
+                ]
+            ]
+        ];
+
+        if (count($images)>0) {
+            $productToUpdate['Images']["Image"] = $images;
+        }
+        $response = $this->getAriseApi()->updateProduct($productToUpdate);
+        return $response;
     }
 }

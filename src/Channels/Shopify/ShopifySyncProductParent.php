@@ -19,9 +19,6 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
 
     abstract protected function getCategoryTree();
 
-    abstract protected function getNbLevels();
-
-
     
     protected function getShopifyApi(): ShopifyApiParent
     {
@@ -169,16 +166,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         $this->associateProductCollection($productShopify, $product['categories']);
     }
 
-    protected function getParentProduct($productModelSku)
-    {
-        $parent = $this->akeneoConnector->getProductModel($productModelSku);
-        if ($this->getNbLevels()==1) {
-            return $parent;
-        } else {
-            return $parent['parent'] ? $this->akeneoConnector->getProductModel($parent['parent']) : $parent;
-        }
-    }
-
+   
     protected function checkIfCategoryPresent($code)
     {
         if (!$this->categoriesApi) {
@@ -246,8 +234,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     {
         $parent = $product['parent'];
         $this->logger->info('Create product variant '.$parent['code']);
-        $familyVariant = $this->akeneoConnector->getFamilyVariant($parent['family'], $parent['family_variant']);
-        $axesVariations = $this->getAxes($familyVariant);
+        $axesVariations = $this->getAxesVariation($parent['family'], $parent['family_variant']);
         $productModel = $product['variants'][0];
 
         $productToCreate = [
@@ -255,9 +242,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
             'title' => $this->getTitle($productModel, $this->getLocale(), true),
             'handle' =>  $parent['code'],
             'product_type' => $this->getFamilyName($parent['family'], $this->getLocale()),
-            'variants' => [
-                    
-            ],
+            'variants' => [],
             'images' => []
         ];
 
@@ -358,21 +343,6 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     }
 
 
-    protected function getAxes(array $variantFamily): array
-    {
-        $axes = [];
-        foreach ($variantFamily['variant_attribute_sets'] as $variantAttribute) {
-            foreach ($variantAttribute['axes'] as $axe) {
-                $axes[]= $axe;
-            }
-        }
-        if ($this->getNbLevels()==1 && count($axes)==2) {
-            unset($axes[0]);
-            $axes= array_values($axes);
-        }
-
-        return $axes;
-    }
 
     protected function integrateProductSimple(array $product)
     {

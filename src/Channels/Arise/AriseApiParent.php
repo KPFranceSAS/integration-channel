@@ -466,12 +466,6 @@ abstract class AriseApiParent implements ApiInterface
         }
     }
 
-
-
-
-
-
-
     public function checkIfOrderIsNotMarkedAsShipped($order): bool
     {
         foreach ($order->lines as $line) {
@@ -481,4 +475,51 @@ abstract class AriseApiParent implements ApiInterface
         }
         return false;
     }
+
+    public function createProduct($product)
+    {
+        $this->logger->info('Create product on Arise');
+        $request = new AriseRequest('/product/create', 'POST');
+        $params= [
+            'Request'=> [
+                 'Product'=> $product,
+            ]
+         ];
+        $request->addApiParam("payload", json_encode($params));
+        $reponse = $this->client->execute($request);
+        return $reponse;
+    }
+
+
+    public function updateProduct($product)
+    {
+        $this->logger->info('Update product on Arise');
+        $request = new AriseRequest('/product/update', 'POST');
+        $params= [
+            'Request'=> [
+                 'Product'=> $product,
+            ]
+        ];
+        $request->addApiParam("payload", json_encode($params));
+        $reponse = $this->client->execute($request);
+        return $reponse;
+    }
+
+
+    public function migrateImage($url)
+    {
+        $this->logger->info('Migrate url img '.$url);
+        $request = new AriseRequest('/image/migrate', 'POST');
+        $params= [
+            'Request'=> [
+                 'Image'=> [
+                    'Url' => $url,
+                 ],
+            ]
+         ];
+        $request->addApiParam("payload", json_encode($params));
+        $reponse = $this->client->execute($request);
+        return property_exists($reponse, 'data') ? $reponse->data->image->url : null;
+    }
+    
 }

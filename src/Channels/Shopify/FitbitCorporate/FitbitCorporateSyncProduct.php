@@ -8,10 +8,6 @@ use App\Entity\IntegrationChannel;
 
 class FitbitCorporateSyncProduct extends ShopifySyncProductParent
 {
-    protected function getNbLevels()
-    {
-        return 2;
-    }
 
     protected function getCategoryTree()
     {

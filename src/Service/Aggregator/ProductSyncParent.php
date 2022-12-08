@@ -77,10 +77,13 @@ abstract class ProductSyncParent
                 $axes[]= $axe;
             }
         }
+        if ($this->getNbLevels()==1 && count($axes)==2) {
+            unset($axes[0]);
+            $axes= array_values($axes);
+        }
+
         return $axes;
     }
-
-
 
 
     protected function getAttributeSimple($productPim, $nameAttribute, $locale=null)
@@ -159,6 +162,34 @@ abstract class ProductSyncParent
         return null;
     }
 
+    protected function getAttributeChoice($productPim, $nameAttribute, $locale)
+    {
+
+        $value = $this->getAttributeSimple($productPim, $nameAttribute);
+        if($value){
+            return $this->getTranslationOption($nameAttribute, $value, $locale);
+        }
+        return null;
+    }
+
+
+
+    protected function getParentProduct($productModelSku)
+    {
+        $parent = $this->akeneoConnector->getProductModel($productModelSku);
+        if ($this->getNbLevels()==1) {
+            return $parent;
+        } else {
+            return $parent['parent'] ? $this->akeneoConnector->getProductModel($parent['parent']) : $parent;
+        }
+    }
+
+    
+
+    protected function getNbLevels(){
+        return 2;
+    }
+
 
     protected function getAttributeUnit($productPim, $nameAttribute, $unitToConvert)
     {
@@ -206,7 +237,7 @@ abstract class ProductSyncParent
 
 
     
-
+    
 
 
 
