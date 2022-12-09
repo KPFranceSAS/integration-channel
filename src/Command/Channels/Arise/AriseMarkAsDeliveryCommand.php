@@ -83,24 +83,30 @@ abstract class AriseMarkAsDeliveryCommand extends Command
 
         if (!$webOrderArise) {
             $this->logger->info('Not order in this case...');
+        } else {
+            $this->logger->info('Check '.$webOrderArise);
         }
 
         $statutExpedition = $webOrderArise->getStatusExpedition();
         if ($statutExpedition && $statutExpedition['FechaEntrega']) {
-            $this->logger->info('Is delivered '.$statutExpedition['FechaEntrega'].' > '.$statutExpedition['Numero']);
-            $messageDelivery = 'Mark as delivered on '.$statutExpedition['FechaEntrega'];
-            if ($webOrderArise->haveNoLogWithMessage($messageDelivery)) {
-                $markOk =  $this->getApi()->markOrderAsDelivered($orderArise->order_id);
-                if ($markOk) {
-                    $this->logger->info($messageDelivery);
-                    $webOrderArise->addLog($messageDelivery);
-                    $this->manager->flush();
+            if ($statutExpedition['FechaEntrega']) {
+                $this->logger->info('Is delivered '.$statutExpedition['FechaEntrega'].' > '.$statutExpedition['Numero']);
+                $messageDelivery = 'Mark as delivered on '.$statutExpedition['FechaEntrega'];
+                if ($webOrderArise->haveNoLogWithMessage($messageDelivery)) {
+                    $markOk =  $this->getApi()->markOrderAsDelivered($orderArise->order_id);
+                    if ($markOk) {
+                        $this->logger->info($messageDelivery);
+                        $webOrderArise->addLog($messageDelivery);
+                        $this->manager->flush();
+                    }
+                } else {
+                    $this->logger->info('Already marked as delivered');
                 }
             } else {
-                $this->logger->info('Already marked as delivered');
+                $this->logger->info('Not yet delivered > '.$statutExpedition['Numero']);
             }
         } else {
-            $this->logger->info('Is not yet delivered');
+            $this->logger->info('Not found on DHL');
         }
     }
 }
