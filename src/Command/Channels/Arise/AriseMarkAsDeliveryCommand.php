@@ -67,7 +67,11 @@ abstract class AriseMarkAsDeliveryCommand extends Command
             $this->checkOrderStatus($orderArise);
         }
 
-        
+        $orderArises = $this->getApi()->getAllOrdersDelivered();
+
+        foreach ($orderArises as $orderArise) {
+            $this->checkOrderStatus($orderArise);
+        }
         
         return Command::SUCCESS;
     }
