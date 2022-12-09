@@ -47,13 +47,12 @@ abstract class AriseApiParent implements ApiInterface
             $realOffset =  $offset+1;
             $this->logger->info('Get orders batch n°' . $realOffset . ' / ' . $max_page . ' >>' . json_encode($params));
             $reponse = $this->client->execute($req);
-
             if ($reponse->data->count > 0) {
                 $orders = array_merge($orders, $reponse->data->orders);
             }
 
             $offset+=self::PAGINATION;
-            $max_page  = $reponse->data->count;
+            $max_page  = $reponse->data->countTotal;
         }
 
         return $orders;
