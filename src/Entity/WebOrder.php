@@ -11,6 +11,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
+use GuzzleHttp\Client;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -370,6 +371,29 @@ class WebOrder
     public function setPurchaseDateFromString($purchaseValue)
     {
         $this->purchaseDate =  DatetimeUtils::transformFromIso8601($purchaseValue);
+    }
+
+
+
+
+    public function getStatusExpedition(){
+        if($this->trackingUrl){
+            $codeTracking =str_replace('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/', '', $this->trackingUrl);;
+            try {
+                $client = new Client();
+                $response = $client->get(
+                    'https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $codeTracking,
+                    ['connect_timeout' => 1]
+                );
+                $body = json_decode((string) $response->getBody(), true);
+                if ($body) {
+                    return $body;
+                }
+            } catch (Exception $e) {
+                
+            }
+        }
+        return null;
     }
 
 

@@ -56,6 +56,31 @@ class DhlGetTracking
     }
 
 
+    public function isDeliveredExternalNumber($externalOrderNumber): bool
+    {
+        try {
+            $client = new Client();
+            $response = $client->get(
+                'https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $externalOrderNumber,
+                ['connect_timeout' => 1]
+            );
+            $body = json_decode((string) $response->getBody(), true);
+            if ($body) {
+                if ($body['FechaEntrega']) {
+                    return true;
+                }
+            }
+        } catch (Exception $e) {
+            $this->logger->alert('DHL is not accessible');
+        }
+
+        return false;
+    }
+
+
+
+
+
 
 
 

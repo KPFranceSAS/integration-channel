@@ -164,9 +164,8 @@ abstract class ProductSyncParent
 
     protected function getAttributeChoice($productPim, $nameAttribute, $locale)
     {
-
         $value = $this->getAttributeSimple($productPim, $nameAttribute);
-        if($value){
+        if ($value) {
             return $this->getTranslationOption($nameAttribute, $value, $locale);
         }
         return null;
@@ -186,16 +185,15 @@ abstract class ProductSyncParent
 
     
 
-    protected function getNbLevels(){
+    protected function getNbLevels()
+    {
         return 2;
     }
 
 
     protected function getAttributeUnit($productPim, $nameAttribute, $unitToConvert)
     {
-
         if (array_key_exists($nameAttribute, $productPim['values'])) {
-
             $valueAttribute = $productPim['values'][$nameAttribute][0]['data'];
             return $valueAttribute['amount'] > 0 ? $this->transformUnit($valueAttribute["unit"], $unitToConvert, $valueAttribute['amount']) : 0;
         }
@@ -220,17 +218,11 @@ abstract class ProductSyncParent
         ];
 
         if (!array_key_exists($unitBase, $factors) || !array_key_exists($unitFinal, $factors)) {
-            echo "Invalid units";
-            return;
+            $this->logger->critical("Invalid units ".$unitBase." or ".$unitFinal);
+            return 0;
         }
-    
-        // convert the value to base
-        $value_in_meters = $value * $factors[$unitBase];
-    
-        // convert the value from base to the desired unit
-        $converted_value = $value_in_meters / $factors[$unitFinal];
-    
-        return $converted_value;
+        $valueBase = $value * $factors[$unitBase];
+        return $valueBase / $factors[$unitFinal];
     }
 
 

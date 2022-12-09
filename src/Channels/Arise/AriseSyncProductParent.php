@@ -21,7 +21,7 @@ abstract class AriseSyncProductParent extends ProductSyncParent
 
     protected function getNbLevels()
     {
-      return 1;
+        return 1;
     }
 
 
@@ -119,9 +119,8 @@ abstract class AriseSyncProductParent extends ProductSyncParent
             $i = $key+1;
             $valueVariants["Variation".$i] = [
                                 'name'=> $axeVariation ,
-                                
                                 'hasImage' =>true,
-                                "customize" => false,
+                                "customize" => true,
                                 "options" => [
                                     'option' => []
                                 ]
@@ -200,7 +199,8 @@ abstract class AriseSyncProductParent extends ProductSyncParent
 
 
 
-    protected function getTransferedUrlImages(array $product, $nbImages=9){
+    protected function getTransferedUrlImages(array $product, $nbImages=9)
+    {
         $images = [];
         for ($i=1;$i<=$nbImages;$i++) {
             $imageUrl = $this->getAttributeSimple($product, 'image_url_'.$i);

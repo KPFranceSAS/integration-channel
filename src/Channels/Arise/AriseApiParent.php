@@ -78,8 +78,15 @@ abstract class AriseApiParent implements ApiInterface
         return $this->getOrders($params);
     }
 
-
-
+    public function getAllOrdersShipped()
+    {
+        $params = [
+            'status' => 'shipped',
+            'created_after' => '2022-09-01T09:00:00+08:00'
+        ];
+        return $this->getOrders($params);
+    }
+    
     
 
     /**
@@ -382,7 +389,7 @@ abstract class AriseApiParent implements ApiInterface
 
 
 
-    public function markAsDelivered($packageId)
+    public function markPackAsDelivered($packageId)
     {
         $this->logger->info('Delivered');
         $request = new AriseRequest('/order/package/sof/delivered');
@@ -454,7 +461,28 @@ abstract class AriseApiParent implements ApiInterface
                 $this->logger->info('Order was not mark as ready to ship');
                 return false;
             }
-            $wasMarkAsDelivered = $this->markAsDelivered($packId);
+            /*
+            $wasMarkAsDelivered = $this->markPackAsDelivered($packId);
+            if (!$wasMarkAsDelivered) {
+                $this->logger->info('Order was not mark as delivered');
+                return false;
+            }*/
+            return true;
+        } catch(Exception $e) {
+            $this->logger->critical($e->getMessage());
+            return false;
+        }
+    }
+
+
+
+
+    public function markOrderAsDelivered($orderId)
+    {
+        try {
+            $order = $this->getOrder($orderId);
+            $packId = $this->createPackForOrder($order);
+            $wasMarkAsDelivered = $this->markPackAsDelivered($packId);
             if (!$wasMarkAsDelivered) {
                 $this->logger->info('Order was not mark as delivered');
                 return false;
@@ -465,6 +493,9 @@ abstract class AriseApiParent implements ApiInterface
             return false;
         }
     }
+
+
+
 
     public function checkIfOrderIsNotMarkedAsShipped($order): bool
     {
@@ -521,5 +552,4 @@ abstract class AriseApiParent implements ApiInterface
         $reponse = $this->client->execute($request);
         return property_exists($reponse, 'data') ? $reponse->data->image->url : null;
     }
-    
 }

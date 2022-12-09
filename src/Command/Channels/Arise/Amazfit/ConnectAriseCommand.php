@@ -24,17 +24,17 @@ class ConnectAriseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->markAsDelivered();
+        $this->markPackAsDelivered();
         return Command::SUCCESS;
     }
 
     
-    private function markAsDelivered()
+    private function markPackAsDelivered()
     {
         $order =  $this->ariseApi->getOrder("62218628040");
         dump($order);
         //$pack = $this->ariseApi->createPackForOrder($order);
-        //$response  = $this->ariseApi->markAsDelivered($pack);
+        //$response  = $this->ariseApi->markPackAsDelivered($pack);
     }
 
 
@@ -103,7 +103,7 @@ class ConnectAriseCommand extends Command
         
 
 
-        $response  = $this->ariseApi->markAsDelivered('FP0739538250');
+        $response  = $this->ariseApi->markPackAsDelivered('FP0739538250');
         
 
         dump($response);
