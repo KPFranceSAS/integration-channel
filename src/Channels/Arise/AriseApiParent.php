@@ -80,7 +80,7 @@ abstract class AriseApiParent implements ApiInterface
     public function getAllOrdersShipped()
     {
         $params = [
-            'status' => 'shipped',
+            'status' => ['shipped', 'ready_to_ship', 'delivered'],
             'created_after' => '2022-09-01T09:00:00+08:00'
         ];
         return $this->getOrders($params);

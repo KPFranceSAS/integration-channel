@@ -24,8 +24,8 @@ class ConnectAriseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $orders = $this->ariseApi->getAllProducts();
-        dump(count($orders));
+        $orders = $this->ariseApi->getOrder("67512232274");
+        dump($orders);
         return Command::SUCCESS;
     }
 
