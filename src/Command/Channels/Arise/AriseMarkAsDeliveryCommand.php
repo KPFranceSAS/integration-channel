@@ -84,11 +84,11 @@ abstract class AriseMarkAsDeliveryCommand extends Command
         if (!$webOrderArise) {
             $this->logger->info('Not order in this case...');
         } else {
-            $this->logger->info('Check '.$webOrderArise);
+            $this->logger->info('>> Check '.$webOrderArise);
         }
 
         $statutExpedition = $webOrderArise->getStatusExpedition();
-        if ($statutExpedition && $statutExpedition['FechaEntrega']) {
+        if ($statutExpedition) {
             if ($statutExpedition['FechaEntrega']) {
                 $this->logger->info('Is delivered '.$statutExpedition['FechaEntrega'].' > '.$statutExpedition['Numero']);
                 $messageDelivery = 'Mark as delivered on '.$statutExpedition['FechaEntrega'];
