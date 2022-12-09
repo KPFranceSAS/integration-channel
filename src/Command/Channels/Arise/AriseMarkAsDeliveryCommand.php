@@ -67,11 +67,11 @@ abstract class AriseMarkAsDeliveryCommand extends Command
             $this->checkOrderStatus($orderArise);
         }
 
-        $orderArises = $this->getApi()->getAllOrdersDelivered();
+        /*$orderArises = $this->getApi()->getAllOrdersDelivered();
 
         foreach ($orderArises as $orderArise) {
             $this->checkOrderStatus($orderArise);
-        }
+        }*/
         
         return Command::SUCCESS;
     }
@@ -95,6 +95,7 @@ abstract class AriseMarkAsDeliveryCommand extends Command
 
         if (!$webOrderArise) {
             $this->logger->info('Not order in this case...');
+            return;
         } else {
             $this->logger->info('>> Check '.$webOrderArise);
         }
