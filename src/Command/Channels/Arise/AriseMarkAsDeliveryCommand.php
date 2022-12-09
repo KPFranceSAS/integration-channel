@@ -92,6 +92,7 @@ abstract class AriseMarkAsDeliveryCommand extends Command
             if ($webOrderArise->haveNoLogWithMessage($messageDelivery)) {
                 $markOk =  $this->getApi()->markOrderAsDelivered($orderArise->order_id);
                 if ($markOk) {
+                    $this->logger->info($messageDelivery);
                     $webOrderArise->addLog($messageDelivery);
                     $this->manager->flush();
                 }
