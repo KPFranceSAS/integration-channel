@@ -58,8 +58,9 @@ abstract class AriseMarkAsDeliveryCommand extends Command
         $orderArises = $this->getApi()->getAllOrdersShipped();
 
         foreach ($orderArises as $orderArise) {
-            $this->checkOrderStatus($orderArise);           
+            $this->checkOrderStatus($orderArise);
         }
+        
         return Command::SUCCESS;
     }
 
@@ -72,28 +73,33 @@ abstract class AriseMarkAsDeliveryCommand extends Command
 
     protected function checkOrderStatus(stdClass $orderArise)
     {
+        /**@var WebOrder */
         $webOrderArise = $this->manager->getRepository(WebOrder::class)->findOneBy([
             'channel'=>$this->getChannel(),
             'fulfilledBy'=> WebOrder::FULFILLED_BY_SELLER,
             'status' => WebOrder::STATE_INVOICED,
             'externalNumber'=>$orderArise->order_id
-        ]); 
+        ]);
 
-        if(!$webOrderArise){
+        if (!$webOrderArise) {
             $this->logger->info('Not order in this case...');
         }
 
         $statutExpedition = $webOrderArise->getStatusExpedition();
-        if($statutExpedition && $statutExpedition['FechaEntrega']){
+        if ($statutExpedition && $statutExpedition['FechaEntrega']) {
             $this->logger->info('Is delivered '.$statutExpedition['FechaEntrega'].' > '.$statutExpedition['Numero']);
-            $markOk =  $this->getApi()->markOrderAsDelivered($orderArise->order_id);
-            if($markOk){
-                $webOrderArise->addLog('Mark as delivered on '.$statutExpedition['FechaEntrega']);
+            $messageDelivery = 'Mark as delivered on '.$statutExpedition['FechaEntrega'];
+            if ($webOrderArise->haveNoLogWithMessage($messageDelivery)) {
+                $markOk =  $this->getApi()->markOrderAsDelivered($orderArise->order_id);
+                if ($markOk) {
+                    $webOrderArise->addLog($messageDelivery);
+                    $this->manager->flush();
+                }
+            } else {
+                $this->logger->info('Already marked as delivered');
             }
-        }else{
+        } else {
             $this->logger->info('Is not yet delivered');
         }
-        
     }
-
 }
