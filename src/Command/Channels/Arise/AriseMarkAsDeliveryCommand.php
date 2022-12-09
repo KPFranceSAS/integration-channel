@@ -55,7 +55,19 @@ abstract class AriseMarkAsDeliveryCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $orderArises = $this->getApi()->getAllOrdersShipped();
+        $orderArises = $this->getApi()->getAllOrdersShipping();
+
+        foreach ($orderArises as $orderArise) {
+            $this->checkOrderStatus($orderArise);
+        }
+
+        $orderArises = $this->getApi()->getAllOrdersReadyToShip();
+
+        foreach ($orderArises as $orderArise) {
+            $this->checkOrderStatus($orderArise);
+        }
+
+        $orderArises = $this->getApi()->getAllOrdersDelivered();
 
         foreach ($orderArises as $orderArise) {
             $this->checkOrderStatus($orderArise);

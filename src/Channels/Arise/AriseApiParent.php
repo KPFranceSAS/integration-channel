@@ -77,10 +77,28 @@ abstract class AriseApiParent implements ApiInterface
         return $this->getOrders($params);
     }
 
-    public function getAllOrdersShipped()
+    public function getAllOrdersReadyToShip()
     {
         $params = [
-            'status' => ['shipped', 'ready_to_ship', 'delivered'],
+            'status' => 'ready_to_ship',
+            'created_after' => '2022-09-01T09:00:00+08:00'
+        ];
+        return $this->getOrders($params);
+    }
+
+    public function getAllOrdersShipping()
+    {
+        $params = [
+            'status' => 'shipping',
+            'created_after' => '2022-09-01T09:00:00+08:00'
+        ];
+        return $this->getOrders($params);
+    }
+
+    public function getAllOrdersDelivered()
+    {
+        $params = [
+            'status' => 'delivered',
             'created_after' => '2022-09-01T09:00:00+08:00'
         ];
         return $this->getOrders($params);
