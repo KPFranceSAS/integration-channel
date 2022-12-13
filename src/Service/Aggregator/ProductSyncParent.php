@@ -191,18 +191,18 @@ abstract class ProductSyncParent
     }
 
 
-    protected function getAttributeUnit($productPim, $nameAttribute, $unitToConvert)
+    protected function getAttributeUnit($productPim, $nameAttribute, $unitToConvert, $nbRound)
     {
         if (array_key_exists($nameAttribute, $productPim['values'])) {
             $valueAttribute = $productPim['values'][$nameAttribute][0]['data'];
-            return $valueAttribute['amount'] > 0 ? $this->transformUnit($valueAttribute["unit"], $unitToConvert, $valueAttribute['amount']) : 0;
+            return $valueAttribute['amount'] > 0 ? $this->transformUnit($valueAttribute["unit"], $unitToConvert, $valueAttribute['amount'], $nbRound) : 0;
         }
         return null;
     }
 
 
 
-    protected function transformUnit($unitBase, $unitFinal, $value)
+    protected function transformUnit($unitBase, $unitFinal, $value, $nbRound)
     {
         $factors = [
             "KILOMETER" => 1000.0,
@@ -222,7 +222,7 @@ abstract class ProductSyncParent
             return 0;
         }
         $valueBase = $value * $factors[$unitBase];
-        return $valueBase / $factors[$unitFinal];
+        return round($valueBase / $factors[$unitFinal], $nbRound);
     }
 
 

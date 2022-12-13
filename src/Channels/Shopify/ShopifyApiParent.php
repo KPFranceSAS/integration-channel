@@ -271,7 +271,7 @@ abstract class ShopifyApiParent implements ApiInterface
             );
             $responseArray = $response->getDecodedBody();
             if (array_key_exists($indexKey, $responseArray)) {
-                $this->logger->info('Fetch ' . count($responseArray[$indexKey ]) . " new elements > ".$endPoint );
+                $this->logger->info('Fetch ' . count($responseArray[$indexKey ]) . " new elements > ".$endPoint);
                 $elements = array_merge($elements, $responseArray[$indexKey ]);
                 $this->logger->info('Fetch ' . count($elements) . " elements > ".$indexKey);
                 
@@ -306,9 +306,9 @@ abstract class ShopifyApiParent implements ApiInterface
         return $this->client->post('collects', ['collect' => $collect]);
     }
 
-    public function deleteCollect($collectId): array
+    public function deleteCollect($collectId)
     {
-        return $this->$this->client->delete('collects/'.$collectId);
+        return $this->client->delete('collects/'.$collectId);
     }
 
     public function getAllCustomCategory(): array

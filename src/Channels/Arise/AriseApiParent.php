@@ -533,6 +533,7 @@ abstract class AriseApiParent implements ApiInterface
                  'Product'=> $product,
             ]
          ];
+
         $request->addApiParam("payload", json_encode($params));
         $reponse = $this->client->execute($request);
         return $reponse;
@@ -566,6 +567,17 @@ abstract class AriseApiParent implements ApiInterface
             ]
          ];
         $request->addApiParam("payload", json_encode($params));
+        $reponse = $this->client->execute($request);
+        return property_exists($reponse, 'data') ? $reponse->data->image->url : null;
+    }
+
+
+
+    public function uploadImage($content)
+    {
+        $this->logger->info('Upload url img ');
+        $request = new AriseRequest('/image/upload', 'POST');
+        $request->addFileParam("image", $content);
         $reponse = $this->client->execute($request);
         return property_exists($reponse, 'data') ? $reponse->data->image->url : null;
     }

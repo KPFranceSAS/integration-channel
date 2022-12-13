@@ -4,6 +4,8 @@ namespace App\Channels\Arise;
 
 use App\Channels\Arise\AriseApiParent;
 use App\Service\Aggregator\ProductSyncParent;
+use Imagine\Gd\Imagine;
+use Imagine\Image\Box;
 use stdClass;
 
 abstract class AriseSyncProductParent extends ProductSyncParent
@@ -69,13 +71,12 @@ abstract class AriseSyncProductParent extends ProductSyncParent
 
     public function integrateProductVariant(array $product)
     {
-        $productArise = $this->checkIfProductPresent($product['parent']['code']);
+        $productArise = $this->checkIfProductPresent($product['variants'][0]['identifier']);
         if (!$productArise) {
             $productResult = $this->createProductVariant($product);
         } else {
             $productResult = $this->updateProductVariant($productArise, $product);
         }
-        dump($productResult);
     }
 
 
@@ -117,7 +118,7 @@ abstract class AriseSyncProductParent extends ProductSyncParent
         $valueVariants = [];
         foreach ($axesVariations as $key => $axeVariation) {
             $i = $key+1;
-            $valueVariants["Variation".$i] = [
+            $valueVariants["variation".$i] = [
                                 'name'=> $axeVariation ,
                                 'hasImage' =>true,
                                 "customize" => true,
@@ -138,34 +139,36 @@ abstract class AriseSyncProductParent extends ProductSyncParent
                 $value = $this->getAttributeSimple($variant, $axeVariation);
                 $translatedValue = $this->getTranslationOption($axeVariation, $value, $this->getLocale());
                 $variantToCreate[$axeVariation] = $translatedValue;
-                if (!in_array($translatedValue, $valueVariants["Variation".$i]['options']['option'])) {
-                    $valueVariants["Variation".$i]['options']['option'][]=$translatedValue;
+                if (!in_array($translatedValue, $valueVariants["variation".$i]['options']['option'])) {
+                    $valueVariants["variation".$i]['options']['option'][]=$translatedValue;
                 }
             }
 
             $productToCreate['Skus']['Sku'][]=$variantToCreate;
         }
-        $productToCreate['Variation']=$valueVariants;
-
-        dump($productToCreate);
+        $productToCreate['variation']=$valueVariants;
         return  $this->getAriseApi()->createProduct($productToCreate);
     }
 
 
 
-    protected function updateProductVariant(array $productShopify, array $product)
+    protected function updateProductVariant(stdClass $productArise, array $product)
     {
         $parent = $product['parent'];
-        $productModel = $product['variants'][0];
         $this->logger->info('Update product variant '.$parent['code']);
-        $productToUpdate = [
-            'body_html' => $this->getDescription($productModel, $this->getLocale()),
-            'title' => $this->getTitle($productModel, $this->getLocale(), true),
-            'id' => $productShopify['id'],
-        ];
-        $response = $this->getAriseApi()->updateProduct($productToUpdate);
-        $body = $response->getDecodedBody();
-        return $body['product'];
+        
+
+        /* $parent = $product['parent'];
+         $productModel = $product['variants'][0];
+         $this->logger->info('Update product variant '.$parent['code']);
+         $productToUpdate = [
+             'body_html' => $this->getDescription($productModel, $this->getLocale()),
+             'title' => $this->getTitle($productModel, $this->getLocale(), true),
+             'id' => $productShopify['id'],
+         ];
+         $response = $this->getAriseApi()->updateProduct($productToUpdate);
+         $body = $response->getDecodedBody();
+         return $body['product'];*/
     }
 
 
@@ -205,13 +208,46 @@ abstract class AriseSyncProductParent extends ProductSyncParent
         for ($i=1;$i<=$nbImages;$i++) {
             $imageUrl = $this->getAttributeSimple($product, 'image_url_'.$i);
             if ($imageUrl) {
-                $imageMigrated = $this->getAriseApi()->migrateImage($imageUrl);
-                if ($imageMigrated) {
-                    $images[]=$imageMigrated;
+                list($iwidth, $iheight) = getimagesize($imageUrl);
+                if ($iwidth > self::MAX_SIZE || $iheight > self::MAX_SIZE) {
+                    $content = $this->resize($imageUrl);
+                    $imageUploaded = $this->getAriseApi()->uploadImage($content);
+                    if ($imageUploaded) {
+                        $this->logger->info('Image uploaded '.$imageUploaded);
+                        $images[]=$imageUploaded;
+                    }
+                } else {
+                    $imageMigrated = $this->getAriseApi()->migrateImage($imageUrl);
+                    if ($imageMigrated) {
+                        $this->logger->info('Image migarted '.$imageMigrated);
+                        $images[]=$imageMigrated;
+                    }
                 }
             }
         }
         return $images;
+    }
+
+
+    protected const MAX_SIZE = 5000;
+
+    public function resize(string $filename): string
+    {
+        list($iwidth, $iheight) = getimagesize($filename);
+        $ratio = $iwidth / $iheight;
+        $width = self::MAX_SIZE;
+        $height = self::MAX_SIZE;
+        if ($width / $height > $ratio) {
+            $width = $height * $ratio;
+        } else {
+            $height = $width / $ratio;
+        }
+        $imagine = new Imagine();
+
+        $photo = $imagine->open($filename);
+
+        $photo->resize(new Box($width, $height));
+        return $photo->__toString();
     }
 
 
@@ -245,12 +281,12 @@ abstract class AriseSyncProductParent extends ProductSyncParent
         return [
             "SellerSku" => $product['identifier'],
             "ean_code" => $this->getAttributeSimple($product, 'ean'),
-            "quantity" => 0,
-            "price" => $this->getAttributePrice($product, 'msrp', 'EUR'),
-            "package_length" => (int) $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER'),
-            "package_width" => (int) $this->getAttributeUnit($product, 'package_width', 'CENTIMETER'),
-            "package_height" => (int) $this->getAttributeUnit($product, 'package_height', 'CENTIMETER'),
-            "package_weight" => $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM'),
+            "quantity" => "0",
+            "price" => (string)$this->getAttributePrice($product, 'msrp', 'EUR'),
+            "package_length" => (string)$this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0),
+            "package_width" => (string)$this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0),
+            "package_height" =>  (string)$this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0),
+            "package_weight" => (string)$this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 2),
         ];
     }
 
