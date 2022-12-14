@@ -222,7 +222,6 @@ abstract class AriseIntegratorParent extends IntegratorParent
 
     public function getEmailAddress($orderApi)
     {
-        
         foreach ($orderApi->lines as $line) {
             if (strlen($line->digital_delivery_info)>0) {
                 return $line->digital_delivery_info;
@@ -261,8 +260,8 @@ abstract class AriseIntegratorParent extends IntegratorParent
             $company = $this->getCompanyIntegration($orderApi);
             $bcConnector = $this->getBusinessCentralConnector($company);
             
-            //$saleOrderBc = $bcConnector->getSaleOrderByNumber($order->getOrderErp());
-            //$bcConnector->updateSaleOrder($saleOrderBc['id'], $saleOrderBc['@odata.etag'], ["URLEtiqueta" => $link]);
+            $saleOrderBc = $bcConnector->getSaleOrderByNumber($order->getOrderErp());
+            $bcConnector->updateSaleOrder($saleOrderBc['id'], $saleOrderBc['@odata.etag'], ["URLEtiqueta" => $link]);
             $this->addLogToOrder($order, 'Updated sale order adding the label for printing');
         }
     }

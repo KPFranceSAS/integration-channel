@@ -219,7 +219,7 @@ abstract class AriseSyncProductParent extends ProductSyncParent
                 } else {
                     $imageMigrated = $this->getAriseApi()->migrateImage($imageUrl);
                     if ($imageMigrated) {
-                        $this->logger->info('Image migarted '.$imageMigrated);
+                        $this->logger->info('Image migrated '.$imageMigrated);
                         $images[]=$imageMigrated;
                     }
                 }
