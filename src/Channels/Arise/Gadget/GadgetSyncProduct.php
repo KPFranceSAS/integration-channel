@@ -25,7 +25,7 @@ class GadgetSyncProduct extends AriseSyncProductParent
 
     public function getChannel(): string
     {
-        return IntegrationChannel::CHANNEL_AMAZFIT_ARISE;
+        return IntegrationChannel::CHANNEL_ARISE;
     }
 
     protected function getLocale()

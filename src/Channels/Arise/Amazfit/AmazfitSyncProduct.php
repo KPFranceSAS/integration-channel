@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Channels\Arise\Gadget;
+namespace App\Channels\Arise\Amazfit;
 
 use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\Channels\Arise\AriseSyncProductParent;
 use App\Entity\IntegrationChannel;
 
-class SonosSyncProduct extends AriseSyncProductParent
+class AmazfitSyncProduct extends AriseSyncProductParent
 {
     protected function getProductsEnabledOnChannel()
     {
@@ -25,7 +25,7 @@ class SonosSyncProduct extends AriseSyncProductParent
 
     public function getChannel(): string
     {
-        return IntegrationChannel::CHANNEL_SONOS_ARISE;
+        return IntegrationChannel::CHANNEL_AMAZFIT_ARISE;
     }
 
     protected function getLocale()
