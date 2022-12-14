@@ -14,7 +14,7 @@ class GadgetSyncProduct extends AriseSyncProductParent
         $searchBuilder
             ->addFilter('arise_category_id', 'NOT EMPTY')
             ->addFilter('brand', 'NOT EMPTY')
-            ->addFilter('marketplaces_assignement', 'IN', ['arise_sonos_es_gi'])
+            ->addFilter('marketplaces_assignement', 'IN', ['arise_es_gi'])
             ->addFilter('enabled_channel', '=', true, ['scope' => 'Marketplace'])
             ->addFilter('enabled', '=', true);
 
@@ -25,7 +25,7 @@ class GadgetSyncProduct extends AriseSyncProductParent
 
     public function getChannel(): string
     {
-        return IntegrationChannel::CHANNEL_ARISE;
+        return IntegrationChannel::CHANNEL_AMAZFIT_ARISE;
     }
 
     protected function getLocale()

@@ -3,6 +3,7 @@
 namespace App\Controller\Order;
 
 use App\Controller\Order\WebOrderCrudController;
+use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -23,8 +24,10 @@ class DeliveryOrderCrudController extends WebOrderCrudController
         $qb = $this->entityRepository->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
         $qb->andWhere('entity.status IN (:statusDelivery)');
         $qb->andWhere('entity.fulfilledBy IN (:fulfilledByState)');
+        $qb->andWhere('entity.channel != :channel');
+        $qb->setParameter('channel', IntegrationChannel::CHANNEL_CHANNELADVISOR);
         $qb->setParameter('statusDelivery', [WebOrder::STATE_SYNC_TO_ERP]);
-        $qb->setParameter('fulfilledByState', [WebOrder::FULFILLED_BY_SELLER]);
+        $qb->setParameter('fulfilledByState', [WebOrder::FULFILLED_BY_SELLER, WebOrder::FULFILLED_BY_EXTERNAL]);
         return $qb;
     }
 }

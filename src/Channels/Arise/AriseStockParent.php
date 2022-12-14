@@ -3,9 +3,6 @@
 namespace App\Channels\Arise;
 
 use App\Channels\Arise\AriseApiParent;
-use App\Entity\IntegrationChannel;
-use App\Entity\Product;
-use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\StockParent;
 
