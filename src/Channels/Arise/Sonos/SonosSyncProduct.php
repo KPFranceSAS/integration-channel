@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Channels\Arise\Gadget;
+namespace App\Channels\Arise\Sonos;
 
 use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\Channels\Arise\AriseSyncProductParent;
