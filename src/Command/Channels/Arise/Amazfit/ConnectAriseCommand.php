@@ -2,7 +2,10 @@
 
 namespace App\Command\Channels\Arise\Amazfit;
 
+use App\BusinessCentral\Connector\GadgetIberiaConnector;
+use App\Channels\AliExpress\AliExpress\AliExpressIntegrateOrder;
 use App\Channels\Arise\Amazfit\AmazfitApi;
+use App\Channels\Arise\Amazfit\AmazfitIntegrator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,21 +15,34 @@ class ConnectAriseCommand extends Command
     protected static $defaultName = 'app:amazfit-test';
     protected static $defaultDescription = 'Connection to Arise amazfit';
 
-    public function __construct(AmazfitApi $ariseApi)
+    public function __construct(AmazfitApi $ariseApi, AmazfitIntegrator $amazfitIntegrator)
     {
         $this->ariseApi = $ariseApi;
+        $this->amazfitIntegrator = $amazfitIntegrator;
         parent::__construct();
     }
 
     private $ariseApi;
 
+    private $amazfitIntegrator;
+
   
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $orders = $this->ariseApi->getOrder("67512232274");
-        dump($orders);
+        $this->createOrder();
+        
         return Command::SUCCESS;
+    }
+
+
+    protected function createOrder()
+    {
+        $order = $this->amazfitIntegrator->getApi()->getOrder('73397932200');
+        $orderBc = $this->amazfitIntegrator->transformToAnBcOrder($order);
+        $orderBc->customerNumber = AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER;
+        $bcConnector = $this->amazfitIntegrator->getBusinessCentralConnector(GadgetIberiaConnector::GADGET_IBERIA);
+        $orderFinal = $bcConnector->createSaleOrder($orderBc->transformToArray());
     }
 
     

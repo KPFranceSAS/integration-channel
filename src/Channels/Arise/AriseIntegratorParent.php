@@ -8,13 +8,11 @@ use App\BusinessCentral\Model\PostalAddress;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\BusinessCentral\ProductTaxFinder;
-use App\Channels\AliExpress\AliExpress\AliExpressIntegrateOrder;
 use App\Channels\Arise\AriseApiParent;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\IntegratorParent;
-use App\Service\Aggregator\StockParent;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -142,6 +140,14 @@ abstract class AriseIntegratorParent extends IntegratorParent
         if ($this->checkIsAriseFulfilled($orderApi)) {
             $orderBC->shippingAgent = 'ARISE';
             $orderBC->shippingAgentService = 'STANDARD';
+            $this->logger->info('Create Label');
+            $pdfLink = $this->getAriseApi()->createLabel($orderApi->order_id);
+            $pdfContent = file_get_contents($pdfLink);
+           
+            $filename = $orderApi->order_id.'_'.date('YmdHis').'.pdf';
+            $this->ariseLabelStorage->write($filename, $pdfContent);
+            $orderBC->URLEtiqueta = "https://marketplace.kps-group.com/labels/".$filename;
+            $this->logger->info('Host it on '.$orderBC->URLEtiqueta);
         }
 
         $this->checkAdressPostal($orderBC->shippingPostalAddress);
@@ -240,31 +246,6 @@ abstract class AriseIntegratorParent extends IntegratorParent
         }
     }
 
-
-
-    protected function checkAfterIntegration(WebOrder $order, $orderApi)
-    {
-        if ($order->isFulfiledBySeller()==false) {
-            $this->addLogToOrder($order, 'Creation of the label for printing');
-            $pdfLink = $this->getAriseApi()->createLabel($orderApi->order_id);
-            $this->addLogToOrder($order, 'Get content of the label for '.$pdfLink);
-            $pdfContent = file_get_contents($pdfLink);
-
-            
-            $filename = str_replace("/", "-", $order->getOrderErp()).'_'.$orderApi->order_id.'_'.date('YmdHis').'.pdf';
-            $this->ariseLabelStorage->write($filename, $pdfContent);
-            $link = "https://marketplace.kps-group.com/labels/".$filename;
-            $this->addLogToOrder($order, 'Publish label on '.$link);
-            $this->addLogToOrder($order, 'Update sale order adding the label for printing');
-
-            $company = $this->getCompanyIntegration($orderApi);
-            $bcConnector = $this->getBusinessCentralConnector($company);
-            
-            $saleOrderBc = $bcConnector->getSaleOrderByNumber($order->getOrderErp());
-            $bcConnector->updateSaleOrder($saleOrderBc['id'], $saleOrderBc['@odata.etag'], ["URLEtiqueta" => $link]);
-            $this->addLogToOrder($order, 'Updated sale order adding the label for printing');
-        }
-    }
 
 
     protected function getSalesOrderLines($orderApi): array

@@ -63,6 +63,8 @@ class SaleOrder
 
     public $email;
 
+    public $URLEtiqueta;
+
 
     public function __construct()
     {

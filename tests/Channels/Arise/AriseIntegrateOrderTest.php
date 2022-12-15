@@ -18,6 +18,5 @@ class AriseIntegrateOrderTest extends KernelTestCase
         $bcConnector = $aliExpressIntegrator->getBusinessCentralConnector(GadgetIberiaConnector::GADGET_IBERIA);
         $orderFinal = $bcConnector->createSaleOrder($orderBc->transformToArray());
         $saleOrderBc = $bcConnector->getFullSaleOrder($orderFinal['id']);
-        $bcConnector->updateSaleOrder($saleOrderBc['id'], $saleOrderBc['@odata.etag'], ["URLEtiqueta" => "https://marketplace.kps-group.com/labels/WPV21-01304_67031224042_20221125133227.pdf"]);
     }
 }
