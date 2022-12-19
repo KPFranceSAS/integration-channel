@@ -22,6 +22,10 @@ flysystem:
             adapter: 'local'
             options:
                 directory: '%kernel.project_dir%/public/report'
+        product.storage:        
+            adapter: 'local'
+            options:
+                directory: '%kernel.project_dir%/public/products'
         ariseLabel.storage:        
             adapter: 'local'
             options:
