@@ -40,6 +40,7 @@ class ProductStockFinder
             $this->logger->info('Stock available ' . $stockAvailbility['no'] . ' in ' . $depot . ' >>> ' . $stockAvailbility['quantityAvailable'.$depot]);
             return  $stockAvailbility['quantityAvailable'.$depot];
         } else {
+            $this->logger->error('Retrieve data from BC ' . $sku . ' in ' . $depot);
             $skuAvalibility = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KIT_PERSONALIZACION_SPORT)->getStockAvailabilityPerProduct($sku);
             if ($skuAvalibility) {
                 $this->stockLevels[$sku] = $skuAvalibility;

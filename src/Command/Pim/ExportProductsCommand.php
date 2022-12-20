@@ -69,7 +69,7 @@ class ExportProductsCommand extends Command
             'categories' => implode(',', $product['categories']),
             'enabled' => (int)$product['enabled'],
             'family' => $product['family'],
-            'parent' => $product['parent'],
+            'parent' => $this->getParentProduct($product['parent']),
             'created' => $product['created'],
             'updated' => $product['updated'],
         ];
@@ -96,6 +96,18 @@ class ExportProductsCommand extends Command
         }
         return $flatProduct;
     }
+
+
+
+    protected function getParentProduct($productModelSku)
+    {
+        if (strlen($productModelSku)==0) {
+            return null;
+        }
+        $parent = $this->akeneoConnector->getProductModel($productModelSku);
+        return $parent['parent'] ?  $parent['parent'] : $productModelSku;
+    }
+
 
 
     public function isMetric($val)
@@ -147,7 +159,7 @@ class ExportProductsCommand extends Command
         }
         $csvContent = $csv->toString();
         $this->logger->info("start export products locally");
-        $this->productStorage->write('products/export_products_sftp.csv', $csvContent);
+        $this->productStorage->write('export_products_sftp.csv', $csvContent);
     }
 
 

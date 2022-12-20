@@ -33,7 +33,8 @@ class WebOrder
     public const  DEPOT_FBA_AMAZON = 'AMAZON';
     public const  DEPOT_CENTRAL = 'CENTRAL';
     public const  DEPOT_LAROCA = 'LAROCA';
-    public const  DEPOT_ACTIVE_ANTS = 'ACTIVE';
+    public const  DEPOT_3PLUK = '3PLUK';
+    public const  DEPOT_3PLUE = '3PLUE';
     public const  DEPOT_MADRID = 'MADRID';
     public const  DEPOT_MIXED = 'MIXED';
 
@@ -376,9 +377,11 @@ class WebOrder
 
 
 
-    public function getStatusExpedition(){
-        if($this->trackingUrl){
-            $codeTracking =str_replace('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/', '', $this->trackingUrl);;
+    public function getStatusExpedition()
+    {
+        if ($this->trackingUrl) {
+            $codeTracking =str_replace('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/', '', $this->trackingUrl);
+            ;
             try {
                 $client = new Client();
                 $response = $client->get(
@@ -390,7 +393,6 @@ class WebOrder
                     return $body;
                 }
             } catch (Exception $e) {
-                
             }
         }
         return null;
