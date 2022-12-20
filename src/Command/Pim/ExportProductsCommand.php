@@ -43,10 +43,10 @@ class ExportProductsCommand extends Command
     {
         $products = $this->getProductsEnabledOnChannel();
         $productToArrays=[];
-        $base = ['sku', 'categories' ,'enabled' ,'family', 'parent','created','updated'];
+        $base = ['sku', 'categories' ,'enabled' ,'family', 'parent','variant-axe-1', 'variant-axe-2',  'variant-axe-3', 'created','updated'];
         $header = [];
         foreach ($products as $product) {
-            $productToArray = $this->flatProduct($product);
+            $productToArray = $this->flatProduct($product, $base);
             $headerProduct = array_keys($productToArray);
             foreach ($headerProduct as $headerP) {
                 if (!in_array($headerP, $header) && !in_array($headerP, $base)) {
@@ -61,18 +61,37 @@ class ExportProductsCommand extends Command
         return Command::SUCCESS;
     }
 
-    public function flatProduct(array $product):array
+    public function flatProduct(array $product, array $base):array
     {
         $this->logger->info('Flat product '.$product['identifier']);
-        $flatProduct = [
-            'sku' => $product['identifier'],
-            'categories' => implode(',', $product['categories']),
-            'enabled' => (int)$product['enabled'],
-            'family' => $product['family'],
-            'parent' => $this->getParentProduct($product['parent']),
-            'created' => $product['created'],
-            'updated' => $product['updated'],
-        ];
+
+        $flatProduct = array_fill_keys($base, null);
+
+        
+        $flatProduct['sku'] = $product['identifier'];
+        $flatProduct['categories'] = implode(',', $product['categories']);
+        $flatProduct['enabled'] = (int)$product['enabled'];
+        $flatProduct['family'] = $product['family'];
+        
+        $flatProduct['created'] = $product['created'];
+        $flatProduct['updated'] = $product['updated'];
+      
+
+        if (array_key_exists('parent', $product) && strlen($product['parent'])>0) {
+            $parent = $this->getParentProduct($product['parent']);
+            $flatProduct['parent'] = $parent['code'];
+            $axesVariation = $this->getAxesVariation($product['family'], $parent['family_variant']);
+            $i=1;
+            foreach ($axesVariation as $axeVariation) {
+                $flatProduct['variant-axe-'.$i]=$axeVariation;
+                $i++;
+            }
+        }
+
+        
+
+        
+
 
         foreach ($product['values'] as $attribute => $value) {
             foreach ($value as $val) {
@@ -98,6 +117,24 @@ class ExportProductsCommand extends Command
     }
 
 
+    protected function getAxesVariation($family, $familyVariant): array
+    {
+        $familyVariant = $this->akeneoConnector->getFamilyVariant($family, $familyVariant);
+        return $this->getAxes($familyVariant);
+    }
+    
+
+    protected function getAxes(array $variantFamily): array
+    {
+        $axes = [];
+        foreach ($variantFamily['variant_attribute_sets'] as $variantAttribute) {
+            foreach ($variantAttribute['axes'] as $axe) {
+                $axes[]= $axe;
+            }
+        }
+        return $axes;
+    }
+
 
     protected function getParentProduct($productModelSku)
     {
@@ -105,7 +142,7 @@ class ExportProductsCommand extends Command
             return null;
         }
         $parent = $this->akeneoConnector->getProductModel($productModelSku);
-        return $parent['parent'] ?  $parent['parent'] : $productModelSku;
+        return $parent['parent'] ?  $this->akeneoConnector->getProductModel($parent['parent']) : $parent;
     }
 
 

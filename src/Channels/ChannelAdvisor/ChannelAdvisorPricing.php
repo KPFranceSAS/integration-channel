@@ -67,6 +67,7 @@ class ChannelAdvisorPricing extends PriceParent
         $this->channelAdvisorStorage->write('/accounts/12010024/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010025/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12010026/Inventory/Transform/'.$filename, $dataArray);
+        $this->channelAdvisorStorage->write('/accounts/12044694/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12044693/Inventory/Transform/'.$filename, $dataArray);
     }
 
