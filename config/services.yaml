@@ -21,6 +21,8 @@ services:
             tags: ['app.priceupdater']
         App\Service\Aggregator\ProductSyncParent:
             tags: ['app.productupdater']
+        App\Service\Aggregator\UpdateDeliveryParent:
+            tags: ['app.deliveryupdater']
 
     App\:
         resource: '../src/'
@@ -47,6 +49,9 @@ services:
     App\Service\Aggregator\ProductSyncAggregator:
         arguments:
             - !tagged_iterator app.productupdater
+    App\Service\Aggregator\UpdateDeliveryAggregator:
+        arguments:
+            - !tagged_iterator app.deliveryupdater
     App\BusinessCentral\Connector\BusinessCentralAggregator:
         arguments:
             - !tagged_iterator app.businesscentralconnector

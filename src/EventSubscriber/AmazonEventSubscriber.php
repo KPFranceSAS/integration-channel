@@ -41,7 +41,7 @@ class AmazonEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (in_array($entity->getStatus(), [WebOrder::STATE_SYNC_TO_ERP, WebOrder::STATE_INVOICED])) {
+        if (in_array($entity->getStatus(), [WebOrder::STATE_SYNC_TO_ERP, WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])) {
             $bcConnector =  $this->businessCentralAggregator->getBusinessCentralConnector($entity->getCompany());
             if ($entity->getStatus() == WebOrder::STATE_SYNC_TO_ERP) {
                 $content = $bcConnector->getFullSaleOrderByNumber($entity->getOrderErp());
@@ -51,7 +51,7 @@ class AmazonEventSubscriber implements EventSubscriberInterface
                     $content = $bcConnector->getSaleInvoiceByOrderNumber($entity->getOrderErp());
                 }
                 $entity->orderBCContent = $content;
-            } elseif ($entity->getStatus() == WebOrder::STATE_INVOICED) {
+            } elseif (in_array($entity->getStatus(), [WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])) {
                 $entity->orderBCContent = $bcConnector->getFullSaleInvoiceByNumber($entity->getInvoiceErp());
             }
         }

@@ -42,9 +42,8 @@ class ImportProductCategoryCommand extends Command
 
         $output->writeln('Start imports ' . count($products));
         foreach ($products as $product) {
-            $productDb = $this->getProductCorrelationSku($product["Sku"]);
+            $productDb = $product["Sku"];
             if ($productDb) {
-
                 if (array_key_exists('Category', $product)) {
                     $categoryDb = $this->manager->getRepository(Category::class)->findOneBy(["name" => $product['Category']]);
 
@@ -81,9 +80,6 @@ class ImportProductCategoryCommand extends Command
                         $productDb->setMinQtyFbaUk(null);
                     }
                 }
-
-
-
                 $this->manager->flush();
             } else {
                 $output->writeln('Product not found ' . $product['Sku']);
@@ -91,16 +87,5 @@ class ImportProductCategoryCommand extends Command
         }
         $output->writeln('Finish imports ' . count($products));
         return Command::SUCCESS;
-    }
-
-
-
-    protected function getProductCorrelationSku(string $sku)
-    {
-        $skuSanitized = strtoupper($sku);
-        $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
-        $skuFinal = $productCorrelation ? $productCorrelation->getSkuErpBc() : $skuSanitized;
-
-        return  $this->manager->getRepository(Product::class)->findOneBy(["sku" => $skuFinal]);
     }
 }

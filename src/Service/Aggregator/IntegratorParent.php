@@ -10,15 +10,15 @@ use App\BusinessCentral\ProductTaxFinder;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
+use App\Helper\Traits\TraitServiceLog;
 use App\Service\Aggregator\ApiAggregator;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use function Symfony\Component\String\u;
 use Psr\Log\LoggerInterface;
-use stdClass;
 
 abstract class IntegratorParent
 {
+    use TraitServiceLog;
     protected $logger;
 
     protected $productTaxFinder;
@@ -45,6 +45,17 @@ abstract class IntegratorParent
     }
 
 
+    abstract public function transformToAnBcOrder($orderApi): SaleOrder;
+
+    abstract public function getChannel();
+
+    abstract public function getCompanyIntegration($orderApi);
+
+    abstract public function getCustomerBC($orderApi);
+
+    abstract protected function getOrderId($orderApi);
+
+
 
     public function getApi()
     {
@@ -57,18 +68,6 @@ abstract class IntegratorParent
     {
         return $this->businessCentralAggregator->getBusinessCentralConnector($companyName);
     }
-
-
-    abstract public function transformToAnBcOrder($orderApi): SaleOrder;
-
-    abstract public function getChannel();
-
-    abstract public function getCompanyIntegration($orderApi);
-
-    abstract public function getCustomerBC($orderApi);
-
-    abstract protected function getOrderId($orderApi);
-
     public function processOrders($reIntegrate = false)
     {
         try {
@@ -163,7 +162,7 @@ abstract class IntegratorParent
                 $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
 
                 // check if limit of 40 is overlimited
-                if ($webOrder->getFulfilledBy() == WebOrder::FULFILLED_BY_SELLER &&  strlen($orderBC->shippingPostalAddress->street) > 40) {
+                if ($webOrder->getFulfilledBy() == WebOrder::FULFILLED_BY_SELLER  && $webOrder->getCarrierService() == WebOrder::CARRIER_DHL &&  strlen($orderBC->shippingPostalAddress->street) > 40) {
                     $errorLength = 'The BC sale order ' . $erpOrder['number'] . ' corresponding to the weborder  ' . $webOrder->getExternalNumber() . ' has been created with an address length of the street over 40 characters. ' . $orderBC->shippingPostalAddress->street . ". Please modify it on Business central";
                     $this->addLogToOrder($webOrder, $errorLength);
                     $this->addError($errorLength);
@@ -220,12 +219,6 @@ abstract class IntegratorParent
     }
 
 
-
-    /**
-     * Integrates order
-     * Checks if already integrated in BusinessCentral (invoice or order)
-     *
-     */
     public function reIntegrateOrder(WebOrder $order)
     {
         try {
@@ -247,7 +240,7 @@ abstract class IntegratorParent
             $order->setOrderErp($erpOrder['number']);
             $this->addLogToOrder($order, 'Integration done ' . $erpOrder['number']);
             // check if limit of 40 is overlimited
-            if ($order->getFulfilledBy() == WebOrder::FULFILLED_BY_SELLER &&  strlen($orderBC->shippingPostalAddress->street) > 40) {
+            if ($order->getFulfilledBy() == WebOrder::FULFILLED_BY_SELLER && $order->getCarrierService() == WebOrder::CARRIER_DHL &&  strlen($orderBC->shippingPostalAddress->street) > 40) {
                 $errorLength = 'The BC sale order ' . $erpOrder['number'] . ' corresponding to the weborder  ' . $order->getExternalNumber() . ' has been created with an address length of the street over 40 characters. ' . $orderBC->shippingPostalAddress->street . ". Please modify it on Business central";
                 $this->addLogToOrder($order, $errorLength);
                 $this->addError($errorLength);
@@ -322,31 +315,6 @@ abstract class IntegratorParent
 
 
 
-
-    protected function addLogToOrder(WebOrder $webOrder, string  $message)
-    {
-        $webOrder->addLog($message);
-        $this->logger->info($message);
-    }
-
-
-
-    protected function addError($errorMessage)
-    {
-        $this->logger->error($errorMessage);
-        $this->errors[] = $errorMessage;
-    }
-
-
-
-    protected function logLine($message)
-    {
-        $separator = str_repeat("-", strlen($message));
-        $this->logger->info('');
-        $this->logger->info($separator);
-        $this->logger->info($message);
-        $this->logger->info($separator);
-    }
 
 
     protected function getProductCorrelationSku(string $sku, string $company): string

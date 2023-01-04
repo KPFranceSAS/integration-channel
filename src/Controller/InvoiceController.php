@@ -74,7 +74,7 @@ class InvoiceController extends AbstractController
             $webOrders = $qb->getQuery()->getResult();
             $webOrder = count($webOrders) > 0 ? reset($webOrders) : null;
             if ($webOrder) {
-                if ($webOrder->getStatus() == WebOrder::STATE_INVOICED) {
+                if (in_array($webOrder->getStatus(), [WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])) {
                     $orderAli = $apiAggregator->getApi($webOrder->getChannel())
                                             ->getOrder($webOrder->getExternalNumber());
                     if (!$orderAli) {
@@ -166,7 +166,7 @@ class InvoiceController extends AbstractController
             $webOrders = $qb->getQuery()->getResult();
             $webOrder = count($webOrders) > 0 ? reset($webOrders) : null;
             if ($webOrder) {
-                if ($webOrder->getStatus() == WebOrder::STATE_INVOICED) {
+                if (in_array($webOrder->getStatus(), [WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])){
                     $orderAli = $apiAggregator->getApi($webOrder->getChannel())
                                             ->getOrder($webOrder->getExternalNumber());
                     if (!$orderAli) {

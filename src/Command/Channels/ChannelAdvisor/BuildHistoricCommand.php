@@ -87,7 +87,7 @@ class BuildHistoricCommand extends Command
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($amzOrderId);
-        $webOrder->setStatus(WebOrder::STATE_INVOICED);
+        $webOrder->setStatus(WebOrder::STATE_COMPLETE);
         $webOrder->setChannel(IntegrationChannel::CHANNEL_CHANNELADVISOR);
         $webOrder->setSubchannel($amzOrderSubChannel);
 

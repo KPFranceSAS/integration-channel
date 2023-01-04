@@ -35,6 +35,11 @@ class WebOrderCrudController extends AdminCrudController
     }
 
 
+    public function getDefautOrder(): array
+    {
+        return ['purchaseDate' => "DESC"];
+    }
+
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -167,10 +172,11 @@ class WebOrderCrudController extends AdminCrudController
     public function configureFilters(Filters $filters): Filters
     {
         $choiceStatuts = [
-            WebOrder::STATE_ERROR_TEXT => WebOrder::STATE_ERROR,
-            WebOrder::STATE_SYNC_TO_ERP_TEXT  => WebOrder::STATE_SYNC_TO_ERP,
-            WebOrder::STATE_INVOICED_TEXT => WebOrder::STATE_INVOICED,
-            WebOrder::STATE_CANCELLED_TEXT => WebOrder::STATE_CANCELLED,
+            'Error' => WebOrder::STATE_ERROR,
+            'Sync to erp'  => WebOrder::STATE_SYNC_TO_ERP,
+            'On delivery' => WebOrder::STATE_INVOICED,
+            'Completed' => WebOrder::STATE_COMPLETE,
+            'Cancelled' => WebOrder::STATE_CANCELLED,
         ];
 
 
@@ -179,6 +185,12 @@ class WebOrderCrudController extends AdminCrudController
             WebOrder::FULFILLED_BY_SELLER  => WebOrder::FULFILLED_BY_SELLER
         ];
 
+
+        $choicesCarrier = [
+            WebOrder::CARRIER_ARISE => WebOrder::CARRIER_ARISE,
+            WebOrder::CARRIER_DHL  => WebOrder::CARRIER_DHL,
+            WebOrder::CARRIER_FBA  => WebOrder::CARRIER_FBA
+        ];
 
         $choicesWarehouse = [
             WebOrder::DEPOT_CENTRAL => WebOrder::DEPOT_CENTRAL,
@@ -198,6 +210,7 @@ class WebOrderCrudController extends AdminCrudController
             ->add(ChoiceFilter::new('subchannel', "Marketplace")->canSelectMultiple(true)->setChoices($this->getMarketplaces()))
             ->add(ChoiceFilter::new('company', "Company")->canSelectMultiple(true)->setChoices($this->getCompanies()))
             ->add(ChoiceFilter::new('fulfilledBy')->canSelectMultiple(true)->setChoices($choicesFulfiled))
+            ->add(ChoiceFilter::new('carrierService')->canSelectMultiple(true)->setChoices($choicesCarrier))
             ->add(ChoiceFilter::new('warehouse')->canSelectMultiple(true)->setChoices($choicesWarehouse));
     }
 
@@ -348,6 +361,7 @@ class WebOrderCrudController extends AdminCrudController
             TextField::new('customerNumber', "Customer"),
             TextField::new('documentInErp', "Document N°"),
             TextField::new('fulfilledBy', "Fulfillement"),
+            TextField::new('carrierService', "Carrier"),
             TextField::new('warehouse', "Warehouse"),
             TextField::new('getStatusLitteral', "Status")->setTemplatePath('admin/fields/orders/status.html.twig'),
             DateTimeField::new('purchaseDate', "Purchase date"),

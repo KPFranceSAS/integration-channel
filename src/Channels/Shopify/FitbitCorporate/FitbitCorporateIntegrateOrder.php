@@ -8,7 +8,7 @@ use App\Entity\IntegrationChannel;
 
 class FitbitCorporateIntegrateOrder extends ShopifyIntegrateOrder
 {
-    public const FITBITCORPORATE_CUSTOMER_NUMBER = "130957";
+    public const FITBITCORPORATE_CUSTOMER_NUMBER = "131157";
 
     public function getChannel()
     {

@@ -3,6 +3,8 @@
 {% elseif  entity.instance.status == constant('App\\Entity\\WebOrder::STATE_SYNC_TO_ERP') %}
 	{% set classColor = 'primary' %}
 {% elseif  entity.instance.status == constant('App\\Entity\\WebOrder::STATE_INVOICED') %}
+	{% set classColor = 'info' %}
+{% elseif  entity.instance.status == constant('App\\Entity\\WebOrder::STATE_COMPLETE') %}
 	{% set classColor = 'success' %}
 {% elseif  entity.instance.status == constant('App\\Entity\\WebOrder::STATE_CANCELLED') %}
 	{% set classColor = 'warning' %}
@@ -10,11 +12,11 @@
 	{% set classColor = 'secondary' %}
 {% endif %}
 
-<div class="" style="{% if entity.instance.hasDelayTreatment %}min-width:140px{% endif %}">
+<div class="" style="{% if entity.instance.hasDelayTreatment and entity.instance.status != constant('App\\Entity\\WebOrder::STATE_CANCELLED') %}min-width:140px{% endif %}">
 	<span class="badge badge-{{classColor}}">
 		{{entity.instance.getStatusLitteral}}
 	</span>
-	{% if entity.instance.hasDelayTreatment %}
+	{% if entity.instance.hasDelayTreatment and entity.instance.status != constant('App\\Entity\\WebOrder::STATE_CANCELLED')  %}
 	<span class="popover__wrapper">
 		<i class="fas fa-exclamation-triangle text-danger popover__title"></i>
 		<div class="popover__content">

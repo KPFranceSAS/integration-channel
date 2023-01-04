@@ -2,13 +2,11 @@
 
 namespace App\Command\Pim;
 
-use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\BusinessCentral\ProductStockFinder;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
 use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
-use App\Service\Pim\AkeneoConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Csv\Writer;
 use League\Flysystem\FilesystemOperator;

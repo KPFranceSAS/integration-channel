@@ -39,6 +39,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
 
     public function syncProducts()
     {
+        /** @var  array $products */
         $products = $this->getProductsEnabledOnChannel();
         $productToArrays=[];
         $base = ['sku', 'categories' ,'enabled' ,'family', 'parent','created','updated'];

@@ -22,7 +22,7 @@ abstract class AliExpressUpdateStatusParent extends UpdateStatusParent
     }
 
 
-    protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber)
+    protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber= null)
     {
         $result = $this->getAliExpressApi()->markOrderAsFulfill($order->getExternalNumber(), "SPAIN_LOCAL_DHL", $trackingNumber);
         if ($result) {

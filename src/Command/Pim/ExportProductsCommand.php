@@ -41,6 +41,7 @@ class ExportProductsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var  array $products */
         $products = $this->getProductsEnabledOnChannel();
         $productToArrays=[];
         $base = ['sku', 'categories' ,'enabled' ,'family', 'parent','variant-axe-1', 'variant-axe-2',  'variant-axe-3', 'created','updated'];

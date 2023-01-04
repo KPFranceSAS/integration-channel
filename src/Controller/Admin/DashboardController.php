@@ -13,6 +13,7 @@ use App\Controller\Order\FitbitExpressOrderCrudController;
 use App\Controller\Order\FlashledOrderCrudController;
 use App\Controller\Order\MinibattOrderCrudController;
 use App\Controller\Order\OwletCareOrderCrudController;
+use App\Controller\Order\PreparationOrderCrudController;
 use App\Controller\Order\WebOrderCrudController;
 use App\Controller\Pricing\PricingCrudController;
 use App\Entity\AmazonFinancialEvent;
@@ -63,7 +64,7 @@ class DashboardController extends AbstractDashboardController
                         ->setController(ChannelAdvisorOrderCrudController::class),
                     MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)
                         ->setController(AliexpressOrderCrudController::class),
-                    MenuItem::linkToCrud('Arise', 'fas fa-sun', WebOrder::class)
+                    MenuItem::linkToCrud('Miravia', 'fas fa-sun', WebOrder::class)
                         ->setController(AriseOrderCrudController::class),
                     MenuItem::linkToCrud('Owletcare', 'fas fa-baby', WebOrder::class)
                         ->setController(OwletCareOrderCrudController::class),
@@ -72,10 +73,13 @@ class DashboardController extends AbstractDashboardController
                     MenuItem::linkToCrud('Minibatt', 'fas fa-car-battery', WebOrder::class)
                         ->setController(MinibattOrderCrudController::class),
                     MenuItem::section(),
-                    MenuItem::linkToCrud('On delivery', 'fas fa-truck-loading', WebOrder::class)
+                    MenuItem::linkToCrud('On preparation', 'fas fa-truck-loading', WebOrder::class)
+                        ->setController(PreparationOrderCrudController::class),
+                    MenuItem::linkToCrud('On delivery', 'fas fa-truck', WebOrder::class)
                         ->setController(DeliveryOrderCrudController::class),
                     MenuItem::linkToCrud('Errors', 'fas fa-exclamation-triangle', WebOrder::class)
                         ->setController(ErrorOrderCrudController::class),
+                    MenuItem::section(),
                     MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)
                         ->setController(WebOrderCrudController::class),
                 ]),

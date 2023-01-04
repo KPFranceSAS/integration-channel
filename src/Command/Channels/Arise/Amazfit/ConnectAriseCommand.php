@@ -3,6 +3,7 @@
 namespace App\Command\Channels\Arise\Amazfit;
 
 use App\BusinessCentral\Connector\GadgetIberiaConnector;
+use App\Channels\AliExpress\AliExpress\AliExpressApi;
 use App\Channels\AliExpress\AliExpress\AliExpressIntegrateOrder;
 use App\Channels\Arise\Amazfit\AmazfitApi;
 use App\Channels\Arise\Amazfit\AmazfitIntegrator;
@@ -38,11 +39,13 @@ class ConnectAriseCommand extends Command
 
     protected function createOrder()
     {
-        $order = $this->amazfitIntegrator->getApi()->getOrder('73397932200');
+        $order = $this->amazfitIntegrator->getApi()->getOrder('86839148089');
         $orderBc = $this->amazfitIntegrator->transformToAnBcOrder($order);
         $orderBc->customerNumber = AliExpressIntegrateOrder::ALIEXPRESS_CUSTOMER_NUMBER;
         $bcConnector = $this->amazfitIntegrator->getBusinessCentralConnector(GadgetIberiaConnector::GADGET_IBERIA);
+        dump(json_encode($orderBc->transformToArray()));
         $orderFinal = $bcConnector->createSaleOrder($orderBc->transformToArray());
+        dump($orderFinal);
     }
 
     

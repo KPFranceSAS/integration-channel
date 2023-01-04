@@ -2,11 +2,10 @@
 
 namespace App\Channels\Shopify\Flashled;
 
-use App\Channels\Shopify\ShopifyStockParent;
 use App\Entity\IntegrationChannel;
-use App\Entity\WebOrder;
+use App\Service\Aggregator\UpdateDeliveryParent;
 
-class FlashledStock extends ShopifyStockParent
+class FlashledUpdateDelivery extends UpdateDeliveryParent
 {
     public function getChannel()
     {

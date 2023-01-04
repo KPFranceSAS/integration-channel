@@ -81,26 +81,48 @@
              </div>
 
             {% if entity.instance.isFulfiledBySeller() %}
-               <div class="card mb-4">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="fab fa-dhl"></i> DHL</h5>
-                    {% set trackingInfo =  entity.instance.getStatusExpedition() %}
-                   
-                    {% if trackingInfo %}
-                        Numero : {{trackingInfo.Numero}}<br/>
-                        FechaEntrega : {{trackingInfo.FechaEntrega}}
-                        {% for step in trackingInfo.Seguimiento %}
-                            <hr/>
-                            <div class="">
-                                <div class=""><h6><i class="far fa-clock"></i> {{step.Fecha}} {{step.Hora}}</h6></div>
-                                <div class="">
-                                    {{step.Descripcion}} <i>{{step.Ciudad}}</i>
-                                </div> 
-                            </div>                       
-                        {% endfor %}    
-                        {% endif %}
-                </div>
-             </div>
+                {% set trackingInfo =  entity.instance.getStatusExpedition() %}
+                {% if trackingInfo %}
+                            {% if entity.instance.isFulfiledByDhl() %}
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fab fa-dhl"></i> DHL</h5>
+                                        Numero : {{trackingInfo.Numero}}<br/>
+                                        Delivery : {{trackingInfo.FechaEntrega}}
+                                        {% for step in trackingInfo.Seguimiento %}
+                                            <hr/>
+                                            <div class="">
+                                                <div class=""><h6><i class="far fa-clock"></i> {{step.Fecha}} {{step.Hora}}</h6></div>
+                                                <div class="">
+                                                    {{step.Descripcion}} <i>{{step.Ciudad}}</i>
+                                                </div> 
+                                            </div>                       
+                                        {% endfor %}    
+                                        
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% if entity.instance.isFulfiledByArise() %}
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <h5 class="card-title"><i class="fas fa-truck"></i> GLS</h5>
+                                        Numero : {{trackingInfo.clientReference}}<br/>
+                                        Delivery :  {% if trackingInfo.state.code == 'delivered' %}{{trackingInfo.deliveryDate}}{% endif %}
+                                        {% for step in trackingInfo.tracking %}
+                                            <hr/>
+                                            <div class="">
+                                                <div class=""><h6><i class="far fa-clock"></i> {{step.at}}</h6></div>
+                                                <div class="">
+                                                    {{step.description}}
+                                                </div> 
+                                            </div>                       
+                                        {% endfor %}    
+                                        
+                                </div>
+                            </div>
+                            {% endif %}
+
+              {% endif %}
             {% endif %}
 
              {% if entity.instance.amzEvents %}

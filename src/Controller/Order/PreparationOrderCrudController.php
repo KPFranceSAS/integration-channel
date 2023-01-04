@@ -10,11 +10,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 
-class DeliveryOrderCrudController extends WebOrderCrudController
+class PreparationOrderCrudController extends WebOrderCrudController
 {
     public function getName(): string
     {
-        return "On delivery order";
+        return "On preparation order";
     }
 
 
@@ -23,7 +23,7 @@ class DeliveryOrderCrudController extends WebOrderCrudController
         $qb = $this->entityRepository->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
         $qb->andWhere('entity.status IN (:statusDelivery)');
         $qb->andWhere('entity.fulfilledBy IN (:fulfilledByState)');
-        $qb->setParameter('statusDelivery', [WebOrder::STATE_INVOICED]);
+        $qb->setParameter('statusDelivery', [WebOrder::STATE_SYNC_TO_ERP]);
         $qb->setParameter('fulfilledByState', [WebOrder::FULFILLED_BY_SELLER]);
         return $qb;
     }

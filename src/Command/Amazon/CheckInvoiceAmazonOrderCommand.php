@@ -63,7 +63,7 @@ class CheckInvoiceAmazonOrderCommand extends Command
         $orderAmz = $this->manager->getRepository(WebOrder::class)->findOneBy([
             "externalNumber" => $amazonOrder->getAmazonOrderId(),
             "channel" => IntegrationChannel::CHANNEL_CHANNELADVISOR,
-            "status" => WebOrder::STATE_INVOICED
+            "status" => WebOrder::STATE_COMPLETE
         ]);
         if ($orderAmz) {
             $amazonOrder->setIntegrated(true);

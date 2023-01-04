@@ -15,7 +15,7 @@ class AriseOrderCrudController extends WebOrderCrudController
 {
     public function getName(): string
     {
-        return "Arise Order";
+        return "Miravia Order";
     }
 
 
@@ -56,7 +56,7 @@ class AriseOrderCrudController extends WebOrderCrudController
     public function getMarketplaces()
     {
         return [
-            'Arise' => 'Arise',
+            'Miravia.es' => 'Miravia.es',
         ];
     }
 }

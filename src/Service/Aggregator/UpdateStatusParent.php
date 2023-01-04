@@ -5,16 +5,19 @@ namespace App\Service\Aggregator;
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
+use App\Helper\Traits\TraitServiceLog;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\ApiAggregator;
+use App\Service\Carriers\DhlGetTracking;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
 
 abstract class UpdateStatusParent
 {
+    use TraitServiceLog;
+
     protected $logger;
 
     protected $manager;
@@ -42,7 +45,6 @@ abstract class UpdateStatusParent
 
     abstract public function getChannel();
 
-
     public function getApi()
     {
         return $this->apiAggregator->getApi($this->getChannel());
@@ -53,10 +55,6 @@ abstract class UpdateStatusParent
     {
         return $this->businessCentralAggregator->getBusinessCentralConnector($companyName);
     }
-
-    
-
-
 
     /**
      *
@@ -88,30 +86,16 @@ abstract class UpdateStatusParent
     }
 
 
-    public function logLine($message)
-    {
-        $separator = str_repeat("-", strlen($message));
-        $this->logger->info('');
-        $this->logger->info($separator);
-        $this->logger->info($message);
-        $this->logger->info($separator);
-    }
-
-
-
-
-    protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber)
+    protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber=null)
     {
         return true;
     }
-
 
 
     protected function postUpdateStatusInvoice(WebOrder $order, $invoice)
     {
         return true;
     }
-
 
     protected function updateStatusSaleOrder(WebOrder $order)
     {
@@ -127,65 +111,6 @@ abstract class UpdateStatusParent
         }
         $this->manager->flush();
     }
-
-
-
-
-    /*    protected function updateStatusSaleOrderFulfiledBySeller(WebOrder $order)
-    {
-        $this->logger->info('Update status order fulfiled by seller');
-        $statusSaleOrder = $this->getSaleOrderStatus($order);
-
-        if (in_array($statusSaleOrder['statusCode'], ["99", "-1", "0", "1", "2"])) {
-            $this->addOnlyLogToOrderIfNotExists($order, 'Order status in BC >'.$statusSaleOrder['statusLabel'] .' statusCode '.$statusSaleOrder['statusCode']);
-            if ($statusSaleOrder['statusCode']=="99" || $statusSaleOrder['statusCode']=="-1") {
-                $this->checkShipmentIsLate($order);
-            }
-            $this->checkOrderIsLate($order);
-            return;
-        }
-
-        if (in_array($statusSaleOrder['statusCode'], ["3", "4"]) && strlen($statusSaleOrder['InvoiceNo'])) {
-            $this->addOnlyLogToOrderIfNotExists($order, 'Warehouse shipment created in the ERP with number ' . $statusSaleOrder['ShipmentNo']);
-            $this->addOnlyLogToOrderIfNotExists($order, 'Invoice created in the ERP with number ' . $statusSaleOrder['InvoiceNo']);
-            $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
-            $invoice =  $businessCentralConnector->getSaleInvoiceByNumber($statusSaleOrder['InvoiceNo']);
-            if ($invoice) {
-                $order->cleanErrors();
-                $postUpdateStatus = false;
-                if ($order->getCarrierService() == WebOrder::CARRIER_DHL) {
-                    $tracking =  $this->getTrackingDhl($statusSaleOrder['ShipmentNo']);
-                    if (!$tracking) {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo']);
-                    } else {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DHL with tracking number ' . $tracking);
-                        $order->setTrackingUrl('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking);
-                        $order->setTrackingCode($tracking);
-                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
-                    }
-                }
-
-
-                if ($order->getCarrierService() == WebOrder::CARRIER_ARISE) {
-                    $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and waiting to be collected by Arise');
-                    $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, 'XXXXXXXXXX');
-                }
-
-
-
-                if ($postUpdateStatus) {
-                    $order->setInvoiceErp($invoice['number']);
-                    $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
-                    $order->setStatus(WebOrder::STATE_INVOICED);
-                } else {
-                    $this->checkInvoiceIsLate($order, $invoice);
-                }
-            } else {
-                $this->addOnlyLogToOrderIfNotExists($order, 'Invoice ' . $statusSaleOrder['InvoiceNo']." is not accesible through API");
-            }
-        }
-    }*/
-
 
     protected function updateStatusSaleOrderFulfiledBySeller(WebOrder $order)
     {
@@ -208,20 +133,33 @@ abstract class UpdateStatusParent
             $invoice =  $businessCentralConnector->getSaleInvoiceByNumber($statusSaleOrder['InvoiceNo']);
             if ($invoice) {
                 $order->cleanErrors();
-                $tracking =  $this->getTrackingDhl($statusSaleOrder['ShipmentNo']);
-                if (!$tracking) {
-                    $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo']);
-                } else {
-                    $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DHL with tracking number ' . $tracking);
-                    $order->setTrackingUrl('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking);
-                    $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
-                    if ($postUpdateStatus) {
-                        $order->setInvoiceErp($invoice['number']);
-                        $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
-                        $order->setStatus(WebOrder::STATE_INVOICED);
+                $postUpdateStatus = false;
+                if ($order->getCarrierService() == WebOrder::CARRIER_DHL) {
+                    $tracking =  DhlGetTracking::getTrackingExternalWeb($statusSaleOrder['ShipmentNo']);
+                    if (!$tracking) {
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo']);
                     } else {
-                        $this->checkInvoiceIsLate($order, $invoice);
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DHL with tracking number ' . $tracking);
+                        $order->setTrackingUrl(DhlGetTracking::getTrackingUrlBase($tracking));
+                        $order->setTrackingCode($tracking);
+                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
                     }
+                }
+
+
+                if ($order->getCarrierService() == WebOrder::CARRIER_ARISE) {
+                    $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and waiting to be collected by Arise');
+                    $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice);
+                }
+
+
+
+                if ($postUpdateStatus) {
+                    $order->setInvoiceErp($invoice['number']);
+                    $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
+                    $order->setStatus(WebOrder::STATE_INVOICED);
+                } else {
+                    $this->checkInvoiceIsLate($order, $invoice);
                 }
             } else {
                 $this->addOnlyLogToOrderIfNotExists($order, 'Invoice ' . $statusSaleOrder['InvoiceNo']." is not accesible through API");
@@ -229,6 +167,8 @@ abstract class UpdateStatusParent
         }
     }
 
+
+    
 
     protected function updateStatusSaleOrderFulfiledByExternal(WebOrder $order)
     {
@@ -246,7 +186,7 @@ abstract class UpdateStatusParent
                 if ($postUpdateStatus) {
                     $order->setInvoiceErp($invoice['number']);
                     $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
-                    $order->setStatus(WebOrder::STATE_INVOICED);
+                    $order->setStatus(WebOrder::STATE_COMPLETE);
                 }
             } else {
                 $this->addOnlyLogToOrderIfNotExists($order, 'Invoice n°' . $statusSaleOrder['InvoiceNo'].' is not yet accessible through API');
@@ -255,13 +195,6 @@ abstract class UpdateStatusParent
             $this->checkOrderIsLate($order);
         }
     }
-
-
-
-
-
-
-
 
 
     protected function getSaleOrderStatus(WebOrder $order)
@@ -277,32 +210,6 @@ abstract class UpdateStatusParent
         return null;
     }
 
-
-
-
-    public function getTrackingDhl($externalOrderNumber): ?string
-    {
-        try {
-            $client = new Client();
-            $response = $client->get(
-                'https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $externalOrderNumber,
-                ['connect_timeout' => 1]
-            );
-            $body = json_decode((string) $response->getBody(), true);
-            if ($body) {
-                $toReplace = [];
-                for ($i = 1; $i < 10; $i++) {
-                    $toReplace[]=" ".$i."0";
-                }
-
-
-                return str_replace($toReplace, "", $body['NumeroExpedicionTLG']);
-            }
-        } catch (Exception $e) {
-            $this->logger->alert('DHL is not accessible');
-        }
-        return null;
-    }
 
 
     protected function getInvoiceNumber(WebOrder $order)
@@ -407,47 +314,5 @@ abstract class UpdateStatusParent
             $this->logLine('>>> Updating status of order ' . $orderToSend->getExternalNumber());
             $this->updateStatusSaleOrder($orderToSend);
         }
-    }
-
-
-    protected function addLogToOrder(WebOrder $webOrder, string $message)
-    {
-        $webOrder->addLog($message);
-        $this->logger->info($message);
-    }
-
-
-
-    protected function addErrorToOrder(WebOrder $webOrder, string $message)
-    {
-        $webOrder->addError($message);
-        $this->addError($webOrder . ' > ' . $message);
-    }
-
-
-    protected function addOnlyLogToOrderIfNotExists(WebOrder $webOrder, string $message)
-    {
-        if ($webOrder->haveNoLogWithMessage($message)) {
-            $this->addLogToOrder($webOrder, $message);
-        } else {
-            $this->logger->info($message);
-        }
-    }
-
-
-    protected function addOnlyErrorToOrderIfNotExists(WebOrder $webOrder, string $message)
-    {
-        if ($webOrder->haveNoLogWithMessage($message)) {
-            $this->addErrorToOrder($webOrder, $message);
-        } else {
-            $this->logger->error($message);
-        }
-    }
-
-
-    protected function addError(string $errorMessage)
-    {
-        $this->logger->error($errorMessage);
-        $this->errors[] = $errorMessage;
     }
 }

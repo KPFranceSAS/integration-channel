@@ -6,6 +6,8 @@ use App\Entity\IntegrationChannel;
 use App\Helper\Traits\TraitLoggable;
 use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
+use App\Service\Carriers\AriseTracking;
+use App\Service\Carriers\DhlGetTracking;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -45,22 +47,18 @@ class WebOrder
     public const  FULFILLED_BY_SELLER = 'OWN MANAGED';
     public const  FULFILLED_MIXED = 'MIXED MANAGED';
 
+
+    public const  CARRIER_DHL = 'DHL';
+    public const  CARRIER_ARISE = 'ARISE';
+    public const  CARRIER_FBA = 'FBA';
+
     public const  STATE_ERROR_INVOICE = -2;
     public const  STATE_ERROR = -1;
     public const  STATE_CREATED = 0;
     public const  STATE_SYNC_TO_ERP = 1;
     public const  STATE_INVOICED = 5;
+    public const  STATE_COMPLETE = 6;
     public const  STATE_CANCELLED = 7;
-
-    public const  STATE_ERROR_INVOICE_TEXT = 'Error send invoice';
-    public const  STATE_ERROR_TEXT = 'Error integration';
-    public const  STATE_CREATED_TEXT = 'Order integrated';
-    public const  STATE_SYNC_TO_ERP_TEXT = 'Order integrated';
-    public const  STATE_SYNC_TO_WAITING_DELIVERY_TEXT = 'Wait for shipping';
-    public const  STATE_INVOICED_TEXT = 'Invoice integrated';
-    public const  STATE_UNDEFINED_TEXT = 'Undefined';
-    public const  STATE_CANCELLED_TEXT = "Cancelled";
-
 
     /**
      * @ORM\Id
@@ -156,12 +154,33 @@ class WebOrder
 
     public $amzEvents;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $trackingCode;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $carrierService;
+
 
 
     public function isFulfiledBySeller()
     {
         return $this->fulfilledBy == self::FULFILLED_BY_SELLER;
     }
+
+    public function isFulfiledByDhl()
+    {
+        return $this->fulfilledBy == self::FULFILLED_BY_SELLER && $this->carrierService == self::CARRIER_DHL;
+    }
+
+    public function isFulfiledByArise()
+    {
+        return $this->fulfilledBy == self::FULFILLED_BY_SELLER && $this->carrierService == self::CARRIER_ARISE;
+    }
+    
 
     public function getNbHoursSinceCreation()
     {
@@ -231,19 +250,23 @@ class WebOrder
     public function getStatusLitteral()
     {
         if ($this->status ==  self::STATE_ERROR) {
-            return self::STATE_ERROR_TEXT;
+            return "Error";
         } elseif ($this->status ==  self::STATE_SYNC_TO_ERP) {
             return $this->fulfilledBy == self::FULFILLED_BY_SELLER
-                ? self::STATE_SYNC_TO_WAITING_DELIVERY_TEXT
-                : self::STATE_SYNC_TO_ERP_TEXT;
+                ? "Waiting for shipping"
+                : "Waiting for invoicing";
         } elseif ($this->status ==  self::STATE_INVOICED) {
-            return self::STATE_INVOICED_TEXT;
+            return $this->fulfilledBy == self::FULFILLED_BY_SELLER
+            ? "On delivery"
+            : 'Invoice integrated';
+        } elseif ($this->status ==  self::STATE_COMPLETE) {
+            return  'Completed';
         } elseif ($this->status ==  self::STATE_CANCELLED) {
-            return self::STATE_CANCELLED_TEXT;
+            return 'Cancelled';
         } elseif ($this->status ==  self::STATE_ERROR_INVOICE) {
-            return self::STATE_ERROR_INVOICE_TEXT;
+            return 'Error send invoice';
         } else {
-            return self::STATE_UNDEFINED_TEXT;
+            return 'Undefined';
         }
     }
 
@@ -267,13 +290,16 @@ class WebOrder
 
     public function hasDelayTreatment()
     {
+        $completedStates= [self::STATE_INVOICED, self::STATE_COMPLETE];
         if (
-            $this->channel == IntegrationChannel::CHANNEL_CHANNELADVISOR
-            && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL
-            && $this->status != self::STATE_INVOICED
+            $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL
+            && !in_array($this->status, $completedStates)
         ) {
             return DatetimeUtils::isOutOfDelay($this->createdAt, self::TIMING_INTEGRATION);
-        } elseif ($this->fulfilledBy == self::FULFILLED_BY_SELLER && $this->status != self::STATE_INVOICED) {
+        } elseif (
+            $this->fulfilledBy == self::FULFILLED_BY_SELLER
+            && !in_array($this->status, $completedStates)
+        ) {
             return DatetimeUtils::isOutOfDelayBusinessDays($this->purchaseDate, self::TIMING_SHIPPING);
         }
         return false;
@@ -281,12 +307,16 @@ class WebOrder
 
     public function getDelayProblemMessage()
     {
+        $completedStates= [self::STATE_INVOICED, self::STATE_COMPLETE];
         if (
-            $this->channel == IntegrationChannel::CHANNEL_CHANNELADVISOR
-            && $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL && $this->status != self::STATE_INVOICED
+            $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL
+            && !in_array($this->status, $completedStates)
         ) {
             return 'Invoice should be done in ' . self::TIMING_INTEGRATION . ' hours  for ' . $this->__toString();
-        } elseif ($this->fulfilledBy == self::FULFILLED_BY_SELLER && $this->status != self::STATE_INVOICED) {
+        } elseif (
+            $this->fulfilledBy == self::FULFILLED_BY_SELLER
+            && !in_array($this->status, $completedStates)
+        ) {
             return 'Shipping should be processed in ' . self::TIMING_SHIPPING . ' hours  for ' . $this->__toString();
         }
         return 'No delay message for ' . $this->__toString();
@@ -338,7 +368,7 @@ class WebOrder
             case IntegrationChannel::CHANNEL_AMAZFIT_ARISE:
             case IntegrationChannel::CHANNEL_SONOS_ARISE:
             case IntegrationChannel::CHANNEL_ARISE:
-                return 'https://sellercenter.proyectoarise.es/apps/order/detail?tradeOrderId=' . $this->externalNumber;
+                return 'https://sellercenter.miravia.es/apps/order/detail?tradeOrderId=' . $this->externalNumber;
         }
         throw new Exception('No url link of weborder for ' . $this->channel);
     }
@@ -356,9 +386,11 @@ class WebOrder
         if ($orderApi->DistributionCenterTypeRollup == 'ExternallyManaged') {
             $webOrder->setWarehouse(WebOrder::DEPOT_FBA_AMAZON);
             $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_EXTERNAL);
+            $webOrder->setCarrierService(WebOrder::CARRIER_FBA);
         } elseif ($orderApi->DistributionCenterTypeRollup == 'SellerManaged') {
             $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
             $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+            $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
         } else {
             $webOrder->setWarehouse(WebOrder::DEPOT_MIXED);
             $webOrder->setFulfilledBy(WebOrder::FULFILLED_MIXED);
@@ -379,24 +411,37 @@ class WebOrder
 
     public function getStatusExpedition()
     {
-        if ($this->trackingUrl) {
-            $codeTracking =str_replace('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/', '', $this->trackingUrl);
-            ;
-            try {
-                $client = new Client();
-                $response = $client->get(
-                    'https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $codeTracking,
-                    ['connect_timeout' => 1]
-                );
-                $body = json_decode((string) $response->getBody(), true);
-                if ($body) {
-                    return $body;
-                }
-            } catch (Exception $e) {
+        if ($this->carrierService == WebOrder::CARRIER_DHL) {
+            if ($this->trackingCode) {
+                return DhlGetTracking::getDHLResponse($this->trackingCode);
+            }
+        } else if ($this->carrierService == WebOrder::CARRIER_ARISE){
+            if ($this->trackingCode) {
+                $orderContent=$this->getOrderContent();
+                return AriseTracking::getGlsResponse($this->trackingCode, $orderContent->address_shipping->post_code);
             }
         }
         return null;
     }
+
+
+
+    public function checkifDelivered(): ?DateTime
+    {
+        if ($this->carrierService == WebOrder::CARRIER_DHL) {
+            if ($this->trackingCode) {
+                return DhlGetTracking::checkIfDelivered($this->trackingCode);
+            }
+        } else if ($this->carrierService == WebOrder::CARRIER_ARISE){
+            if ($this->trackingCode) {
+                $orderContent=$this->getOrderContent();
+                return AriseTracking::checkIfDelivered($this->trackingCode, $orderContent->address_shipping->post_code);
+            }
+        }
+        return null;
+    }
+
+
 
 
 
@@ -471,8 +516,8 @@ class WebOrder
         $webOrder = WebOrder::createOrderFromShopify($orderApi);
         $webOrder->setExternalNumber('FBT-' . $orderApi['order_number']);
         $webOrder->setChannel(IntegrationChannel::CHANNEL_FITBITCORPORATE);
-        $webOrder->setSubchannel('Google.kps.direct');
-        $webOrder->addLog('Retrieved from Google.kps.direct');
+        $webOrder->setSubchannel('Fitbitcorporate.kps.tech');
+        $webOrder->addLog('Retrieved from Fitbitcorporate.kps.tech');
         return $webOrder;
     }
 
@@ -496,6 +541,7 @@ class WebOrder
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+        $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
         $webOrder->setContent($orderApi);
         return $webOrder;
     }
@@ -515,6 +561,7 @@ class WebOrder
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+        $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
         $webOrder->addLog('Retrieved from Aliexpress');
         $webOrder->setContent($orderApi);
         return $webOrder;
@@ -529,24 +576,23 @@ class WebOrder
         $webOrder->setExternalNumber($orderApi->order_id);
         $webOrder->setStatus(WebOrder::STATE_CREATED);
         $webOrder->setChannel(IntegrationChannel::CHANNEL_ARISE);
-        $webOrder->setSubchannel('Arise');
+        $webOrder->setSubchannel('Miravia.es');
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $datePurchase = new DateTime($orderApi->created_at, new DateTimeZone('Europe/London'));
         $datePurchase->setTimezone(new DateTimeZone('Europe/Paris'));
         $webOrder->setPurchaseDate($datePurchase);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
-        
+        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
         
         foreach ($orderApi->lines as $line) {
             if ($line->delivery_option_sof==1) {
-                $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+                $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
             } else {
-                $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_EXTERNAL);
+                $webOrder->setCarrierService(WebOrder::CARRIER_ARISE);
             }
         }
         
-
-        $webOrder->addLog('Retrieved from Arise');
+        $webOrder->addLog('Retrieved from Miravia');
         $webOrder->setContent($orderApi);
         return $webOrder;
     }
@@ -777,6 +823,30 @@ class WebOrder
     public function setTrackingUrl(?string $trackingUrl): self
     {
         $this->trackingUrl = $trackingUrl;
+
+        return $this;
+    }
+
+    public function getTrackingCode(): ?string
+    {
+        return $this->trackingCode;
+    }
+
+    public function setTrackingCode(?string $trackingCode): self
+    {
+        $this->trackingCode = $trackingCode;
+
+        return $this;
+    }
+
+    public function getCarrierService(): ?string
+    {
+        return $this->carrierService;
+    }
+
+    public function setCarrierService(?string $carrierService): self
+    {
+        $this->carrierService = $carrierService;
 
         return $this;
     }

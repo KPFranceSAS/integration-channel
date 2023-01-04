@@ -150,8 +150,6 @@ abstract class AriseIntegratorParent extends IntegratorParent
             $this->logger->info('Host it on '.$orderBC->URLEtiqueta);
         }
 
-        $this->checkAdressPostal($orderBC->shippingPostalAddress);
-
         $orderBC->phoneNumber = $orderApi->address_shipping->phone;
         $orderBC->email = $this->getEmailAddress($orderApi);
         $orderBC->externalDocumentNumber = (string)$orderApi->order_id;
@@ -235,17 +233,6 @@ abstract class AriseIntegratorParent extends IntegratorParent
         }
         return  null;
     }
-
-
-    public function checkAdressPostal(PostalAddress $postalAddress)
-    {
-        $street = str_replace(" ", "", strtoupper($postalAddress->street));
-        $forbiddenDestinations = ['CITYBOX', 'CITIBOX', 'CITYPAQ', 'CORREOPOSTAL', 'APARTADOPOSTAL', 'SMARTPOINT'];
-        if (u($street)->containsAny($forbiddenDestinations)) {
-            throw new Exception("Address " . $postalAddress->street . " contains one of the forbidden word. We let you cancel the order online");
-        }
-    }
-
 
 
     protected function getSalesOrderLines($orderApi): array

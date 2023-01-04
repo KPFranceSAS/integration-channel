@@ -100,11 +100,10 @@ abstract class AriseMarkAsDeliveryCommand extends Command
             $this->logger->info('>> Check '.$webOrderArise);
         }
 
-        $statutExpedition = $webOrderArise->getStatusExpedition();
-        if ($statutExpedition) {
-            if ($statutExpedition['FechaEntrega']) {
-                $this->logger->info('Is delivered '.$statutExpedition['FechaEntrega'].' > '.$statutExpedition['Numero']);
-                $messageDelivery = 'Mark as delivered on '.$statutExpedition['FechaEntrega'];
+        $deliveryDate = $webOrderArise->checkifDelivered();
+        if ($deliveryDate) {
+                $this->logger->info('Is delivered '.$deliveryDate->format('d/m/Y'));
+                $messageDelivery = 'Mark as delivered on '.$deliveryDate->format('d/m/Y');
                 if ($webOrderArise->haveNoLogWithMessage($messageDelivery)) {
                     $markOk =  $this->getApi()->markOrderAsDelivered($orderArise->order_id);
                     if ($markOk) {
@@ -116,10 +115,8 @@ abstract class AriseMarkAsDeliveryCommand extends Command
                     $this->logger->info('Already marked as delivered');
                 }
             } else {
-                $this->logger->info('Not yet delivered > '.$statutExpedition['Numero']);
+                $this->logger->info('Not yet delivered');
             }
-        } else {
-            $this->logger->info('Not found on DHL');
-        }
+        
     }
 }
