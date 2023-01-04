@@ -246,7 +246,7 @@ abstract class UpdateStatusParent
                 if ($postUpdateStatus) {
                     $order->setInvoiceErp($invoice['number']);
                     $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
-                    $order->setStatus(WebOrder::STATE_COMPLETE);
+                    $order->setStatus(WebOrder::STATE_INVOICED);
                 }
             } else {
                 $this->addOnlyLogToOrderIfNotExists($order, 'Invoice n°' . $statusSaleOrder['InvoiceNo'].' is not yet accessible through API');
