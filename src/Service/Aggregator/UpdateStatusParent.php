@@ -7,7 +7,6 @@ use App\Entity\WebOrder;
 use App\Helper\MailService;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\ApiAggregator;
-use App\Service\Carriers\GetTracking;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -131,14 +130,71 @@ abstract class UpdateStatusParent
 
 
 
+
+    /*    protected function updateStatusSaleOrderFulfiledBySeller(WebOrder $order)
+    {
+        $this->logger->info('Update status order fulfiled by seller');
+        $statusSaleOrder = $this->getSaleOrderStatus($order);
+
+        if (in_array($statusSaleOrder['statusCode'], ["99", "-1", "0", "1", "2"])) {
+            $this->addOnlyLogToOrderIfNotExists($order, 'Order status in BC >'.$statusSaleOrder['statusLabel'] .' statusCode '.$statusSaleOrder['statusCode']);
+            if ($statusSaleOrder['statusCode']=="99" || $statusSaleOrder['statusCode']=="-1") {
+                $this->checkShipmentIsLate($order);
+            }
+            $this->checkOrderIsLate($order);
+            return;
+        }
+
+        if (in_array($statusSaleOrder['statusCode'], ["3", "4"]) && strlen($statusSaleOrder['InvoiceNo'])) {
+            $this->addOnlyLogToOrderIfNotExists($order, 'Warehouse shipment created in the ERP with number ' . $statusSaleOrder['ShipmentNo']);
+            $this->addOnlyLogToOrderIfNotExists($order, 'Invoice created in the ERP with number ' . $statusSaleOrder['InvoiceNo']);
+            $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
+            $invoice =  $businessCentralConnector->getSaleInvoiceByNumber($statusSaleOrder['InvoiceNo']);
+            if ($invoice) {
+                $order->cleanErrors();
+                $postUpdateStatus = false;
+                if ($order->getCarrierService() == WebOrder::CARRIER_DHL) {
+                    $tracking =  $this->getTrackingDhl($statusSaleOrder['ShipmentNo']);
+                    if (!$tracking) {
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo']);
+                    } else {
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DHL with tracking number ' . $tracking);
+                        $order->setTrackingUrl('https://clientesparcel.dhl.es/LiveTracking/ModificarEnvio/' . $tracking);
+                        $order->setTrackingCode($tracking);
+                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
+                    }
+                }
+
+
+                if ($order->getCarrierService() == WebOrder::CARRIER_ARISE) {
+                    $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and waiting to be collected by Arise');
+                    $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, 'XXXXXXXXXX');
+                }
+
+
+
+                if ($postUpdateStatus) {
+                    $order->setInvoiceErp($invoice['number']);
+                    $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
+                    $order->setStatus(WebOrder::STATE_INVOICED);
+                } else {
+                    $this->checkInvoiceIsLate($order, $invoice);
+                }
+            } else {
+                $this->addOnlyLogToOrderIfNotExists($order, 'Invoice ' . $statusSaleOrder['InvoiceNo']." is not accesible through API");
+            }
+        }
+    }*/
+
+
     protected function updateStatusSaleOrderFulfiledBySeller(WebOrder $order)
     {
         $this->logger->info('Update status order fulfiled by seller');
         $statusSaleOrder = $this->getSaleOrderStatus($order);
 
         if (in_array($statusSaleOrder['statusCode'], ["99", "-1", "0", "1", "2"])) {
-            $this->addOnlyLogToOrderIfNotExists($order, 'Order status in BC >'.$statusSaleOrder['statusLabel'] .' statusCode '.$statusSaleOrder['statusCode'] );
-            if ($statusSaleOrder['statusCode']=="99" || $statusSaleOrder['statusCode']=="-1" ) {
+            $this->addOnlyLogToOrderIfNotExists($order, 'Order status in BC >'.$statusSaleOrder['statusLabel'] .' statusCode '.$statusSaleOrder['statusCode']);
+            if ($statusSaleOrder['statusCode']=="99" || $statusSaleOrder['statusCode']=="-1") {
                 $this->checkShipmentIsLate($order);
             }
             $this->checkOrderIsLate($order);
@@ -174,9 +230,6 @@ abstract class UpdateStatusParent
     }
 
 
-
-
-
     protected function updateStatusSaleOrderFulfiledByExternal(WebOrder $order)
     {
         $this->logger->info('Update status order fulfiled by External');
@@ -193,8 +246,8 @@ abstract class UpdateStatusParent
                 if ($postUpdateStatus) {
                     $order->setInvoiceErp($invoice['number']);
                     $order->setErpDocument(WebOrder::DOCUMENT_INVOICE);
-                    $order->setStatus(WebOrder::STATE_INVOICED);
-                } 
+                    $order->setStatus(WebOrder::STATE_COMPLETE);
+                }
             } else {
                 $this->addOnlyLogToOrderIfNotExists($order, 'Invoice n°' . $statusSaleOrder['InvoiceNo'].' is not yet accessible through API');
             }
@@ -237,7 +290,13 @@ abstract class UpdateStatusParent
             );
             $body = json_decode((string) $response->getBody(), true);
             if ($body) {
-                return str_replace(" 20", "", $body['NumeroExpedicionTLG']);
+                $toReplace = [];
+                for ($i = 1; $i < 10; $i++) {
+                    $toReplace[]=" ".$i."0";
+                }
+
+
+                return str_replace($toReplace, "", $body['NumeroExpedicionTLG']);
             }
         } catch (Exception $e) {
             $this->logger->alert('DHL is not accessible');
@@ -336,7 +395,7 @@ abstract class UpdateStatusParent
      */
     protected function reUpdateStatusSaleOrders()
     {
-         /** @var array[\App\Entity\WebOrder] */
+        /** @var array[\App\Entity\WebOrder] */
         $ordersToSend = $this->manager->getRepository(WebOrder::class)->findBy(
             [
                 "status" => WebOrder::STATE_ERROR_INVOICE,
