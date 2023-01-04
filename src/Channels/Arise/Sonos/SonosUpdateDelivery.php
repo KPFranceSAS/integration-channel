@@ -5,7 +5,7 @@ namespace App\Channels\Arise\Sonos;
 use App\Channels\Arise\AriseUpdateDeliveryParent;
 use App\Entity\IntegrationChannel;
 
-class SonosUpdateStatus extends AriseUpdateDeliveryParent
+class SonosUpdateDelivery extends AriseUpdateDeliveryParent
 {
     public function getChannel()
     {
