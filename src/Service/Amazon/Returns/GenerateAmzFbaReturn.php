@@ -98,7 +98,8 @@ class GenerateAmzFbaReturn
             $fbaReturn->setCommissionOnRefund($refundCommisionCost);
             $fbaReturn->setStatus(FbaReturn::STATUS_WAITING_CUSTOMER);
             $fbaReturn->setSku($amazonFinancialEvent->getSku());
-            $fbaReturn->setPostedDate(DateTimeImmutable::createFromMutable($amazonFinancialEvent->getPostedDate()));
+            $postedDate = DateTimeImmutable::createFromMutable($amazonFinancialEvent->getPostedDate());
+            $fbaReturn->setPostedDate($postedDate);
             $fbaReturn->setProduct($amazonFinancialEvent->getProduct());
             $fbaReturn->addLog('Creation of refund through refund event');
             $fabREturns[] = $fbaReturn;

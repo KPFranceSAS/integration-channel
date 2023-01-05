@@ -234,8 +234,9 @@ class WebOrderCrudController extends AdminCrudController
             'Amazon DE' => "Amazon Seller Central - DE",
             'Amazon ES' => "Amazon Seller Central - ES",
             'Amazon FR' => 'Amazon Seller Central - FR',
-            'Arise' => 'Arise',
+            "Fitbitcorporate.kps.tech"=> "Fitbitcorporate.kps.tech",
             'Flashled.es' => 'Flashled.es',
+            'Miravia.es' => 'Miravia.es',
             'Minibatt.com' => 'Minibatt.com',
             'Owletbaby.es' => 'Owletbaby.es',
         ];

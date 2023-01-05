@@ -9,6 +9,7 @@ use App\Controller\Order\AriseOrderCrudController;
 use App\Controller\Order\ChannelAdvisorOrderCrudController;
 use App\Controller\Order\DeliveryOrderCrudController;
 use App\Controller\Order\ErrorOrderCrudController;
+use App\Controller\Order\FitbitCorporateOrderCrudController;
 use App\Controller\Order\FitbitExpressOrderCrudController;
 use App\Controller\Order\FlashledOrderCrudController;
 use App\Controller\Order\MinibattOrderCrudController;
@@ -33,25 +34,35 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class DashboardController extends AbstractDashboardController
 {
+    protected $adminContext;
+
+    public function __construct(AdminContextProvider $adminContext)
+    {
+        $this->adminContext = $adminContext;
+    }
+
     /**
      * @Route("/", name="admin")
      */
     public function index(): Response
     {
-        $manager = $this->container->get('doctrine')->getManager();
-        return $this->render('admin/dashboard.html.twig');
+        $menu= $this->adminContext->getContext()->getMainMenu();
+        return $this->render('admin/dashboard.html.twig', ["menu"=>$menu]);
     }
 
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
+            ->disableUrlSignatures()
             ->setTitle('Patxira');
     }
 
@@ -72,6 +83,8 @@ class DashboardController extends AbstractDashboardController
                         ->setController(FlashledOrderCrudController::class),
                     MenuItem::linkToCrud('Minibatt', 'fas fa-car-battery', WebOrder::class)
                         ->setController(MinibattOrderCrudController::class),
+                    MenuItem::linkToCrud('Fitbit corporate', 'fas fa-running', WebOrder::class)
+                        ->setController(FitbitCorporateOrderCrudController::class),
                     MenuItem::section(),
                     MenuItem::linkToCrud('On preparation', 'fas fa-truck-loading', WebOrder::class)
                         ->setController(PreparationOrderCrudController::class),

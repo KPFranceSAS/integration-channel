@@ -1,50 +1,79 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
+{% block content_title %}Welcome on Patxira{% endblock %}
 {% block main %}
 
-<div class="mb-4">
-    <div class="row ">
-        <div class="col-4 text-center d-grid gap-2 ">
-            <a href="{{ ea_url().setController('App\\Controller\\Order\\WebOrderCrudController').setAction('index') }}" class="btn btn-outline-primary btn-lg">
-            <i class="fa fa-shopping-cart"></i><br/>All Orders
-            </a>
-        </div>
-        <div class="col-4 text-center d-grid gap-2 ">
-            <a href="{{ ea_url().setController('App\\Controller\\Order\\ErrorOrderCrudController').setAction('index') }}" class="btn btn-outline-primary btn-lg">
-            <i class="fas fa-exclamation-triangle"></i><br/>Errors
-            </a>
-        </div>
-        <div class="col-4 text-center d-grid gap-2 ">
-            <a href="{{ ea_url().setController('App\\Controller\\Order\\DeliveryOrderCrudController').setAction('index') }}" class="btn btn-outline-primary btn-lg">
-            <i class="fas fa-truck-loading"></i><br/>On delivery
-            </a>
-        </div>
-    </div>
- </div>   
- <!--div class="mb-4">
-    <div class="row">   
 
-        <div class="col-3 text-center d-grid gap-2 ">
-            <a href="{{ ea_url().setController('App\\Controller\\Order\\ChannelAdvisorOrderCrudController').setAction('index')}}" class="btn btn-outline-primary btn-lg">
-                <i class="fab fa-amazon"></i><br/>Amazon
-            </a>
-        </div>
-        <div class="col-3 text-center d-grid gap-2 ">
-            <a href="{{ ea_url().setController('App\\Controller\\Order\\AliexpressOrderCrudController').setAction('index')}}" class="btn btn-outline-primary btn-lg">
-            <i class="fab fa-alipay"></i><br/>Aliexpress
-            </a>
-        </div>
-        <div class="col-3 text-center d-grid gap-2 ">
-            <a href="{{ ea_url().setController('App\\Controller\\Order\\FitbitExpressOrderCrudController').setAction('index')}}" class="btn btn-outline-primary btn-lg">
-            <i class="fas fa-heartbeat"></i><br/>Fitbitexpress
-            </a>
-        </div>
-        <div class="col-3 text-center d-grid gap-2 ">
-            <a href="{{ ea_url().setController('App\\Controller\\Order\\OwletCareOrderCrudController').setAction('index')}}" class="btn btn-outline-primary btn-lg">
-            <i class="fas fa-baby"></i><br/>Owletcare
-            </a>
-        </div>
-    </div>
-</div>
--->
-{% endblock %}
+<div class='row'>
+	<div class="col-xl-6">
+
+		<div class="card mb-4">
+			<div class="card-body">
+				<aside class="content-top ea-search-enabled">
+					<div class="content-search">
+
+						<form class="form-action-search" method="get">
+							<input type="hidden" name="crudAction" value="index">
+							<input type="hidden" name="crudControllerFqcn" value="App\Controller\Order\WebOrderCrudController">
+							<input type="hidden" name="page" value="1">
+							<input type="hidden" name="signature" value="{{ ea_url().unsetAll().setAction('index').setController("App\Controller\Order\WebOrderCrudController").getSignature() }}">
+
+							<div class="form-group">
+								<div class="form-widget">
+									<i class="fas fa-search content-search-icon"></i>
+									<label class="content-search-label" data-value="">
+										<input class="form-control is-blank" type="search" name="query" value="" placeholder="Search an order" spellcheck="false" autocorrect="false" oninput="this.parentNode.dataset.value=this.value">
+									</label>
+								</div>
+							</div>
+						</form>
+					</div>
+				</aside>
+			</div>
+		</div>
+
+
+	</div>
+	<div class="col-xl-6">
+
+		{% for menuDto in menu.items %}
+
+			{% if menuDto.hasSubItems %}
+				<div class="card mb-4">
+					<div class="card-body">
+						<div class="row g-0">
+							<div class="col-12 ">
+								<h5>
+									{% if menuDto.icon is not empty %}
+										<i class="menu-icon fa-fw {{ menuDto.icon }}"></i>
+									{% endif %}
+									{{ menuDto.label|raw }}</h5>
+							</div>
+						</div>
+
+						<div class="row g-0">
+							{% for item in menuDto.subItems %}
+								{% if item.isMenuSection ==false %}
+									<div class="col-4 text-center ">
+
+										<a href="{{ item.linkUrl }}" class="btn btn-outline-dark btn-lg d-block" target="{{ item.linkTarget }}" rel="{{ item.linkRel }}" referrerpolicy="origin-when-cross-origin">
+											{% if item.icon is not empty %}
+												<i class="menu-icon fa-fw {{ item.icon }}"></i><br/>
+											{% endif %}
+
+											{{ item.label|raw }}
+
+											{% if item.badge %}
+												<span class="menu-item-badge rounded-pill badge {{ item.badge.cssClass }}" style="{{ item.badge.htmlStyle }}">{{ item.badge.content }}</span>
+											{% endif %}
+										</a>
+									</div>
+								{% endif %}
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+</div>{% endblock %}

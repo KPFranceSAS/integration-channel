@@ -136,3 +136,8 @@
 .priceProductSaleChannels .input-group-text {
     height: 35px;
 }
+
+
+.btn-outline-dark:hover {
+    color: #fff!important;
+}

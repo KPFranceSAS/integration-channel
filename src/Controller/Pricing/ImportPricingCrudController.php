@@ -192,7 +192,7 @@ class ImportPricingCrudController extends AdminCrudController
         $user = $this->getUser();
         
         return $this->renderForm(
-            'admin/crud/importPricing/import.html.twig', 
+            'admin/crud/importPricing/import.html.twig',
             [
                 'form' => $form,
                 'import' => $import,
@@ -252,7 +252,7 @@ class ImportPricingCrudController extends AdminCrudController
         $datas = [];
 
         if (substr($uploadedFile->getClientOriginalName(), -3) == 'csv') {
-            $reader = ReaderEntityFactory::createCSVReader($uploadedFile->getClientOriginalName());
+            $reader = ReaderEntityFactory::createCSVReader();
             $reader->setFieldDelimiter(';');
             $reader->setFieldEnclosure('"');
         } else {
@@ -264,7 +264,7 @@ class ImportPricingCrudController extends AdminCrudController
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $row) {
                 if (!$header) {
-                    foreach($row->getCells() as $cell){
+                    foreach ($row->getCells() as $cell) {
                         $header[] = $cell->getValue();
                     }
                 } else {
