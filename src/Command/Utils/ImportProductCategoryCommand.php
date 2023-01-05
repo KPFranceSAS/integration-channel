@@ -42,7 +42,7 @@ class ImportProductCategoryCommand extends Command
 
         $output->writeln('Start imports ' . count($products));
         foreach ($products as $product) {
-            $productDb = $product["Sku"];
+            $productDb = $this->manager->getRepository(Product::class)->findOneBy(["sku" => $product['Sku']]);
             if ($productDb) {
                 if (array_key_exists('Category', $product)) {
                     $categoryDb = $this->manager->getRepository(Category::class)->findOneBy(["name" => $product['Category']]);
