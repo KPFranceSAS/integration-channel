@@ -1,0 +1,15 @@
+{% if  status == constant('App\\Entity\\AmazonRemoval::PENDING') %}
+	{% set classColor = 'info' %}
+{% elseif  status == constant('App\\Entity\\AmazonRemoval::COMPLETED') %}
+	{% set classColor = 'success' %}
+{% elseif  status == constant('App\\Entity\\AmazonRemoval::CANCELLED') %}
+	{% set classColor = 'warning' %}
+{% else %}
+	{% set classColor = 'secondary' %}
+{% endif %}
+
+<div class="">
+	<span class="badge badge-{{classColor}}">
+		{{status}}
+	</span>
+</div>

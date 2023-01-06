@@ -1,0 +1,76 @@
+
+<table class="table datagrid ">
+					<thead>
+						<tr>
+							<th>
+								Sku
+							</th>
+							<th>
+								Description
+							</th>
+							<th>
+								Brand
+							</th>
+                    		<th>
+								Status
+							</th>						
+                     		<th>
+								Disposition
+							</th>
+							<th>
+							   Requested
+							</th>
+							<th>
+								Cancelled
+							</th>
+							<th>
+								Disposed
+							</th>
+							<th>
+								Shipped
+							</th>
+                     <th>
+								In process
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for item in field.value %}
+							<tr>
+								
+								<td data-label="Sku" class=" text-left field-text">
+									{{item.product.sku}}
+								</td>
+								<td data-label="Description" class=" text-left field-text">
+									{{item.product.description}}
+								</td>
+								<td data-label="Brand" class=" text-left field-text">
+									{{item.product.brand}}
+								</td>
+								<td data-label="Status" class=" text-left field-text">
+									{% include "admin/fields/amazon/partialStatus.html.twig" with {'status':item.calculateStatus } %}
+								</td>
+	
+								
+								<td data-label="Disposition" class=" text-left field-text">
+									{{item.disposition}}
+								</td>
+                        		<td data-label="Requested" class=" text-left field-text">
+									{{item.requestedQuantity}}
+								</td>
+								<td data-label="Cancelled" class=" text-left field-text">
+									{{item.cancelledQuantity}}
+								</td>
+								<td data-label="Disposed" class=" text-left field-text">
+									{{item.disposedQuantity}}
+								</td>
+								<td data-label="Shipped" class=" text-left field-text">
+									{{item.shippedQuantity}}
+								</td>
+								<td data-label="In process" class=" text-left field-text">
+									{{item.inProcessQuantity}}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+</table>

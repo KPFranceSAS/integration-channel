@@ -19,6 +19,7 @@ use App\Controller\Order\PreparationOrderCrudController;
 use App\Controller\Order\WebOrderCrudController;
 use App\Controller\Pricing\PricingCrudController;
 use App\Entity\AmazonFinancialEvent;
+use App\Entity\AmazonRemoval;
 use App\Entity\Brand;
 use App\Entity\Category;
 use App\Entity\FbaReturn;
@@ -96,7 +97,6 @@ class DashboardController extends AbstractDashboardController
                         ->setController(LateOrderCrudController::class),
                     MenuItem::linkToCrud('Error', 'fas fa-exclamation-triangle', WebOrder::class)
                         ->setController(ErrorOrderCrudController::class),
-                    MenuItem::section(),
                     MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)
                         ->setController(WebOrderCrudController::class),
                 ]),
@@ -105,7 +105,8 @@ class DashboardController extends AbstractDashboardController
                     MenuItem::linkToCrud('Inventory', 'fas fa-cube', Product::class)
                         ->setController(StockCrudController::class),
                     MenuItem::linkToCrud('Fees', 'fas fa-money-bill-alt', AmazonFinancialEvent::class),
-                    MenuItem::linkToCrud('FBA Returns', 'fas fa-exchange-alt', FbaReturn::class),
+                    MenuItem::linkToCrud('FBA Removal', 'fas fa-exchange-alt', AmazonRemoval::class),
+                    //MenuItem::linkToCrud('FBA Returns', 'fas fa-exchange-alt', FbaReturn::class),
                 ])
                 ->setPermission('ROLE_AMAZON'),
             MenuItem::subMenu('Pricing', 'fas fa-money-bill')

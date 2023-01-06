@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\AmazonRemoval;
 use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
 use App\Helper\Utils\ExchangeRateCalculator;
@@ -142,6 +143,11 @@ class AmazonRemovalOrder
      */
     private $fbaReturns;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=AmazonRemoval::class, inversedBy="amazonRemovalOrders")
+     */
+    private $amazonRemoval;
+
 
     /**
     *  @Groups({"export_order"})
@@ -167,6 +173,21 @@ class AmazonRemovalOrder
         $this->returns = new ArrayCollection();
         $this->fbaReturns = new ArrayCollection();
     }
+
+
+    public function calculateStatus() : string
+    {
+        $quantity = $this->requestedQuantity - $this->cancelledQuantity;
+        if ($quantity == 0) {
+            return AmazonRemoval::CANCELLED;
+        }
+        if ($this->orderType == 'Return') {
+            return ($quantity - $this->shippedQuantity) ==0 ? AmazonRemoval::COMPLETED : AmazonRemoval::PENDING;
+        } else {
+            return ($quantity - $this->disposedQuantity) ==0 ? AmazonRemoval::COMPLETED : AmazonRemoval::PENDING;
+        }
+    }
+
 
 
     public function importData(ExchangeRateCalculator $calculator, array $orderAmz)
@@ -498,6 +519,18 @@ class AmazonRemovalOrder
                 $fbaReturn->setAmazonRemoval(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAmazonRemoval(): ?AmazonRemoval
+    {
+        return $this->amazonRemoval;
+    }
+
+    public function setAmazonRemoval(?AmazonRemoval $amazonRemoval): self
+    {
+        $this->amazonRemoval = $amazonRemoval;
 
         return $this;
     }

@@ -1,0 +1,33 @@
+<p>
+	A removal Order from FBA with N°{{removal.orderId}} has been requested and will be sent to {{removal.shipCity}}, {{removal.shipCountry}}. PLease notice that those quantities can arrive by batches.
+</p>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="min-width:100%;  border-collapse: collapse; border-style: solid; border-color: # aeabab;" border="1px">
+	<thead>
+		<tr>
+			<th style="padding:5px; border: 1px solid #aeabab;" align="left">Sku</th>
+			<th style="padding:5px; border: 1px solid #aeabab;" align="left">Name</th>
+			<th style="padding:5px; border: 1px solid #aeabab;" align="left">Brand</th>
+			<th style="padding:5px; border: 1px solid #aeabab;" align="left">Qty</th>
+		</tr>
+	</thead>
+	<tbody>
+
+		{% for item in removal.amazonRemovalOrders %}
+			<tr>
+				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
+					{{item.product.sku}}
+				</td>
+				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
+					{{item.product.description}}
+				</td>
+				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
+					{{item.product.brand}}
+				</td>
+				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
+					{{item.requestedQuantity}}
+				</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+</table>
