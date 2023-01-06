@@ -71,7 +71,7 @@ class OrderLogCrudController extends AdminCrudController
 
 
         return $filters
-            ->add(ChoiceFilter::new('status')->canSelectMultiple(true)->setChoices($choiceStatuts))
+            ->add(ChoiceFilter::new('category')->canSelectMultiple(true)->setChoices($choiceStatuts))
             ->add(DateTimeFilter::new('logDate', "Log date"))
             ->add(DateTimeFilter::new('createdAt', "Created at"))
             ->add(ChoiceFilter::new('integrationChannel', "Integration Channel")->canSelectMultiple(true)->setChoices($this->getChannels()))
