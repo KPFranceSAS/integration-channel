@@ -24,6 +24,7 @@ use App\Entity\Category;
 use App\Entity\FbaReturn;
 use App\Entity\ImportPricing;
 use App\Entity\IntegrationChannel;
+use App\Entity\OrderLog;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Entity\Promotion;
@@ -157,7 +158,12 @@ class DashboardController extends AbstractDashboardController
                         'Integration channel',
                         'fas fa-stream',
                         IntegrationChannel::class
-                    ),
+                    )->setPermission('ROLE_ADMIN'),
+                    MenuItem::linkToCrud(
+                        'Order error log',
+                        'fas fa-bug',
+                        OrderLog::class
+                    )->setPermission('ROLE_ADMIN'),
                     MenuItem::linkToCrud(
                         'Users',
                         'fa fa-user',

@@ -24,9 +24,6 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     {
         return $this->getApi();
     }
-
-
-
     
     public function retrievAllChildren($parent)
     {
@@ -44,6 +41,16 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
         $this->syncAllCategorys();
         $this->syncAllProducts();
     }
+
+
+    protected function getMetaFields(){
+        return [];
+    }
+
+
+    
+
+
 
 
     protected function getAllProducts()
@@ -190,7 +197,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     {
         $this->logger->info('Create category '.$category['code']);
         $categoryToCreate = [
-            'body_html' => $category['descriptions'][$this->getLocale()],
+            'body_html' => $category['short_descriptions'][$this->getLocale()],
             'title' => $category['labels'][$this->getLocale()],
             'handle' =>  $category['code'],
         ];
@@ -203,7 +210,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     {
         $this->logger->info('Update category '.$category['code']);
         $categoryToUpdate = [
-            'body_html' => $category['descriptions'][$this->getLocale()],
+            'body_html' => $category['short_descriptions'][$this->getLocale()],
             'title' => $category['labels'][$this->getLocale()],
         ];
         $response = $this->getShopifyApi()->updateCustomCategory($categoryShopify['id'], $categoryToUpdate);
@@ -211,7 +218,7 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     }
 
 
-
+    
 
     protected function checkIfProductPresent($sku)
     {
