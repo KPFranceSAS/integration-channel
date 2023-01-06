@@ -42,6 +42,7 @@ class WebOrder
 
     public const  TIMING_INTEGRATION = 24;
     public const  TIMING_SHIPPING = 30;
+    public const  TIMING_DELIVERY = 192;
 
     public const  FULFILLED_BY_EXTERNAL = 'EXTERNALLY MANAGED';
     public const  FULFILLED_BY_SELLER = 'OWN MANAGED';
@@ -301,6 +302,11 @@ class WebOrder
             && !in_array($this->status, $completedStates)
         ) {
             return DatetimeUtils::isOutOfDelayBusinessDays($this->purchaseDate, self::TIMING_SHIPPING);
+        } elseif (
+            $this->fulfilledBy == self::FULFILLED_BY_SELLER
+            && $this->status == self::STATE_INVOICED
+        ) {
+            return DatetimeUtils::isOutOfDelayBusinessDays($this->purchaseDate, self::TIMING_DELIVERY);
         }
         return false;
     }
@@ -318,6 +324,11 @@ class WebOrder
             && !in_array($this->status, $completedStates)
         ) {
             return 'Shipping should be processed in ' . self::TIMING_SHIPPING . ' hours  for ' . $this->__toString();
+        } elseif (
+            $this->fulfilledBy == self::FULFILLED_BY_SELLER
+            && $this->status == self::STATE_INVOICED
+        ) {
+            return 'Delivery should be processed in max 8 days for ' . $this->__toString();
         }
         return 'No delay message for ' . $this->__toString();
     }
@@ -415,7 +426,7 @@ class WebOrder
             if ($this->trackingCode) {
                 return DhlGetTracking::getDHLResponse($this->trackingCode);
             }
-        } else if ($this->carrierService == WebOrder::CARRIER_ARISE){
+        } elseif ($this->carrierService == WebOrder::CARRIER_ARISE) {
             if ($this->trackingCode) {
                 $orderContent=$this->getOrderContent();
                 return AriseTracking::getGlsResponse($this->trackingCode, $orderContent->address_shipping->post_code);
@@ -432,7 +443,7 @@ class WebOrder
             if ($this->trackingCode) {
                 return DhlGetTracking::checkIfDelivered($this->trackingCode);
             }
-        } else if ($this->carrierService == WebOrder::CARRIER_ARISE){
+        } elseif ($this->carrierService == WebOrder::CARRIER_ARISE) {
             if ($this->trackingCode) {
                 $orderContent=$this->getOrderContent();
                 return AriseTracking::checkIfDelivered($this->trackingCode, $orderContent->address_shipping->post_code);

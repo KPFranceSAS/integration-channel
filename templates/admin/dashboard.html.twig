@@ -5,7 +5,7 @@
 
 
 <div class='row'>
-	<div class="col-xl-6">
+	<div class="col-xl-12">
 
 		<div class="card mb-4">
 			<div class="card-body">
@@ -34,10 +34,11 @@
 
 
 	</div>
-	<div class="col-xl-6">
-
+	<div class="col-xl-12">
+		<div class='row'>
+	
 		{% for menuDto in menu.items %}
-
+			<div class="col-xl-6">
 			{% if menuDto.hasSubItems %}
 				<div class="card mb-4">
 					<div class="card-body">
@@ -51,10 +52,10 @@
 							</div>
 						</div>
 
-						<div class="row g-0">
+						<div class="row g-0 ">
 							{% for item in menuDto.subItems %}
 								{% if item.isMenuSection ==false %}
-									<div class="col-4 text-center ">
+									<div class="col-6 col-sm-4 col-md-3 text-center ">
 
 										<a href="{{ item.linkUrl }}" class="btn btn-outline-dark btn-lg d-block" target="{{ item.linkTarget }}" rel="{{ item.linkRel }}" referrerpolicy="origin-when-cross-origin">
 											{% if item.icon is not empty %}
@@ -68,12 +69,17 @@
 											{% endif %}
 										</a>
 									</div>
+								{% else %}
+							</div>	
+							<div class="row g-0 mt-2">
 								{% endif %}
 							{% endfor %}
 						</div>
 					{% endif %}
 				</div>
 			</div>
+			</div>
 		{% endfor %}
+		</div>
 	</div>
 </div>{% endblock %}

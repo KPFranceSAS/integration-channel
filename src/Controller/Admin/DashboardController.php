@@ -12,6 +12,7 @@ use App\Controller\Order\ErrorOrderCrudController;
 use App\Controller\Order\FitbitCorporateOrderCrudController;
 use App\Controller\Order\FitbitExpressOrderCrudController;
 use App\Controller\Order\FlashledOrderCrudController;
+use App\Controller\Order\LateOrderCrudController;
 use App\Controller\Order\MinibattOrderCrudController;
 use App\Controller\Order\OwletCareOrderCrudController;
 use App\Controller\Order\PreparationOrderCrudController;
@@ -71,26 +72,28 @@ class DashboardController extends AbstractDashboardController
         return [
             MenuItem::subMenu('Orders', 'fa fa-shopping-cart')
                 ->setSubItems([
-                    MenuItem::linkToCrud('ChannelAdvisor', 'fab fa-amazon', WebOrder::class)
+                    MenuItem::linkToCrud('Channel Advisor', 'fab fa-amazon', WebOrder::class)
                         ->setController(ChannelAdvisorOrderCrudController::class),
                     MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)
                         ->setController(AliexpressOrderCrudController::class),
                     MenuItem::linkToCrud('Miravia', 'fas fa-sun', WebOrder::class)
                         ->setController(AriseOrderCrudController::class),
-                    MenuItem::linkToCrud('Owletcare', 'fas fa-baby', WebOrder::class)
+                    MenuItem::linkToCrud('Owlet Care', 'fas fa-baby', WebOrder::class)
                         ->setController(OwletCareOrderCrudController::class),
                     MenuItem::linkToCrud('Flashled', 'far fa-lightbulb', WebOrder::class)
                         ->setController(FlashledOrderCrudController::class),
                     MenuItem::linkToCrud('Minibatt', 'fas fa-car-battery', WebOrder::class)
                         ->setController(MinibattOrderCrudController::class),
-                    MenuItem::linkToCrud('Fitbit corporate', 'fas fa-running', WebOrder::class)
+                    MenuItem::linkToCrud('Fitbit Corporate', 'fas fa-running', WebOrder::class)
                         ->setController(FitbitCorporateOrderCrudController::class),
                     MenuItem::section(),
-                    MenuItem::linkToCrud('On preparation', 'fas fa-truck-loading', WebOrder::class)
+                    MenuItem::linkToCrud('Waiting for shipping', 'fas fa-truck-loading', WebOrder::class)
                         ->setController(PreparationOrderCrudController::class),
                     MenuItem::linkToCrud('On delivery', 'fas fa-truck', WebOrder::class)
                         ->setController(DeliveryOrderCrudController::class),
-                    MenuItem::linkToCrud('Errors', 'fas fa-exclamation-triangle', WebOrder::class)
+                    MenuItem::linkToCrud('Late', 'fas fa-clock', WebOrder::class)
+                        ->setController(LateOrderCrudController::class),
+                    MenuItem::linkToCrud('Error', 'fas fa-exclamation-triangle', WebOrder::class)
                         ->setController(ErrorOrderCrudController::class),
                     MenuItem::section(),
                     MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)
