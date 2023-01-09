@@ -45,19 +45,17 @@ class OrderLogCrudController extends AdminCrudController
     {
         return [
             TextField::new('category', 'Category'),
-            TextField::new('description', 'Error'),
             TextField::new('orderNumber', 'Order number'),
             TextField::new('marketplace', 'Marketplace'),
             TextField::new('integrationChannel', 'Integration'),
-            DateTimeField::new('logDate', "Date")
+            DateTimeField::new('logDate', "Date"),
+            TextField::new('description', 'Error'),
         ];
     }
     
 
     public function configureFilters(Filters $filters): Filters
     {
-        
-
         $choiceStatuts = [
             OrderLog::CATEGORY_DELAY_DELIVERY => OrderLog::CATEGORY_DELAY_DELIVERY,
             OrderLog::CATEGORY_DELAY_INVOICE => OrderLog::CATEGORY_DELAY_INVOICE,
