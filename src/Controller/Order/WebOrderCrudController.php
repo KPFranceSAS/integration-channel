@@ -44,7 +44,6 @@ class WebOrderCrudController extends AdminCrudController
     {
         $crud = parent::configureCrud($crud);
         $crud->overrideTemplate('crud/detail', 'admin/crud/order/detail.html.twig');
-        $crud->overrideTemplate('crud/index', 'admin/crud/order/index.html.twig');
 
         return $crud;
     }

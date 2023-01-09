@@ -2,10 +2,10 @@
 
 
     {% block responsive_header_logo %}
-                                <a class="responsive-logo" title="{{ ea.dashboardTitle|striptags }}" href="{{ path(ea.dashboardRouteName) }}">
-                                    <i class="fas fa-leaf"></i> {{ ea.dashboardTitle|raw }}
-                                </a>
-                            {% endblock responsive_header_logo %}
+        <a class="responsive-logo" title="{{ ea.dashboardTitle|striptags }}" href="{{ path(ea.dashboardRouteName) }}">
+            <i class="fas fa-leaf"></i> {{ ea.dashboardTitle|raw }}
+        </a>
+    {% endblock responsive_header_logo %}
 
 
     {% block header_logo %}

@@ -62,6 +62,15 @@ class DashboardController extends AbstractDashboardController
         return $this->render('admin/dashboard.html.twig', ["menu"=>$menu]);
     }
 
+
+    /**
+     * @Route("/help", name="help")
+     */
+    public function help(): Response
+    {
+        return $this->render('help/user.html.twig');
+    }
+
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
@@ -170,10 +179,10 @@ class DashboardController extends AbstractDashboardController
                         'fa fa-user',
                         User::class
                     )->setPermission('ROLE_ADMIN'),
-            ])
+                    ]),
+                    MenuItem::linkToRoute('Help', 'fas fa-question-circle', 'help'),
         ];
     }
-
 
     public function configureAssets(): Assets
     {
