@@ -11,6 +11,7 @@ use AmazonPHP\SellingPartner\Regions;
 use AmazonPHP\SellingPartner\SellingPartnerSDK;
 use AmazonPHP\SellingPartner\STSClient;
 use Buzz\Client\Curl;
+use DateInterval;
 use DateTime;
 use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Log\LoggerInterface;
@@ -95,9 +96,23 @@ class AmzApi
 
     public function getShipmentReceived()
     {
+        $dateTime= new DateTime();
+        $dateTime->sub(new DateInterval('P30D'));
+
         return $this->sdk->fulfillmentOutbound()->listAllFulfillmentOrders(
             $this->getAccessToken(),
-            Regions::EUROPE
+            Regions::EUROPE,
+            $dateTime
+        );
+    }
+
+
+    public function getParcelShipments($orderId)
+    {
+        return $this->sdk->fulfillmentOutbound()->getFulfillmentOrder(
+            $this->getAccessToken(),
+            Regions::EUROPE,
+            $orderId
         );
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Service\Amazon\Report;
 
+use App\Entity\AmazonFinancialEvent;
 use App\Entity\AmazonFinancialEventGroup;
 use App\Entity\AmazonReimbursement;
 use App\Entity\AmazonReturn;
@@ -11,29 +12,29 @@ use App\Entity\ProductStockDaily;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class PublishPowerBi
 {
-    const BATCH_SIZE = 500;
-    public function __construct(LoggerInterface $logger, ManagerRegistry $manager, SerializerInterface $serializer, FilesystemOperator $kpssportStorage)
+    const BATCH_SIZE = 1000;
+    public function __construct(LoggerInterface $logger, ManagerRegistry $manager, SerializerInterface $serializer, $projectDir)
     {
-        $this->kpssportStorage = $kpssportStorage;
         /** @var \Doctrine\ORM\EntityManagerInterface */
         $this->manager = $manager->getManager();
         $this->serializer = $serializer;
         $this->logger = $logger;
+        $this->projectDir =  $projectDir.'/public/report/';
     }
 
     private $manager;
 
     private $logger;
 
+    private $projectDir;
+
     private $serializer;
-
-    private $kpssportStorage;
-
 
 
     public function exportAll()
@@ -53,16 +54,15 @@ class PublishPowerBi
     public function exportData($className, $groupSerialisation, $fileName)
     {
         $this->logger->info("Export " . $className);
-        $elements  = $this->manager->getRepository($className)->findAll();
-        $this->kpssportStorage->write($fileName, $this->serializer->serialize($elements, 'json', [
-            DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
-            'groups' => $groupSerialisation
-        ]), []);
+        $query = "select a from ".$className." a";
+        $this->exportDataQuery($query, $groupSerialisation, $fileName);
         $this->logger->info("Export " . $className . " done ");
     }
 
 
 
+
+    
 
     public function exportProducts()
     {
@@ -108,58 +108,79 @@ class PublishPowerBi
                 'name' => $result['salesChannel']
             ];
         }
-        $this->kpssportStorage->write('marketplaces.json', json_encode($marketplaces), []);
+        $filePath = $this->projectDir.'marketplaces.json';
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($filePath);
+        $this->manager->clear();
+        $filesystem->appendToFile($filePath, json_encode($marketplaces));
     }
+
+
+
 
 
 
     public function exportOrders()
     {
-        $this->logger->info("Export orders ");
-        $orders = [];
-        
-        $i = 1;
-        $q = $this->manager->createQuery('select a from App\Entity\AmazonOrder a');
-        foreach ($q->toIterable() as $amz) {
-            if ($amz->getIsReturn() == false) {
-                $order = $this->serializer->serialize($amz, 'json', [
-                    DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
-                    'groups' => 'export_order'
-                ]);
-                $orders[] = json_decode($order);
-                ++$i;
-                if (($i % self::BATCH_SIZE) === 0) {
-                    $this->logger->info("Exported  $i orders ");
-                    $this->manager->clear(); // Detaches all objects from Doctrine!
-                }
-            }
-        }
-
-        $this->kpssportStorage->write('orders.json', json_encode($orders), []);
+        $this->logger->info("Export orders start ");
+        $query = 'select a from App\Entity\AmazonOrder a where a.isReturn = 0';
+        $this->exportDataQuery($query, 'export_order', 'orders.json');
         $this->logger->info("Export orders done ");
     }
 
 
     public function exportFinancials()
     {
-        $this->logger->info("Export financials ");
-        $financials = [];
+        $this->exportData(AmazonFinancialEvent::class, 'export_order', 'reimbursements.json');
+    }
+
+
+    public function exportDataQuery($query, $groupSerialisation, $fileName)
+    {
+        $filePath = $this->projectDir.$fileName;
+
+        $filesystem = new Filesystem();
+        $filesystem->remove($filePath);
+
+        $this->logger->info("Export datas : ".$query);
+        $datas = [];
+        $filesystem->appendToFile($filePath, "[");
         $i = 1;
-        $q = $this->manager->createQuery('select a from App\Entity\AmazonFinancialEvent a');
+        $firstAdded = false;
+        $q = $this->manager->createQuery($query);
         foreach ($q->toIterable() as $amz) {
-            $financial = $this->serializer->serialize($amz, 'json', [
+            $data = $this->serializer->serialize($amz, 'json', [
                 DateTimeNormalizer::FORMAT_KEY => 'Y-m-d H:i:s',
-                'groups' => 'export_order'
+                'groups' => $groupSerialisation
             ]);
-            $financials[] = json_decode($financial);
+            $datas[] = json_decode($data);
             ++$i;
             if (($i % self::BATCH_SIZE) === 0) {
-                $this->logger->info("Exported  $i financials ");
+                $this->logger->info("Exported  $i datas in ".$fileName);
                 $this->manager->clear(); // Detaches all objects from Doctrine!
+                $valueToadd = substr(json_encode($datas), 1, -1);
+
+                if ($firstAdded) {
+                    $valueToadd =  ','. $valueToadd;
+                } else {
+                    $firstAdded = true;
+                }
+                $filesystem->appendToFile($filePath, $valueToadd);
+                $datas = [];
             }
         }
+        if (count($datas)>0) {
+            $valueToadd = substr(json_encode($datas), 1, -1);
+            if ($firstAdded) {
+                $valueToadd =  ','. $valueToadd;
+            } else {
+                $firstAdded = true;
+            }
+            $filesystem->appendToFile($filePath, $valueToadd);
+        }
 
-        $this->kpssportStorage->write('financials.json', json_encode($financials), []);
-        $this->logger->info("Export financials done ");
+        $filesystem->appendToFile($filePath, ']');
+        $this->logger->info("Export datas done ");
     }
 }

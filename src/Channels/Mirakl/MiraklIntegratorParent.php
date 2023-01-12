@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Channels\Arise;
+namespace App\Channels\Mirakl;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Model\PostalAddress;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\BusinessCentral\ProductTaxFinder;
-use App\Channels\Arise\AriseApiParent;
+use App\Channels\Mirakl\MiraklApiParent;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
@@ -19,7 +20,7 @@ use function Symfony\Component\String\u;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
-abstract class AriseIntegratorParent extends IntegratorParent
+abstract class MiraklIntegratorParent extends IntegratorParent
 {
     public const ARISE_CUSTOMER_NUMBER = "003307";
 
@@ -30,15 +31,13 @@ abstract class AriseIntegratorParent extends IntegratorParent
         LoggerInterface $logger,
         MailService $mailer,
         BusinessCentralAggregator $businessCentralAggregator,
-        ApiAggregator $apiAggregator,
-        FilesystemOperator $ariseLabelStorage
+        ApiAggregator $apiAggregator
     ) {
         parent::__construct($productTaxFinder, $manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator);
-        $this->ariseLabelStorage = $ariseLabelStorage;
     }
 
 
-    protected $ariseLabelStorage;
+
 
     
     /**
@@ -53,19 +52,18 @@ abstract class AriseIntegratorParent extends IntegratorParent
 
         foreach ($ordersApi as $orderApi) {
             try {
-                $orderFull = $this->getAriseApi()->getOrder($orderApi->order_id);
-                if ($this->integrateOrder($orderFull)) {
+                if ($this->integrateOrder($orderApi)) {
                     $counter++;
                     $this->logger->info("Orders integrated : $counter ");
                 }
             } catch (Exception $exception) {
-                $this->addError('Problem retrieved Arise #' . $orderApi->order_id . ' > ' . $exception->getMessage());
+                $this->addError('Problem retrieved Mirakl #' . $orderApi->order_id . ' > ' . $exception->getMessage());
             }
         }
     }
 
 
-    protected function getAriseApi():AriseApiParent
+    protected function getMiraklApi():MiraklApiParent
     {
         return $this->getApi();
     }
@@ -81,7 +79,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
 
     public function getCustomerBC($orderApi)
     {
-        return AriseIntegratorParent::ARISE_CUSTOMER_NUMBER;
+        return MiraklIntegratorParent::ARISE_CUSTOMER_NUMBER;
     }
 
 
@@ -135,19 +133,6 @@ abstract class AriseIntegratorParent extends IntegratorParent
             }
         }
 
-
-        if ($this->checkIsAriseFulfilled($orderApi)) {
-            $orderBC->shippingAgent = 'ARISE';
-            $orderBC->shippingAgentService = 'STANDARD';
-            $this->logger->info('Create Label');
-            $pdfLink = $this->getAriseApi()->createLabel($orderApi->order_id);
-            $pdfContent = file_get_contents($pdfLink);
-           
-            $filename = $orderApi->order_id.'_'.date('YmdHis').'.pdf';
-            $this->ariseLabelStorage->write($filename, $pdfContent);
-            $orderBC->URLEtiqueta = "https://marketplace.kps-group.com/labels/".$filename;
-            $this->logger->info('Host it on '.$orderBC->URLEtiqueta);
-        }
 
         $orderBC->phoneNumber = $orderApi->address_shipping->phone;
         $orderBC->email = $this->getEmailAddress($orderApi);
@@ -208,17 +193,17 @@ abstract class AriseIntegratorParent extends IntegratorParent
         return $orderBC;
     }
 
-    public function checkIsAriseFulfilled($orderApi)
+    public function checkIsMiraklFulfilled($orderApi)
     {
-        $isFulfilledByArise = false;
+        $isFulfilledByMirakl = false;
         foreach ($orderApi->lines as $line) {
             if ($line->delivery_option_sof==1) {
-                $isFulfilledByArise = false;
+                $isFulfilledByMirakl = false;
             } else {
-                $isFulfilledByArise = true;
+                $isFulfilledByMirakl = true;
             }
         }
-        return  $isFulfilledByArise;
+        return  $isFulfilledByMirakl;
     }
 
 

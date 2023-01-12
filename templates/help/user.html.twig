@@ -2,24 +2,57 @@
 
 {% block content_title %}Help{% endblock %}
 {% block main %}
+<ul>
+	<li>
+		<a href="#purposes">Purposes</a>
+	</li>
+	<li>
+		<a href="#usage">Usage</a>
+		<ul>
+			<li>
+				<a href="#login">Login</a>
+			</li>
+			<li>
+				<a href="#interface">Interface</a>
+			</li>
+			<li>
+				<a href="#orders">Orders</a>
+			</li>
+			<li>
+				<a href="#amazon-fba">Amazon & FBA</a>
+			</li>
+			<li>
+				<a href="#pricing">Pricing</a>
+			</li>
+			<li>
+				<a href="#configuration">Configuration</a>
+			</li>
 
-<h2 id="purposes">Purposes</h2>
+		</ul>
+	</li>
+	<li>
+		<a href="#errors">Errors</a>
+	</li>
+</ul>
+
+<hr class=""/>
+<h2  class="mb-4"  id="purposes">Purposes</h2>
 <p>The app aims to be a middleware between some of online sale channels providing IT solutions to solve syncronization and integration problematics.</p>
-<h3 id="order-synchronisation">Order synchronisation</h3>
+<h4 class="mt-4 mb-2" id="order-synchronisation">Order synchronisation</h4>
 <p>The main task executed by the app is the integration in Business central.
 		Each sale order belongs to a sale channel and through a integration channel (Channeladvisor, Aliexpress, ...). 
 		Sale order will be integrated and regarding the carrier solution (External m or own managed) wil be posted as invoice or as shipment.
 		In case of a own managed shipment, tracking will be send through sale channel.
 		Invoice will be sent automatically by email or through the sale channel.</p>
 <p>A full picture of the process is visible on
-	<a href="https://miro.com/app/board/uXjVOMngBLs=/?share_link_id=362798380277">this schema</a>
+	<a target="_blank" href="https://miro.com/app/board/uXjVOMngBLs=/?share_link_id=362798380277">this schema</a>
 </p>
-<h3 id="stock-synchronization">Stock synchronization</h3>
+<h4 class="mt-4 mb-2" id="stock-synchronization">Stock synchronization</h4>
 <p>The app connects hourly to Business cental to get the level of stocks (La Roca, Madrid) of every SKU and send available level of stock to every sale channel. 
 		Some rules are added to add some buffer and avoid syncronisation error.
 		For the warehouse in La Roca, if the level is greater than 5, the available of stock is calculated as 70% of the real available stock. If the real stock is less than 5, the stoc k is considered equal to 0.
 		For the warehouse in Madrid, real stock is sent.</p>
-<h3 id="fba-and-amazon-reporting">FBA and Amazon reporting</h3>
+<h4 class="mt-4 mb-2" id="fba-and-amazon-reporting">FBA and Amazon reporting</h4>
 <p>The app connects to different reports provided by Amazon and uses the content to provide some helpers to manage Business.</p>
 <ul>
 	<li>stock level on FBA and alert regarding skus that need to be sent to FBA</li>
@@ -28,18 +61,19 @@
 	</li>
 	<li>export datas to Power BI to provide datas to consume</li>
 </ul>
-<h3 id="pricing">Pricing</h3>
+<h4 class="mt-4 mb-2" id="pricing">Pricing</h4>
 <p>The app can manage prices and promotions prices to the different setup sale channels. The sale channel is a combination of a marketplace and a company, then Amazon.es will be involved in 2 companies that means there will be 2 sale channels for each company.
 		For a sku given, users can manage if a product price is enabled on a sale channel and then define is price.
 		The promotion system will help users to manage finely promotion prices.</p>
-<h2 id="usage">Usage</h2>
-<h3 id="login">Login</h3>
+<hr class=""/>		
+<h2  class="mb-4"  id="usage">Usage</h2>
+<h4 class="mt-4 mb-2" id="login">Login</h4>
 <p>App is acccesible through web
-	<a href="https://marketplace.kps-group.com">https://marketplace.kps-group.com</a>
+	<a target="_blank" href="https://marketplace.kps-group.com">https://marketplace.kps-group.com</a>
 </p>
 <p><img class="img-fluid" src="/assets/images/doc/login.png" alt="Login" title="Login"></p>
 <p>You need to provide your email as username and the password that have been provided.</p>
-<h3 id="interface">Interface</h3>
+<h4 class="mt-4 mb-2" id="interface">Interface</h4>
 <p><img class="img-fluid" src="/assets/images/doc/interface.png" alt="Interface" title="Interface"></p>
 <p>Interface has common functionality through all screens</p>
 <ol>
@@ -50,7 +84,7 @@
 	<li>Sorting. Only column with this sign provide sort asc or desc functionality</li>
 	<li>Individual action.  (ex : detail, edit, delete, ...). Regarding your roles you will not access to every action.</li>
 </ol>
-<h3 id="orders">Orders</h3>
+<h4 class="mt-4 mb-2" id="orders">Orders</h4>
 <p><img class="img-fluid" src="/assets/images/doc/order-page.png" alt="Order" title="Order page"></p>
 <ol>
 	<li>List of all sale channels</li>
@@ -60,36 +94,36 @@
 	<li>Display all the elements retrieved from Business central, especially the VAT rates or shipping rates.</li>
 	<li>For Amazon only, we retrieve all the financial datas associated with this transaction (order,return, cashback, fee or shipping)</li>
 </ol>
-<h3 id="amazon-fba">Amazon &amp; FBA</h3>
-<h4 id="inventory">Inventory</h4>
-<h4 id="fees">Fees</h4>
-<h4 id="fba-returns">FBA Returns</h4>
-<h3 id="pricing">Pricing</h3>
-<h4 id="prices">Prices</h4>
-<h4 id="promotions">Promotions</h4>
-<h4 id="import">Import</h4>
-<h4 id="sale-channel">Sale Channel</h4>
-<h3 id="config">Config</h3>
-<h4 id="products">Products</h4>
+<h4 class="mt-4 mb-2" id="amazon-fba">Amazon &amp; FBA</h4>
+<h6 class="mt-4 mb-2" id="inventory">Inventory</h5>
+<h6 class="mt-4 mb-2" id="fees">Fees</h5>
+<h6 class="mt-4 mb-2" id="fba-returns">FBA Returns</h5>
+<h4 class="mt-4 mb-2" id="pricing">Pricing</h4>
+<h6 class="mt-4 mb-2" id="prices">Prices</h5>
+<h6 class="mt-4 mb-2" id="promotions">Promotions</h5>
+<h6 class="mt-4 mb-2" id="import">Import</h5>
+<h6 class="mt-4 mb-2" id="sale-channel">Sale Channel</h5>
+<h4 class="mt-4 mb-2" id="configuration">Configuration</h4>
+<h6 class="mt-4 mb-2" id="products">Products</h5>
 <p><img class="img-fluid" src="/assets/images/doc/Products.png" alt="Products" title="Products"></p>
 <p>Products are integrated through some other services of syncronization. (PIM, Product Onboarding, Business Central).
 		You can edit the description, category and brand if it is not well setup.
 </p>
-<h4 id="brands">Brands</h4>
+<h6 class="mt-4 mb-2" id="brands">Brands</h5>
 <p>
 	<img class="img-fluid" src="/assets/images/doc/Brands.png" alt="Brands" title="Brands">
 </p>
 <p>You can add, edit and delete Brand from this interface. This data will be use essentially in the PowerBI report.</p>
-<h4 id="categorys">Categorys</h4>
+<h6 class="mt-4 mb-2" id="categorys">Categorys</h5>
 <p><img class="img-fluid" src="/assets/images/doc/Categorys.png" alt="Categorys" title="Categorys"></p>
 <p>You can add, edit and delete Category from this interface. This data will be use essentially in the PowerBI report.</p>
-<h4 id="sku-mappings">Sku mappings</h4>
+<h6 class="mt-4 mb-2" id="sku-mappings">Sku mappings</h5>
 <p><img class="img-fluid" src="/assets/images/doc/Sku-Mappings.png" alt="Sku" title="Sku mappings"></p>
 <p>For some reasons, the skus created in the sale channel is not corresponding to any sku in Business central.
 		THis interface enables operators to add, edit or delete sku mappings between a sku used in a sale channel and the sku used in Business central.</p>
-<h4 id="integration-channel">Integration Channel</h4>
-<h4 id="order-error-logs">Order error Logs</h4>
-<h4 id="users">Users</h4>
+<h6 class="mt-4 mb-2" id="integration-channel">Integration Channel</h5>
+<h6 class="mt-4 mb-2" id="order-error-logs">Order error Logs</h5>
+<h6 class="mt-4 mb-2" id="users">Users</h5>
 <p><img class="img-fluid" src="/assets/images/doc/Create-User.png" alt="User" title="User creation"></p>
 <p>Define the role the user will have in the application</p>
 <ul>
@@ -101,10 +135,11 @@
 	<li>Sale channels. List of sale channels for which the user will be able to manage price and promotions</li>
 	<li>Manage users. The user can create new users.</li>
 </ul>
-<h2 id="errors">Errors</h2>
+<hr class=""/>
+<h2  class="mb-4"  id="errors">Errors</h2>
 <p>During syncronisation, some alerts can be sent by email to advice operators about the operations they should operate to
 </p>
-<h3 id="sku-mapping">Sku mapping</h3>
+<h4 class="mt-4 mb-2" id="sku-mapping">Sku mapping</h4>
 <p>In the case, you received an error with SKU mapping error. the steps are :\</p>
 <ol>
 	<li>Find on Business central what is the real SKU</li>
@@ -117,7 +152,7 @@
 	<li>Click on Retry.</li>
 	<li>The Weborder is integrated. If you don&#39;t do the steps 6 to 8, a process would do it twice a day for you.</li>
 </ol>
-<h3 id="address-length">Address length</h3>
+<h4 class="mt-4 mb-2" id="address-length">Address length</h4>
 <p>If you received messages containing those information
 	<em>The BC sale order WPV21-01103 corresponding to the weborder 8155312123395027 has been created with an address length of the street over 40 characters. Please modify it on Business central</em>
 	The DHL connector has a restriction of 40 characters for the address section. A script try to reduce the address at the maximum but it happens that the limit is exceeded. 
@@ -127,7 +162,7 @@
 	<li>Find on Business central the sale order or the sale shipment if it is already created</li>
 	<li>Modify the delivery address to suit the limitation of 40 characters, keeping the essential information.</li>
 </ol>
-<h3 id="delay-of-treatment">Delay of treatment</h3>
+<h4 class="mt-4 mb-2" id="delay-of-treatment">Delay of treatment</h4>
 <p>If you received messages containing those information
 	<em>Order AliExpress n°3017869929123012 (#53100) &gt; Shipping should be processed in 30 hours for Order AliExpress n°3017869929123012 (#53100)</em>
 	Some Businesss rules have been added to check the integration process.
@@ -146,7 +181,7 @@
 	<li>Check if the shipment has been done</li>
 	<li>Check if the carrier has the tracking information</li>
 </ol>
-<h3 id="delay-of-tracking">Delay of tracking</h3>
+<h4 class="mt-4 mb-2" id="delay-of-tracking">Delay of tracking</h4>
 <p>If you received messages containing those information
 	<em>Order AliExpress n°3018294824139882 (#54539) has been sent with the invoice GFV22/0900124 but no tracking is retrieved. Please confirm tracking on ALIEXPRESS</em>
 	The invoice is created in Business central and shipment also has been created. But no tracking code is available. Normally, in the process, we get the tracking code in the next 12 hours after the creation of the invoice.</p>

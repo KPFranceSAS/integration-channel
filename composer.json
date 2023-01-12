@@ -30,6 +30,7 @@
         "league/flysystem-bundle": "^2.0",
         "league/flysystem-ftp": "^2.0",
         "league/flysystem-sftp": "^2.0",
+        "mirakl/sdk-php-shop": "^1.17",
         "nesbot/carbon": "^2.54",
         "nyholm/psr7": "^1.4",
         "phpdocumentor/reflection-docblock": "^5.2",

@@ -36,12 +36,8 @@ class ConnectAmzCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->amzApiInbound->sendInbounds();
+        $this->getAmazonExpedition();
 
-        //dump($this->amzApiInbound->getLabels('FBA15GDH8SLH'));
-
-        //$this->getFinancialEvents();
-        //$this->getFinancialsGroup();
 
         return Command::SUCCESS;
     }
@@ -49,10 +45,14 @@ class ConnectAmzCommand extends Command
 
 
 
-    protected function getProductData()
+    protected function getAmazonExpedition()
     {
-        return $this->api->getProductData('B01N95Z86Y');
+        return dump($this->api->getShipmentReceived());
+        
+        return $this->api->getParcelShipments('S02-1485397-8719750');
     }
+
+
 
 
 
@@ -89,34 +89,5 @@ GROUP BY afe.transaction_type, afe.amount_type, afe.amount_description
         $dateTime = new DateTime('2019-11-01');
         $dateTimeFin = new DateTime('2020-06-03');
         $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);
-    }
-
-
-
-    protected function calculate()
-    {
-        $tests = [
-            [12.68, 'EUR', '2021-04-16',],
-            [12.68, 'GBP', '2021-04-16',],
-            [12.68, 'USD', '2021-04-16',],
-            [250.68, 'EUR', '2022-01-01',],
-            [250.68, 'GBP', '2022-01-01',],
-            [250.68, 'USD', '2022-01-01',],
-            [12.68, 'EUR', '2019-04-16',],
-            [12.68, 'GBP', '2019-04-16',],
-            [12.68, 'USD', '2019-04-16',],
-            [250, 'EUR', '2022-01-06',],
-            [250, 'GBP', '2022-01-06',],
-            [250, 'USD', '2022-01-06',],
-        ];
-
-
-        foreach ($tests as $k => $test) {
-            $tests[$k][] = $this->caluclator->getConvertedAmount($test[0], $test[1], $test[2]);
-            $tests[$k][] = $this->caluclator->getRate($test[1], $test[2]);
-        }
-        dump($tests);
-
-        return Command::SUCCESS;
     }
 }

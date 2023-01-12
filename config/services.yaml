@@ -62,6 +62,8 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
+            $projectDir: '%kernel.project_dir%'
+            
             $channelEndpoint : '%env(resolve:CHANNEL_ENDPOINT)%'
             $channelRefreshToken : '%env(resolve:CHANNEL_REFRESHTOKEN)%'
             $channelApplicationId : '%env(resolve:CHANNEL_APPLICATIONID)%'
@@ -133,6 +135,9 @@ services:
             $fitbitCorporateShopDomain : '%env(resolve:FITBITCORPORATE_SHOPDOMAINE)%'
             $fitbitCorporateVersion : '%env(resolve:FITBITCORPORATE_VERSION)%'
             $fitbitCorporateScopes : '%env(resolve:FITBITCORPORATE_SCOPES)%'
+
+            $decathlonClientUrl :  '%env(resolve:DECATHLON_URL)%'
+            $decathlonClientKey : '%env(resolve:DECATHLON_KEY)%'
 
           
             

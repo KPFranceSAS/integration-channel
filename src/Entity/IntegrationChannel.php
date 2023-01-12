@@ -26,6 +26,7 @@ class IntegrationChannel
     public const CHANNEL_ARISE = 'ARISE';
     public const CHANNEL_SONOS_ARISE='SONOS_ARISE';
     public const CHANNEL_AMAZFIT_ARISE='AMAZFIT_ARISE';
+    public const CHANNEL_DECATHLON='DECATHLON';
 
 
     use TraitTimeUpdated;

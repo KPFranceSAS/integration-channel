@@ -1,16 +1,1 @@
-# Read the documentation at https://github.com/thephpleague/flysystem-bundle/blob/master/docs/1-getting-started.md
-flysystem:
-    storages:
-         kpssport.storage:
-            adapter: 'sftp'
-            options:
-                host: '%env(resolve:EXPORT_JSON_HOST)%'
-                port: 22
-                username: '%env(resolve:EXPORT_JSON_USERNAME)%'
-                password: '%env(resolve:EXPORT_JSON_PASSWORD)%'
-                privateKey: 
-                root: '%env(resolve:EXPORT_JSON_DIRECTORY)%'
-                timeout: 60
-                directoryPerm: 0744
-                permPublic: 0700
-                permPrivate: 0744             
+

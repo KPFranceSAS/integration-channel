@@ -2,9 +2,9 @@
 
 namespace App\Channels\Arise;
 
-use AmazonPHP\SellingPartner\Exception\Exception;
 use App\Channels\Arise\AriseClient;
 use App\Service\Aggregator\ApiInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 
 abstract class AriseApiParent implements ApiInterface
