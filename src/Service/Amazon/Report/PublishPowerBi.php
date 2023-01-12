@@ -132,7 +132,7 @@ class PublishPowerBi
 
     public function exportFinancials()
     {
-        $this->exportData(AmazonFinancialEvent::class, 'export_order', 'reimbursements.json');
+        $this->exportData(AmazonFinancialEvent::class, 'export_order', 'financials.json');
     }
 
 
