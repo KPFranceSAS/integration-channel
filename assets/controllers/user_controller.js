@@ -4,6 +4,9 @@ import { Controller } from '@hotwired/stimulus';
 export default class extends Controller {
     connect() {
         this.togglesalechannels();
+        this.togglechannels();
+        this.toggleadmin();
+        
     }
 
 
@@ -13,6 +16,25 @@ export default class extends Controller {
             this.displayElement('User_saleChannels');
         } else{
             this.hideElement('User_saleChannels');
+        }
+    }
+
+
+    togglechannels(event){
+        var checked = document.getElementById('User_isOrderManager').checked;
+        if(checked){
+            this.displayElement('User_channels');
+        } else{
+            this.hideElement('User_channels');
+        }
+    }
+
+    toggleadmin(event){
+        var checked = document.getElementById('User_isAdmin').checked;
+        if(checked){
+            this.displayElement('User_isSuperAdmin');
+        } else{
+            this.hideElement('User_isSuperAdmin');
         }
     }
 

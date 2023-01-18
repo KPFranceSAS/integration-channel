@@ -228,7 +228,28 @@ abstract class ProductSyncParent
 
 
 
-    
+    protected function isMetric($val)
+    {
+        return is_array($val) && array_key_exists("unit", $val);
+    }
+
+    protected function isCurrency($val)
+    {
+        return is_array($val) && is_array($val[0]);
+    }
+
+
+    protected function getAttributeColumnName($attribute, $val)
+    {
+        $nameAttribute=$attribute;
+        if ($val['locale']) {
+            $nameAttribute .= '-'. $val['locale'];
+        }
+        if ($val['scope']) {
+            $nameAttribute .= '-'. $val['scope'];
+        }
+        return $nameAttribute;
+    }
     
 
 

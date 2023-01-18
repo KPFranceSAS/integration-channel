@@ -7,6 +7,7 @@ use App\Entity\IntegrationChannel;
 use App\Entity\OrderLog;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -31,6 +32,11 @@ class OrderLogCrudController extends AdminCrudController
     }
 
 
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        return $crud->setEntityPermission('ROLE_ADMIN');
+    }
 
     public function configureActions(Actions $actions): Actions
     {

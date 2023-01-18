@@ -6,6 +6,7 @@ use App\Controller\Admin\AdminCrudController;
 use App\Entity\Product;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -36,6 +37,13 @@ class ProductCrudController extends AdminCrudController
     {
         $actions = parent::configureActions($actions);
         return $actions->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE);
+    }
+
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        return $crud->setEntityPermission('ROLE_ADMIN');
     }
 
 

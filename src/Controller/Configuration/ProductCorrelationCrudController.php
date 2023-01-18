@@ -4,6 +4,7 @@ namespace App\Controller\Configuration;
 
 use App\Controller\Admin\AdminCrudController;
 use App\Entity\ProductCorrelation;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -40,5 +41,11 @@ class ProductCorrelationCrudController extends AdminCrudController
             TextField::new('skuUsed', 'SKU Marketplace'),
             AssociationField::new('product', 'SKU Business Central'),
         ];
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        return $crud->setEntityPermission('ROLE_ADMIN');
     }
 }

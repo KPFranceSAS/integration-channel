@@ -76,11 +76,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $isFbaManager;
 
-
-
-     /**
-     * @ORM\PrePersist
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
      */
+    private $isOrderManager;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $isSuperAdmin;
+
+
+
+    /**
+    * @ORM\PrePersist
+    */
     public function prePersist(): void
     {
         $this->updateRoles();
@@ -98,15 +108,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = ["ROLE_USER"];
 
-        if($this->isAdmin){
+
+        if ($this->isAdmin) {
             $roles[] = 'ROLE_ADMIN';
+            if ($this->isSuperAdmin) {
+                $roles[] = 'ROLE_SUPER_ADMIN';
+            }
         }
 
-        if($this->isFbaManager){
-            $roles[] = 'ROLE_AMAZON';
-        } 
+        
 
-        if($this->isPricingManager){
+        if ($this->isOrderManager) {
+            $roles[] = 'ROLE_ORDER';
+        } else {
+            $this->channels =[];
+        }
+
+        if ($this->isFbaManager) {
+            $roles[] = 'ROLE_AMAZON';
+        }
+
+        if ($this->isPricingManager) {
             $roles[] = 'ROLE_PRICING';
         } else {
             $this->saleChannels =[];
@@ -126,9 +148,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function validate(ExecutionContextInterface $context, $payload)
     {
         if ($this->isPricingManager && count($this->saleChannels)==0) {
-                $context->buildViolation('You must define at least one sale channel')
-                    ->atPath('saleChannels')
-                    ->addViolation();
+            $context->buildViolation('You must define at least one sale channel')
+                ->atPath('saleChannels')
+                ->addViolation();
         }
     }
 
@@ -333,6 +355,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsFbaManager(?bool $isFbaManager): self
     {
         $this->isFbaManager = $isFbaManager;
+
+        return $this;
+    }
+
+    public function isIsOrderManager(): ?bool
+    {
+        return $this->isOrderManager;
+    }
+
+    public function setIsOrderManager(?bool $isOrderManager): self
+    {
+        $this->isOrderManager = $isOrderManager;
+
+        return $this;
+    }
+
+    public function isIsSuperAdmin(): ?bool
+    {
+        return $this->isSuperAdmin;
+    }
+
+    public function setIsSuperAdmin(?bool $isSuperAdmin): self
+    {
+        $this->isSuperAdmin = $isSuperAdmin;
 
         return $this;
     }

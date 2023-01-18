@@ -108,7 +108,8 @@ class DashboardController extends AbstractDashboardController
                         ->setController(ErrorOrderCrudController::class),
                     MenuItem::linkToCrud('All', 'fa fa-shopping-cart', WebOrder::class)
                         ->setController(WebOrderCrudController::class),
-                ]),
+                ])
+                ->setPermission('ROLE_ORDER'),
             MenuItem::subMenu('Amazon & FBA', 'fab fa-amazon')
                 ->setSubItems([
                     MenuItem::linkToCrud('Inventory', 'fas fa-cube', Product::class)
@@ -148,22 +149,22 @@ class DashboardController extends AbstractDashboardController
                         'Product',
                         'fas fa-barcode',
                         Product::class
-                    )->setController(ProductCrudController::class),
+                    )->setController(ProductCrudController::class)->setPermission('ROLE_ADMIN'),
                     MenuItem::linkToCrud(
                         'Brand',
                         'far fa-registered',
                         Brand::class
-                    ),
+                    )->setPermission('ROLE_ADMIN'),
                     MenuItem::linkToCrud(
                         'Category',
                         'fas fa-sitemap',
                         Category::class
-                    ),
+                    )->setPermission('ROLE_ADMIN'),
                     MenuItem::linkToCrud(
                         'SKU Mapping',
                         'fa fa-exchange',
                         ProductCorrelation::class
-                    ),
+                    )->setPermission('ROLE_ADMIN'),
                     MenuItem::linkToCrud(
                         'Integration channel',
                         'fas fa-stream',
@@ -179,7 +180,7 @@ class DashboardController extends AbstractDashboardController
                         'fa fa-user',
                         User::class
                     )->setPermission('ROLE_ADMIN'),
-                    ]),
+                    ])->setPermission('ROLE_ADMIN'),
                     MenuItem::linkToRoute('Help', 'fas fa-question-circle', 'help'),
         ];
     }

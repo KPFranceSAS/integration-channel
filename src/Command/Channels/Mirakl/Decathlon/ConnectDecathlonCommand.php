@@ -7,6 +7,7 @@ use Mirakl\MCI\Shop\Request\Attribute\GetAttributesRequest;
 use Mirakl\MCI\Shop\Request\Hierarchy\GetHierarchiesRequest;
 use Mirakl\MCI\Shop\Request\ValueList\GetValueListsItemsRequest;
 use Mirakl\MMP\Common\Domain\Product\Offer\ProductReference;
+use Mirakl\MMP\Shop\Request\Channel\GetChannelsRequest;
 use Mirakl\MMP\Shop\Request\Offer\GetAccountRequest;
 use Mirakl\MMP\Shop\Request\Order\Get\GetOrdersRequest;
 use Mirakl\MMP\Shop\Request\Product\GetProductsRequest;
@@ -32,7 +33,7 @@ class ConnectDecathlonCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->getOrders();
+        $this->getChannels();
         
         return Command::SUCCESS;
     }
@@ -47,13 +48,23 @@ class ConnectDecathlonCommand extends Command
     }
 
 
+    protected function getChannels()
+    {
+        $api = $this->decathlonApi->getClient();
+        $request = new GetChannelsRequest();
+        $request->setLocale('fr_FR');
+        $result = $api->getAccount($request);
+        dump($result);
+    }
+
+
 
     protected function getCategories()
     {
         $api = $this->decathlonApi->getClient();
         $request = new GetHierarchiesRequest();
         //$request->setMaxLevel(2);
-        $request->setHierarchyCode('50000');
+        $request->setHierarchyCode('30058');
         $result = $api->getHierarchies($request);
         dump($result);
     }
@@ -63,8 +74,10 @@ class ConnectDecathlonCommand extends Command
     {
         $api = $this->decathlonApi->getClient();
         $request = new GetAttributesRequest();
-        $request->setData('all_operator_attributes', true);
+        $request->setMaxLevel(0);
+        $request->setHierarchyCode('30061');
         $result = $api->getAttributes($request);
+        dump($result);
     }
 
 
@@ -72,7 +85,9 @@ class ConnectDecathlonCommand extends Command
     {
         $api = $this->decathlonApi->getClient();
         $request = new GetValueListsItemsRequest();
+        $request->setData('hierarchy', '30061');
         $result = $api->getValueListsItems($request);
+
         dump($result);
     }
 

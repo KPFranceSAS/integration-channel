@@ -103,28 +103,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
     }
 
 
-    public function isMetric($val)
-    {
-        return is_array($val) && array_key_exists("unit", $val);
-    }
-
-    public function isCurrency($val)
-    {
-        return is_array($val) && is_array($val[0]);
-    }
-
-
-    public function getAttributeColumnName($attribute, $val)
-    {
-        $nameAttribute=$attribute;
-        if ($val['locale']) {
-            $nameAttribute .= '-'. $val['locale'];
-        }
-        if ($val['scope']) {
-            $nameAttribute .= '-'. $val['scope'];
-        }
-        return $nameAttribute;
-    }
+    
 
 
 

@@ -81,6 +81,12 @@ class UserCrudController extends AdminCrudController
                     'second_options' => ['label' => 'Repeat password'],
                     'required' => $pageName == Crud::PAGE_NEW
                 ]);
+
+            $fields[] = BooleanField::new('isOrderManager', 'Manage orders')->setFormTypeOptions(
+                [
+                    'attr.data-action'=>'change->user#togglechannels'
+                ]
+            );
             $fields[] = ChoiceField::new('channels', 'Channel Alerts')->setChoices($choices)->allowMultipleChoices()->setHelp("Receive alerts for orders done on this channels of integration");
             
             $fields[] = BooleanField::new('isFbaManager', 'Manage FBA');
@@ -90,10 +96,12 @@ class UserCrudController extends AdminCrudController
                 ]
             );
             $fields[] = AssociationField::new('saleChannels', 'Sale Channels')->setHelp("Manage pricings on sale channels");
-            $fields[] = BooleanField::new('isAdmin', 'Manage users');
-
-            
-
+            $fields[] = BooleanField::new('isAdmin', 'Manage configuration')->setFormTypeOptions(
+                [
+                    'attr.data-action'=>'change->user#toggleadmin'
+                ]
+            );
+            $fields[] = BooleanField::new('isSuperAdmin', 'Manage users');
         }
         return $fields;
     }
