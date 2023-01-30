@@ -4,6 +4,7 @@ namespace App\Command\Integrator;
 
 use App\Entity\IntegrationChannel;
 use App\Helper\MailService;
+use App\Service\Aggregator\PriceStockAggregator;
 use App\Service\Aggregator\StockAggregator;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -17,9 +18,13 @@ class StockUpdateAllCommand extends Command
     protected static $defaultName = 'app:update-stocks-all';
     protected static $defaultDescription = 'Update stocks in all channels';
 
-    public function __construct(StockAggregator $stockAggregator, ManagerRegistry $managerRegistry, LoggerInterface $logger, MailService $mailService)
+    public function __construct(StockAggregator $stockAggregator,
+    PriceStockAggregator $priceStockAggregator, 
+    ManagerRegistry $managerRegistry, 
+    LoggerInterface $logger, MailService $mailService)
     {
         $this->stockAggregator = $stockAggregator;
+        $this->priceStockAggregator = $priceStockAggregator;
         $this->logger = $logger;
         $this->mailService = $mailService;
         $this->managerRegistry = $managerRegistry->getManager();
@@ -29,6 +34,8 @@ class StockUpdateAllCommand extends Command
     private $managerRegistry;
 
     private $stockAggregator;
+
+    private $priceStockAggregator;
 
     private $logger;
 
@@ -52,7 +59,12 @@ class StockUpdateAllCommand extends Command
                 $this->logger->info('##########################################');
                 $this->logger->info('');
                 $stockUpdate = $this->stockAggregator->getStock($channel->getCode());
-                $stockUpdate->send();
+                if($stockUpdate){
+                    $stockUpdate->send();
+                } else {
+                    $this->logger->critical('No stock update CHANNEL >>> '.$channel->getCode());
+                }
+                
                 $this->logger->info('');
                 $this->logger->info('##########################################');
                 $this->logger->info('End stock update CHANNEL >>> '.$channel->getCode());

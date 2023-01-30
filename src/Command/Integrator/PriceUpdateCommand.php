@@ -3,6 +3,7 @@
 namespace App\Command\Integrator;
 
 use App\Service\Aggregator\PriceAggregator;
+use App\Service\Aggregator\PriceStockAggregator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,13 +14,16 @@ class PriceUpdateCommand extends Command
     protected static $defaultName = 'app:update-prices-to';
     protected static $defaultDescription = 'Update prices with the given sale channel';
 
-    public function __construct(PriceAggregator $priceAggregator)
+    public function __construct(PriceAggregator $priceAggregator, PriceStockAggregator $priceStockAggregator)
     {
         $this->priceAggregator = $priceAggregator;
+        $this->priceStockAggregator = $priceStockAggregator;
         parent::__construct();
     }
 
     private $priceAggregator;
+
+    private $priceStockAggregator;
 
 
     protected function configure(): void
@@ -33,6 +37,9 @@ class PriceUpdateCommand extends Command
     {
         $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
         $priceUpdater = $this->priceAggregator->getPrice($channelIntegration);
+        if(!$priceUpdater){
+            $priceUpdater = $this->priceStockAggregator->getPriceStock($channelIntegration);
+        }
         $priceUpdater->send();
         return Command::SUCCESS;
     }

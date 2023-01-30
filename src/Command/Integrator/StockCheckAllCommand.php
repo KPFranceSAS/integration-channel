@@ -52,7 +52,9 @@ class StockCheckAllCommand extends Command
                 $this->logger->info('##########################################');
                 $this->logger->info('');
                 $stockUpdate = $this->stockAggregator->getStock($channel->getCode());
-                $stockUpdate->check();
+                if($stockUpdate){
+                    $stockUpdate->check();
+                }
                 $this->logger->info('');
                 $this->logger->info('##########################################');
                 $this->logger->info('End stock update CHANNEL >>> '.$channel->getCode());

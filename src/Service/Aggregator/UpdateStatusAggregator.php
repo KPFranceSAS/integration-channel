@@ -7,7 +7,7 @@ use App\Service\Aggregator\UpdateStatusParent;
 
 class UpdateStatusAggregator extends Aggregator
 {
-    public function getInvoice(string $channel): UpdateStatusParent
+    public function getInvoice(string $channel): ?UpdateStatusParent
     {
         return $this->getService($channel);
     }

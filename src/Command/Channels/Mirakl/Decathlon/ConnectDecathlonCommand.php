@@ -33,7 +33,7 @@ class ConnectDecathlonCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->getChannels();
+        $this->getProductAttributesValues();
         
         return Command::SUCCESS;
     }
@@ -52,8 +52,7 @@ class ConnectDecathlonCommand extends Command
     {
         $api = $this->decathlonApi->getClient();
         $request = new GetChannelsRequest();
-        $request->setLocale('fr_FR');
-        $result = $api->getAccount($request);
+        $result = $api->getChannels($request);
         dump($result);
     }
 
@@ -72,23 +71,14 @@ class ConnectDecathlonCommand extends Command
 
     protected function getProductAttributes()
     {
-        $api = $this->decathlonApi->getClient();
-        $request = new GetAttributesRequest();
-        $request->setMaxLevel(0);
-        $request->setHierarchyCode('30061');
-        $result = $api->getAttributes($request);
+        $result = $this->decathlonApi->getAttributes('30058');
         dump($result);
     }
 
 
     protected function getProductAttributesValues()
     {
-        $api = $this->decathlonApi->getClient();
-        $request = new GetValueListsItemsRequest();
-        $request->setData('hierarchy', '30061');
-        $result = $api->getValueListsItems($request);
-
-        dump($result);
+       
     }
 
 

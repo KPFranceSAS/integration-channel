@@ -5,6 +5,7 @@ namespace App\Channels\Mirakl\Decathlon;
 use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\Channels\Mirakl\MiraklSyncProductParent;
 use App\Entity\IntegrationChannel;
+use App\Helper\Utils\StringUtils;
 
 class DecathlonSyncProduct extends MiraklSyncProductParent
 {
@@ -15,10 +16,12 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             ->addFilter('decathlon_category_id', 'NOT EMPTY')
             ->addFilter('decathlon_product_type', 'NOT EMPTY')
             ->addFilter('brand', 'NOT EMPTY')
-            ->addFilter('enabled_channel', '=', true, ['scope' => 'decathlon'])
+            ->addFilter('ean', 'NOT EMPTY')
+            ->addFilter('enabled_channel', '=', true, ['scope' => 'Marketplace'])
+            ->addFilter('marketplaces_assignement', 'IN', ['decathlon_fr_kp'])
             ->addFilter('enabled', '=', true);
 
-        return $this->akeneoConnector->searchProducts($searchBuilder, 'decathlon');
+        return $this->akeneoConnector->searchProducts($searchBuilder, 'Marketplace');
     }
 
     
@@ -27,17 +30,27 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
     {
         $this->logger->info('Flat product '.$product['identifier']);
 
+
+        $categoryCode = $this->getAttributeSimple($product, 'decathlon_category_id');
+
+
         $flatProduct = [
-            'category' => $this->getAttributeSimple($product, 'decathlon_category_id'),
+            'category' => $categoryCode,
             'ProductIdentifier' => $product['identifier'],
-            'brandName' => $this->getAttributeChoice($product, 'brand', 'en_GB'),
+            
             'PRODUCT_TYPE' => $this->getAttributeSimple($product, 'decathlon_product_type'),
             'ean_codes' => $this->getAttributeSimple($product, 'ean'),
-            'mainImage' => $this->getAttributeSimple($product, 'image_url_1'),
-            'mainTitle' => $this->getAttributeSimple($product, 'article_name', 'en_GB'),
-            /*'color'=>
-            "SIZE" */
+            'main_image' => $this->getAttributeSimple($product, 'image_url_1'),
+            'mainTitle' => $this->getAttributeSimple($product, 'erp_name'),
         ];
+
+
+
+
+
+
+
+
 
 
         for ($i = 2; $i <= 7;$i++) {
@@ -72,10 +85,22 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
         }
 
 
+        $fieldsToConvert = [
+            "brandName" => [
+                "field" => "brand",
+                "type" => "choice",
+                "locale" => "en_GB",
+            ],
 
-        $valuesUnit = [
+            "color" => [
+                "field" => "color_generic",
+                "type" => "choice",
+                "locale" => "en_GB",
+            ],
+
             "CHARACTERISTIC_575" => [
                 "field" => 'product_lenght',
+                "type" => "unit",
                 "unit" => 'CENTIMETER',
                 "convertUnit" => 'cm' ,
                 'round' => 0
@@ -83,29 +108,46 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             "CHARACTERISTIC_398" => [
                 "field" => 'product_width',
                 "unit" => 'CENTIMETER',
+                "type" => "unit",
                 "convertUnit" => 'cm' ,
                 'round' => 0
             ],
             "CHARACTERISTIC_569" => [
                 "field" => 'product_height',
                 "unit" => 'CENTIMETER',
+                "type" => "unit",
                 "convertUnit" => 'cm',
                 'round' => 0
             ],
             "CHARACTERISTIC_590" => [
                 "field" => 'product_weight',
                 "unit" => 'KILOGRAM',
+                "type" => "unit",
                 "convertUnit" => 'kg',
-                'round' => 3
+                'round' => 0
             ],
+            
          ];
 
-        foreach ($valuesUnit as $valueUnitMirakl=>$valueUnit) {
-            $value = $this->getAttributeUnit($product, $valueUnit['field'], $valueUnit['unit'], $valueUnit['round']);
+        foreach ($fieldsToConvert as $fieldMirakl => $fieldPim) {
+            $value = null;
+            if ($fieldPim['type']=='unit') {
+                $valueConverted = $this->getAttributeUnit($product, $fieldPim['field'], $fieldPim['unit'], $fieldPim['round']);
+                if ($valueConverted) {
+                    $value = $valueConverted.' '.$fieldPim['convertUnit'];
+                }
+            } elseif ($fieldPim['type']=='choice') {
+                $value = $this->getAttributeChoice($product, $fieldPim['field'], $fieldPim['locale']);
+            }
             if ($value) {
-                $flatProduct[$valueUnitMirakl]=str_replace('.', ',', $value).' '.$valueUnit['convertUnit'];
+                $codeMirakl = $this->getCodeMarketplace($categoryCode, $fieldMirakl, $value);
+                if ($codeMirakl) {
+                    $flatProduct[$fieldMirakl] = $codeMirakl;
+                }
             }
         }
+
+        
         return $flatProduct;
     }
 

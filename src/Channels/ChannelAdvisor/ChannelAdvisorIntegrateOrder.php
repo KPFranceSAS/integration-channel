@@ -225,7 +225,7 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             "12010023" =>   "000193", // Customer Amazon DE KP France
             "12009934" =>   "000222", // Customer Amazon FR KP France
             "12010026" =>   "000230", // Customer Amazon ES KP France
-            "12044694" =>   "002418", // Customer Amazon ES GI
+            "12044694" =>   "003315", // Customer Amazon ES GI
         ];
         if (array_key_exists($profileId, $mapCustomer)) {
             return $mapCustomer[$profileId];

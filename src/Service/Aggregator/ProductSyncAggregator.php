@@ -7,7 +7,7 @@ use App\Service\Aggregator\ProductSyncParent;
 
 class ProductSyncAggregator extends Aggregator
 {
-    public function getProductSync(string $channel): ProductSyncParent
+    public function getProductSync(string $channel): ?ProductSyncParent
     {
         return $this->getService($channel);
     }

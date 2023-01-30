@@ -199,6 +199,7 @@ abstract class AliExpressApiParent implements ApiInterface
         $req->setParam1(json_encode($param1));
         $this->logger->info('Get Order  ' . $orderNumber);
         $resp = $this->client->execute($req, $this->clientAccessToken);
+        dump($resp);
         return $resp->result->data;
     }
 

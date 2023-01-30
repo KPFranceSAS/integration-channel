@@ -36,7 +36,7 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->transformeOrder();
+        $order = $this->aliExpress->getOrder("3016506064585909");
         return Command::SUCCESS;
     }
 

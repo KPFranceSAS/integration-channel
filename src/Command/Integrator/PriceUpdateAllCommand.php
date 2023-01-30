@@ -5,6 +5,7 @@ namespace App\Command\Integrator;
 use App\Entity\IntegrationChannel;
 use App\Helper\MailService;
 use App\Service\Aggregator\PriceAggregator;
+use App\Service\Aggregator\PriceStockAggregator;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -19,11 +20,13 @@ class PriceUpdateAllCommand extends Command
 
     public function __construct(
         PriceAggregator $priceAggregator,
+        PriceStockAggregator $priceStockAggregator,
         ManagerRegistry $managerRegistry,
         LoggerInterface $logger,
         MailService $mailService
     ) {
         $this->priceAggregator = $priceAggregator;
+        $this->priceStockAggregator = $priceStockAggregator;
         $this->logger = $logger;
         $this->mailService = $mailService;
         $this->managerRegistry = $managerRegistry->getManager();
@@ -33,6 +36,8 @@ class PriceUpdateAllCommand extends Command
     private $managerRegistry;
 
     private $priceAggregator;
+
+    private $priceStockAggregator;
 
     private $logger;
 
@@ -55,8 +60,14 @@ class PriceUpdateAllCommand extends Command
                 $this->logger->info('Start price update CHANNEL >>> '.$channel->getCode());
                 $this->logger->info('##########################################');
                 $this->logger->info('');
+                    
                 $priceUpdater = $this->priceAggregator->getPrice($channel->getCode());
+                if(!$priceUpdater){
+                    $priceUpdater = $this->priceStockAggregator->getPriceStock($channel->getCode());
+                }
                 $priceUpdater->send();
+                
+                
                 $this->logger->info('');
                 $this->logger->info('##########################################');
                 $this->logger->info('End price update CHANNEL >>> '.$channel->getCode());

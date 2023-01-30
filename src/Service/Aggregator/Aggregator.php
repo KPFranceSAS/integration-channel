@@ -3,15 +3,20 @@
 namespace App\Service\Aggregator;
 
 use Exception;
+use Psr\Log\LoggerInterface;
 
 abstract class Aggregator
 {
     protected $services;
 
+    protected $logger;
+
 
     public function __construct(
-        iterable $services
+        iterable $services,
+        LoggerInterface $logger
     ) {
+        $this->logger = $logger;
         foreach ($services as $service) {
             $this->services[$service->getChannel()] = $service;
         }
@@ -24,7 +29,8 @@ abstract class Aggregator
         if (array_key_exists($channel, $this->services)) {
             return $this->services[$channel];
         } else {
-            throw new Exception("Channel $channel is not related to any " . get_class($this));
+           $this->logger->info("Channel $channel is not related to any " . get_class($this));
+           return null;
         }
     }
 

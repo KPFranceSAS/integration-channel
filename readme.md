@@ -125,8 +125,8 @@ Error of customer not found > check the thick box on customer card  Disable sear
 
 #### Get credentials for Aliexpress
 Go on your brower with the master account of aliexpress
-And replace client_id value by ALI_EXPRESS_ID get on [Console Aliexpress](https://console.aliexpress.com/app/app.htm?appId=10234288#/?appId=10234288&_k=h5u3py)\
-In your browser floow this url replacing the XXXXX value https://oauth.aliexpress.com/authorize?response_type=code&client_id=XXXXXXX&redirect_uri=https://aliexpress.gadgetiberia.es/es/module/aliexpress_official/auth?token=a1d930a3e4332d2c083978e8b5293b78&state=1212&view=web&sp=ae\
+And replace value by ALI_EXPRESS_ID get on [Console Aliexpress](https://console.aliexpress.com/app/app.htm?appId=10234288#/?appId=10234288&_k=h5u3py)\
+In your browser follow this url replacing the XXXXX value https://oauth.aliexpress.com/authorize?response_type=code&client_id=XXXXXXX&redirect_uri=https://kps.green&state=1212&view=web&sp=ae\
 In the html request get the code of auth and use it in the command to regenerate the token. Token is valid for one year.
 With the code you get, generate a new token
 ```

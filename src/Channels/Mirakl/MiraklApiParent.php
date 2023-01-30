@@ -5,9 +5,11 @@ namespace App\Channels\Mirakl;
 use App\Channels\Mirakl\MiraklClient;
 use App\Service\Aggregator\ApiInterface;
 use Exception;
+use GuzzleHttp\Client;
 use Mirakl\MCI\Common\Domain\Product\ProductImportTracking;
 use Mirakl\MCI\Shop\Client\ShopApiClient;
 use Mirakl\MCI\Shop\Request\Product\ProductImportRequest;
+use Mirakl\MMP\Shop\Request\Offer\UpdateOffersRequest;
 use Mirakl\MMP\Shop\Request\Order\Get\GetOrdersRequest;
 use Psr\Log\LoggerInterface;
 use SplFileObject;
@@ -19,12 +21,23 @@ abstract class MiraklApiParent implements ApiInterface
     protected $logger;
 
 
+    protected $clientUrl;
+
+
+    protected $clientKey;
+
+    protected $shopId;
+
+
     public function __construct(LoggerInterface $logger, string $clientUrl, string $clientKey, ?string $shopId=null)
     {
         $this->client = new ShopApiClient($clientUrl, $clientKey, $shopId);
         $this->client->setLogger($logger);
         
         $this->logger = $logger;
+        $this->clientUrl = $clientUrl;
+        $this->clientKey = $clientKey;
+        $this->shopId = $shopId;
     }
 
     public function getClient(): ShopApiClient
@@ -148,10 +161,21 @@ abstract class MiraklApiParent implements ApiInterface
     }
 
 
+    public function sendOfferImports(array  $offers)
+    {
+            $request = new UpdateOffersRequest();
+            $request->setOffers($offers);
+
+            $result = $this->client->updateOffers($request);
+            return $result;
+         
+    }
+
 
     public function sendProductImports(string $file): ProductImportTracking
     {
         $request = new ProductImportRequest(new SplFileObject($file));
+        $request->setOperatorFormat(true);
         $result = $this->client->importProducts($request);
         return $result;
     }
@@ -225,14 +249,62 @@ abstract class MiraklApiParent implements ApiInterface
     {
     }
 
+    
 
-    public function migrateImage($url)
+
+    public function getAllAttributesForCategory($hierarchyCode)
     {
+        $params = [
+            'hierarchy' => $hierarchyCode,
+            'max_level' => 0,
+            'all_operator_attributes' => "true"
+        ];
+        return $this->sendRequest('products/attributes', $params);
+    }
+
+
+    public function getAllAttributes()
+    {
+        return $this->sendRequest('products/attributes', [
+            'all_operator_attributes' => "true"
+        ]);
     }
 
 
 
-    public function uploadImage($content)
+    public function getAllAttributesValueForCode($code)
     {
+        $params = [
+            'code' => $code,
+        ];
+        return $this->sendRequest('values_lists', $params);
+    }
+
+
+    public function getAllAttributesValue()
+    {
+        return $this->sendRequest('values_lists');
+    }
+
+
+
+
+
+    public function sendRequest($endPoint, $queryParams = [], $method = 'GET', $form = null)
+    {
+        $parameters = [
+            'query' => $queryParams,
+            'debug' => true,
+            'headers' => [
+                    "Authorization"=>$this->clientKey
+                    ]
+        ];
+        if ('GET' != $method && $form) {
+            $parameters['json'] = $form;
+        }
+        $client = new Client();
+        $response = $client->request($method, $this->clientUrl."/". $endPoint, $parameters);
+
+        return json_decode($response->getBody());
     }
 }

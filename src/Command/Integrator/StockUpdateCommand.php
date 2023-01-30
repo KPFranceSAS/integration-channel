@@ -32,8 +32,10 @@ class StockUpdateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
-        $stockUtil = $this->stockAggregator->getStock($channelIntegration);
-        $stockUtil->send();
+        $stockUpdate = $this->stockAggregator->getStock($channelIntegration);
+        if($stockUpdate){
+            $stockUpdate->send();
+        }
         return Command::SUCCESS;
     }
 }

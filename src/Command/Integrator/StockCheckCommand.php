@@ -33,7 +33,10 @@ class StockCheckCommand extends Command
     {
         $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
         $stockUtil = $this->stockAggregator->getStock($channelIntegration);
-        $stockUtil->check();
+        if($stockUtil){
+            $stockUtil->check();
+        }
+        
         return Command::SUCCESS;
     }
 }

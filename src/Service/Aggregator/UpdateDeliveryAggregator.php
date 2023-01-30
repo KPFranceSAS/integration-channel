@@ -7,7 +7,7 @@ use App\Service\Aggregator\UpdateDeliveryParent;
 
 class UpdateDeliveryAggregator extends Aggregator
 {
-    public function getDelivery(string $channel): UpdateDeliveryParent
+    public function getDelivery(string $channel): ?UpdateDeliveryParent
     {
         return $this->getService($channel);
     }
