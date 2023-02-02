@@ -102,13 +102,13 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
         $orderBC->billToName = $orderApi->BillingFirstName . ' ' . $orderApi->BillingLastName;
 
         $orderBC->sellingPostalAddress->street = substr($orderApi->BillingAddressLine1, 0, 100);
-        if (strlen($orderApi->BillingAddressLine2) > 0) {
+        if ($orderApi->BillingAddressLine2 && strlen($orderApi->BillingAddressLine2) > 0) {
             $orderBC->sellingPostalAddress->street .= "\r\n" . substr($orderApi->BillingAddressLine2, 0, 100);
         }
         $orderBC->sellingPostalAddress->city = substr($orderApi->BillingCity, 0, 100);
         $orderBC->sellingPostalAddress->postalCode = $orderApi->BillingPostalCode;
         $orderBC->sellingPostalAddress->countryLetterCode = $orderApi->BillingCountry;
-        if (strlen($orderApi->BillingStateOrProvinceName) > 0 && $orderApi->BillingStateOrProvinceName != "--") {
+        if ($orderApi->BillingStateOrProvinceName && strlen($orderApi->BillingStateOrProvinceName) > 0 && $orderApi->BillingStateOrProvinceName != "--") {
             $orderBC->sellingPostalAddress->state = substr($orderApi->BillingStateOrProvinceName, 0, 30);
         }
 
@@ -116,14 +116,18 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
 
 
         $orderBC->shipToName = $orderApi->ShippingFirstName . ' ' . $orderApi->ShippingLastName;
-        $orderBC->shippingPostalAddress->street = substr($orderApi->ShippingAddressLine1, 0, 100);
-        if (strlen($orderApi->ShippingAddressLine2) > 0) {
+        if ($orderApi->ShippingAddressLine1) {
+            $orderBC->shippingPostalAddress->street = substr($orderApi->ShippingAddressLine1, 0, 100);
+        } else {
+            $orderBC->shippingPostalAddress->street='';
+        }
+        if ($orderApi->ShippingAddressLine2 && strlen($orderApi->ShippingAddressLine2) > 0) {
             $orderBC->shippingPostalAddress->street .= "\r\n" . substr($orderApi->ShippingAddressLine2, 0, 100);
         }
         $orderBC->shippingPostalAddress->city = substr($orderApi->ShippingCity, 0, 100);
         $orderBC->shippingPostalAddress->postalCode = $orderApi->ShippingPostalCode;
         $orderBC->shippingPostalAddress->countryLetterCode = $orderApi->ShippingCountry;
-        if (strlen($orderApi->ShippingStateOrProvinceName) > 0 && $orderApi->ShippingStateOrProvinceName != "--") {
+        if ($orderApi->ShippingStateOrProvinceName && strlen($orderApi->ShippingStateOrProvinceName) > 0 && $orderApi->ShippingStateOrProvinceName != "--") {
             $orderBC->shippingPostalAddress->state = substr($orderApi->BillingStateOrProvinceName, 0, 30);
         }
 

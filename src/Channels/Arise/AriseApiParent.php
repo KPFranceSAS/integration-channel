@@ -239,8 +239,9 @@ abstract class AriseApiParent implements ApiInterface
 
         $request = new AriseRequest('/product/price_quantity/update');
         $request->addApiParam('payload', json_encode($payload));
+        $response = $this->client->execute($request);
         
-        return $this->client->execute($request);
+        return $response;
     }
 
     public function getProductInfo($itemId)

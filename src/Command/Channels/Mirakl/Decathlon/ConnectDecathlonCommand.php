@@ -33,7 +33,7 @@ class ConnectDecathlonCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->getProductAttributesValues();
+        $this->getOrders();
         
         return Command::SUCCESS;
     }
@@ -78,11 +78,20 @@ class ConnectDecathlonCommand extends Command
 
     protected function getProductAttributesValues()
     {
-       
     }
 
 
     protected function getOrders()
+    {
+        $api = $this->decathlonApi->getClient();
+        $request = new GetOrdersRequest();
+        
+        $result = $api->getOrders($request);
+        dump($result);
+    }
+
+
+    protected function getAllOrders()
     {
         $api = $this->decathlonApi->getClient();
         $request = new GetOrdersRequest();

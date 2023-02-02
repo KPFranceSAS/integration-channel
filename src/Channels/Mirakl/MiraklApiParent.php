@@ -6,11 +6,18 @@ use App\Channels\Mirakl\MiraklClient;
 use App\Service\Aggregator\ApiInterface;
 use Exception;
 use GuzzleHttp\Client;
+use Mirakl\Core\Domain\Collection\DocumentCollection;
+use Mirakl\Core\Domain\Document;
 use Mirakl\MCI\Common\Domain\Product\ProductImportTracking;
 use Mirakl\MCI\Shop\Client\ShopApiClient;
 use Mirakl\MCI\Shop\Request\Product\ProductImportRequest;
+use Mirakl\MMP\Common\Domain\Order\Accept\AcceptOrderLine;
 use Mirakl\MMP\Shop\Request\Offer\UpdateOffersRequest;
+use Mirakl\MMP\Shop\Request\Order\Accept\AcceptOrderRequest;
+use Mirakl\MMP\Shop\Request\Order\Document\UploadOrdersDocumentsRequest;
 use Mirakl\MMP\Shop\Request\Order\Get\GetOrdersRequest;
+use Mirakl\MMP\Shop\Request\Order\Ship\ShipOrderRequest;
+use Mirakl\MMP\Shop\Request\Order\Tracking\UpdateOrderTrackingInfoRequest;
 use Psr\Log\LoggerInterface;
 use SplFileObject;
 
@@ -78,51 +85,26 @@ abstract class MiraklApiParent implements ApiInterface
             $offset+=self::PAGINATION;
             $max_page  = $reponse->getTotalCount();
         }
-        return $orders;
+        $ordersSanitized = [];
+        foreach($orders as $order){
+            $ordersSanitized[]=$order->toArray();
+        }
+        return $ordersSanitized;
     }
 
 
     public function getAllOrdersToSend()
     {
         $params = [
-            
+            'order_state_codes' => [
+                'WAITING_ACCEPTANCE',
+                "SHIPPING"
+            ]
         ];
         return $this->getOrders($params);
     }
 
 
-    public function getAllOrders()
-    {
-        $params = [
-           
-        ];
-        return $this->getOrders($params);
-    }
-
-    public function getAllOrdersReadyToShip()
-    {
-        $params = [
-          
-        ];
-        return $this->getOrders($params);
-    }
-
-    public function getAllOrdersShipping()
-    {
-        $params = [
-            
-        ];
-        return $this->getOrders($params);
-    }
-
-    public function getAllOrdersDelivered()
-    {
-        $params = [
-            
-        ];
-        return $this->getOrders($params);
-    }
-    
     
 
    
@@ -135,40 +117,15 @@ abstract class MiraklApiParent implements ApiInterface
         return;
     }
 
-    public function getAllActiveProducts()
-    {
-        $params=[
-            'filter' => 'live'
-        ];
-        return $this->getProducts($params);
-    }
-
-
-    public function getAllProducts()
-    {
-        return $this->getProducts();
-    }
-
-
-    public function getProducts(array $params = [])
-    {
-        $offset = 0;
-        $max_page = 1;
-        $products = [];
-        
-
-        return $products;
-    }
-
+    
 
     public function sendOfferImports(array  $offers)
     {
-            $request = new UpdateOffersRequest();
-            $request->setOffers($offers);
+        $request = new UpdateOffersRequest();
+        $request->setOffers($offers);
 
-            $result = $this->client->updateOffers($request);
-            return $result;
-         
+        $result = $this->client->updateOffers($request);
+        return $result;
     }
 
 
@@ -185,71 +142,54 @@ abstract class MiraklApiParent implements ApiInterface
 
     
 
+
+    public function sendInvoice($orderId, $invoiceNumber, $invoiceContent){
+        $docs = new DocumentCollection();
+        $docs->add(new Document($invoiceContent, $invoiceNumber.'_'.date('Ymd-His').'.pdf', 'CUSTOMER_INVOICE'));
+        $request = new UploadOrdersDocumentsRequest($docs, $orderId);
+        $result = $this->client->uploadOrderDocuments($request);
+        
+        return true;
+    }
    
 
 
-    public function updateStockLevel()
+
+
+    public function markOrderAsFulfill($orderId, $carrierCode, $carrierName, $carrierUrl, $trackingNumber):bool
     {
+        $request = new UpdateOrderTrackingInfoRequest($orderId, [
+                'carrier_code' => $carrierCode,
+                'carrier_name' => $carrierName,
+                'carrier_url' => $carrierUrl,
+                'tracking_number' => $trackingNumber,
+             ]);
+        $result = $this->client->updateOrderTrackingInfo($request);
+
+
+        $request = new ShipOrderRequest($orderId);
+        $result = $this->client->shipOrder($request);
+        return true;
     }
 
-
-
-
-
-
-    public function updateStockLevels($inventorys)
+    public function markOrderAsAccepted($order): bool
     {
+        $ordersId = [];
+        foreach($order['order_lines'] as $orderLine){
+            if ($orderLine["order_line_state"]=='WAITING_ACCEPTANCE') {
+                $ordersId[] =  new AcceptOrderLine(['id' => $orderLine['order_line_id'], 'accepted' => true]);
+            }
+        }
+        if(count($ordersId)>0){
+            $request = new AcceptOrderRequest($order['order_id'], $ordersId);
+            $this->client->acceptOrder($request);
+            return true;
+        } else {
+            return false;
+        }
+        
     }
-
-    public function updatePrice($itemId, $skuId, $sellerSku, $price, $salePrice=0)
-    {
-    }
-
-    public function updatePrices(array $prices)
-    {
-    }
-
-    public function getProductInfo($itemId)
-    {
-    }
-
-
-
-    
-
-
-    public function desactivateProduct($itemId, $sellerSku)
-    {
-    }
-
-
-
-    public function updateTrackingInfo($trackingNumber, $packageId, $shipmentProviderCode)
-    {
-    }
-
-
-
-
-
-    public function markOrderAsFulfill($orderId, $carrierName, $trackingNumber)
-    {
-    }
-
-
-
-
-   
-    public function createProduct($product)
-    {
-    }
-
-
-    public function updateProduct($product)
-    {
-    }
-
-    
+        
 
 
     public function getAllAttributesForCategory($hierarchyCode)

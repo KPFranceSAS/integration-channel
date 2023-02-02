@@ -7,10 +7,10 @@ use App\Controller\Fba\StockCrudController;
 use App\Controller\Order\AliexpressOrderCrudController;
 use App\Controller\Order\AriseOrderCrudController;
 use App\Controller\Order\ChannelAdvisorOrderCrudController;
+use App\Controller\Order\DecathlonOrderCrudController;
 use App\Controller\Order\DeliveryOrderCrudController;
 use App\Controller\Order\ErrorOrderCrudController;
 use App\Controller\Order\FitbitCorporateOrderCrudController;
-use App\Controller\Order\FitbitExpressOrderCrudController;
 use App\Controller\Order\FlashledOrderCrudController;
 use App\Controller\Order\LateOrderCrudController;
 use App\Controller\Order\MinibattOrderCrudController;
@@ -97,6 +97,8 @@ class DashboardController extends AbstractDashboardController
                         ->setController(MinibattOrderCrudController::class),
                     MenuItem::linkToCrud('Fitbit Corporate', 'fas fa-running', WebOrder::class)
                         ->setController(FitbitCorporateOrderCrudController::class),
+                        MenuItem::linkToCrud('Decathlon', 'fas fa-volleyball-ball', WebOrder::class)
+                        ->setController(DecathlonOrderCrudController::class),
                     MenuItem::section(),
                     MenuItem::linkToCrud('Waiting for shipping', 'fas fa-truck-loading', WebOrder::class)
                         ->setController(PreparationOrderCrudController::class),

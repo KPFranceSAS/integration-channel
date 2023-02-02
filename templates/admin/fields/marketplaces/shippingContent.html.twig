@@ -1,13 +1,17 @@
 
 {% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_CHANNELADVISOR')  %}
 	{% include "admin/fields/marketplaces/channelAdvisor/shippingContent.html.twig" with {'field': field} %}
-{% endif %}
-{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ALIEXPRESS') or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_FITBITEXPRESS')  %}
+{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ALIEXPRESS')
+	 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_FITBITEXPRESS')  %}
 	{% include "admin/fields/marketplaces/aliExpress/shippingContent.html.twig" with {'field': field} %}
-{% endif %}
-{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_OWLETCARE')  or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MINIBATT')   or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_FLASHLED')  %}
+{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_OWLETCARE') 
+	 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MINIBATT')
+	 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_FLASHLED')  %}
 	{% include "admin/fields/marketplaces/shopify/shippingContent.html.twig" with {'field': field} %}
-{% endif %}
-{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ARISE') or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_AMAZFIT_ARISE')  or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_SONOS_ARISE')  %}
+{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ARISE')
+		 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_AMAZFIT_ARISE') 
+		 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_SONOS_ARISE')  %}
 	{% include "admin/fields/marketplaces/arise/shippingContent.html.twig" with {'field': field} %}
+{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_DECATHLON') %}
+	{% include "admin/fields/marketplaces/mirakl/shippingContent.html.twig" with {'field': field} %}
 {% endif %}

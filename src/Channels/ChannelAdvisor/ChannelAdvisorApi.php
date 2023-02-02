@@ -301,4 +301,44 @@ class ChannelAdvisorApi implements ApiInterface
 
         return $orderRetrieve;
     }
+
+
+
+    public function getAllOrdersBy($params, $notExported=false): array
+    {
+        $i = 1;
+        $orderRetrieve = [];
+
+        $paramsRequest = [
+            '$expand' => 'Items($expand=Adjustments,Promotions,BundleComponents),Fulfillments($expand=Items),Adjustments',
+            '$filter' => $params,
+        ];
+
+        if ($notExported) {
+            $paramsRequest['exported'] = 'false';
+        }
+
+
+        $ordersApi = $this->getOrders($paramsRequest);
+
+        foreach ($ordersApi->value as $orderApi) {
+            $orderRetrieve[] = $orderApi;
+        }
+        $this->logger->info("Get batch $i >> " . count($orderRetrieve) . ' orders');
+
+        while (true) {
+            if (property_exists($ordersApi, '@odata.nextLink')) {
+                $ordersApi = $this->getNextResults($ordersApi->{'@odata.nextLink'});
+                foreach ($ordersApi->value as $orderApi) {
+                    $orderRetrieve[] = $orderApi;
+                }
+                ++$i;
+                $this->logger->info("Get batch $i >> " . count($orderRetrieve) . ' orders');
+            } else {
+                break;
+            }
+        }
+
+        return $orderRetrieve;
+    }
 }

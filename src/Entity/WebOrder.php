@@ -352,34 +352,27 @@ class WebOrder
 
     public function getUrl()
     {
+         $order = $this->getOrderContent();
         switch ($this->channel) {
             case IntegrationChannel::CHANNEL_FITBITEXPRESS:
             case IntegrationChannel::CHANNEL_ALIEXPRESS:
                 return 'https://gsp.aliexpress.com/apps/order/detail?orderId=' . $this->externalNumber;
-
             case IntegrationChannel::CHANNEL_CHANNELADVISOR:
                 return 'https://sellercentral.amazon.fr/orders-v3/order/' . $this->externalNumber;
-
             case IntegrationChannel::CHANNEL_OWLETCARE:
-                $order = $this->getOrderContent();
                 return 'https://owlet-spain.myshopify.com/admin/orders/' . $order['id'];
-
             case IntegrationChannel::CHANNEL_MINIBATT:
-                $order = $this->getOrderContent();
                 return 'https://minibattstore.myshopify.com/admin/orders/' . $order['id'];
-
             case IntegrationChannel::CHANNEL_FLASHLED:
-                $order = $this->getOrderContent();
                 return 'https://testflashled.myshopify.com/admin/orders/' . $order['id'];
-
             case IntegrationChannel::CHANNEL_FITBITCORPORATE:
-                $order = $this->getOrderContent();
-                return 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'];
-                
+                return 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'];     
             case IntegrationChannel::CHANNEL_AMAZFIT_ARISE:
             case IntegrationChannel::CHANNEL_SONOS_ARISE:
             case IntegrationChannel::CHANNEL_ARISE:
                 return 'https://sellercenter.miravia.es/apps/order/detail?tradeOrderId=' . $this->externalNumber;
+            case IntegrationChannel::CHANNEL_DECATHLON:
+                return 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $this->externalNumber;
         }
         throw new Exception('No url link of weborder for ' . $this->channel);
     }
@@ -479,7 +472,10 @@ class WebOrder
                 $webOrder = WebOrder::createOneFromArise($orderApi);
                 $webOrder->setChannel(IntegrationChannel::CHANNEL_SONOS_ARISE);
                 return $webOrder;
-
+            
+            case IntegrationChannel::CHANNEL_DECATHLON:
+                return WebOrder::createOneFromDecathlon($orderApi);
+                
             case IntegrationChannel::CHANNEL_CHANNELADVISOR:
                 return WebOrder::createOneFromChannelAdvisor($orderApi);
                 
@@ -607,6 +603,37 @@ class WebOrder
         $webOrder->setContent($orderApi);
         return $webOrder;
     }
+
+
+
+
+
+    public static function createOneFromDecathlon($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromMirakl($orderApi);
+        $webOrder->setSubchannel("Decathlon ".$orderApi['channel']['label']);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_DECATHLON);
+        return $webOrder;
+    }
+
+
+    public static function createOrderFromMirakl($orderApi): WebOrder
+    {
+        $webOrder = new WebOrder();
+        $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['created_date']));
+        $webOrder->setStatus(WebOrder::STATE_CREATED);
+        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
+        $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
+        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+        $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
+        $webOrder->setContent($orderApi);
+        $webOrder->setExternalNumber($orderApi['order_id']);
+        
+        $webOrder->addLog('Retrieved from '.$orderApi['channel']['code'].' '.$orderApi['channel']['label']);
+        return $webOrder;
+    }
+
+
 
 
 
