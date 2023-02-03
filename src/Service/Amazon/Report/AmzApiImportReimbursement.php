@@ -52,6 +52,7 @@ class AmzApiImportReimbursement extends AmzApiImport
             ]);
             if ($reimbursementOriginalAmz) {
                 $reimbursementAmz->setOriginalReimbursement($reimbursementOriginalAmz);
+                $reimbursementAmz->setAmazonOrderId($reimbursementOriginalAmz->getAmazonOrderId());
             }
         }
         return $reimbursementAmz;

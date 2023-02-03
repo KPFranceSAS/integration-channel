@@ -3,14 +3,10 @@
 namespace App\Command\Channels\Mirakl\Decathlon;
 
 use App\Channels\Mirakl\Decathlon\DecathlonApi;
-use Mirakl\MCI\Shop\Request\Attribute\GetAttributesRequest;
 use Mirakl\MCI\Shop\Request\Hierarchy\GetHierarchiesRequest;
-use Mirakl\MCI\Shop\Request\ValueList\GetValueListsItemsRequest;
-use Mirakl\MMP\Common\Domain\Product\Offer\ProductReference;
 use Mirakl\MMP\Shop\Request\Channel\GetChannelsRequest;
 use Mirakl\MMP\Shop\Request\Offer\GetAccountRequest;
 use Mirakl\MMP\Shop\Request\Order\Get\GetOrdersRequest;
-use Mirakl\MMP\Shop\Request\Product\GetProductsRequest;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -68,17 +64,6 @@ class ConnectDecathlonCommand extends Command
         dump($result);
     }
 
-
-    protected function getProductAttributes()
-    {
-        $result = $this->decathlonApi->getAttributes('30058');
-        dump($result);
-    }
-
-
-    protected function getProductAttributesValues()
-    {
-    }
 
 
     protected function getOrders()

@@ -194,8 +194,8 @@ class AmazonReimbursement
                     "amount-total",
                 ])) {
                     $valueFormate = round(floatval($value), 2);
-                    $this->{$attribute . 'Currency'} = $valueFormate > 0 ? $valueFormate : null;
-                    $this->{$attribute} =  $valueFormate > 0 ? round($calculator->getConvertedAmountDate($valueFormate, $this->currencyUnit, $this->approvalDate), 2) : null;
+                    $this->{$attribute . 'Currency'} = $valueFormate;
+                    $this->{$attribute} = round($calculator->getConvertedAmountDate($valueFormate, $this->currencyUnit, $this->approvalDate), 2);
                 } elseif (in_array($key, [
                     "quantity-reimbursed-cash-per-unit",
                     "quantity-reimbursed-inventory",
