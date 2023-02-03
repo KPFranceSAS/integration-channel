@@ -54,6 +54,7 @@ class AmzApiImportReimbursement extends AmzApiImport
                 $reimbursementAmz->setOriginalReimbursement($reimbursementOriginalAmz);
                 $reimbursementAmz->setAmazonOrderId($reimbursementOriginalAmz->getAmazonOrderId());
             }
+            $reimbursementAmz->importData($this->exchangeRate, $importOrder);
         }
         return $reimbursementAmz;
     }

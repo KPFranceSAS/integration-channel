@@ -184,7 +184,9 @@ class AmazonReimbursement
 
     public function importData(ExchangeRateCalculator $calculator, array $reimbursementAmz)
     {
+
         foreach ($reimbursementAmz as $key => $value) {
+            
             $attribute = $this->checkIfImportAttribute($key);
             if ($attribute) {
                 if (in_array($key, ["approval-date"])) {
@@ -197,7 +199,7 @@ class AmazonReimbursement
                     $this->{$attribute . 'Currency'} = $valueFormate;
                     $this->{$attribute} = round($calculator->getConvertedAmountDate($valueFormate, $this->currencyUnit, $this->approvalDate), 2);
                 } elseif (in_array($key, [
-                    "quantity-reimbursed-cash-per-unit",
+                    "quantity-reimbursed-cash",
                     "quantity-reimbursed-inventory",
                     "quantity-reimbursed-total",
                 ])) {
@@ -207,6 +209,7 @@ class AmazonReimbursement
                 }
             }
         }
+
     }
 
     /**
