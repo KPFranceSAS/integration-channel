@@ -34,7 +34,7 @@ class AmzApiImportReimbursement extends AmzApiImport
         if (!$reimbursementAmz) {
             $reimbursementAmz = new AmazonReimbursement();
             $this->manager->persist($reimbursementAmz);
-            $reimbursementAmz->importData($this->exchangeRate, $importOrder);
+            
 
             $ordersAmz = $this->manager->getRepository(AmazonOrder::class)->findBy([
                 "amazonOrderId" => $importOrder['amazon-order-id'],
@@ -44,6 +44,7 @@ class AmzApiImportReimbursement extends AmzApiImport
                 $reimbursementAmz->setMarketplaceName($ordersAmz[0]->getSalesChannel());
             }
         }
+        $reimbursementAmz->importData($this->exchangeRate, $importOrder);
         $this->addProductByFnsku($reimbursementAmz);
         if ($importOrder['original-reimbursement-id']) {
             $reimbursementOriginalAmz = $this->manager->getRepository(AmazonReimbursement::class)->findOneBy([
@@ -53,8 +54,8 @@ class AmzApiImportReimbursement extends AmzApiImport
             if ($reimbursementOriginalAmz) {
                 $reimbursementAmz->setOriginalReimbursement($reimbursementOriginalAmz);
                 $reimbursementAmz->setAmazonOrderId($reimbursementOriginalAmz->getAmazonOrderId());
+                $reimbursementAmz->setMarketplaceName($reimbursementOriginalAmz->getMarketplaceName());
             }
-            $reimbursementAmz->importData($this->exchangeRate, $importOrder);
         }
         return $reimbursementAmz;
     }
