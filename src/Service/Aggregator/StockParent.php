@@ -158,6 +158,17 @@ abstract class StockParent
     
     protected function isNotBundle(string $sku): bool
     {
+
+        if(in_array($sku, [
+            "FLS-FLASHLED-3PCK",
+            "FLS-FLASHLED-6PCK",
+            "FLS-FLASHLED-20PCK",
+            "FLS-FLASHLED-64PCK"
+            ])){
+                return false;
+        }
+
+
         return u($sku)->containsAny('-PCK-') ? false : true;
     }
 }
