@@ -159,7 +159,7 @@ abstract class AriseApiParent implements ApiInterface
             $realOffset =  $offset+1;
             $this->logger->info('Get products batch n°' .$realOffset . ' / ' . $max_page . ' >>' . json_encode($params));
             $reponse = $this->client->execute($req);
-            $this->logger->info('Response ' . json_encode($reponse));
+            //$this->logger->info('Response ' . json_encode($reponse));
             
             if (property_exists($reponse->data, 'total_products')) {
                 if ($reponse->data->total_products > 0) {

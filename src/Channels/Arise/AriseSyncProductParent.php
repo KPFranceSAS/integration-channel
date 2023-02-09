@@ -234,7 +234,7 @@ abstract class AriseSyncProductParent extends ProductSyncParent
     }
 
 
-    protected const MAX_SIZE = 5000;
+    protected const MAX_SIZE = 3000;
 
     public function resize(string $filename): string
     {
