@@ -528,6 +528,8 @@ abstract class BusinessCentralConnector
     }
 
 
+
+
     /**
      * Sale invoice
      */
@@ -605,11 +607,60 @@ abstract class BusinessCentralConnector
     }
 
 
+
+
+
+
+
+    /**
+     * Sale return order
+     */
+    public function createSaleReturnOrder(array $order): ?array
+    {
+        return $this->doPostRequest(
+            self::EP_SALES_RETURNS,
+            $order
+        );
+    }
+
+
+
+     /**
+     * Sale return order
+     */
+    public function createSaleReturnOrderLine(array $orderLine): ?array
+    {
+        return $this->doPostRequest(
+            self::EP_SALES_RETURNS_LINE,
+            $orderLine
+        );
+    }
+
+
+
+    /**
+     * Sale return order
+     */
+
+    public function updateSaleReturnOrder(string $id, string $etag, array $order): ?array
+    {
+        return $this->doPatchRequest(
+            self::EP_SALES_RETURNS . '(' . $id . ')',
+            $etag,
+            $order
+        );
+    }
+
+
+
+
     public function getSaleReturnByNumber(string $number): ?array
     {
         return $this->getElementByNumber(
             self::EP_SALES_RETURNS,
-            $number
+            $number,
+            'number',
+            ['$expand' => 'salesReturnOrderLines,customer']
         );
     }
 
@@ -622,6 +673,19 @@ abstract class BusinessCentralConnector
             ['$expand' => 'salesReturnOrderLines,customer']
         );
     }
+
+
+    public function getSaleReturnByInvoiceAndLpn($invoiceNumber, $lpn): ?array
+    {
+        return $this->getElementsByArray(
+            self::EP_SALES_RETURNS,
+            "correctedInvoiceNo eq '$invoiceNumber' and packageTrackingNo eq '$lpn'",
+            false,
+            ['$expand' => 'salesReturnOrderLines,customer']
+        );
+    }
+
+
 
 
     public function getSaleReturnByExternalNumber(string $number): ?array

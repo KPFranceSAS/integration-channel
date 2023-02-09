@@ -208,20 +208,25 @@ abstract class AriseSyncProductParent extends ProductSyncParent
         for ($i=1;$i<=$nbImages;$i++) {
             $imageUrl = $this->getAttributeSimple($product, 'image_url_'.$i);
             if ($imageUrl) {
-                list($iwidth, $iheight) = getimagesize($imageUrl);
-                if ($iwidth > self::MAX_SIZE || $iheight > self::MAX_SIZE) {
-                    $content = $this->resize($imageUrl);
-                    $imageUploaded = $this->getAriseApi()->uploadImage($content);
-                    if ($imageUploaded) {
-                        $this->logger->info('Image uploaded '.$imageUploaded);
-                        $images[]=$imageUploaded;
+                $headers = @get_headers($imageUrl);
+                if (strpos($headers[0], '404') === false) {
+                    list($iwidth, $iheight) = getimagesize($imageUrl);
+                    if ($iwidth > self::MAX_SIZE || $iheight > self::MAX_SIZE) {
+                        $content = $this->resize($imageUrl);
+                        $imageUploaded = $this->getAriseApi()->uploadImage($content);
+                        if ($imageUploaded) {
+                            $this->logger->info('Image uploaded '.$imageUploaded);
+                            $images[]=$imageUploaded;
+                        }
+                    } else {
+                        $imageMigrated = $this->getAriseApi()->migrateImage($imageUrl);
+                        if ($imageMigrated) {
+                            $this->logger->info('Image migrated '.$imageMigrated);
+                            $images[]=$imageMigrated;
+                        }
                     }
                 } else {
-                    $imageMigrated = $this->getAriseApi()->migrateImage($imageUrl);
-                    if ($imageMigrated) {
-                        $this->logger->info('Image migrated '.$imageMigrated);
-                        $images[]=$imageMigrated;
-                    }
+                    $this->logger->info('Product '.$product['identifier'].' >> Image URL '.$i.' >>> '. $imageUrl.' do not exists');
                 }
             }
         }

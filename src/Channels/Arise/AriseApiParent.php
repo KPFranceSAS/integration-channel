@@ -159,13 +159,17 @@ abstract class AriseApiParent implements ApiInterface
             $realOffset =  $offset+1;
             $this->logger->info('Get products batch n°' .$realOffset . ' / ' . $max_page . ' >>' . json_encode($params));
             $reponse = $this->client->execute($req);
+            $this->logger->info('Response ' . json_encode($reponse));
             
-            if ($reponse->data->total_products > 0) {
-                $products = array_merge($products, $reponse->data->products);
+            if (property_exists($reponse->data, 'total_products')) {
+                if ($reponse->data->total_products > 0) {
+                    $products = array_merge($products, $reponse->data->products);
+                }
+                $offset+=self::PAGINATION;
+                $max_page  = $reponse->data->total_products;
+            } else {
+                return [];
             }
-
-            $offset+=self::PAGINATION;
-            $max_page  = $reponse->data->total_products;
         }
 
         return $products;
