@@ -10,6 +10,7 @@ use App\Entity\IntegrationChannel;
 use App\Entity\User;
 use App\Entity\WebOrder;
 use App\Filter\LateOrderFilter;
+use App\Form\ChangeCompleteType;
 use App\Form\ChangeStatusInvoiceType;
 use App\Service\Aggregator\IntegratorAggregator;
 use Doctrine\Persistence\ManagerRegistry;
@@ -159,6 +160,14 @@ class WebOrderCrudController extends AdminCrudController
                 ->addCssClass('btn')
                 ->linkToCrudAction('changeStatusToInvoiced');
             $actions->add(Crud::PAGE_DETAIL, $changeStatusToInvoiced);
+
+            $changeStatusToCompleted = Action::new('changeStatusToComplete', 'Mark as complete', 'fas fa-user-check')
+            ->displayIf(static function ($entity) {
+                return $entity->canChangeStatusToComplete();
+            })
+            ->addCssClass('btn')
+            ->linkToCrudAction('changeStatusToComplete');
+            $actions->add(Crud::PAGE_DETAIL, $changeStatusToCompleted);
         }
 
 
@@ -326,6 +335,30 @@ class WebOrderCrudController extends AdminCrudController
             $webOrder->setStatus(WebOrder::STATE_INVOICED);
             $webOrder->addLog('Marked as invoiced by ' . $user->getUserIdentifier() . ' : ' . $webOrder->comments, 'info', $user->getUserIdentifier());
             $this->addFlash('success', "Web Order " . $webOrder->getExternalNumber() . " has been marked as invoiced");
+            $managerRegistry->getManager()->flush();
+            return $this->redirect($this->adminUrlGenerator->setController(WebOrderCrudController::class)
+                ->setAction(Action::DETAIL)
+                ->setEntityId($webOrder->getId())
+                ->generateUrl());
+        }
+        return $this->renderForm('admin/crud/order/changeStatus.html.twig', ['form' => $form, 'entity' => $webOrder]);
+    }
+
+
+
+    public function changeStatusToComplete(
+        AdminContext $context,
+        ManagerRegistry $managerRegistry
+    ) {
+        $webOrder = $context->getEntity()->getInstance();
+        $form = $this->createForm(ChangeCompleteType::class, $webOrder);
+        $form->handleRequest($context->getRequest());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+            $webOrder->cleanErrors();
+            $webOrder->setStatus(WebOrder::STATE_COMPLETE);
+            $webOrder->addLog('Marked as complete by ' . $user->getUserIdentifier() . ' : ' . $webOrder->comments, 'info', $user->getUserIdentifier());
+            $this->addFlash('success', "Web Order " . $webOrder->getExternalNumber() . " has been marked as complete");
             $managerRegistry->getManager()->flush();
             return $this->redirect($this->adminUrlGenerator->setController(WebOrderCrudController::class)
                 ->setAction(Action::DETAIL)

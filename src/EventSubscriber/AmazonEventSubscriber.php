@@ -7,6 +7,7 @@ use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Service\Amazon\History\AmzHistoryAggregator;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
+use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AmazonEventSubscriber implements EventSubscriberInterface
@@ -41,18 +42,23 @@ class AmazonEventSubscriber implements EventSubscriberInterface
             return;
         }
 
+        
+
         if (in_array($entity->getStatus(), [WebOrder::STATE_SYNC_TO_ERP, WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])) {
-            $bcConnector =  $this->businessCentralAggregator->getBusinessCentralConnector($entity->getCompany());
-            if ($entity->getStatus() == WebOrder::STATE_SYNC_TO_ERP) {
-                $content = $bcConnector->getFullSaleOrderByNumber($entity->getOrderErp());
-                if ($content) {
-                    $content["salesInvoiceLines"] = $content["salesOrderLines"];
-                } else {
-                    $content = $bcConnector->getSaleInvoiceByOrderNumber($entity->getOrderErp());
+            try {
+                $bcConnector =  $this->businessCentralAggregator->getBusinessCentralConnector($entity->getCompany());
+                if ($entity->getStatus() == WebOrder::STATE_SYNC_TO_ERP) {
+                    $content = $bcConnector->getFullSaleOrderByNumber($entity->getOrderErp());
+                    if ($content) {
+                        $content["salesInvoiceLines"] = $content["salesOrderLines"];
+                    } else {
+                        $content = $bcConnector->getSaleInvoiceByOrderNumber($entity->getOrderErp());
+                    }
+                    $entity->orderBCContent = $content;
+                } elseif (in_array($entity->getStatus(), [WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])) {
+                    $entity->orderBCContent = $bcConnector->getFullSaleInvoiceByNumber($entity->getInvoiceErp());
                 }
-                $entity->orderBCContent = $content;
-            } elseif (in_array($entity->getStatus(), [WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])) {
-                $entity->orderBCContent = $bcConnector->getFullSaleInvoiceByNumber($entity->getInvoiceErp());
+            } catch (Exception $e) {
             }
         }
 

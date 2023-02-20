@@ -246,6 +246,12 @@ class WebOrder
     }
 
 
+    public function canChangeStatusToComplete()
+    {
+        return in_array($this->status, [self::STATE_INVOICED]);
+    }
+
+
 
 
     public function getStatusLitteral()
@@ -352,7 +358,7 @@ class WebOrder
 
     public function getUrl()
     {
-         $order = $this->getOrderContent();
+        $order = $this->getOrderContent();
         switch ($this->channel) {
             case IntegrationChannel::CHANNEL_FITBITEXPRESS:
             case IntegrationChannel::CHANNEL_ALIEXPRESS:
@@ -366,7 +372,7 @@ class WebOrder
             case IntegrationChannel::CHANNEL_FLASHLED:
                 return 'https://testflashled.myshopify.com/admin/orders/' . $order['id'];
             case IntegrationChannel::CHANNEL_FITBITCORPORATE:
-                return 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'];     
+                return 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'];
             case IntegrationChannel::CHANNEL_AMAZFIT_ARISE:
             case IntegrationChannel::CHANNEL_SONOS_ARISE:
             case IntegrationChannel::CHANNEL_ARISE:

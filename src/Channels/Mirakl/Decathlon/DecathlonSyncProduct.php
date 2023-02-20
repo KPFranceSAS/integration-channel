@@ -58,7 +58,13 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
         }
 
 
-        $locales = ['en_GB', 'de_DE', 'it_IT', 'fr_FR', 'es_ES'];
+        $locales = [
+            'en_GB',
+            'de_DE',
+            'it_IT',
+            'fr_FR',
+            'es_ES'
+        ];
 
 
         $localizablesTextFields= [
@@ -77,6 +83,8 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 if ($value) {
                     if ($localizableMirakl=='longDescription') {
                         $flatProduct[$localizableMirakl.'-'.$loc] = $this->convertHtmlToMarkdown($value);
+                    } elseif ($localizableMirakl=='productTitle') {
+                        $flatProduct[$localizableMirakl.'-'.$loc] = substr($this->sanitizeHtml($value), 0, 80);
                     } else {
                         $flatProduct[$localizableMirakl.'-'.$loc] = $this->sanitizeHtml($value);
                     }
