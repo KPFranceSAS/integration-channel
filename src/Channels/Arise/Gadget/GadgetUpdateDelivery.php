@@ -9,6 +9,6 @@ class GadgetUpdateDelivery extends AriseUpdateDeliveryParent
 {
     public function getChannel()
     {
-        return IntegrationChannel::CHANNEL_SONOS_ARISE;
+        return IntegrationChannel::CHANNEL_ARISE;
     }
 }
