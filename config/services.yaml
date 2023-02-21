@@ -144,5 +144,9 @@ services:
             $decathlonClientUrl :  '%env(resolve:DECATHLON_URL)%'
             $decathlonClientKey : '%env(resolve:DECATHLON_KEY)%'
 
+            $manoManoClientUrl :  '%env(resolve:MANOMANO_URL)%'
+            $manoManoFrContractId :  '%env(resolve:MANOMANO_FR_CONTRAT)%'
+            $manoManoFrKey :  '%env(resolve:MANOMANO_FR_KEY)%'
+
           
             

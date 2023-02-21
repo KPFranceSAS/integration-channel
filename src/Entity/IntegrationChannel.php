@@ -27,6 +27,10 @@ class IntegrationChannel
     public const CHANNEL_SONOS_ARISE='SONOS_ARISE';
     public const CHANNEL_AMAZFIT_ARISE='AMAZFIT_ARISE';
     public const CHANNEL_DECATHLON='DECATHLON';
+    public const CHANNEL_MANOMANO_FR='MANOMANO_FR';
+    public const CHANNEL_MANOMANO_ES='MANOMANO_ES';
+    public const CHANNEL_MANOMANO_DE='MANOMANO_DE';
+    public const CHANNEL_MANOMANO_IT='MANOMANO_IT';
 
 
     use TraitTimeUpdated;

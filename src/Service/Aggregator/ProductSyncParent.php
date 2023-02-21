@@ -268,4 +268,15 @@ abstract class ProductSyncParent
 
         return null;
     }
+
+    protected function removeNewLine(string $text): string
+    {
+        return str_replace(["\r\n", "\n"], '', $text);
+    }
+
+
+    protected function sanitizeHtml(string $text): string
+    {
+        return $this->removeNewLine(strip_tags($text));
+    }
 }
