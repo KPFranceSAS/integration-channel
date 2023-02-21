@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Channels\Mirakl;
+namespace App\Channels\ManoMano;
 
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\SaleOrder;
