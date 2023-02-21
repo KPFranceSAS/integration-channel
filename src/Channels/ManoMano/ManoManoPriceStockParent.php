@@ -66,11 +66,11 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
         $csv->setDelimiter(';');
         $csv->insertOne($finalHeader);
         
-        foreach ($products as $product) {
+        foreach ($offers as $offer) {
             $productArray = array_fill_keys($finalHeader, '');
             foreach ($finalHeader as $column) {
-                if (array_key_exists($column, $product)) {
-                    $productArray[$column]=$product[$column];
+                if (array_key_exists($column, $offer)) {
+                    $productArray[$column]=$offer[$column];
                 }
             }
             $csv->insertOne(array_values($productArray));
