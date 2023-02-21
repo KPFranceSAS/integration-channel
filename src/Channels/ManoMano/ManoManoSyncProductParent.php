@@ -4,10 +4,15 @@ namespace App\Channels\ManoMano;
 
 use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\Entity\IntegrationChannel;
+use App\Entity\Product;
+use App\Entity\SaleChannel;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
+use App\Service\Aggregator\PriceStockAggregator;
 use App\Service\Aggregator\ProductSyncParent;
 use App\Service\Pim\AkeneoConnector;
+use Doctrine\Persistence\ManagerRegistry;
 use League\Csv\Writer;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -20,7 +25,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
     abstract protected function getLocale(): string;
 
-    
+    protected $priceStockAggregator;
 
     protected $projectDir;
 
@@ -31,9 +36,13 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         MailService $mailer,
         BusinessCentralAggregator $businessCentralAggregator,
         ApiAggregator $apiAggregator,
+        ManagerRegistry $manager,
+        PriceStockAggregator $priceStockAggregator,
         $projectDir
     ) {
         $this->projectDir =  $projectDir.'/public/manomano/catalogue/';
+        $this->priceStockAggregator = $priceStockAggregator;
+        $this->manager = $manager;
         parent::__construct($logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
     }
 
@@ -49,8 +58,39 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         $products = $this->getProductsEnabledOnChannel();
         $productToArrays=[];
         $finalHeader = [];
+
+        /**@var ManoManoPriceStockParent */
+        $priceUpdater = $this->priceStockAggregator->getPriceStock($this->getChannel());
+        $integrationChannel = $this->manager->getRepository(IntegrationChannel::class)->findBy([
+            'code' => $this->getChannel()
+        ]);
+        $saleChannels = $this->manager->getRepository(SaleChannel::class)->findBy([
+            'integrationChannel' => $integrationChannel
+        ]);
+        
+
         foreach ($products as $product) {
             $productToArray = $this->flatProduct($product);
+
+
+            $productDb = $this->manager->getRepository(Product::class)->findOneBy([
+                'sku' => $product['identifier']
+            ]);
+            if ($productDb && count($saleChannels)>0) {
+                /**@var SaleChannel */
+                $saleChannel =  $saleChannels[0];
+                $productPrice = $priceUpdater->flatProduct($productDb, $saleChannel);
+                if ($productPrice) {
+                    foreach ($productPrice as $key => $value) {
+                        $productToArray[$key] = $value;
+                    }
+                }
+            }
+
+           
+
+
+
             $headerProduct = array_keys($productToArray);
             foreach ($headerProduct as $headerP) {
                 if (!in_array($headerP, $finalHeader)) {
@@ -95,7 +135,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             'Sample_SKU' => 0,
             'Unit_count' => 1,
             "unit_count_type" => 'pièce',
-            "shipping_time" => "3#5",
+            "shipping_time" => "3#7",
             "carrier" => "UPS",
             "shipping_price_vat_inc" => 0,
             "use_grid" => 0,
@@ -198,6 +238,8 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             }
         }
 
+
+        
         
         return $flatProduct;
     }

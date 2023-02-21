@@ -5,6 +5,7 @@ namespace App\Channels\ManoMano;
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\ProductStockFinder;
 use App\Entity\Product;
+use App\Entity\SaleChannel;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\PriceStockParent;
@@ -46,10 +47,12 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
 
     public function sendStocksPrices(array $products, array $saleChannels)
     {
+        $saleChannel = $saleChannels[0];
+
         $offers = [];
         $finalHeader =[];
         foreach ($products as $product) {
-            $offer = $this->addProduct($product, $saleChannels);
+            $offer = $this->flatProduct($product, $saleChannel);
             if ($offer) {
                 $headerProduct = array_keys($offer);
                 foreach ($headerProduct as $headerP) {
@@ -86,9 +89,8 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
    
 
 
-    protected function addProduct(Product $product, array $saleChannels): ?array
+    public function flatProduct(Product $product, SaleChannel $saleChannel): ?array
     {
-        $saleChannel =  $saleChannels[0];
         $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
         if ($productMarketplace->getEnabled()) {
             $offer = [

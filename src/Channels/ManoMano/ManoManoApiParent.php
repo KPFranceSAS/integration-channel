@@ -45,9 +45,17 @@ abstract class ManoManoApiParent implements ApiInterface
      */
     public function getOrders(array $params = [])
     {
-        $offset = 0;
+        $offset = 1;
         $max_page = 1;
         $orders = [];
+        while ($offset  <= $max_page) {
+            $params ['seller_contract_id'] = $this->contractId;
+            $realOffset =  $offset+1;
+            $this->logger->info('Get orders batch n°' . $realOffset . ' / ' . $max_page . ' >>' . json_encode($params));
+            $reponse =  $this->sendRequest('orders/v1/orders', $params);
+            $orders = array_merge($orders, $reponse['content']);
+            $max_page  = $reponse['pagination']['pages'];
+        }
         
         return $orders;
     }
@@ -56,7 +64,7 @@ abstract class ManoManoApiParent implements ApiInterface
     public function getAllOrdersToSend()
     {
         $params = [
-           
+            'status' => 'PENDING'
         ];
         return $this->getOrders($params);
     }
@@ -72,24 +80,11 @@ abstract class ManoManoApiParent implements ApiInterface
         return $reponse;
     }
 
+
     
-
-    public function sendOfferImports(array  $offers)
-    {
-        $result = true;
-        return $result;
-    }
-
-
-   
 
 
     public const PAGINATION = 50;
-
-    
-
-
-    
 
 
 
@@ -114,10 +109,6 @@ abstract class ManoManoApiParent implements ApiInterface
         
 
 
-
-
-
-
     public function sendRequest($endPoint, $queryParams = [], $method = 'GET', $body = null)
     {
         $client = new Client();
@@ -136,6 +127,6 @@ abstract class ManoManoApiParent implements ApiInterface
         $request = new Request($method, $url, $headers, $body);
         
         $response = $client->sendRequest($request);
-        return json_decode($response->getBody());
+        return json_decode($response->getBody(), true);
     }
 }
