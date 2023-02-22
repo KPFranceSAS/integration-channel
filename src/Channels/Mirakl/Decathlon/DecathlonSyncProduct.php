@@ -35,7 +35,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
 
 
         $flatProduct = [
-            'category' => $categoryCode,
+            'category' => str_replace('_', '-', $categoryCode),
             'ProductIdentifier' => $product['identifier'],
             
             'PRODUCT_TYPE' => $this->getAttributeSimple($product, 'decathlon_product_type'),
