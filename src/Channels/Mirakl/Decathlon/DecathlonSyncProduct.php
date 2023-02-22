@@ -31,11 +31,11 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
         $this->logger->info('Flat product '.$product['identifier']);
 
 
-        $categoryCode = $this->getAttributeSimple($product, 'decathlon_category_id');
+        $categoryCode = str_replace('_', '-', $this->getAttributeSimple($product, 'decathlon_category_id'));
 
 
         $flatProduct = [
-            'category' => str_replace('_', '-', $categoryCode),
+            'category' =>  $categoryCode,
             'ProductIdentifier' => $product['identifier'],
             
             'PRODUCT_TYPE' => $this->getAttributeSimple($product, 'decathlon_product_type'),
