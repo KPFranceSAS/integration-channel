@@ -17,7 +17,7 @@ abstract class ManoManoUpdateStatusParent extends UpdateStatusParent
 
     protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber=null)
     {
-        $codeCarrier = $this->getCodeCarrier($order->getCarrierService());
+       /* $codeCarrier = $this->getCodeCarrier($order->getCarrierService());
         $nameCarrier = $this->getNameCarrier($order->getCarrierService());
             
         if (!$codeCarrier || !$nameCarrier) {
@@ -39,22 +39,7 @@ abstract class ManoManoUpdateStatusParent extends UpdateStatusParent
             $this->addLogToOrder($order, 'Error posting tracking number ' . $trackingNumber);
             return false;
         }
+        */
     }
 
-    protected function getCodeCarrier(string $carrierCode): ?string
-    {
-        if ($carrierCode ==  WebOrder::CARRIER_DHL) {
-            return "DHLESP";
-        }
-        return null;
-    }
-
-
-    protected function getNameCarrier(string $carrierCode): ?string
-    {
-        if ($carrierCode ==  WebOrder::CARRIER_DHL) {
-            return "DHL (Spain)";
-        }
-        return null;
-    }
 }

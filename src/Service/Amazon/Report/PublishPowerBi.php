@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class PublishPowerBi
 {
-    const BATCH_SIZE = 1000;
+    const BATCH_SIZE = 500;
     public function __construct(LoggerInterface $logger, ManagerRegistry $manager, SerializerInterface $serializer, $projectDir)
     {
         /** @var \Doctrine\ORM\EntityManagerInterface */

@@ -6,14 +6,12 @@ use App\Entity\IntegrationChannel;
 use App\Helper\Traits\TraitLoggable;
 use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
-use App\Service\Carriers\AriseTracking;
-use App\Service\Carriers\DhlGetTracking;
+use App\Service\Carriers\UpsGetTracking;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
 use Doctrine\ORM\Mapping as ORM;
 use Exception;
-use GuzzleHttp\Client;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -52,6 +50,7 @@ class WebOrder
     public const  CARRIER_DHL = 'DHL';
     public const  CARRIER_ARISE = 'ARISE';
     public const  CARRIER_FBA = 'FBA';
+    public const  CARRIER_UPS = 'UPS';
 
     public const  STATE_ERROR_INVOICE = -2;
     public const  STATE_ERROR = -1;
@@ -152,7 +151,7 @@ class WebOrder
      */
     private $fulfilledBy;
 
-
+    public $deliverySteps;
     public $amzEvents;
 
     /**
@@ -181,6 +180,9 @@ class WebOrder
     {
         return $this->fulfilledBy == self::FULFILLED_BY_SELLER && $this->carrierService == self::CARRIER_ARISE;
     }
+
+
+    
     
 
     public function getNbHoursSinceCreation()
@@ -419,42 +421,10 @@ class WebOrder
 
 
 
-    public function getStatusExpedition()
-    {
-        if ($this->carrierService == WebOrder::CARRIER_DHL) {
-            if ($this->trackingCode) {
-                return DhlGetTracking::getDHLResponse($this->trackingCode);
-            }
-        } elseif ($this->carrierService == WebOrder::CARRIER_ARISE) {
-            if ($this->trackingCode) {
-                $orderContent=$this->getOrderContent();
-                return AriseTracking::getGlsResponse($this->trackingCode, $orderContent->address_shipping->post_code);
-            }
-        }
-        return null;
-    }
+   
 
 
-
-    public function checkifDelivered(): ?DateTime
-    {
-        if ($this->carrierService == WebOrder::CARRIER_DHL) {
-            if ($this->trackingCode) {
-                return DhlGetTracking::checkIfDelivered($this->trackingCode);
-            }
-        } elseif ($this->carrierService == WebOrder::CARRIER_ARISE) {
-            if ($this->trackingCode) {
-                $orderContent=$this->getOrderContent();
-                return AriseTracking::checkIfDelivered($this->trackingCode, $orderContent->address_shipping->post_code);
-            }
-        }
-        return null;
-    }
-
-
-
-
-
+    
     public static function createOneFrom($orderApi, $channel): WebOrder
     {
         switch ($channel) {
@@ -635,9 +605,20 @@ class WebOrder
         $webOrder->setContent($orderApi);
         $webOrder->setExternalNumber($orderApi['order_id']);
         
+        $skus = [];
+        foreach ($orderApi["order_lines"] as $line) {
+            $skus[] = $line['offer_sku'];
+        }
+        $shouldBeSentByUps = UpsGetTracking::shouldBeSentWith($skus);
+        if($shouldBeSentByUps){
+            $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
+        }
         $webOrder->addLog('Retrieved from '.$orderApi['channel']['code'].' '.$orderApi['channel']['label']);
         return $webOrder;
     }
+
+
+
 
 
 

@@ -30,7 +30,7 @@ abstract class MiraklUpdateStatusParent extends UpdateStatusParent
                 $order->getExternalNumber(), 
                 $codeCarrier,
                 $nameCarrier, 
-                DhlGetTracking::getTrackingUrlBase($trackingNumber),
+                $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $trackingNumber),
                 $trackingNumber);
             if ($result) {
                 $this->addLogToOrder($order, 'Mark as fulfilled on '.$this->getChannel());

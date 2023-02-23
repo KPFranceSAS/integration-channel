@@ -54,6 +54,30 @@ class DhlGetTracking
 
 
 
+    public static function getStepsTrackings($externalOrderNumber): ?array
+    {
+        $body = self::getDHLResponse($externalOrderNumber);
+        if ($body) {
+            $steps = [];
+            foreach($body['Seguimiento'] as $step){
+                $dateEvent = DateTime::createFromFormat('d/m/Y H:i', $step['Fecha']. ' '.$step['Hora']);
+                $description = $step['Descripcion']. ' '.$step['Ciudad'];
+                $steps[ $dateEvent->format('YmdHis')]=[
+                        'date'=>$dateEvent,
+                        'description'=>$description
+                ];
+            }
+            return $steps;
+           
+        }
+        return null;
+    }
+
+
+
+
+
+
 
     public static function getTrackingUrlBase($codeTracking)
     {

@@ -6,6 +6,7 @@ use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Service\Amazon\History\AmzHistoryAggregator;
+use App\Service\Carriers\TrackingAggregator;
 use EasyCorp\Bundle\EasyAdminBundle\Event\BeforeCrudActionEvent;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -16,12 +17,16 @@ class AmazonEventSubscriber implements EventSubscriberInterface
 
     private $amzHistoryAggregator;
 
+    private $trackingAggregator;
+
     public function __construct(
         BusinessCentralAggregator $businessCentralAggregator,
-        AmzHistoryAggregator $amzHistoryAggregator
+        AmzHistoryAggregator $amzHistoryAggregator,
+        TrackingAggregator $trackingAggregator
     ) {
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->amzHistoryAggregator = $amzHistoryAggregator;
+        $this->trackingAggregator = $trackingAggregator;
     }
 
     public static function getSubscribedEvents(): array
@@ -61,6 +66,25 @@ class AmazonEventSubscriber implements EventSubscriberInterface
             } catch (Exception $e) {
             }
         }
+
+
+        if ($entity->getTrackingCode()) {
+            try {
+              
+                if($entity->getCarrierService() == WebOrder::CARRIER_ARISE){
+                    $orderContent=$entity->getOrderContent();
+                    $zipCode = $orderContent->address_shipping->post_code;
+                } else {
+                    $zipCode = null;
+                }
+        
+                 $entity->deliverySteps = $this->trackingAggregator->getFormattedSteps($entity->getCarrierService(),$entity->getTrackingCode(), $zipCode );
+            } catch (Exception $e) {
+            }
+        }
+
+
+
 
 
         if (in_array($entity->getChannel(), [IntegrationChannel::CHANNEL_CHANNELADVISOR])) {

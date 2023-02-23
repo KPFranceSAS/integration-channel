@@ -18,6 +18,8 @@ class DecathlonUpdateStatus extends MiraklUpdateStatusParent
     protected function getCodeCarrier(string $carrierCode): ?string {
         if($carrierCode ==  WebOrder::CARRIER_DHL){
             return "DHLESP";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS){
+            return "UPS";
         }
         return null;
     }
@@ -26,6 +28,8 @@ class DecathlonUpdateStatus extends MiraklUpdateStatusParent
     protected function getNameCarrier(string $carrierCode): ?string {
         if($carrierCode ==  WebOrder::CARRIER_DHL){
             return "DHL (Spain)";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS){
+            return "UPS";
         }
         return null;
     }

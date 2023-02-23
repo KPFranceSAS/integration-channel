@@ -9,6 +9,8 @@ use App\Helper\Traits\TraitServiceLog;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Carriers\DhlGetTracking;
+use App\Service\Carriers\TrackingAggregator;
+use App\Service\Carriers\UpsGetTracking;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -30,16 +32,26 @@ abstract class UpdateStatusParent
 
     protected $apiAggregator;
 
+    protected $trackingAggregator;
+
     protected $errors;
 
 
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, ApiAggregator $apiAggregator)
+    public function __construct(
+        ManagerRegistry $manager, 
+        LoggerInterface $logger, 
+        MailService $mailer, 
+        BusinessCentralAggregator $businessCentralAggregator, 
+        ApiAggregator $apiAggregator,
+        TrackingAggregator $trackingAggregator
+    )
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->apiAggregator = $apiAggregator;
+        $this->trackingAggregator = $trackingAggregator;
     }
 
 
@@ -150,6 +162,15 @@ abstract class UpdateStatusParent
                 if ($order->getCarrierService() == WebOrder::CARRIER_ARISE) {
                     $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and waiting to be collected by Arise');
                     $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice);
+                }
+
+
+                if ($order->getCarrierService() == WebOrder::CARRIER_UPS) {
+                        $tracking = $statusSaleOrder['trackingNumber'];
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by UPS with tracking number ' . $tracking);
+                        $order->setTrackingUrl(UpsGetTracking::getTrackingUrlBase($tracking));
+                        $order->setTrackingCode($tracking);
+                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
                 }
 
 

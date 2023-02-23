@@ -24,7 +24,14 @@ abstract class ShopifyUpdateStatusParent extends UpdateStatusParent
             foreach ($jsonOrder['line_items'] as $item) {
                 $ids[] = ['id' => $item['id']];
             }
-            $result = $this->getShopifyApi()->markAsFulfilled($jsonOrder['id'], $mainLocation['id'], $ids, $trackingNumber, DhlGetTracking::getTrackingUrlBase($trackingNumber));
+
+            $result = $this->getShopifyApi()->markAsFulfilled(
+                $jsonOrder['id'], 
+                $mainLocation['id'],
+                $ids, 
+                $trackingNumber, 
+                $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $trackingNumber)
+            );
             if ($result) {
                 $this->addLogToOrder($order, 'Mark as fulfilled on ' . $this->getChannel());
                 return true;

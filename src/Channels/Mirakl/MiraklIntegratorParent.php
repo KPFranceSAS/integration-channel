@@ -14,6 +14,7 @@ use App\Helper\MailService;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\IntegratorParent;
+use App\Service\Carriers\UpsGetTracking;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -130,6 +131,13 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         $orderBC->pricesIncludeTax = true;
 
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
+
+        if($this->shouldBeSentByUps($orderApi)){
+            $orderBC->shippingAgent = "UPS";
+            $orderBC->shippingAgentService = "1";
+        }
+        
+
         $livraisonFees = floatval($orderApi['shipping_price']);
         // ajout livraison
         $company = $this->getCompanyIntegration($orderApi);
@@ -148,6 +156,17 @@ abstract class MiraklIntegratorParent extends IntegratorParent
     }
 
    
+
+    protected function shouldBeSentByUps($orderApi): bool
+    {
+        $skus = [];
+        foreach ($orderApi["order_lines"] as $line) {
+            $skus[] = $line['offer_sku'];
+        }
+        return UpsGetTracking::shouldBeSentWith($skus);
+    }
+
+
 
     protected function getSalesOrderLines($orderApi): array
     {

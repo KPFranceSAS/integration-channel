@@ -3,6 +3,7 @@
 namespace App\BusinessCentral\Model;
 
 use App\BusinessCentral\Model\PostalAddress;
+use App\Service\Carriers\UpsGetTracking;
 
 class SaleOrder
 {
@@ -74,6 +75,7 @@ class SaleOrder
     }
 
     public $salesLines = [];
+
 
 
     public function transformToArray(): array

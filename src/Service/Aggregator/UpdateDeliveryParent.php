@@ -6,6 +6,8 @@ use App\Entity\WebOrder;
 use App\Helper\MailService;
 use App\Helper\Traits\TraitServiceLog;
 use App\Service\Aggregator\ApiAggregator;
+use App\Service\Carriers\TrackingAggregator;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -25,15 +27,24 @@ abstract class UpdateDeliveryParent
 
     protected $apiAggregator;
 
+    protected $trackingAggregator;
+
     protected $errors;
 
 
-    public function __construct(ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, ApiAggregator $apiAggregator)
+    public function __construct(
+        ManagerRegistry $manager, 
+        LoggerInterface $logger, 
+        MailService $mailer, 
+        ApiAggregator $apiAggregator, 
+        TrackingAggregator $trackingAggregator
+    )
     {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->apiAggregator = $apiAggregator;
+        $this->trackingAggregator = $trackingAggregator;
     }
 
 
@@ -94,7 +105,7 @@ abstract class UpdateDeliveryParent
     protected function updateDeliverySaleOrder(WebOrder $webOrder)
     {
         try {
-            $dateDelivery = $webOrder->checkifDelivered();
+            $dateDelivery = $this->checkifDelivered($webOrder);
             if ($dateDelivery) {
                     $this->logger->info('Is delivered '.$dateDelivery->format('d/m/Y'));
                     $messageDelivery = 'Mark as delivered on '.$dateDelivery->format('d/m/Y');
@@ -117,5 +128,20 @@ abstract class UpdateDeliveryParent
             $this->addErrorToOrder($webOrder, $webOrder->getExternalNumber() . ' >> ' . $message);
         }
         $this->manager->flush();
+    }
+
+
+
+    protected function checkifDelivered(WebOrder $webOrder): ?DateTime
+    {
+        $trackingCode = $webOrder->getTrackingCode();
+        if($webOrder->getCarrierService() == WebOrder::CARRIER_ARISE){
+            $orderContent=$webOrder->getOrderContent();
+            $zipCode = $orderContent->address_shipping->post_code;
+        } else {
+            $zipCode = null;
+        }
+
+        return $trackingCode ? $this->trackingAggregator->checkIfDelivered($webOrder->getCarrierService(),$trackingCode, $zipCode ) : null;
     }
 }

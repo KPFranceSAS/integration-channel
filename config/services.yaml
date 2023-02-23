@@ -80,6 +80,8 @@ services:
 
             $appEnv : '%env(resolve:APP_ENV)%'
 
+            $shippyProKey : '%env(resolve:SHIPPYPRO_KEY)%'
+
             $amzLwaId : '%env(resolve:AMZ_LWA_ID)%'
             $amzLwaSecret  : '%env(resolve:AMZ_LWA_SECRET)%'
             $amzAwsId  : '%env(resolve:AMZ_AWS_ID)%'

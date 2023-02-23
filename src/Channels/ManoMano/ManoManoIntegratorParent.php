@@ -9,6 +9,7 @@ use App\Channels\ManoMano\ManoManoApiParent;
 use App\Entity\WebOrder;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\IntegratorParent;
+use App\Service\Carriers\UpsGetTracking;
 use Exception;
 
 abstract class ManoManoIntegratorParent extends IntegratorParent
@@ -106,6 +107,12 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
         $orderBC->pricesIncludeTax = true;
 
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
+
+        if($this->shouldBeSentByUps($orderApi)){
+            $orderBC->shippingAgent = "UPS";
+            $orderBC->shippingAgentService = "1";
+        }
+
         $livraisonFees = floatval($orderApi['shipping_price']);
         // ajout livraison
         $company = $this->getCompanyIntegration($orderApi);
@@ -121,6 +128,16 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
             $orderBC->salesLines[] = $saleLineDelivery;
         }
         return $orderBC;
+    }
+
+
+    protected function shouldBeSentByUps($orderApi): bool
+    {
+        $skus = [];
+        foreach ($orderApi["order_lines"] as $line) {
+            $skus[] = $line['offer_sku'];
+        }
+        return UpsGetTracking::shouldBeSentWith($skus);
     }
 
    
