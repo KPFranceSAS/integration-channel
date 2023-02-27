@@ -1,16 +1,16 @@
 {% if field.value|length > 0 %}
 	<div class="">
-		{{field.value.shipping_address.name}}<br/>
-		{{field.value.shipping_address.street_1}}<br/>
-		{% if field.value.shipping_address.street_2| length > 0%}
-			{{field.value.shipping_address.street_2}}<br/>
+		{{field.value.customer.shipping_address.firstname}} {{field.value.customer.shipping_address.lastname}}<br/>
+		{{field.value.customer.shipping_address.street_1}}<br/>
+		{% if field.value.customer.shipping_address.street_2 is defined %}
+			{{field.value.customer.shipping_address.street_2}}<br/>
 		{% endif %}
-		{{field.value.shipping_address.zip_code}}
-		{{field.value.shipping_address.city}},
-		{% if field.value.shipping_address.state|length > 0 %}
-			{{field.value.shipping_address.state}},
+		{{field.value.customer.shipping_address.zip_code}}
+		{{field.value.customer.shipping_address.city}},
+		{% if field.value.customer.shipping_address.state is defined %}
+			{{field.value.customer.shipping_address.state}},
 		{% endif %}
-		{{field.value.shipping_address.country_iso_code}}
+		{{field.value.customer.shipping_address.country_iso_code}}
 
 	</div>
 {% else %}

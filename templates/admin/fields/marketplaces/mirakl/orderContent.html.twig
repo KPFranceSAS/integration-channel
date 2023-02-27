@@ -22,13 +22,13 @@
 				{% for line in field.value.order_lines %}
 					<tr>
 						<td data-label="Sku" class="text-left field-text">
-							{{line.offer_sku}}
+							{{line.offer.sku}}
 						</td>
 						<td data-label="Title" class="text-left field-text">
-							{{line.product_title|slice(0,20)}}
+							{{line.offer.description|slice(0,20)}}
 						</td>
 						<td data-label="Unit Price" class="text-left field-text">
-							{{line.price_unit}}
+							{{line.price}}
 							EUR
 						</td>
 						<td data-label="Qty" class="text-left field-text">
@@ -43,7 +43,7 @@
 						<strong>Total shipping</strong>
 					</td>
 					<td colspan="" data-label="Total shipping" class="text-left field-text">
-						{{field.value.shipping_price}}
+						{{field.value.shipping.price}}
 					</td>
 				</tr>
 				<tr >

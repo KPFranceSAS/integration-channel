@@ -29,8 +29,8 @@ class ConnectDecathlonCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->getOrders();
-        
+        $this->getOrdersArray();
+       
         return Command::SUCCESS;
     }
 
@@ -62,6 +62,15 @@ class ConnectDecathlonCommand extends Command
         $request->setHierarchyCode('30058');
         $result = $api->getHierarchies($request);
         dump($result);
+    }
+
+
+
+    protected function getOrdersArray()
+    {
+        $result = $this->decathlonApi->getAllOrdersToSend();
+       
+        dump(json_encode($result));
     }
 
 

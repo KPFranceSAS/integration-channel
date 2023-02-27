@@ -105,6 +105,13 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 "type" => "choice",
                 "locale" => "en_GB",
             ],
+
+
+            "SPORT_69" => [
+                "field" => "decathlon_sport_69",
+                "type" => "multichoice",
+                "locale" => "en_GB",
+            ],
                         
 
             "CHARACTERISTIC_575" => [
@@ -145,14 +152,33 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 if ($valueConverted) {
                     $value = $valueConverted.' '.$fieldPim['convertUnit'];
                 }
+                if ($value) {
+                    $codeMirakl = $this->getCodeMarketplace($categoryCode, $fieldMirakl, $value);
+                    if ($codeMirakl) {
+                        $flatProduct[$fieldMirakl] = $codeMirakl;
+                    }
+                }
             } elseif ($fieldPim['type']=='choice') {
-                dump($product);
                 $value = $this->getAttributeChoice($product, $fieldPim['field'], $fieldPim['locale']);
-            }
-            if ($value) {
-                $codeMirakl = $this->getCodeMarketplace($categoryCode, $fieldMirakl, $value);
-                if ($codeMirakl) {
-                    $flatProduct[$fieldMirakl] = $codeMirakl;
+                if ($value) {
+                    $codeMirakl = $this->getCodeMarketplace($categoryCode, $fieldMirakl, $value);
+                    if ($codeMirakl) {
+                        $flatProduct[$fieldMirakl] = $codeMirakl;
+                    }
+                }
+            } elseif ($fieldPim['type']=='multichoice') {
+                $values = $this->getAttributeMultiChoice($product, $fieldPim['field'], $fieldPim['locale']);
+                if (count($values)>0) {
+                    $valuesMirakls= [];
+                    foreach ($values as $value) {
+                        $codeMirakl = $this->getCodeMarketplace($categoryCode, $fieldMirakl, $value);
+                        if ($codeMirakl) {
+                            $flatProduct[$fieldMirakl] = $codeMirakl;
+                        }
+                    }
+                    if (count($valuesMirakls)>0) {
+                        $flatProduct[$fieldMirakl] = implode('|', $valuesMirakls);
+                    }
                 }
             }
         }

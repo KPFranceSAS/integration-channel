@@ -54,7 +54,7 @@ class ProductTaxFinder
                 $this->logger->info('No canon digital for ' . $item['number']);
             }
         } else {
-            $this->logger->error('No canon digital in '.$shippingCountry.' or '.$billingCountry);
+            $this->logger->info('No canon digital in '.$shippingCountry.' or '.$billingCountry);
         }
         return 0;
     }
@@ -79,7 +79,7 @@ class ProductTaxFinder
                 $this->logger->info('No Ecotax for ' . $item['number']);
             }
         } else {
-            $this->logger->error('No Ecotax in '.$shippingCountry.' or '.$billingCountry);
+            $this->logger->info('No Ecotax in '.$shippingCountry.' or '.$billingCountry);
         }
         return 0;
     }

@@ -59,7 +59,7 @@ abstract class MiraklIntegratorParent extends IntegratorParent
                     $this->logger->info("Orders integrated : $counter ");
                 }
             } catch (Exception $exception) {
-                $this->addError('Problem retrieved '.$this->getChannel().' #' . $orderApi['order_id'] . ' > ' . $exception->getMessage());
+                $this->addError('Problem retrieved '.$this->getChannel().' #' . $orderApi['id'] . ' > ' . $exception->getMessage());
             }
         }
     }
@@ -74,7 +74,7 @@ abstract class MiraklIntegratorParent extends IntegratorParent
 
     protected function getOrderId($orderApi)
     {
-        return $orderApi['order_id'];
+        return $this->getExternalNumber($orderApi);
     }
 
 
@@ -96,16 +96,16 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         $orderBC->requestedDeliveryDate = $dateDelivery->format('Y-m-d');
         $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
       
-        $orderBC->shipToName = $orderApi['shipping_address']['lastname']." ".$orderApi['shipping_address']['firstname'];
-        $orderBC->billToName = $orderApi['billing_address']['lastname']." ".$orderApi['billing_address']['firstname'];
+        $orderBC->shipToName = $orderApi['customer']['shipping_address']['lastname']." ".$orderApi['customer']['shipping_address']['firstname'];
+        $orderBC->billToName = $orderApi['customer']['billing_address']['lastname']." ".$orderApi['customer']['billing_address']['firstname'];
         
 
         $valuesAddress = ['selling' => 'billing' , 'shipping'=>'shipping'];
 
         foreach ($valuesAddress as $bcVal => $miraklVal) {
-            $adress =  $orderApi[$miraklVal.'_address']["street_1"];
-            if (strlen($orderApi[$miraklVal.'_address']["street_2"]) > 0) {
-                $adress .= ', ' . $orderApi[$miraklVal.'_address']["street_2"];;
+            $adress =  $orderApi['customer'][$miraklVal.'_address']["street_1"];
+            if (array_key_exists('street_2', $orderApi['customer'][$miraklVal.'_address'])) {
+                $adress .= ', ' . $orderApi['customer'][$miraklVal.'_address']["street_2"];
             }
             $adress = $this->simplifyAddress($adress);
 
@@ -114,31 +114,31 @@ abstract class MiraklIntegratorParent extends IntegratorParent
             } else {
                 $orderBC->{$bcVal . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
             }
-            $orderBC->{$bcVal . "PostalAddress"}->city = substr($orderApi[$miraklVal.'_address']["city"], 0, 100);
-            $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi[$miraklVal.'_address']["zip_code"];
+            $orderBC->{$bcVal . "PostalAddress"}->city = substr($orderApi['customer'][$miraklVal.'_address']["city"], 0, 100);
+            $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi['customer'][$miraklVal.'_address']["zip_code"];
             
-            $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = $orderApi[$miraklVal.'_address']["country_iso_code"];
+            $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = $orderApi['customer'][$miraklVal.'_address']["country"];
 
-            if (strlen($orderApi[$miraklVal.'_address']['state']) > 0) {
-                $orderBC->{$bcVal . "PostalAddress"}->state = substr($orderApi[$miraklVal.'_address']['state'], 0, 30);
+            if (array_key_exists('state', $orderApi['customer'][$miraklVal.'_address'])) {
+                $orderBC->{$bcVal . "PostalAddress"}->state = substr($orderApi['customer'][$miraklVal.'_address']['state'], 0, 30);
             }
         }
 
 
-        $orderBC->phoneNumber = $orderApi['shipping_address']['phone'];
+        $orderBC->phoneNumber = $orderApi['customer']['shipping_address']['phone'];
         $orderBC->email = $orderApi['customer_notification_email'];
-        $orderBC->externalDocumentNumber = (string)$orderApi->order_id;
+        $orderBC->externalDocumentNumber = $this->getExternalNumber($orderApi);
         $orderBC->pricesIncludeTax = true;
 
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
 
-        if($this->shouldBeSentByUps($orderApi)){
+        if ($this->shouldBeSentByUps($orderApi)) {
             $orderBC->shippingAgent = "UPS";
             $orderBC->shippingAgentService = "1";
         }
         
 
-        $livraisonFees = floatval($orderApi['shipping_price']);
+        $livraisonFees = floatval($orderApi['shipping']['price']);
         // ajout livraison
         $company = $this->getCompanyIntegration($orderApi);
 
@@ -155,13 +155,25 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         return $orderBC;
     }
 
+
+
+
+    protected function getExternalNumber($orderApi)
+    {
+        foreach ($orderApi['order_additional_fields'] as $field) {
+            if ($field['code']=='orderid') {
+                return $field['value'];
+            }
+        }
+        return  null;
+    }
    
 
     protected function shouldBeSentByUps($orderApi): bool
     {
         $skus = [];
         foreach ($orderApi["order_lines"] as $line) {
-            $skus[] = $line['offer_sku'];
+            $skus[] = $line['offer']['sku'];
         }
         return UpsGetTracking::shouldBeSentWith($skus);
     }
@@ -175,9 +187,9 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         foreach ($orderApi["order_lines"] as $line) {
             $saleLine = new SaleOrderLine();
             $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
-            $saleLine->itemId = $this->getProductCorrelationSku($line['offer_sku'], $company);
+            $saleLine->itemId = $this->getProductCorrelationSku($line['offer']['sku'], $company);
 
-            $saleLine->unitPrice = floatval($line['price_unit']);
+            $saleLine->unitPrice = floatval($line['price']);
             $saleLine->quantity = $line['quantity'];
             $saleOrderLines[] = $saleLine;
         }
@@ -187,13 +199,11 @@ abstract class MiraklIntegratorParent extends IntegratorParent
 
     protected function checkAfterPersist(WebOrder $order, $orderApi)
     {
-       
-       $accepted = $this->getMiraklApi()->markOrderAsAccepted($orderApi);
-       if($accepted){
+        $accepted = $this->getMiraklApi()->markOrderAsAccepted($orderApi);
+        if ($accepted) {
             $this->addLogToOrder($order, 'Marked as accepted on '.$this->getChannel());
         } else {
             $this->addLogToOrder($order, 'Order already accepted on '.$this->getChannel());
         }
     }
-
 }

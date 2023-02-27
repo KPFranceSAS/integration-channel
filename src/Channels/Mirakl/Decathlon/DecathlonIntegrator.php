@@ -9,9 +9,9 @@ use Exception;
 
 class DecathlonIntegrator extends MiraklIntegratorParent
 {
-
     public const DECATHLON_FR = '000774';
 
+       
 
     public function getChannel()
     {
@@ -22,7 +22,7 @@ class DecathlonIntegrator extends MiraklIntegratorParent
     public function getCustomerBC($orderApi): string
     {
         $codeChannel = $orderApi['channel']['code'];
-        if($codeChannel == 'FR'){
+        if ($codeChannel == 'FR') {
             return self::DECATHLON_FR;
         } else {
             throw new Exception('No customer has been setup for Decathlon on channel '.$codeChannel);
@@ -35,5 +35,4 @@ class DecathlonIntegrator extends MiraklIntegratorParent
     {
         return BusinessCentralConnector::KP_FRANCE;
     }
-
 }

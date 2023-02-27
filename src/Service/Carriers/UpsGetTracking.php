@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Service\Carriers;
+
 use function Symfony\Component\String\u;
 
 class UpsGetTracking
@@ -14,20 +15,18 @@ class UpsGetTracking
 
     public static function shouldBeSentWith(array $skus):bool
     {
-
-       foreach($skus as $sku){
-            if(self::isThisSkuShouldBeSendWithUps($sku)){
+        foreach ($skus as $sku) {
+            if (self::isThisSkuShouldBeSendWithUps($sku)) {
                 return true;
             }
-       }
-       return false;
+        }
+        return false;
     }
 
 
     public static function isThisSkuShouldBeSendWithUps($sku):bool
     {
-
-        if(u($sku)->startsWith('ANK-')){
+        if (u($sku)->startsWith('ANK-')) {
             return true;
         }
         return false;

@@ -172,6 +172,22 @@ abstract class ProductSyncParent
     }
 
 
+    protected function getAttributeMultiChoice($productPim, $nameAttribute, $locale)
+    {
+        $values = $this->getAttributeSimple($productPim, $nameAttribute);
+        if ($values && is_array($values) && count($values)>0) {
+            $valuesPim = [];
+            foreach ($values as $value) {
+                $valuesPim[]=$this->getTranslationOption($nameAttribute, $value, $locale);
+            }
+            return $valuesPim;
+        }
+        return [];
+    }
+
+
+
+
 
     protected function getParentProduct($productModelSku)
     {

@@ -603,16 +603,24 @@ class WebOrder
         $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
         $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
         $webOrder->setContent($orderApi);
-        $webOrder->setExternalNumber($orderApi['order_id']);
+        
+        $externalNumber = null;
+        foreach ($orderApi['order_additional_fields'] as $field) {
+            if ($field['code']=='orderid') {
+                $externalNumber = $field['value'];
+            }
+        }
+        $webOrder->setExternalNumber($externalNumber);
         
         $skus = [];
         foreach ($orderApi["order_lines"] as $line) {
-            $skus[] = $line['offer_sku'];
+            $skus[] = $line['offer']['sku'];
         }
         $shouldBeSentByUps = UpsGetTracking::shouldBeSentWith($skus);
-        if($shouldBeSentByUps){
+        if ($shouldBeSentByUps) {
             $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
         }
+        
         $webOrder->addLog('Retrieved from '.$orderApi['channel']['code'].' '.$orderApi['channel']['label']);
         return $webOrder;
     }
@@ -657,6 +665,7 @@ class WebOrder
             IntegrationChannel::CHANNEL_FLASHLED,
             IntegrationChannel::CHANNEL_MINIBATT,
             IntegrationChannel::CHANNEL_FITBITCORPORATE,
+            IntegrationChannel::CHANNEL_DECATHLON,
         ])) {
             return $this->getContent();
         }

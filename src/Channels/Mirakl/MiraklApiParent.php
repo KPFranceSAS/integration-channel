@@ -86,7 +86,7 @@ abstract class MiraklApiParent implements ApiInterface
             $max_page  = $reponse->getTotalCount();
         }
         $ordersSanitized = [];
-        foreach($orders as $order){
+        foreach ($orders as $order) {
             $ordersSanitized[]=$order->toArray();
         }
         return $ordersSanitized;
@@ -143,7 +143,8 @@ abstract class MiraklApiParent implements ApiInterface
     
 
 
-    public function sendInvoice($orderId, $invoiceNumber, $invoiceContent){
+    public function sendInvoice($orderId, $invoiceNumber, $invoiceContent)
+    {
         $docs = new DocumentCollection();
         $docs->add(new Document($invoiceContent, $invoiceNumber.'_'.date('Ymd-His').'.pdf', 'CUSTOMER_INVOICE'));
         $request = new UploadOrdersDocumentsRequest($docs, $orderId);
@@ -175,19 +176,18 @@ abstract class MiraklApiParent implements ApiInterface
     public function markOrderAsAccepted($order): bool
     {
         $ordersId = [];
-        foreach($order['order_lines'] as $orderLine){
-            if ($orderLine["order_line_state"]=='WAITING_ACCEPTANCE') {
-                $ordersId[] =  new AcceptOrderLine(['id' => $orderLine['order_line_id'], 'accepted' => true]);
+        foreach ($order['order_lines'] as $orderLine) {
+            if ($orderLine["status"]['state']=='WAITING_ACCEPTANCE') {
+                $ordersId[] =  new AcceptOrderLine(['id' => $orderLine['id'], 'accepted' => true]);
             }
         }
-        if(count($ordersId)>0){
-            $request = new AcceptOrderRequest($order['order_id'], $ordersId);
+        if (count($ordersId)>0) {
+            $request = new AcceptOrderRequest($order['id'], $ordersId);
             $this->client->acceptOrder($request);
             return true;
         } else {
             return false;
         }
-        
     }
         
 

@@ -138,7 +138,9 @@ abstract class IntegratorParent
             $this->logger->info('To integrate ');
 
             try {
+                $this->logger->info('Creation of webOrder entity ');
                 $webOrder = WebOrder::createOneFrom($order, $this->getChannel());
+                $this->logger->info('WebOrder entity created for '.$this->getChannel());
                 $webOrder->setCompany($company);
                 $this->manager->persist($webOrder);
                 $this->checkAfterPersist($webOrder, $order);
