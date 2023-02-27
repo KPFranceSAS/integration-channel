@@ -196,27 +196,24 @@ abstract class IntegratorParent
 
     public function adjustSaleOrder(WebOrder $order, SaleOrder $saleOrder)
     {
-        if ($saleOrder->sellingPostalAddress->countryLetterCode == 'ES' ||  $saleOrder->shippingPostalAddress->countryLetterCode == 'ES') {
-            $this->addSpecificTaxesForSpain($order, $saleOrder);
-        }
-    }
-
-
-
-    protected function addSpecificTaxesForSpain(WebOrder $order, SaleOrder $saleOrder)
-    {
         foreach ($saleOrder->salesLines as $keySaleLine => $saleLine) {
             if ($saleLine->lineType  == SaleOrderLine::TYPE_ITEM) {
                 $this->logger->info('Have this product some canon digital');
-                $canonDigital = $this->productTaxFinder->getCanonDigitalForItem($saleLine->itemId, $order->getCompany());
-                if ($canonDigital > 0) {
-                    $newPrice = $saleLine->unitPrice - $canonDigital;
-                    $this->logger->info('Remove canon digital amount ' . $canonDigital . ' Change product price ' . $newPrice);
+                $addtitionalTax = $this->productTaxFinder->getAdditionalTaxes(
+                    $saleLine->itemId,
+                    $order->getCompany(),
+                    $saleOrder->shippingPostalAddress->countryLetterCode,
+                    $saleOrder->sellingPostalAddress->countryLetterCode
+                );
+                if ($addtitionalTax > 0) {
+                    $newPrice = $saleLine->unitPrice - $addtitionalTax;
+                    $this->logger->info('Remove additional tax amount ' . $addtitionalTax . ' Change product price ' . $newPrice);
                     $saleOrder->salesLines[$keySaleLine]->unitPrice = $newPrice;
                 }
             }
         }
     }
+
 
 
     public function reIntegrateOrder(WebOrder $order)

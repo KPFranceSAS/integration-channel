@@ -105,6 +105,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 "type" => "choice",
                 "locale" => "en_GB",
             ],
+                        
 
             "CHARACTERISTIC_575" => [
                 "field" => 'product_lenght',
@@ -145,6 +146,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                     $value = $valueConverted.' '.$fieldPim['convertUnit'];
                 }
             } elseif ($fieldPim['type']=='choice') {
+                dump($product);
                 $value = $this->getAttributeChoice($product, $fieldPim['field'], $fieldPim['locale']);
             }
             if ($value) {

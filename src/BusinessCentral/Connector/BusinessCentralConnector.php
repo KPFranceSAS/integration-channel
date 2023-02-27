@@ -66,6 +66,8 @@ abstract class BusinessCentralConnector
 
     public const EP_TRANSFER_ORDERS = "transferOrders";
 
+
+    public const EP_FEES_TAXES = "FeesAndTaxes";
     
 
 
@@ -759,5 +761,21 @@ abstract class BusinessCentralConnector
             null,
             true
         );
+    }
+
+
+
+
+
+    public function getAllTaxes(): ?array
+    {
+        return $this->getElementsByArray(self::EP_FEES_TAXES, null, true);
+    }
+
+
+
+    public function getTaxesByCodeAndByFeeType($code, $feeType): ?array
+    {
+        return $this->getElementsByArray(self::EP_FEES_TAXES, "FeeType eq '$feeType' and Code eq '$code'");
     }
 }
