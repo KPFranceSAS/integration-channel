@@ -16,9 +16,10 @@ class DecathlonApi extends MiraklApiParent
     
     public function __construct(
         LoggerInterface $logger,
+        $projectDir,
         $decathlonClientUrl,
         $decathlonClientKey
     ) {
-        parent::__construct($logger, $decathlonClientUrl, $decathlonClientKey);
+        parent::__construct($logger, $projectDir, $decathlonClientUrl, $decathlonClientKey);
     }
 }

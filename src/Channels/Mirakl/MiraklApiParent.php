@@ -20,6 +20,7 @@ use Mirakl\MMP\Shop\Request\Order\Ship\ShipOrderRequest;
 use Mirakl\MMP\Shop\Request\Order\Tracking\UpdateOrderTrackingInfoRequest;
 use Psr\Log\LoggerInterface;
 use SplFileObject;
+use Symfony\Component\Filesystem\Filesystem;
 
 abstract class MiraklApiParent implements ApiInterface
 {
@@ -35,12 +36,14 @@ abstract class MiraklApiParent implements ApiInterface
 
     protected $shopId;
 
+    protected $projectDir;
 
-    public function __construct(LoggerInterface $logger, string $clientUrl, string $clientKey, ?string $shopId=null)
+
+    public function __construct(LoggerInterface $logger, string $projectDir, string $clientUrl, string $clientKey, ?string $shopId=null)
     {
         $this->client = new ShopApiClient($clientUrl, $clientKey, $shopId);
         $this->client->setLogger($logger);
-        
+        $this->projectDir =  $projectDir.'/var/invoices/';
         $this->logger = $logger;
         $this->clientUrl = $clientUrl;
         $this->clientKey = $clientKey;
@@ -146,9 +149,16 @@ abstract class MiraklApiParent implements ApiInterface
     public function sendInvoice($orderId, $invoiceNumber, $invoiceContent)
     {
         $docs = new DocumentCollection();
-        $docs->add(new Document($invoiceContent, $invoiceNumber.'_'.date('Ymd-His').'.pdf', 'CUSTOMER_INVOICE'));
+        $fs = new Filesystem();
+        $filename= 'invoice_'.str_replace("/", '_', $invoiceNumber).'_'.date('YmdHis').'.pdf';
+        $filePath = $this->projectDir.$filename;
+        $fs->dumpFile($filePath, $invoiceContent);
+        $file = new \SplFileObject($filePath);
+
+        $docs->add(new Document($file, $filename, 'CUSTOMER_INVOICE'));
         $request = new UploadOrdersDocumentsRequest($docs, $orderId);
         $result = $this->client->uploadOrderDocuments($request);
+        $fs->remove($filename);
         
         return true;
     }

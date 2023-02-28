@@ -2,7 +2,9 @@
 
 namespace App\Command\Channels\Mirakl\Decathlon;
 
+use App\BusinessCentral\Connector\KpFranceConnector;
 use App\Channels\Mirakl\Decathlon\DecathlonApi;
+use App\Channels\Mirakl\Decathlon\DecathlonSyncProduct;
 use Mirakl\MCI\Shop\Request\Hierarchy\GetHierarchiesRequest;
 use Mirakl\MMP\Shop\Request\Channel\GetChannelsRequest;
 use Mirakl\MMP\Shop\Request\Offer\GetAccountRequest;
@@ -16,23 +18,39 @@ class ConnectDecathlonCommand extends Command
     protected static $defaultName = 'app:decathlon-test';
     protected static $defaultDescription = 'Connection to Deacthlon';
 
-    public function __construct(DecathlonApi $decathlonApi)
-    {
+    public function __construct(
+        DecathlonApi $decathlonApi,
+        DecathlonSyncProduct $decathlonSyncProduct,
+        KpFranceConnector $kpFranceConnector
+    ) {
         $this->decathlonApi = $decathlonApi;
+        $this->decathlonSyncProduct = $decathlonSyncProduct;
+        $this->kpFranceConnector = $kpFranceConnector;
         parent::__construct();
     }
 
     private $decathlonApi;
 
+    private $kpFranceConnector;
+    
 
+    private $decathlonSyncProduct;
   
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->getOrdersArray();
+        $invoice = $this->kpFranceConnector->getSaleInvoiceByNumber('FVF23/0201376');
+        $invoiceContent =  $this->kpFranceConnector->getContentInvoicePdf($invoice["id"]);
+        dump($this->decathlonApi->sendInvoice('fr9534967739_f939eaa403024b19b9cacd4648a3735b-A', 'FVF23/0201376', $invoiceContent));
        
         return Command::SUCCESS;
     }
+
+
+    protected function decathlonSyncProduct()
+    {
+    }
+
 
 
     protected function connectToDecathlon()
