@@ -8,11 +8,8 @@ use App\Service\Carriers\ShippyProTracking;
 use DateTime;
 use Exception;
 
-
-
 class TrackingAggregator
 {
-
     protected $shippyProTracking;
 
     public function __construct(
@@ -23,12 +20,12 @@ class TrackingAggregator
 
     public function checkIfDelivered($carrier, $codeTracking, $zipCode=null): ?DateTime
     {
-        switch ($carrier){
-            case WebOrder::CARRIER_DHL : 
+        switch ($carrier) {
+            case WebOrder::CARRIER_DHL:
                 return DhlGetTracking::checkIfDelivered($codeTracking);
-            case WebOrder::CARRIER_ARISE : 
+            case WebOrder::CARRIER_ARISE:
                 return AriseTracking::checkIfDelivered($codeTracking, $zipCode);
-            case WebOrder::CARRIER_UPS : 
+            case WebOrder::CARRIER_UPS:
                 $this->shippyProTracking->checkIfDelivered($codeTracking);
         }
         return null;
@@ -40,13 +37,13 @@ class TrackingAggregator
 
     public function getFormattedSteps($carrier, $codeTracking, $zipCode=null): ?array
     {
-       switch ($carrier){
-            case WebOrder::CARRIER_DHL : 
+        switch ($carrier) {
+            case WebOrder::CARRIER_DHL:
                 return DhlGetTracking::getStepsTrackings($codeTracking);
-            case WebOrder::CARRIER_ARISE : 
+            case WebOrder::CARRIER_ARISE:
                 return AriseTracking::getStepsTrackings($codeTracking, $zipCode);
-            case WebOrder::CARRIER_UPS : 
-                $this->shippyProTracking->getStepsTrackings($codeTracking);
+            case WebOrder::CARRIER_UPS:
+                return $this->shippyProTracking->getStepsTrackings($codeTracking);
         }
         return null;
     }
@@ -54,18 +51,14 @@ class TrackingAggregator
 
     public function getTrackingUrlBase($carrier, $codeTracking, $zipCode=null)
     {
-        switch ($carrier){
-            case WebOrder::CARRIER_DHL : 
+        switch ($carrier) {
+            case WebOrder::CARRIER_DHL:
                 return DhlGetTracking::getTrackingUrlBase($codeTracking);
-            case WebOrder::CARRIER_ARISE : 
+            case WebOrder::CARRIER_ARISE:
                 return AriseTracking::getTrackingUrlBase($codeTracking, $zipCode);
-            case WebOrder::CARRIER_UPS : 
+            case WebOrder::CARRIER_UPS:
                 return UpsGetTracking::getTrackingUrlBase($codeTracking);
         }
         return null;
     }
-
-
-
-    
 }
