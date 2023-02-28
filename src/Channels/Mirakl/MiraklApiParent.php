@@ -153,12 +153,12 @@ abstract class MiraklApiParent implements ApiInterface
         $filename= 'invoice_'.str_replace("/", '_', $invoiceNumber).'_'.date('YmdHis').'.pdf';
         $filePath = $this->projectDir.$filename;
         $fs->dumpFile($filePath, $invoiceContent);
-        $file = new \SplFileObject($filePath);
+        $file = new SplFileObject($filePath);
 
         $docs->add(new Document($file, $filename, 'CUSTOMER_INVOICE'));
         $request = new UploadOrdersDocumentsRequest($docs, $orderId);
         $result = $this->client->uploadOrderDocuments($request);
-        $fs->remove($filename);
+        $fs->remove($filePath);
         
         return true;
     }
