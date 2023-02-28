@@ -177,7 +177,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
         $attributes= $this->getAllAttributesForCategory($categoryCode);
         
         foreach ($attributes as $attribute) {
-            if (StringUtils::compareString($attribute->code, $attributeCode) && $attribute->type == 'LIST') {
+            if (StringUtils::compareString($attribute->code, $attributeCode) && in_array($attribute->type, ['LIST', 'LIST_MULTIPLE_VALUES'])) {
                 $valuesAttributes = $this->getAllValuesForAttribute($attribute->values_list);
                 foreach ($valuesAttributes->values as $valuesAttribute) {
                     if (StringUtils::compareString($valuesAttribute->label, $attributeValue)) {
