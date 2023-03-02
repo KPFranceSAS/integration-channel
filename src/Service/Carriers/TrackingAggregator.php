@@ -26,7 +26,7 @@ class TrackingAggregator
             case WebOrder::CARRIER_ARISE:
                 return AriseTracking::checkIfDelivered($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
-                $this->shippyProTracking->checkIfDelivered($codeTracking);
+                return $this->shippyProTracking->checkIfDelivered($codeTracking);
         }
         return null;
     }

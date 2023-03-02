@@ -37,26 +37,15 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
         $flatProduct = [
             'category' =>  $categoryCode,
             'ProductIdentifier' => $product['identifier'],
-            
             'PRODUCT_TYPE' => $this->getAttributeSimple($product, 'decathlon_product_type'),
             'ean_codes' => $this->getAttributeSimple($product, 'ean'),
             'main_image' => $this->getAttributeSimple($product, 'image_url_1'),
             'mainTitle' => $this->getAttributeSimple($product, 'erp_name'),
         ];
 
-
-
-
-
-
-
-
-
-
         for ($i = 2; $i <= 7;$i++) {
             $flatProduct['image_'.$i] = $this->getAttributeSimple($product, 'image_url_'.$i);
         }
-
 
         $locales = [
             'en_GB',
@@ -66,7 +55,6 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             'es_ES'
         ];
 
-
         $localizablesTextFields= [
             'productTitle' => 'article_name',
             'webcatchline' => 'short_description',
@@ -74,7 +62,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             'storageAdvice' => 'storage_advice',
             'video1' => 'howto_video_url_1',
         ];
-        
+   
 
 
         foreach ($localizablesTextFields as $localizableMirakl => $localizablePim) {
