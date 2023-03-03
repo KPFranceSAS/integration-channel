@@ -99,7 +99,7 @@ abstract class StockParent
         $skuFinal = $this->getProductCorrelationSku($sku);
         $stock = $this->productStockFinder->getRealStockProductWarehouse($skuFinal, $depot);
         if ($stock >= 5) {
-            return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
+            return round(0.8 * $stock, 0, PHP_ROUND_HALF_DOWN);
         }
         return 0;
     }
@@ -158,14 +158,13 @@ abstract class StockParent
     
     protected function isNotBundle(string $sku): bool
     {
-
-        if(in_array($sku, [
+        if (in_array($sku, [
             "FLS-FLASHLED-3PCK",
             "FLS-FLASHLED-6PCK",
             "FLS-FLASHLED-20PCK",
             "FLS-FLASHLED-64PCK"
-            ])){
-                return false;
+            ])) {
+            return false;
         }
 
 
