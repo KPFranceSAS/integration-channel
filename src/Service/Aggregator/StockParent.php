@@ -98,8 +98,15 @@ abstract class StockParent
     {
         $skuFinal = $this->getProductCorrelationSku($sku);
         $stock = $this->productStockFinder->getRealStockProductWarehouse($skuFinal, $depot);
-        if ($stock >= 5) {
+
+        if ($stock >= 150) {
+            return round(0.9 * $stock, 0, PHP_ROUND_HALF_DOWN);
+        } elseif ($stock >= 100) {
             return round(0.8 * $stock, 0, PHP_ROUND_HALF_DOWN);
+        } elseif ($stock >= 50) {
+            return round(0.75 * $stock, 0, PHP_ROUND_HALF_DOWN);
+        } elseif ($stock >= 5) {
+            return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
         }
         return 0;
     }
