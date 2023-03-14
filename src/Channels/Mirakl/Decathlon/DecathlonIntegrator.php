@@ -10,6 +10,11 @@ use Exception;
 class DecathlonIntegrator extends MiraklIntegratorParent
 {
     public const DECATHLON_FR = '000774';
+    public const DECATHLON_DE = '000777';
+    public const DECATHLON_IT = '000778';
+    public const DECATHLON_PT = '000779';
+    public const DECATHLON_BE = '000780';
+    public const DECATHLON_ES = '000786';
 
        
 
@@ -24,6 +29,16 @@ class DecathlonIntegrator extends MiraklIntegratorParent
         $codeChannel = $orderApi['channel']['code'];
         if ($codeChannel == 'FR') {
             return self::DECATHLON_FR;
+        } elseif ($codeChannel == 'DE') {
+            return self::DECATHLON_DE;
+        } elseif ($codeChannel == 'IT') {
+            return self::DECATHLON_IT;
+        } elseif ($codeChannel == 'PT') {
+            return self::DECATHLON_PT;
+        } elseif ($codeChannel == 'BE') {
+            return self::DECATHLON_BE;
+        } elseif ($codeChannel == 'ES') {
+            return self::DECATHLON_ES;
         } else {
             throw new Exception('No customer has been setup for Decathlon on channel '.$codeChannel);
         }
