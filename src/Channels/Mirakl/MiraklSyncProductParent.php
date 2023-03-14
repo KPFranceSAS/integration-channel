@@ -81,6 +81,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
             "<h4>" => '####',
             "</h4>" => $caractèreSautLigne,
             "<hr/>" => "$caractèreSautLigne---$caractèreSautLigne",
+            "<hr>" => "$caractèreSautLigne---$caractèreSautLigne",
             "<li>" => "$caractèreSautLigne- ",
             "</li>" => '',
             "<ul>" => "",
