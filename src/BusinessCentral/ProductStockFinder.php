@@ -113,7 +113,7 @@ class ProductStockFinder
                 $availableStock = 0;
                 break;
             }
-            $stock = $this->getFinalStockProductWarehouse($component['ComponentSKU'], $depot, $ponderated);
+            $stock = $this->getFinalStockComponentWarehouse($component['ComponentSKU'], $depot, $ponderated);
             $componentStock = floor($stock / $component['Quantity']);
             $this->logger->info("Component ".$component['ComponentSKU']." capacity in ".$componentStock);
 
