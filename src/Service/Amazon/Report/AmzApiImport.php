@@ -5,9 +5,9 @@ namespace App\Service\Amazon\Report;
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
+use App\Helper\MailService;
 use App\Helper\Utils\ExchangeRateCalculator;
 use App\Service\Amazon\AmzApi;
-use App\Helper\MailService;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -65,7 +65,12 @@ abstract class AmzApiImport
                     $this->importDatas($datasReport);
                     return;
                 } elseif (in_array($reportState->getPayload()->getProcessingStatus(), $badStatus)) {
-                    throw new Exception('Fatal error to get report ' . $this->getName());
+                    if ($reportState->getPayload()->getProcessingStatus() == AmzApi::STATUS_REPORT_CANCELLED) {
+                        $this->logger->error('Report cancelled');
+                        return;
+                    } else {
+                        throw new Exception('Fatal error to get report ' . $this->getName());
+                    }
                 } else {
                     $this->logger->info('Report processing not yet');
                 }

@@ -55,7 +55,7 @@ class FullMajReportCommand extends Command
         $this->amzApiImportOrder->createReportAndImport();
         $this->amzApiImportReturn->createReportAndImport();
         $this->amzApiImportReimbursement->createReportAndImport();
-        $this->publishPowerBi->exportAll();
+        //$this->publishPowerBi->exportAll();
         return Command::SUCCESS;
     }
 }
