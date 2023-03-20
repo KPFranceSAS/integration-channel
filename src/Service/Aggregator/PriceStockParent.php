@@ -84,18 +84,14 @@ abstract class PriceStockParent
 
     public function getStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA): int
     {
-        $stock = $this->productStockFinder->getRealStockProductWarehouse($sku, $depot);
-        if ($stock >= 5) {
-            return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
-        }
-        return 0;
+        return $this->productStockFinder->getFinalStockProductWarehouse($sku, $depot);
     }
 
     protected function getFilteredProducts(array $products, $saleChannels): array
     {
         $productsFiltererd=[];
         foreach ($products as $product) {
-            if($this->isEnabledProducts($product, $saleChannels)){
+            if ($this->isEnabledProducts($product, $saleChannels)) {
                 $productsFiltererd[] = $product;
             }
         }

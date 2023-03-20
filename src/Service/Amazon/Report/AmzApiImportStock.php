@@ -50,7 +50,7 @@ class AmzApiImportStock
 
         $this->setZeroToStockLevel();
         $this->products = [];
-         /** @var array[\App\Entity\Product] */
+        /** @var array[\App\Entity\Product] */
         $products = $this->manager->getRepository(Product::class)->findAll();
 
         foreach ($products as $product) {

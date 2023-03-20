@@ -66,7 +66,8 @@ abstract class BusinessCentralConnector
 
     public const EP_TRANSFER_ORDERS = "transferOrders";
 
-
+    public const EP_BUNDLE_CONTENT = "billOfMaterials";
+    
     public const EP_FEES_TAXES = "FeesAndTaxes";
     
 
@@ -315,6 +316,21 @@ abstract class BusinessCentralConnector
     {
         return $this->getElementById(self::EP_ITEMS, $id);
     }
+    
+
+
+
+    public function getComponentsBundle(string $sku)
+    {
+        return $this->getElementsByArray(
+            self::EP_BUNDLE_CONTENT,
+            "parentItemNo eq '$sku'",
+            true
+        );
+    }
+
+
+
 
     public function getStockAvailabilityPerProduct(string $sku)
     {

@@ -24,16 +24,10 @@ class ProductStockFinder
     }
 
 
-    public function getRealStocksProductWarehouse(array $skus, $depot = WebOrder::DEPOT_LAROCA): array
-    {
-        $skuStocks = [];
-        foreach ($skus as $sku) {
-            $skuStocks[$sku] = $this->getRealStockProductWarehouse($sku, $depot);
-        }
-        return $skuStocks;
-    }
 
-    public function getRealStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA): int
+    
+
+    protected function getStockAvailability($sku, $depot = WebOrder::DEPOT_LAROCA): int
     {
         if (array_key_exists($sku, $this->stockLevels)) {
             $stockAvailbility = $this->stockLevels[$sku];
@@ -41,7 +35,7 @@ class ProductStockFinder
             return  $stockAvailbility['quantityAvailable'.$depot];
         } else {
             $this->logger->info('Retrieve data from BC ' . $sku . ' in ' . $depot);
-            $skuAvalibility = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KIT_PERSONALIZACION_SPORT)->getStockAvailabilityPerProduct($sku);
+            $skuAvalibility =  $this->getConnector()->getStockAvailabilityPerProduct($sku);
             if ($skuAvalibility) {
                 $this->stockLevels[$sku] = $skuAvalibility;
                 $this->logger->info('Stock available ' . $skuAvalibility['no'] . ' in ' . $depot . ' >>> ' . $skuAvalibility['quantityAvailable'.$depot]);
@@ -51,5 +45,110 @@ class ProductStockFinder
             }
         }
         return 0;
+    }
+
+    /**
+     * Returns the real level of stock of product or bundle
+     */
+    public function getRealStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA): int
+    {
+        return $this->getFinalStockProductWarehouse($sku, $depot, false);
+    }
+
+    
+
+    /**
+     * Returns the ponderated level of stock of product or bundle
+     */
+    public function getFinalStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA, $ponderated=true): int
+    {
+        $this->logger->info('------ Check stock '.$sku.' in depot '.$depot.' ------ ');
+        if ($this->isBundle($sku)) {
+            $this->logger->info('Sku '.$sku.' is bundle');
+            
+            $stock =  $this->getFinalStockBundleWarehouse($sku, $depot, $ponderated);
+        } else {
+            $stock = $this->getFinalStockComponentWarehouse($sku, $depot, $ponderated);
+        }
+        $this->logger->info('Stock '.$sku.' in depot '.$depot.' >>> '.$stock);
+
+        return $stock;
+    }
+
+    /**
+     * Returns the level of stock of simple product
+     */
+    protected function getFinalStockComponentWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA, $ponderated=true): int
+    {
+        $stock = $this->getStockAvailability($sku, $depot);
+        $this->logger->info($ponderated ? 'Stock level ponterated' : 'Stock level non-ponderated');
+        if ($ponderated===false) {
+            return $stock;
+        }
+
+        if ($stock >= 150) {
+            return round(0.9 * $stock, 0, PHP_ROUND_HALF_DOWN);
+        } elseif ($stock >= 100) {
+            return round(0.8 * $stock, 0, PHP_ROUND_HALF_DOWN);
+        } elseif ($stock >= 50) {
+            return round(0.75 * $stock, 0, PHP_ROUND_HALF_DOWN);
+        } elseif ($stock >= 5) {
+            return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
+        }
+        return 0;
+    }
+
+
+
+    /**
+     * Returns the level of stock of bundle product
+     */
+    protected function getFinalStockBundleWarehouse($sku, $depot, $ponderated): int
+    {
+        $components = $this->getConnector()->getComponentsBundle($sku);
+        
+        $availableStock = PHP_INT_MAX;
+        foreach ($components as $component) {
+            if ($component['Quantity'] == 0) {
+                $availableStock = 0;
+                break;
+            }
+            $stock = $this->getFinalStockProductWarehouse($component['ComponentSKU'], $depot, $ponderated);
+            $componentStock = floor($stock / $component['Quantity']);
+            $this->logger->info("Component ".$component['ComponentSKU']." capacity in ".$componentStock);
+
+            if ($componentStock < $availableStock) {
+                $availableStock = $componentStock;
+            }
+        }
+
+        $this->logger->info("Avaibility bundle ".$availableStock);
+
+        return $availableStock;
+    }
+
+
+
+    /**
+     * Check if it is a bundle
+     */
+    protected function isBundle($sku): bool
+    {
+        $item =  $this->getConnector()->getItemByNumber($sku);
+
+        if ($item['AssemblyBOM']==false) {
+            return false;
+        }
+
+        if ($item['AssemblyBOM']==true && in_array($item['AssemblyPolicy'], ["Assemble-to-Stock", "Ensamblar para stock"])) {
+            return false;
+        }
+        return true;
+    }
+
+
+    protected function getConnector()
+    {
+        return $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KIT_PERSONALIZACION_SPORT);
     }
 }

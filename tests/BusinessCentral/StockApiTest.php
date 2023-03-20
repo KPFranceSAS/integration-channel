@@ -25,14 +25,14 @@ class StockApiTest extends KernelTestCase
     public function testServiceItemStock(): void
     {
         $kitConn = static::getContainer()->get(ProductStockFinder::class);
-        $result = $kitConn->getRealStockProductWarehouse('PX-P3D2449');
+        $result = $kitConn->getFinalStockProductWarehouse('PX-P3D2449');
         $this->assertIsInt($result);
 
-        $result2 = $kitConn->getRealStockProductWarehouse('PX-P3D2449');
+        $result2 = $kitConn->getFinalStockProductWarehouse('PX-P3D2449');
         $this->assertIsInt($result2);
         $this->assertEquals($result2, $result);
 
-        $result = $kitConn->getRealStockProductWarehouse('PX-PD29');
+        $result = $kitConn->getFinalStockProductWarehouse('PX-PD29');
         $this->assertEquals(0, $result);
     }
 }
