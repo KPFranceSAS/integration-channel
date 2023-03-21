@@ -29,6 +29,7 @@ class DecathlonPriceStock extends MiraklPriceStockParent
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "logistic_class" => "M",
             "description" => 'Offer '.$product->getDescription(),
+            "leadtime_to_ship" => "2",
             "all_prices" => []
         ];
 
