@@ -100,7 +100,9 @@ class MailService
             'Server error:',
             'Unable to authenticate using a private key',
             'CURLE_OPERATION_TIMEDOUT',
-            'Error connecting to the API'
+            'Error connecting to the API',
+            'Error class',
+            'SQLSTATE'
         ];
         if (s($titre)->containsAny($stringForbiddens)) {
             return true;
