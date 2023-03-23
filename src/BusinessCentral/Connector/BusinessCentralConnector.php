@@ -97,6 +97,7 @@ abstract class BusinessCentralConnector
             'base_uri' => $urlBC . '/api/v1.0/',
             'headers'  => [
                 'User-Agent'    => 'Business Central SDK',
+                'Accept-Language' => 'en-US',
                 'Authorization' => "Basic " . base64_encode("$loginBC:$passwordBC"),
             ],
         ]);
