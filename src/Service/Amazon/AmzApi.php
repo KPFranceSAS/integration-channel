@@ -287,9 +287,10 @@ class AmzApi
             Regions::EUROPE,
             $documentReportId
         );
-        $textEncrypted = file_get_contents($response->getPayload()->getUrl());
-        $encryptedMethod = $response->getPayload()->getEncryptionDetails();
-        $decrypted_data = openssl_decrypt($textEncrypted, "aes-256-cbc", base64_decode($encryptedMethod->getKey()), OPENSSL_RAW_DATA, base64_decode($encryptedMethod->getInitializationVector()));
+        $decrypted_data = file_get_contents($response->getUrl());
+        //$encryptedMethod = $response->getCompressionAlgorithmAllowableValues();
+        //$decrypted_data = openssl_decrypt($textEncrypted, "aes-256-cbc", base64_decode($encryptedMethod->getKey()), OPENSSL_RAW_DATA, base64_decode($encryptedMethod->getInitializationVector()));
+        
         return $toArray ? $this->transformDocumentReportToArray($decrypted_data) : $decrypted_data;
     }
 
@@ -330,7 +331,29 @@ class AmzApi
             Regions::EUROPE,
             $configurationReport,
         );
-        return $reponse->getPayload();
+        return $reponse;
+    }
+
+
+    public function createReportStartEnd(DateTime $dateTimeStart, DateTime $dateTimeEnd, $reportType, $marketplaces = null)
+    {
+        $this->logger->info("Report creation $reportType from " . $dateTimeStart->format("Y-m-d"));
+        $configurationReport = new CreateReportSpecification();
+        $configurationReport->setReportType($reportType);
+        $configurationReport->setDataStartTime($dateTimeStart);
+        $configurationReport->setDataEndTime($dateTimeEnd);
+        if ($marketplaces) {
+            $configurationReport->setMarketplaceIds($marketplaces);
+        } else {
+            $configurationReport->setMarketplaceIds($this->getAllMarketplaces());
+        }
+        
+        $reponse = $this->sdk->reports()->createReport(
+            $this->getAccessToken(),
+            Regions::EUROPE,
+            $configurationReport,
+        );
+        return $reponse;
     }
 
 

@@ -129,10 +129,10 @@ class AmzApiImportStock
             sleep(self::WAITING_TIME);
             $errors = [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL];
             $reportState = $this->amzApi->getReport($report->getReportId());
-            if ($reportState->getPayload()->getProcessingStatus() == AmzApi::STATUS_REPORT_DONE) {
+            if ($reportState->getProcessingStatus() == AmzApi::STATUS_REPORT_DONE) {
                 $this->logger->info('Report processing done');
-                return $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
-            } elseif (in_array($reportState->getPayload()->getProcessingStatus(), $errors)) {
+                return $this->amzApi->getContentReport($reportState->getReportDocumentId());
+            } elseif (in_array($reportState->getProcessingStatus(), $errors)) {
                 return  $this->amzApi->getContentLastReport(
                     AmzApi::TYPE_REPORT_MANAGE_INVENTORY,
                     $dateTimeStart,

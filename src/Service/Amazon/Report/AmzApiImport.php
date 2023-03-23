@@ -59,13 +59,13 @@ abstract class AmzApiImport
                 $this->logger->info("Wait  since $j seconds  reporting is done");
                 sleep(self::WAITING_TIME);
                 $reportState = $this->amzApi->getReport($report->getReportId());
-                if ($reportState->getPayload()->getProcessingStatus() == AmzApi::STATUS_REPORT_DONE) {
+                if ($reportState->getProcessingStatus() == AmzApi::STATUS_REPORT_DONE) {
                     $this->logger->info('Report processing done');
-                    $datasReport = $this->amzApi->getContentReport($reportState->getPayload()->getReportDocumentId());
+                    $datasReport = $this->amzApi->getContentReport($reportState->getReportDocumentId());
                     $this->importDatas($datasReport);
                     return;
-                } elseif (in_array($reportState->getPayload()->getProcessingStatus(), $badStatus)) {
-                    if ($reportState->getPayload()->getProcessingStatus() == AmzApi::STATUS_REPORT_CANCELLED) {
+                } elseif (in_array($reportState->getProcessingStatus(), $badStatus)) {
+                    if ($reportState->getProcessingStatus() == AmzApi::STATUS_REPORT_CANCELLED) {
                         $this->logger->error('Report cancelled');
                         return;
                     } else {

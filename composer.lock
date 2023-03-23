@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "513b1e468be1bbf0059816b1b25c401f",
+    "content-hash": "e8cee9f51e015c2ba638fd84b9b95ac7",
     "packages": [
         {
             "name": "akeneo/api-php-client",
@@ -67,16 +67,16 @@
         },
         {
             "name": "amazon-php/sp-api-sdk",
-            "version": "3.0.11",
+            "version": "4.0.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amazon-php/sp-api-sdk.git",
-                "reference": "eddbcfaeeb2b7aa41845bb68b0932b75c5c0b43d"
+                "reference": "298876cc129810fa0b7c4340cd8b8f821002c7b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amazon-php/sp-api-sdk/zipball/eddbcfaeeb2b7aa41845bb68b0932b75c5c0b43d",
-                "reference": "eddbcfaeeb2b7aa41845bb68b0932b75c5c0b43d",
+                "url": "https://api.github.com/repos/amazon-php/sp-api-sdk/zipball/298876cc129810fa0b7c4340cd8b8f821002c7b2",
+                "reference": "298876cc129810fa0b7c4340cd8b8f821002c7b2",
                 "shasum": ""
             },
             "require": {
@@ -93,6 +93,7 @@
                 "kriswallsmith/buzz": "^1.2",
                 "monolog/monolog": "^2.2",
                 "nyholm/psr7": "^1.4",
+                "symfony/dotenv": "^5.4",
                 "symfony/var-dumper": "^5.2"
             },
             "type": "library",
@@ -127,9 +128,9 @@
             ],
             "support": {
                 "issues": "https://github.com/amazon-php/sp-api-sdk/issues",
-                "source": "https://github.com/amazon-php/sp-api-sdk/tree/3.0.11"
+                "source": "https://github.com/amazon-php/sp-api-sdk/tree/4.0.12"
             },
-            "time": "2022-04-14T07:57:52+00:00"
+            "time": "2022-09-25T07:16:47+00:00"
         },
         {
             "name": "async-aws/core",

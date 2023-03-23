@@ -73,7 +73,6 @@ class AmzApiInbound
 
     public function integrateInbound(array $inbound)
     {
-        dump($inbound);
         $country = 'ES';
         $laRoca= new Address(
             [
@@ -143,7 +142,7 @@ class AmzApiInbound
             $inboudnShipmentRequest->setInboundShipmentItems($list);
 
             $reponse = $this->amzApi->createInbound($inboundShipmentPlan->getShipmentId(), $inboudnShipmentRequest);
-            dump($reponse);
+            return $reponse;
         }
     }
 }

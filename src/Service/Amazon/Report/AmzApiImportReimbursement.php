@@ -17,7 +17,10 @@ class AmzApiImportReimbursement extends AmzApiImport
             $dateTimeStart = new DateTime('now');
             $dateTimeStart->sub(new DateInterval('P3D'));
         }
-        return $this->amzApi->createReport($dateTimeStart, AmzApi::TYPE_REPORT_REIMBURSEMENT);
+
+        $dateTimeEnd = new DateTime('now');
+        $dateTimeEnd->sub(new DateInterval('PT6H'));
+        return $this->amzApi->createReportStartEnd($dateTimeStart, $dateTimeEnd, AmzApi::TYPE_REPORT_REIMBURSEMENT);
     }
 
     protected function getLastReportContent()
