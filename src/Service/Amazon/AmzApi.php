@@ -265,8 +265,7 @@ class AmzApi
                 $nextToken
             );
 
-            $payLoad = $reponse->getPayload();
-            $reports = array_merge($reports, $payLoad);
+            $reports = array_merge($reports, $reponse->getReports());
             $nextToken = $reponse->getNextToken();
         } while ($nextToken);
         return $reports;
