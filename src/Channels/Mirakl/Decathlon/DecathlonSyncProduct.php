@@ -70,9 +70,15 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 $value = $this->getAttributeSimple($product, $localizablePim, $loc);
                 if ($value) {
                     if ($localizableMirakl=='longDescription') {
-                        $flatProduct[$localizableMirakl.'-'.$loc] = $this->convertHtmlToMarkdown($value);
+                        $description = $this->convertHtmlToMarkdown($value);
+                        if (strlen($description)>5000) {
+                            $description= substr($description, 0, 4997).'...';
+                        }
+                        $flatProduct[$localizableMirakl.'-'.$loc] = $description;
                     } elseif ($localizableMirakl=='productTitle') {
                         $flatProduct[$localizableMirakl.'-'.$loc] = substr($this->sanitizeHtml($value), 0, 80);
+                    } elseif ($localizableMirakl=='webcatchline') {
+                        $flatProduct[$localizableMirakl.'-'.$loc] = substr($this->sanitizeHtml($value), 0, 200);
                     } else {
                         $flatProduct[$localizableMirakl.'-'.$loc] = $this->sanitizeHtml($value);
                     }
