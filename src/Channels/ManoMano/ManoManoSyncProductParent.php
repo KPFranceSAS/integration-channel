@@ -153,13 +153,15 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         }
 
 
+        $valueTitle = $this->getAttributeSimple($product, "article_name", $this->getLocale());
+        $valueComplementTitle = $this->getAttributeSimple($product, "article_name_additional_information", $this->getLocale());
+
+        $flatProduct['title'] = $valueTitle.$valueComplementTitle;
        
         $localizablesTextFields= [
-            'title' => 'article_name',
             'description' => 'description',
             'brand' => 'brand',
             'manufacturer' => 'brand',
-           
         ];
         
 
@@ -176,6 +178,10 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
             $flatProduct[$localizableMirakl] = $value;
         }
+
+       
+
+        
 
 
         $fieldsToConvert = [
