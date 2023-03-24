@@ -137,7 +137,7 @@ class IntegrateAmzFbaReturn
 
         dump(json_encode($saleReturnLine->transformToArray()));
 
-        $createdSaleReturnOrderLine = $this->kpFranceConnector->createSaleReturnOrder($saleReturnLine->transformToArray());
+        $createdSaleReturnOrderLine = $this->kpFranceConnector->createSaleReturnOrderLine($saleReturnLine->transformToArray());
         dump($createdSaleReturnOrderLine);
         dump($this->kpFranceConnector->getSaleReturnByNumber($createdSaleReturnOrder['number']));
 

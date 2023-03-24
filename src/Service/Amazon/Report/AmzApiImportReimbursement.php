@@ -15,7 +15,7 @@ class AmzApiImportReimbursement extends AmzApiImport
     {
         if (!$dateTimeStart) {
             $dateTimeStart = new DateTime('now');
-            $dateTimeStart->sub(new DateInterval('P3D'));
+            $dateTimeStart->sub(new DateInterval('P20D'));
         }
 
         $dateTimeEnd = new DateTime('now');
