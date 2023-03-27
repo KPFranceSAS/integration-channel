@@ -5,7 +5,7 @@ namespace App\Channels\Mirakl\Decathlon;
 use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\Channels\Mirakl\MiraklSyncProductParent;
 use App\Entity\IntegrationChannel;
-use App\Helper\Utils\StringUtils;
+use League\HTMLToMarkdown\HtmlConverter;
 
 class DecathlonSyncProduct extends MiraklSyncProductParent
 {
@@ -70,7 +70,9 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 $value = $this->getAttributeSimple($product, $localizablePim, $loc);
                 if ($value) {
                     if ($localizableMirakl=='longDescription') {
-                        $description = $this->convertHtmlToMarkdown($value);
+                        $converter = new HtmlConverter();
+                        
+                        $description = $converter->convert(str_replace('~', '-', $value));
                         if (strlen($description)>5000) {
                             $description= substr($description, 0, 4997).'...';
                         }
