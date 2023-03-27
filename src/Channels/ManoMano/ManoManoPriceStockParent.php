@@ -95,7 +95,7 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
         if ($productMarketplace->getEnabled()) {
             $offer = [
                 'sku' =>$product->getSku(),
-                "min_quantity" => 1,
+                "min_quantity" => "",
                 "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             ];
     
