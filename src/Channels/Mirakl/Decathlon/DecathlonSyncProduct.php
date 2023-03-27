@@ -71,10 +71,11 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 if ($value) {
                     if ($localizableMirakl=='longDescription') {
                         $converter = new HtmlConverter();
+                        $valueFormate = str_replace(['~', '<hr>', '<hr/>'], ['-', '<hr><p></p>', '<hr><p></p>'], $value);
+                        $description = $converter->convert($valueFormate);
                         
-                        $description = $converter->convert(str_replace('~', '-', $value));
                         if (strlen($description)>5000) {
-                            $description= substr($description, 0, 4997).'...';
+                            $description= substr($description, 0, 5000);
                         }
                         $flatProduct[$localizableMirakl.'-'.$loc] = $description;
                     } elseif ($localizableMirakl=='productTitle') {
