@@ -149,6 +149,12 @@ services:
             $manoManoClientUrl :  '%env(resolve:MANOMANO_URL)%'
             $manoManoFrContractId :  '%env(resolve:MANOMANO_FR_CONTRAT)%'
             $manoManoFrKey :  '%env(resolve:MANOMANO_FR_KEY)%'
+            $manoManoDeContractId :  '%env(resolve:MANOMANO_DE_CONTRAT)%'
+            $manoManoDeKey :  '%env(resolve:MANOMANO_DE_KEY)%'
+            $manoManoEsContractId :  '%env(resolve:MANOMANO_ES_CONTRAT)%'
+            $manoManoEsKey :  '%env(resolve:MANOMANO_ES_KEY)%'
+            $manoManoItContractId :  '%env(resolve:MANOMANO_IT_CONTRAT)%'
+            $manoManoItKey :  '%env(resolve:MANOMANO_IT_KEY)%'
 
           
             
