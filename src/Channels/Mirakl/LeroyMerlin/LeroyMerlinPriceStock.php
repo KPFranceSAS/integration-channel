@@ -30,10 +30,10 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
             "logistic_class" => "FREE",
             "description" => 'Offer '.$product->getDescription(),
             "leadtime_to_ship" => "2",
-            "vat_lmfr" => "Normal",
-            "vat_lmes" => "Normal",
-            "vat_lmit" => "Normal",
-            "shipment_origin" => "ES",
+            "vat-lmfr" => "Standard",
+            "vat-lmes" => "Standard",
+            "vat-lmit" => "Standard",
+            "shipment-origin" => "ES",
             "all_prices" => []
         ];
 
