@@ -150,7 +150,9 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         //mm_category_id
 
         for ($i = 1; $i <= 5;$i++) {
-            $flatProduct['image_'.$i] = $this->getAttributeSimple($product, 'image_url_'.$i);
+            $imageLocale = $this->getAttributeSimple($product, 'image_url_loc_'.$i, $this->getLocale());
+
+            $flatProduct['image_'.$i] =$imageLocale ? $imageLocale : $this->getAttributeSimple($product, 'image_url_'.$i);
         }
 
 
