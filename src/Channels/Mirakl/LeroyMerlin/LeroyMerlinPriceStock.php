@@ -32,11 +32,10 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
             "leadtime_to_ship" => "2",
             "all_prices" => [],
             "offer_additional_fields" => [
-                "vat_lmfr" => "Standard",
-                "vat-lmes" => "Standard",
-                "vat-lmit" => "Standard",
-                "shipment-origin" => "FR",
-                "shipment_origin" => "DE"
+                ['code'=>"vat_lmfr", 'value' => "Standard"],
+                ['code'=>"vat-lmes" , 'value' => "Standard"],
+                ['code'=>"vat-lmit", 'value' =>"Standard"],
+                ['code'=>"shipment-origin" , 'value' => "ES"],
             ]
         ];
 
