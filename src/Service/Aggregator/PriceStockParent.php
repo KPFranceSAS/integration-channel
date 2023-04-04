@@ -74,7 +74,8 @@ abstract class PriceStockParent
     {
         foreach ($saleChannels as $saleChannel) {
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
-            if ($productMarketplace->getEnabled()) {
+            $this->logger->info('Check product '.$product->getSku() . ' '.$saleChannel->getCode());
+            if ($productMarketplace && $productMarketplace->getEnabled()) {
                 return true;
             }
         }
