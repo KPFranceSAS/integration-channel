@@ -40,34 +40,46 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
 
         $familyPim =$product['family'];
 
-        if($familyPim == 'solar_panel'){
+        if($familyPim == 'solar_panel') {
             $flatProduct ['product_category'] =  '200431|CHARGEUR_DE_PILE|PILE_ET_CHARGEUR|R03-002-010';
         } elseif($familyPim = 'power_station') {
             $flatProduct ['product_category'] =  "200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
             $flatProduct['ATT_15344'] ='LOV_000001'; // included battery
-        } 
+        }
+
+
+
+        $locales = ['fr', 'es', 'it'];
+
+        foreach ($locales as $locale) {
+            $localePim = $locale.'_'.strtoupper($locale);
+            $flatProduct['i18n_'.$locale.'_12963_title'] = $this->getAttributeSimple($product, "article_name", $localePim);
+            $flatProduct['i18n_'.$locale.'_01022_longdescription'] = substr($this->getAttributeSimple($product, "description", $localePim), 0, 5000);
+    
+                
+            for ($i = 1; $i <= 5;$i++) {
+                $attributeImageLoc = $this->getAttributeSimpleScopable($product, 'image_url_loc_'.$i, 'Marketplace', $localePim);
+                $keyArray = $locale == 'fr' ? 'media_'.$i : 'media_'.$i.'_'.$localePim;
+                $flatProduct[$keyArray] = $attributeImageLoc ? $attributeImageLoc : $this->getAttributeSimple($product, 'image_url_'.$i);
+            }
+    
+    
+            /*$videoFr = $this->getAttributeSimple($product, 'promo_video_url_1', $localePim);
+            if($videoFr) {
+                $keyArray = $locale == 'fr' ? 'media_5' : 'media_5_'.$localePim;
+                $flatProduct['media_5'] = $videoFr;
+            }*/
+        }
 
        
-        $flatProduct['i18n_fr_12963_title'] = $this->getAttributeSimple($product, "article_name", 'fr_FR');
-        $flatProduct['i18n_fr_01022_longdescription'] = substr($this->getAttributeSimple($product, "description", 'fr_FR'),0,5000);
-        $flatProduct['i18n_it_12963_title'] = $this->getAttributeSimple($product, "article_name", 'it_IT');
-        $flatProduct['i18n_it_01022_longdescription'] = substr($this->getAttributeSimple($product, "description", 'it_IT'),0,5000);
-        $flatProduct['i18n_es_12963_title'] = $this->getAttributeSimple($product, "article_name", 'es_ES');
-        $flatProduct['i18n_es_01022_longdescription'] = substr($this->getAttributeSimple($product, "description", 'es_ES'),0,5000);
-
-         
-
-        for ($i = 1; $i <= 5;$i++) {
-            $flatProduct['media_'.$i] = $this->getAttributeSimple($product, 'image_url_'.$i);
-        }
-   
+        
 
         $fieldsToConvert = [
             "feature_06575_brand" => [
                 "field" => "brand",
                 "type" => "choice",
                 "locale" => "en_GB",
-            ],            
+            ],
          ];
 
         foreach ($fieldsToConvert as $fieldMirakl => $fieldPim) {
@@ -78,7 +90,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     $value = $valueConverted.' '.$fieldPim['convertUnit'];
                 }
                 if ($value) {
-                    $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'] , $fieldMirakl, $value);
+                    $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'], $fieldMirakl, $value);
                     if ($codeMirakl) {
                         $flatProduct[$fieldMirakl] = $codeMirakl;
                     }
@@ -86,7 +98,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             } elseif ($fieldPim['type']=='choice') {
                 $value = $this->getAttributeChoice($product, $fieldPim['field'], $fieldPim['locale']);
                 if ($value) {
-                    $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'] , $fieldMirakl, $value);
+                    $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'], $fieldMirakl, $value);
                     if ($codeMirakl) {
                         $flatProduct[$fieldMirakl] = $codeMirakl;
                     }
@@ -96,7 +108,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                 if (count($values)>0) {
                     $valuesMirakls= [];
                     foreach ($values as $value) {
-                        $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'] , $fieldMirakl, $value);
+                        $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'], $fieldMirakl, $value);
                         if ($codeMirakl) {
                             $flatProduct[$fieldMirakl] = $codeMirakl;
                         }

@@ -103,6 +103,33 @@ abstract class ProductSyncParent
     }
 
 
+
+
+    protected function getAttributeSimpleScopable($productPim, $nameAttribute, $scope, $locale=null)
+    {
+        if (array_key_exists($nameAttribute, $productPim['values'])) {
+            if ($locale) {
+                foreach ($productPim['values'][$nameAttribute] as $attribute) {
+                   
+                    if ($attribute['locale']==$locale && $attribute['scope']==$scope) {
+                        return $attribute['data'];
+                    }
+                }
+            } else {
+                foreach ($productPim['values'][$nameAttribute] as $attribute) {
+                   
+                    if ($attribute['scope']==$scope) {
+                        return $attribute['data'];
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+
     protected function getTranslationLabel($nameAttribute, $locale)
     {
         $attribute = $this->akeneoConnector->getAttribute($nameAttribute);
