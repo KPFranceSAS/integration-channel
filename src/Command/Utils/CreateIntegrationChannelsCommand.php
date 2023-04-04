@@ -26,8 +26,8 @@ class CreateIntegrationChannelsCommand extends Command
     {
         $integrationChannels=[
             [
-                'code'=>IntegrationChannel::CHANNEL_SONOS_ARISE,
-                'name'=>'Sonos Arise',
+                'code'=>IntegrationChannel::CHANNEL_LEROYMERLIN,
+                'name'=>'Leroy Merlin',
                 'active'=>false,
                 'price'=>false,
                 'stock'=>true,

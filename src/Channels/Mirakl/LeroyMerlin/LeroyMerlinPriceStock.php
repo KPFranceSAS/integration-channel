@@ -33,11 +33,11 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
             "all_prices" => []
         ];
 
-
+            
       
         foreach ($saleChannels as $saleChannel) {
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
-          
+
             if ($productMarketplace->getEnabled()) {
 
                 $mirakCode= substr($saleChannel->getCode(), -3);
