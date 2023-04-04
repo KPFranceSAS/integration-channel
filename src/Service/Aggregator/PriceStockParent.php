@@ -75,8 +75,12 @@ abstract class PriceStockParent
         foreach ($saleChannels as $saleChannel) {
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
             $this->logger->info('Check product '.$product->getSku() . ' '.$saleChannel->getCode());
-            if ($productMarketplace && $productMarketplace->getEnabled()) {
-                return true;
+            if ($productMarketplace) {
+                if($productMarketplace->getEnabled()) {
+                    return true;
+                }
+            } else {
+                $this->logger->error('Not found product '.$product->getSku() . ' '.$saleChannel->getCode());
             }
         }
         return false;
