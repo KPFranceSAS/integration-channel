@@ -149,6 +149,9 @@ services:
             $leroyMerlinClientUrl :  '%env(resolve:LEROYMERLIN_URL)%'
             $leroyMerlinClientKey : '%env(resolve:LEROYMERLIN_KEY)%'
 
+            $boulangerClientUrl :  '%env(resolve:BOULANGER_URL)%'
+            $boulangerClientKey : '%env(resolve:BOULANGER_KEY)%'
+
             $manoManoClientUrl :  '%env(resolve:MANOMANO_URL)%'
             $manoManoFrContractId :  '%env(resolve:MANOMANO_FR_CONTRAT)%'
             $manoManoFrKey :  '%env(resolve:MANOMANO_FR_KEY)%'

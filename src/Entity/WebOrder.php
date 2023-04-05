@@ -383,6 +383,9 @@ class WebOrder
                 return 'https://adeo-marketplace.mirakl.net/mmp/shop/order/' . $this->externalNumber;
             case IntegrationChannel::CHANNEL_DECATHLON:
                 return 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $this->externalNumber;
+            case IntegrationChannel::CHANNEL_BOULANGER:
+                return 'https://merchant.boulanger.com/mmp/shop/order/' . $this->externalNumber;
+
         }
         throw new Exception('No url link of weborder for ' . $this->channel);
     }
@@ -456,6 +459,9 @@ class WebOrder
 
             case IntegrationChannel::CHANNEL_LEROYMERLIN:
                 return WebOrder::createOneFromLeroyMerlin($orderApi);
+            
+            case IntegrationChannel::CHANNEL_BOULANGER:
+                return WebOrder::createOneFromBoulanger($orderApi);
                 
             case IntegrationChannel::CHANNEL_CHANNELADVISOR:
                 return WebOrder::createOneFromChannelAdvisor($orderApi);
@@ -603,6 +609,15 @@ class WebOrder
         return $webOrder;
     }
 
+    public static function createOneFromBoulanger($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromMirakl($orderApi);
+        $webOrder->setSubchannel("Boulanger");
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_BOULANGER);
+        return $webOrder;
+    }
+
+
 
     public static function createOrderFromMirakl($orderApi): WebOrder
     {
@@ -678,6 +693,7 @@ class WebOrder
             IntegrationChannel::CHANNEL_FITBITCORPORATE,
             IntegrationChannel::CHANNEL_DECATHLON,
             IntegrationChannel::CHANNEL_LEROYMERLIN,
+            IntegrationChannel::CHANNEL_BOULANGER,
         ])) {
             return $this->getContent();
         }

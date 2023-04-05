@@ -6,6 +6,7 @@ use App\Controller\Configuration\ProductCrudController;
 use App\Controller\Fba\StockCrudController;
 use App\Controller\Order\AliexpressOrderCrudController;
 use App\Controller\Order\AriseOrderCrudController;
+use App\Controller\Order\BoulangerOrderCrudController;
 use App\Controller\Order\ChannelAdvisorOrderCrudController;
 use App\Controller\Order\DecathlonOrderCrudController;
 use App\Controller\Order\DeliveryOrderCrudController;
@@ -13,6 +14,8 @@ use App\Controller\Order\ErrorOrderCrudController;
 use App\Controller\Order\FitbitCorporateOrderCrudController;
 use App\Controller\Order\FlashledOrderCrudController;
 use App\Controller\Order\LateOrderCrudController;
+use App\Controller\Order\LeroyMerlinOrderCrudController;
+use App\Controller\Order\ManoManoOrderCrudController;
 use App\Controller\Order\MinibattOrderCrudController;
 use App\Controller\Order\OwletCareOrderCrudController;
 use App\Controller\Order\PreparationOrderCrudController;
@@ -83,22 +86,33 @@ class DashboardController extends AbstractDashboardController
         return [
             MenuItem::subMenu('Orders', 'fa fa-shopping-cart')
                 ->setSubItems([
-                    MenuItem::linkToCrud('Channel Advisor', 'fab fa-amazon', WebOrder::class)
-                        ->setController(ChannelAdvisorOrderCrudController::class),
+                    
                     MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)
                         ->setController(AliexpressOrderCrudController::class),
+                    MenuItem::linkToCrud('Amazon', 'fab fa-amazon', WebOrder::class)
+                        ->setController(ChannelAdvisorOrderCrudController::class),
+                     MenuItem::linkToCrud('Boulanger', 'fas fa-tv', WebOrder::class)
+                        ->setController(BoulangerOrderCrudController::class),
+                    MenuItem::linkToCrud('Decathlon', 'fas fa-volleyball-ball', WebOrder::class)
+                        ->setController(DecathlonOrderCrudController::class),
+                    MenuItem::linkToCrud('Fitbit Corporate', 'fas fa-running', WebOrder::class)
+                        ->setController(FitbitCorporateOrderCrudController::class),
+                    MenuItem::linkToCrud('Flashled', 'far fa-lightbulb', WebOrder::class)
+                        ->setController(FlashledOrderCrudController::class),
+                     MenuItem::linkToCrud('Leroy Merlin', 'fas fa-hammer', WebOrder::class)
+                        ->setController(LeroyMerlinOrderCrudController::class),
+                    MenuItem::linkToCrud('ManoMano', 'fas fa-screwdriver', WebOrder::class)
+                        ->setController(ManoManoOrderCrudController::class),
+                    MenuItem::linkToCrud('Minibatt', 'fas fa-car-battery', WebOrder::class)
+                        ->setController(MinibattOrderCrudController::class),
                     MenuItem::linkToCrud('Miravia', 'fas fa-sun', WebOrder::class)
                         ->setController(AriseOrderCrudController::class),
                     MenuItem::linkToCrud('Owlet Care', 'fas fa-baby', WebOrder::class)
                         ->setController(OwletCareOrderCrudController::class),
-                    MenuItem::linkToCrud('Flashled', 'far fa-lightbulb', WebOrder::class)
-                        ->setController(FlashledOrderCrudController::class),
-                    MenuItem::linkToCrud('Minibatt', 'fas fa-car-battery', WebOrder::class)
-                        ->setController(MinibattOrderCrudController::class),
-                    MenuItem::linkToCrud('Fitbit Corporate', 'fas fa-running', WebOrder::class)
-                        ->setController(FitbitCorporateOrderCrudController::class),
-                        MenuItem::linkToCrud('Decathlon', 'fas fa-volleyball-ball', WebOrder::class)
-                        ->setController(DecathlonOrderCrudController::class),
+                    
+                    
+                    
+                   
                     MenuItem::section(),
                     MenuItem::linkToCrud('Waiting for shipping', 'fas fa-truck-loading', WebOrder::class)
                         ->setController(PreparationOrderCrudController::class),

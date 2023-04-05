@@ -27,6 +27,7 @@ class IntegrationChannel
     public const CHANNEL_SONOS_ARISE='SONOS_ARISE';
     public const CHANNEL_AMAZFIT_ARISE='AMAZFIT_ARISE';
     public const CHANNEL_DECATHLON='DECATHLON';
+    public const CHANNEL_BOULANGER='BOULANGER';
     public const CHANNEL_LEROYMERLIN='LEROYMERLIN';
     public const CHANNEL_MANOMANO_FR='MANOMANO_FR';
     public const CHANNEL_MANOMANO_ES='MANOMANO_ES';

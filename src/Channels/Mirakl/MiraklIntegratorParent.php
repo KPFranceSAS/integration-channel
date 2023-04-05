@@ -3,8 +3,6 @@
 namespace App\Channels\Mirakl;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
-use App\BusinessCentral\Connector\BusinessCentralConnector;
-use App\BusinessCentral\Model\PostalAddress;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\BusinessCentral\ProductTaxFinder;
@@ -15,17 +13,12 @@ use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\IntegratorParent;
 use App\Service\Carriers\UpsGetTracking;
-use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use function Symfony\Component\String\u;
-use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
 abstract class MiraklIntegratorParent extends IntegratorParent
 {
-    public const ARISE_CUSTOMER_NUMBER = "003307";
-
 
     public function __construct(
         ProductTaxFinder $productTaxFinder,
