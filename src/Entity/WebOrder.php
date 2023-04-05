@@ -379,6 +379,8 @@ class WebOrder
             case IntegrationChannel::CHANNEL_SONOS_ARISE:
             case IntegrationChannel::CHANNEL_ARISE:
                 return 'https://sellercenter.miravia.es/apps/order/detail?tradeOrderId=' . $this->externalNumber;
+            case IntegrationChannel::CHANNEL_LEROYMERLIN:
+                return 'https://adeo-marketplace.mirakl.net/mmp/shop/order/' . $this->externalNumber;
             case IntegrationChannel::CHANNEL_DECATHLON:
                 return 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $this->externalNumber;
         }
@@ -451,6 +453,9 @@ class WebOrder
             
             case IntegrationChannel::CHANNEL_DECATHLON:
                 return WebOrder::createOneFromDecathlon($orderApi);
+
+            case IntegrationChannel::CHANNEL_LEROYMERLIN:
+                return WebOrder::createOneFromLeroyMerlin($orderApi);
                 
             case IntegrationChannel::CHANNEL_CHANNELADVISOR:
                 return WebOrder::createOneFromChannelAdvisor($orderApi);
@@ -581,7 +586,13 @@ class WebOrder
     }
 
 
-
+    public static function createOneFromLeroyMerlin($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromMirakl($orderApi);
+        $webOrder->setSubchannel("Leroy Merlin ".$orderApi['channel']['label']);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_LEROYMERLIN);
+        return $webOrder;
+    }
 
 
     public static function createOneFromDecathlon($orderApi): WebOrder
@@ -666,6 +677,7 @@ class WebOrder
             IntegrationChannel::CHANNEL_MINIBATT,
             IntegrationChannel::CHANNEL_FITBITCORPORATE,
             IntegrationChannel::CHANNEL_DECATHLON,
+            IntegrationChannel::CHANNEL_LEROYMERLIN,
         ])) {
             return $this->getContent();
         }

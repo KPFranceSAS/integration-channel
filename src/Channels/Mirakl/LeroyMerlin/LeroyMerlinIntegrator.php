@@ -9,13 +9,9 @@ use Exception;
 
 class LeroyMerlinIntegrator extends MiraklIntegratorParent
 {
-    public const DECATHLON_FR = '000774';
-    public const DECATHLON_DE = '000777';
-    public const DECATHLON_IT = '000778';
-    public const DECATHLON_PT = '000779';
-    public const DECATHLON_BE = '000780';
-    public const DECATHLON_ES = '000786';
-
+    public const LEROYMERLIN_FR = '000802';
+    public const LEROYMERLIN_ES = '000803';
+    public const LEROYMERLIN_IT = '000804';
        
 
     public function getChannel()
@@ -27,18 +23,12 @@ class LeroyMerlinIntegrator extends MiraklIntegratorParent
     public function getCustomerBC($orderApi): string
     {
         $codeChannel = $orderApi['channel']['code'];
-        if ($codeChannel == 'FR') {
-            return self::DECATHLON_FR;
-        } elseif ($codeChannel == 'DE') {
-            return self::DECATHLON_DE;
-        } elseif ($codeChannel == 'IT') {
-            return self::DECATHLON_IT;
-        } elseif ($codeChannel == 'PT') {
-            return self::DECATHLON_PT;
-        } elseif ($codeChannel == 'BE') {
-            return self::DECATHLON_BE;
-        } elseif ($codeChannel == 'ES') {
-            return self::DECATHLON_ES;
+        if ($codeChannel == '001') {
+            return self::LEROYMERLIN_FR;
+        } elseif ($codeChannel == '002') {
+            return self::LEROYMERLIN_ES;
+        } elseif ($codeChannel == '003') {
+            return self::LEROYMERLIN_IT;
         } else {
             throw new Exception('No customer has been setup for LeroyMerlin on channel '.$codeChannel);
         }
