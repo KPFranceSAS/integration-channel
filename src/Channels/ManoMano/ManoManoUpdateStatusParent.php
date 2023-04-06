@@ -17,10 +17,9 @@ abstract class ManoManoUpdateStatusParent extends UpdateStatusParent
 
     protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber=null)
     {
-       /* $codeCarrier = $this->getCodeCarrier($order->getCarrierService());
-        $nameCarrier = $this->getNameCarrier($order->getCarrierService());
+        $codeCarrier = $this->getCodeCarrier($order->getCarrierService());
             
-        if (!$codeCarrier || !$nameCarrier) {
+        if (!$codeCarrier) {
             $this->addLogToOrder($order, 'Carrier code is not setup for channel ' . $order->getCarrierService());
             return false;
         }
@@ -28,8 +27,8 @@ abstract class ManoManoUpdateStatusParent extends UpdateStatusParent
         $result = $this->getManoManoApi()->markOrderAsFulfill(
             $order->getExternalNumber(),
             $codeCarrier,
-            $nameCarrier,
-            DhlGetTracking::getTrackingUrlBase($trackingNumber),
+            $codeCarrier,
+            $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $trackingNumber),
             $trackingNumber
         );
         if ($result) {
@@ -39,7 +38,18 @@ abstract class ManoManoUpdateStatusParent extends UpdateStatusParent
             $this->addLogToOrder($order, 'Error posting tracking number ' . $trackingNumber);
             return false;
         }
-        */
+    
+    }
+
+
+
+    protected function getCodeCarrier(string $carrierCode): ?string {
+        if($carrierCode ==  WebOrder::CARRIER_DHL){
+            return "DHL Parcel";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS){
+            return "UPS";
+        }
+        return null;
     }
 
 }

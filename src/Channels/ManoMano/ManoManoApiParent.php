@@ -77,7 +77,7 @@ abstract class ManoManoApiParent implements ApiInterface
     {
         $this->logger->info('Get Order  ' . $orderNumber);
         $reponse =  $this->sendRequest('orders/v1/orders/'.$orderNumber, ['seller_contract_id'=>$this->contractId]);
-        return $reponse;
+        return $reponse['content'];
     }
 
 
@@ -91,6 +91,28 @@ abstract class ManoManoApiParent implements ApiInterface
 
     public function markOrderAsFulfill($orderId, $carrierCode, $carrierName, $carrierUrl, $trackingNumber):bool
     {
+        $products = [];
+        $order = $this->getOrder($orderId);
+        foreach($order['products'] as $product){
+            $products[] = [
+                "seller_sku" =>  $product["seller_sku"],
+                "quantity"=>  $product["quantity"]
+            ];
+        }
+
+        $body = [
+         [
+            "carrier"=> $carrierCode,
+            "order_reference"=>  $orderId,
+            "seller_contract_id"=> $this->contractId,
+            "tracking_number"=>  $trackingNumber,
+            "tracking_url"=> $carrierUrl,
+            "products"=>  $products
+            ]
+         ];
+         $reponse =  $this->sendRequest('orders/v1/shippings', [], 'POST', json_encode($body));
+
+
         return true;
     }
 
@@ -106,8 +128,6 @@ abstract class ManoManoApiParent implements ApiInterface
 
         return true;
     }
-        
-
 
     public function sendRequest($endPoint, $queryParams = [], $method = 'GET', $body = null)
     {

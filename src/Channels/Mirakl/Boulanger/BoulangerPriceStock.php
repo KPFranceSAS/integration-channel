@@ -31,12 +31,6 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             "description" => 'Offer '.$product->getDescription(),
             "leadtime_to_ship" => "2",
             "all_prices" => [],
-            "offer_additional_fields" => [
-                ['code'=>"vat_lmfr", 'value' => "Standard"],
-                ['code'=>"vat-lmes" , 'value' => "Standard"],
-                ['code'=>"vat-lmit", 'value' =>"Standard"],
-                ['code'=>"shipment-origin" , 'value' => "ES"],
-            ]
         ];
 
             

@@ -385,6 +385,12 @@ class WebOrder
                 return 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $this->externalNumber;
             case IntegrationChannel::CHANNEL_BOULANGER:
                 return 'https://merchant.boulanger.com/mmp/shop/order/' . $this->externalNumber;
+            case IntegrationChannel::CHANNEL_MANOMANO_DE:
+            case IntegrationChannel::CHANNEL_MANOMANO_IT:
+            case IntegrationChannel::CHANNEL_MANOMANO_ES:
+            case IntegrationChannel::CHANNEL_MANOMANO_FR:
+                return 'https://toolbox.manomano.com/orders';
+
 
         }
         throw new Exception('No url link of weborder for ' . $this->channel);
@@ -477,6 +483,26 @@ class WebOrder
                 
             case IntegrationChannel::CHANNEL_FITBITCORPORATE:
                 return WebOrder::createOneFromFitbitCorporate($orderApi);
+
+            case IntegrationChannel::CHANNEL_MANOMANO_DE:
+                $webOrder = WebOrder::createOneFromManoMano($orderApi);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_MANOMANO_DE);
+                return $webOrder;
+    
+            case IntegrationChannel::CHANNEL_MANOMANO_FR:
+                $webOrder = WebOrder::createOneFromManoMano($orderApi);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_MANOMANO_FR);
+                return $webOrder;
+    
+            case IntegrationChannel::CHANNEL_MANOMANO_ES:
+                $webOrder = WebOrder::createOneFromManoMano($orderApi);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_MANOMANO_ES);
+                return $webOrder;
+            case IntegrationChannel::CHANNEL_MANOMANO_IT:
+                $webOrder = WebOrder::createOneFromManoMano($orderApi);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_MANOMANO_IT);
+                return $webOrder;
+            
         }
 
         throw new Exception('No constructor of weborder for ' . $channel);
@@ -540,6 +566,9 @@ class WebOrder
         return $webOrder;
     }
 
+
+
+    
 
 
 
@@ -652,7 +681,33 @@ class WebOrder
     }
 
 
+    public static function createOneFromManoMano($orderApi): WebOrder
+    {
+        $webOrder = new WebOrder();
+        $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['created_date']));
+        $webOrder->setStatus(WebOrder::STATE_CREATED);
+        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
+        $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
+        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
+        $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
+        $webOrder->setContent($orderApi);
+        $webOrder->setExternalNumber($orderApi['order_reference']);
+        
+        $skus = [];
+        foreach ($orderApi["products"] as $line) {
+            $skus[] = $line['seller_sku'];
+        }
+        $shouldBeSentByUps = UpsGetTracking::shouldBeSentWith($skus);
+        if ($shouldBeSentByUps) {
+            $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
+        }
+        
+        $webOrder->addLog('Retrieved from ManoMano');
+        return $webOrder;
+    }
 
+
+    
 
 
 

@@ -11,6 +11,7 @@ use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\PriceStockAggregator;
 use App\Service\Aggregator\ProductSyncParent;
+use App\Service\Carriers\UpsGetTracking;
 use App\Service\Pim\AkeneoConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Csv\Writer;
@@ -126,6 +127,9 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         $this->logger->info('Flat product '.$product['identifier']);
 
 
+        $carrierCode = UpsGetTracking::isThisSkuShouldBeSendWithUps($product['identifier']) ? 'UPS' : 'DHL Parcel';
+
+
         $flatProduct = [
             'sku' => $product['identifier'],
             'ean' => $this->getAttributeSimple($product, 'ean'),
@@ -137,7 +141,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             'Unit_count' => "",
             "unit_count_type" => '',
             "shipping_time" => "3#7",
-            "carrier" => "UPS",
+            "carrier" => $carrierCode,
             "shipping_price_vat_inc" => 0,
             "use_grid" => 0,
         ];
