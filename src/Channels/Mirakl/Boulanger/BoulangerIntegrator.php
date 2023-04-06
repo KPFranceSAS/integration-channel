@@ -29,4 +29,9 @@ class BoulangerIntegrator extends MiraklIntegratorParent
     {
         return BusinessCentralConnector::KP_FRANCE;
     }
+
+    protected function getExternalNumber($orderApi)
+    {
+        return  $orderApi['order_id'];
+    }
 }
