@@ -5,11 +5,10 @@ namespace App\Channels\ManoMano\ManoManoFr;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Channels\ManoMano\ManoManoIntegratorParent;
 use App\Entity\IntegrationChannel;
-use Exception;
 
 class ManoManoFrIntegrator extends ManoManoIntegratorParent
 {
-   public const MANOMANO_FR = '000774';
+   public const MANOMANO_FR = '000783';
 
 
 
