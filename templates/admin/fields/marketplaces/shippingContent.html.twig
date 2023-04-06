@@ -16,6 +16,11 @@
 	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_LEROYMERLIN')  
 	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_BOULANGER')  %}
 	{% include "admin/fields/marketplaces/mirakl/shippingContent.html.twig" with {'field': field} %}
+{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_FR') 	
+	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_ES')  
+	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_DE')  
+	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_IT')  %}
+	{% include "admin/fields/marketplaces/manomano/shippingContent.html.twig" with {'field': field} %}
 	{% else  %}
 	<div class="">Not instanced {{entity.instance.channel}} </div>
 {% endif %}

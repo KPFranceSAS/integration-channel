@@ -487,20 +487,25 @@ class WebOrder
             case IntegrationChannel::CHANNEL_MANOMANO_DE:
                 $webOrder = WebOrder::createOneFromManoMano($orderApi);
                 $webOrder->setChannel(IntegrationChannel::CHANNEL_MANOMANO_DE);
+                $webOrder->setSubchannel('Manomano.de');
                 return $webOrder;
     
             case IntegrationChannel::CHANNEL_MANOMANO_FR:
                 $webOrder = WebOrder::createOneFromManoMano($orderApi);
                 $webOrder->setChannel(IntegrationChannel::CHANNEL_MANOMANO_FR);
+                $webOrder->setSubchannel('Manomano.fr');
                 return $webOrder;
     
             case IntegrationChannel::CHANNEL_MANOMANO_ES:
                 $webOrder = WebOrder::createOneFromManoMano($orderApi);
                 $webOrder->setChannel(IntegrationChannel::CHANNEL_MANOMANO_ES);
+                $webOrder->setSubchannel('Manomano.es');
                 return $webOrder;
+                
             case IntegrationChannel::CHANNEL_MANOMANO_IT:
                 $webOrder = WebOrder::createOneFromManoMano($orderApi);
                 $webOrder->setChannel(IntegrationChannel::CHANNEL_MANOMANO_IT);
+                $webOrder->setSubchannel('Manomano.it');
                 return $webOrder;
             
         }
@@ -685,7 +690,7 @@ class WebOrder
     public static function createOneFromManoMano($orderApi): WebOrder
     {
         $webOrder = new WebOrder();
-        $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['created_date']));
+        $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['created_at']));
         $webOrder->setStatus(WebOrder::STATE_CREATED);
         $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
@@ -750,6 +755,10 @@ class WebOrder
             IntegrationChannel::CHANNEL_DECATHLON,
             IntegrationChannel::CHANNEL_LEROYMERLIN,
             IntegrationChannel::CHANNEL_BOULANGER,
+            IntegrationChannel::CHANNEL_MANOMANO_ES,
+            IntegrationChannel::CHANNEL_MANOMANO_DE,
+            IntegrationChannel::CHANNEL_MANOMANO_IT,
+            IntegrationChannel::CHANNEL_MANOMANO_FR,
         ])) {
             return $this->getContent();
         }

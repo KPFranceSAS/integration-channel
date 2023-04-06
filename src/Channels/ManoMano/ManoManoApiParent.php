@@ -39,19 +39,19 @@ abstract class ManoManoApiParent implements ApiInterface
      * order_references_for_customer
      * start_date end_date
      * order_state_codes
-     * STAGING, WAITING_ACCEPTANCE, WAITING_DEBIT, WAITING_DEBIT_PAYMENT, SHIPPING, SHIPPED, TO_COLLECT, RECEIVED, CLOSED, REFUSED, CANCELED
+     * WAITING_PAYMENT, PENDING, REFUSED, PREPARATION, SHIPPED, REFUNDED, REFUNDING, REMORSE_PERIOD
      * @param array $params
      * @return array
      */
     public function getOrders(array $params = [])
     {
         $offset = 1;
-        $max_page = 1;
+        $max_page = 2;
         $orders = [];
-        while ($offset  <= $max_page) {
+        while ($offset  < $max_page) {
             $params ['seller_contract_id'] = $this->contractId;
-            $realOffset =  $offset+1;
-            $this->logger->info('Get orders batch n°' . $realOffset . ' / ' . $max_page . ' >>' . json_encode($params));
+            $params ['page'] = $offset;
+            $this->logger->info('Get orders batch n°' . $offset . ' / ' . $max_page . ' >>' . json_encode($params));
             $reponse =  $this->sendRequest('orders/v1/orders', $params);
             $orders = array_merge($orders, $reponse['content']);
             $max_page  = $reponse['pagination']['pages'];
@@ -63,10 +63,10 @@ abstract class ManoManoApiParent implements ApiInterface
 
     public function getAllOrdersToSend()
     {
-        $params = [
-            'status' => 'PENDING'
-        ];
-        return $this->getOrders($params);
+        $pendings = $this->getOrders(['status' => 'PENDING']);
+        $preparations = $this->getOrders(['status' => 'PREPARATION']);
+        $orders = array_merge($pendings, $preparations);
+        return $orders;
     }
 
 
@@ -118,13 +118,19 @@ abstract class ManoManoApiParent implements ApiInterface
 
     public function markOrderAsAccepted($order): bool
     {
-        $body = [
-            [
-              "order_reference" => $order['order_reference'],
-              "seller_contract_id" =>$this->contractId,
-            ]
-          ];
-        $reponse =  $this->sendRequest('orders/v1/accept-orders', [], 'POST', json_encode($body));
+        if($order['status']=='PENDING'){
+            $body = [
+                [
+                  "order_reference" => $order['order_reference'],
+                  "seller_contract_id" =>$this->contractId,
+                ]
+              ];
+            $reponse =  $this->sendRequest('orders/v1/accept-orders', [], 'POST', json_encode($body));
+            $this->logger->info('Validated');
+        } else {
+            $this->logger->info('Already validated');
+        }
+        
 
         return true;
     }
@@ -145,7 +151,6 @@ abstract class ManoManoApiParent implements ApiInterface
             $url.='?'.implode('&', $urlSegments);
         }
         $request = new Request($method, $url, $headers, $body);
-        
         $response = $client->sendRequest($request);
         return json_decode($response->getBody(), true);
     }

@@ -1,0 +1,64 @@
+{% if field.value|length > 0 %}
+	<div class="">
+		<table class="table datagrid ">
+			<thead>
+				<tr>
+					<th>
+						Sku
+					</th>
+					<th>
+						Title
+					</th>
+
+					<th>
+						Unit Price
+					</th>
+					<th>
+						Qty
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for line in field.value.products %}
+					<tr>
+						<td data-label="Sku" class="text-left field-text">
+							{{line.seller_sku}}
+						</td>
+						<td data-label="Title" class="text-left field-text">
+							{{line.product_title|slice(0,20)}}
+						</td>
+						<td data-label="Unit Price" class="text-left field-text">
+							{{line.product_price.amount}}
+							{{line.price.currency}}
+						</td>
+						<td data-label="Qty" class="text-left field-text">
+							{{line.quantity}}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+			<tfoot>
+				<tr >
+					<td colspan="3" class="tfoot-col-label">
+						<strong>Total shipping</strong>
+					</td>
+					<td colspan="" data-label="Total shipping" class="text-left field-text">
+						{{field.value.shipping_price.amount}}
+					</td>
+				</tr>
+				<tr >
+					<td colspan="3" class="tfoot-col-label">
+						<strong>Total price</strong>
+					</td>
+					<td colspan="" data-label="Total price" class="text-left field-text">
+						{{field.value.total_price.amount}}
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+{% else %}
+	<span class="badge badge-secondary">
+		Data not accessible from Mirakl
+	</span>
+{% endif %}

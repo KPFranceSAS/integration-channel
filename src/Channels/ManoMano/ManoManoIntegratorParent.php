@@ -31,7 +31,7 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
                     $this->logger->info("Orders integrated : $counter ");
                 }
             } catch (Exception $exception) {
-                $this->addError('Problem retrieved '.$this->getChannel().' #' . $orderApi['order_id'] . ' > ' . $exception->getMessage());
+                $this->addError('Problem retrieved '.$this->getChannel().' #' . $orderApi['order_reference'] . ' > ' . $exception->getMessage());
             }
         }
     }
@@ -67,20 +67,20 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
     {
         $orderBC = new SaleOrder();
         $orderBC->customerNumber = $this->getCustomerBC($orderApi);
-        $dateDelivery = DatetimeUtils::transformFromIso8601($orderApi['delivery_date']['earliest']);
+        $dateDelivery = DatetimeUtils::transformFromIso8601($orderApi['created_at']);
         $orderBC->requestedDeliveryDate = $dateDelivery->format('Y-m-d');
         $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
       
-        $orderBC->shipToName = $orderApi['shipping_address']['lastname']." ".$orderApi['shipping_address']['firstname'];
-        $orderBC->billToName = $orderApi['billing_address']['lastname']." ".$orderApi['billing_address']['firstname'];
+        $orderBC->shipToName = $orderApi['addresses']["shipping"]['lastname']." ".$orderApi['addresses']["shipping"]['firstname'];
+        $orderBC->billToName = $orderApi['addresses']["billing"]['lastname']." ".$orderApi['addresses']["billing"]['firstname'];
         
 
         $valuesAddress = ['selling' => 'billing' , 'shipping'=>'shipping'];
 
         foreach ($valuesAddress as $bcVal => $miraklVal) {
-            $adress =  $orderApi[$miraklVal.'_address']["street_1"];
-            if (strlen($orderApi[$miraklVal.'_address']["street_2"]) > 0) {
-                $adress .= ', ' . $orderApi[$miraklVal.'_address']["street_2"];
+            $adress =  $orderApi['addresses'][$miraklVal]["address_line1"];
+            if (strlen($orderApi['addresses'][$miraklVal]["address_line2"]) > 0) {
+                $adress .= ', ' . $orderApi['addresses'][$miraklVal]["address_line2"];
                 ;
             }
             $adress = $this->simplifyAddress($adress);
@@ -90,20 +90,16 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
             } else {
                 $orderBC->{$bcVal . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
             }
-            $orderBC->{$bcVal . "PostalAddress"}->city = substr($orderApi[$miraklVal.'_address']["city"], 0, 100);
-            $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi[$miraklVal.'_address']["zip_code"];
+            $orderBC->{$bcVal . "PostalAddress"}->city = substr($orderApi['addresses'][$miraklVal]["city"], 0, 100);
+            $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi['addresses'][$miraklVal]["zipcode"];
             
-            $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = $orderApi[$miraklVal.'_address']["country_iso_code"];
-
-            if (strlen($orderApi[$miraklVal.'_address']['state']) > 0) {
-                $orderBC->{$bcVal . "PostalAddress"}->state = substr($orderApi[$miraklVal.'_address']['state'], 0, 30);
-            }
+            $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = $orderApi['addresses'][$miraklVal]["country_iso"];
         }
 
 
-        $orderBC->phoneNumber = $orderApi['shipping_address']['phone'];
-        $orderBC->email = $orderApi['customer_notification_email'];
-        $orderBC->externalDocumentNumber = (string)$orderApi->order_id;
+        $orderBC->phoneNumber = $orderApi['addresses']['shipping']['phone'];
+        $orderBC->email = $orderApi['addresses']['billing']['email'];
+        $orderBC->externalDocumentNumber = (string)$orderApi['order_reference'];
         $orderBC->pricesIncludeTax = true;
 
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
@@ -113,7 +109,7 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
             $orderBC->shippingAgentService = "1";
         }
 
-        $livraisonFees = floatval($orderApi['shipping_price']);
+        $livraisonFees = floatval($orderApi['shipping_price']['amount']);
         // ajout livraison
         $company = $this->getCompanyIntegration($orderApi);
 
@@ -134,8 +130,8 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
     protected function shouldBeSentByUps($orderApi): bool
     {
         $skus = [];
-        foreach ($orderApi["order_lines"] as $line) {
-            $skus[] = $line['offer_sku'];
+        foreach ($orderApi["products"] as $line) {
+            $skus[] = $line['seller_sku'];
         }
         return UpsGetTracking::shouldBeSentWith($skus);
     }
@@ -146,12 +142,12 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
     {
         $saleOrderLines = [];
         $company = $this->getCompanyIntegration($orderApi);
-        foreach ($orderApi["order_lines"] as $line) {
+        foreach ($orderApi["products"] as $line) {
             $saleLine = new SaleOrderLine();
             $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
-            $saleLine->itemId = $this->getProductCorrelationSku($line['offer_sku'], $company);
+            $saleLine->itemId = $this->getProductCorrelationSku($line['seller_sku'], $company);
 
-            $saleLine->unitPrice = floatval($line['price_unit']);
+            $saleLine->unitPrice = floatval($line['product_price']['amount']);
             $saleLine->quantity = $line['quantity'];
             $saleOrderLines[] = $saleLine;
         }

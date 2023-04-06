@@ -1,0 +1,17 @@
+{% if field.value|length > 0 %}
+	<div class="">
+		{{field.value.addresses.shipping.firstname}} {{field.value.addresses.shipping.lastname}}<br/>
+		{{field.value.addresses.shipping.address_line1}}<br/>
+		{% if field.value.addresses.shipping.address_line2 is defined %}
+			{{field.value.addresses.shipping.address_line2}}<br/>
+		{% endif %}
+		{{field.value.addresses.shipping.zipcode}}
+		{{field.value.addresses.shipping.city}},
+		{{field.value.addresses.shipping.country_iso}}
+
+	</div>
+{% else %}
+	<span class="badge badge-secondary">
+		Data not accessible from Mirakl
+	</span>
+{% endif %}
