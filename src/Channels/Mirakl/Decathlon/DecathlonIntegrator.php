@@ -45,6 +45,16 @@ class DecathlonIntegrator extends MiraklIntegratorParent
     }
 
 
+    protected function getExternalNumber($orderApi)
+    {
+        foreach ($orderApi['order_additional_fields'] as $field) {
+            if ($field['code']=='orderid') {
+                return $field['value'];
+            }
+        }
+        return  null;
+    }
+
 
     public function getCompanyIntegration($orderApi): string
     {

@@ -151,15 +151,7 @@ abstract class MiraklIntegratorParent extends IntegratorParent
 
 
 
-    protected function getExternalNumber($orderApi)
-    {
-        foreach ($orderApi['order_additional_fields'] as $field) {
-            if ($field['code']=='orderid') {
-                return $field['value'];
-            }
-        }
-        return  null;
-    }
+    abstract protected function getExternalNumber($orderApi);
    
 
     protected function shouldBeSentByUps($orderApi): bool

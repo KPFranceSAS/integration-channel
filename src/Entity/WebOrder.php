@@ -635,6 +635,12 @@ class WebOrder
         $webOrder = WebOrder::createOrderFromMirakl($orderApi);
         $webOrder->setSubchannel("Decathlon ".$orderApi['channel']['label']);
         $webOrder->setChannel(IntegrationChannel::CHANNEL_DECATHLON);
+        foreach ($orderApi['order_additional_fields'] as $field) {
+            if ($field['code']=='orderid') {
+                $webOrder->setExternalNumber($field['value']);
+            }
+        }
+
         return $webOrder;
     }
 
@@ -659,13 +665,8 @@ class WebOrder
         $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
         $webOrder->setContent($orderApi);
         
-        $externalNumber = null;
-        foreach ($orderApi['order_additional_fields'] as $field) {
-            if ($field['code']=='orderid') {
-                $externalNumber = $field['value'];
-            }
-        }
-        $webOrder->setExternalNumber($externalNumber);
+        
+        $webOrder->setExternalNumber($orderApi['order_id']);
         
         $skus = [];
         foreach ($orderApi["order_lines"] as $line) {
