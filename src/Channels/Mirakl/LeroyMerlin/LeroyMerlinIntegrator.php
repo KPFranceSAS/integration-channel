@@ -37,7 +37,7 @@ class LeroyMerlinIntegrator extends MiraklIntegratorParent
 
     protected function getExternalNumber($orderApi)
     {
-        return  $orderApi['order_id'];
+        return  $orderApi['id'];
     }
 
 

@@ -666,7 +666,7 @@ class WebOrder
         $webOrder->setContent($orderApi);
         
         
-        $webOrder->setExternalNumber($orderApi['order_id']);
+        $webOrder->setExternalNumber($orderApi['id']);
         
         $skus = [];
         foreach ($orderApi["order_lines"] as $line) {
