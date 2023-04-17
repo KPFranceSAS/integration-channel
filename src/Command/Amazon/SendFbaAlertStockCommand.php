@@ -71,7 +71,7 @@ class SendFbaAlertStockCommand extends Command
         int $qtyFbaInbound,
         int $qtyFbaSellable,
         int $qtyStockLaRoca,
-        int $qtyStock3plUk,
+        int $qtyStock3plUk
     ) {
         $this->exports[] = [
             'zone' => $zone,
