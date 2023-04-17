@@ -232,6 +232,17 @@ class ProductStockDaily
 
 
     /**
+    * @ORM\Column(type="integer", nullable=true)
+    */
+    private $uk3plBusinessCentralStock = 0;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $uk3plPurchaseBusinessCentralStock = 0;
+
+
+    /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"export_product"})
      */
@@ -716,6 +727,31 @@ class ProductStockDaily
     }
 
 
+    public function getUk3plBusinessCentralStock(): ?int
+    {
+        return $this->uk3plBusinessCentralStock;
+    }
+
+    public function setUk3plBusinessCentralStock(?int $uk3plBusinessCentralStock): self
+    {
+        $this->uk3plBusinessCentralStock = $uk3plBusinessCentralStock;
+
+        return $this;
+    }
+
+    public function getUk3plPurchaseBusinessCentralStock(): ?int
+    {
+        return $this->uk3plPurchaseBusinessCentralStock;
+    }
+
+    public function setUk3plPurchaseBusinessCentralStock(?int $uk3plPurchaseBusinessCentralStock): self
+    {
+        $this->uk3plPurchaseBusinessCentralStock = $uk3plPurchaseBusinessCentralStock;
+
+        return $this;
+    }
+
+
     public static function buildOneFromProduct(Product $product): ProductStockDaily
     {
         $stockDaily = new ProductStockDaily();
@@ -756,6 +792,11 @@ class ProductStockDaily
         
         $stockDaily->setLaRocaBusinessCentralStock($product->getLaRocaBusinessCentralStock());
         $stockDaily->setLaRocaPurchaseBusinessCentralStock($product->getLaRocaPurchaseBusinessCentralStock());
+
+        $stockDaily->setUk3plBusinessCentralStock($product->getUk3plBusinessCentralStock());
+        $stockDaily->setUk3plBusinessCentralStock($product->getUk3plPurchaseBusinessCentralStock());
+
+
         $stockDaily->setBusinessCentralStock($product->getBusinessCentralStock());
         $stockDaily->setBusinessCentralTotalStock($product->getBusinessCentralTotalStock());
 

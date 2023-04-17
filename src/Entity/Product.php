@@ -278,7 +278,15 @@ class Product
      */
     private $laRocaPurchaseBusinessCentralStock = 0;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $uk3plBusinessCentralStock= 0;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $uk3plPurchaseBusinessCentralStock= 0;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -363,6 +371,8 @@ class Product
      * @ORM\OneToMany(targetEntity=ProductCorrelation::class, mappedBy="product")
      */
     private $productCorrelations;
+
+
 
 
     public function __construct()
@@ -477,18 +487,18 @@ class Product
 
     public function needTobeAlertEu(): bool
     {
-        return $this->needTobeAlert('Eu');
+        return $this->needTobeAlert('Eu', 'laRoca');
     }
 
     public function needTobeAlertUk(): bool
     {
-        return $this->needTobeAlert('Uk');
+        return $this->needTobeAlert('Uk', 'uk3pl');
     }
 
 
-    public function needTobeAlert($zone): bool
+    public function needTobeAlert($zone, $fieldEntrepot): bool
     {
-        if ($this->{'minQtyFba' . $zone} && $this->laRocaBusinessCentralStock > 0) {
+        if ($this->{'minQtyFba' . $zone} && $this->{$fieldEntrepot.'BusinessCentralStock'} > 0) {
             $stock = $this->{'fba' . $zone . 'SellableStock'} + $this->{'fba' . $zone . 'InboundStock'};
             return ($stock <= $this->{'minQtyFba' . $zone});
         }
@@ -1293,5 +1303,29 @@ class Product
         return $this;
     }
 
-    
+    public function getUk3plBusinessCentralStock(): ?int
+    {
+        return $this->uk3plBusinessCentralStock;
+    }
+
+    public function setUk3plBusinessCentralStock(?int $uk3plBusinessCentralStock): self
+    {
+        $this->uk3plBusinessCentralStock = $uk3plBusinessCentralStock;
+
+        return $this;
+    }
+
+    public function getUk3plPurchaseBusinessCentralStock(): ?int
+    {
+        return $this->uk3plPurchaseBusinessCentralStock;
+    }
+
+    public function setUk3plPurchaseBusinessCentralStock(?int $uk3plPurchaseBusinessCentralStock): self
+    {
+        $this->uk3plPurchaseBusinessCentralStock = $uk3plPurchaseBusinessCentralStock;
+
+        return $this;
+    }
+
+
 }

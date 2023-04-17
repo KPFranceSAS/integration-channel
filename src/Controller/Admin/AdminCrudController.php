@@ -42,6 +42,11 @@ abstract class AdminCrudController extends AbstractCrudController
         return str_replace('CrudController', '', $reflectionClass->getShortName());
     }
 
+    public function getPluralName()
+    {
+        return $this->getName().'s';
+    }
+
 
     public function getDefautOrder(): array
     {
@@ -53,7 +58,7 @@ abstract class AdminCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular($this->getName())
-            ->setEntityLabelInPlural($this->getName() . 's')
+            ->setEntityLabelInPlural($this->getPluralName())
             ->setDateTimeFormat('yyyy-MM-dd HH:mm')
             ->setDateFormat('yyyy-MM-dd')
             ->setDefaultSort($this->getDefautOrder())

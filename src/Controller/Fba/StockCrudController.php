@@ -40,6 +40,12 @@ class StockCrudController extends AdminCrudController
     }
 
 
+    public function getPluralName(): string
+    {
+        return 'Inventories';
+    }
+
+
     public function configureCrud(Crud $crud): Crud
     {
         $crud = parent::configureCrud($crud);
@@ -122,6 +128,7 @@ class StockCrudController extends AdminCrudController
             IntegerField::new('fbaUkInboundShippedStock', 'FBA UK Inbound Shipped Qty'),
             IntegerField::new('fbaUkInboundReceivingStock', 'FBA UK Inbound Receiving Qty'),
             IntegerField::new('laRocaBusinessCentralStock', 'BC la Roca stock'),
+            IntegerField::new('uk3plBusinessCentralStock', 'BC 3plUk stock'),
             IntegerField::new('soldStockNotIntegrated', 'BC Amazon sales not integrated'),
             IntegerField::new('returnStockNotIntegrated', 'BC Amazon returns not integrated'),
             IntegerField::new('businessCentralStock', 'BC Amazon Stock'),
@@ -147,7 +154,8 @@ class StockCrudController extends AdminCrudController
             ->add(NumericFilter::new('differenceStock', 'Stock Delta'))
             ->add(NeedToAlertFilter::new('stockAlertEu', 'Need to sent stock EU')->setMarketplace('Eu'))
             ->add(NeedToAlertFilter::new('stockAlertUk', 'Need to sent stock Uk')->setMarketplace('Uk'))
-            ->add(NumericFilter::new('laRocaBusinessCentralStock', 'BC la Roca stock'));
+            ->add(NumericFilter::new('laRocaBusinessCentralStock', 'BC la Roca stock'))
+            ->add(NumericFilter::new('uk3plBusinessCentralStock', 'BC 3plUk stock'));
     }
 
 
@@ -180,6 +188,7 @@ class StockCrudController extends AdminCrudController
             IntegerField::new('differenceStock', 'Stock Delta')->setTemplatePath('admin/fields/stocks/deltaStock.html.twig'),
             IntegerField::new('fbaInboundStock', 'FBA Inbound Qty')->setTemplatePath('admin/fields/stocks/inboundStock.html.twig'),
             IntegerField::new('laRocaBusinessCentralStock', 'BC la Roca stock'),
+            IntegerField::new('uk3plBusinessCentralStock', 'BC 3plUk stock'),
         ];
     }
 }

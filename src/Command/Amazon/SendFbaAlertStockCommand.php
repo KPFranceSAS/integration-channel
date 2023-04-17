@@ -38,7 +38,7 @@ class SendFbaAlertStockCommand extends Command
         $zones = ['Eu', 'Uk'];
         foreach ($products as $product) {
             foreach ($zones as $zone) {
-                if ($product->needTobeAlert($zone)) {
+                if ($product->{'needTobeAlert'.$zone}()) {
                     $this->addToReport(
                         $zone,
                         $product->getSku(),
@@ -48,6 +48,7 @@ class SendFbaAlertStockCommand extends Command
                         $product->{'getFba' . $zone . 'InboundStock'}(),
                         $product->{'getFba' . $zone . 'SellableStock'}(),
                         $product->getLaRocaBusinessCentralStock(),
+                        $product->getUk3plBusinessCentralStock(),
                     );
                 }
             }
@@ -69,7 +70,8 @@ class SendFbaAlertStockCommand extends Command
         int $minFbaQty,
         int $qtyFbaInbound,
         int $qtyFbaSellable,
-        int $qtyStockLaRoca
+        int $qtyStockLaRoca,
+        int $qtyStock3plUk,
     ) {
         $this->exports[] = [
             'zone' => $zone,
@@ -80,6 +82,7 @@ class SendFbaAlertStockCommand extends Command
             'qtyFbaInbound' =>  $qtyFbaInbound,
             'qtyFbaSellable' =>  $qtyFbaSellable,
             'qtyStockLaRoca' => $qtyStockLaRoca,
+            'qtyStock3plUk' => $qtyStock3plUk,
         ];
     }
 

@@ -63,6 +63,11 @@ class AmzApiImportStock
                 $product->getSku(),
                 WebOrder::DEPOT_LAROCA
             ));
+            $product->setUk3plBusinessCentralStock($this->productStockFinder->getRealStockProductWarehouse(
+                $product->getSku(),
+                WebOrder::DEPOT_3PLUK
+            ));
+
             $product->setSoldStockNotIntegrated($this->getSoldQtyProductNotIntegrated($product));
             $product->setReturnStockNotIntegrated($this->getReturnQtyProductNotIntegrated($product));
         }
@@ -197,7 +202,6 @@ class AmzApiImportStock
 
             ->set('p.fbaUkSellableStock', 0)
             ->set('p.fbaUkUnsellableStock', 0)
-            ->set('p.fbaUkUnsellableStock', 0)
             ->set('p.fbaUkInboundStock', 0)
             ->set('p.fbaUkOutboundStock', 0)
             ->set('p.fbaUkReservedStock', 0)
@@ -208,7 +212,6 @@ class AmzApiImportStock
             ->set('p.fbaUkTotalStock', 0)
 
             ->set('p.fbaEuSellableStock', 0)
-            ->set('p.fbaEuUnsellableStock', 0)
             ->set('p.fbaEuUnsellableStock', 0)
             ->set('p.fbaEuInboundStock', 0)
             ->set('p.fbaEuOutboundStock', 0)
@@ -223,6 +226,8 @@ class AmzApiImportStock
             ->set('p.businessCentralTotalStock', 0)
             ->set('p.laRocaBusinessCentralStock', 0)
             ->set('p.laRocaPurchaseBusinessCentralStock', 0)
+            ->set('p.uk3plBusinessCentralStock', 0)
+            ->set('p.uk3plPurchaseBusinessCentralStock', 0)
             ->set('p.soldStockNotIntegrated', 0)
             ->set('p.returnStockNotIntegrated', 0)
             ->set('p.differenceStock', 0)

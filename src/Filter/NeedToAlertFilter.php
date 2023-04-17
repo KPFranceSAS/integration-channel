@@ -37,8 +37,11 @@ class NeedToAlertFilter implements FilterInterface
 
         if ($filterDataDto->getValue()) {
             $alias = $filterDataDto->getEntityAlias();
+
+            $stock = $this->marketplace == 'Eu' ? 'laRocaBusinessCentralStock' : 'uk3plBusinessCentralStock';
+
             $queryBuilder->andWhere('(' . $alias . '.fba' . $this->marketplace . 'TotalStock + ' . $alias . '.fba' . $this->marketplace . 'InboundStock ) < ' . $alias . '.minQtyFba' . $this->marketplace)
-                ->andWhere($alias . '.laRocaBusinessCentralStock > 0')
+                ->andWhere($alias . '.'.$stock.' > 0')
                 ->andWhere($alias . '.minQtyFba' . $this->marketplace . ' > 0');
         }
     }
