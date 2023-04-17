@@ -25,7 +25,7 @@ class ConnectManoManoFrCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dump($this->manoManoFrApi->getAllOrdersToSend());
+        $this->manoManoFrApi->markOrderAsFulfill('M230457184259', "UPS", "UPS", "https://www.ups.com/track?loc=en_IT&trackNums=1ZB5K5656820026818", "1ZB5K5656820026818");
         
         return Command::SUCCESS;
     }

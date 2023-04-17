@@ -60,7 +60,6 @@ abstract class ManoManoApiParent implements ApiInterface
         return $orders;
     }
 
-
     public function getAllOrdersToSend()
     {
         $pendings = $this->getOrders(['status' => 'PENDING']);
@@ -68,9 +67,6 @@ abstract class ManoManoApiParent implements ApiInterface
         $orders = array_merge($pendings, $preparations);
         return $orders;
     }
-
-
-    
 
    
     public function getOrder(string $orderNumber)
@@ -80,20 +76,14 @@ abstract class ManoManoApiParent implements ApiInterface
         return $reponse['content'];
     }
 
-
-    
-
-
     public const PAGINATION = 50;
-
-
 
 
     public function markOrderAsFulfill($orderId, $carrierCode, $carrierName, $carrierUrl, $trackingNumber):bool
     {
         $products = [];
         $order = $this->getOrder($orderId);
-        foreach($order['products'] as $product){
+        foreach($order['products'] as $product) {
             $products[] = [
                 "seller_sku" =>  $product["seller_sku"],
                 "quantity"=>  $product["quantity"]
@@ -101,31 +91,35 @@ abstract class ManoManoApiParent implements ApiInterface
         }
 
         $body = [
-         [
-            "carrier"=> $carrierCode,
-            "order_reference"=>  $orderId,
-            "seller_contract_id"=> $this->contractId,
-            "tracking_number"=>  $trackingNumber,
-            "tracking_url"=> $carrierUrl,
-            "products"=>  $products
+            [
+                "carrier"=> $carrierCode,
+                "order_reference"=>  $orderId,
+                "seller_contract_id"=> (int)$this->contractId,
+                "tracking_number"=>  $trackingNumber,
+                "tracking_url"=> $carrierUrl,
+                "products"=>  $products
             ]
-         ];
-         $reponse =  $this->sendRequest('orders/v1/shippings', [], 'POST', json_encode($body));
-
-
+        ];
+        $reponse =  $this->sendRequest('orders/v1/shippings', [], 'POST', json_encode($body));
+        if($reponse) {
+            throw new Exception("Error during shipping confirmation ".json_encode($reponse));
+        }
         return true;
     }
 
     public function markOrderAsAccepted($order): bool
     {
-        if($order['status']=='PENDING'){
+        if($order['status']=='PENDING') {
             $body = [
                 [
                   "order_reference" => $order['order_reference'],
-                  "seller_contract_id" =>$this->contractId,
+                  "seller_contract_id" => (int)$this->contractId,
                 ]
               ];
             $reponse =  $this->sendRequest('orders/v1/accept-orders', [], 'POST', json_encode($body));
+            if($reponse) {
+                throw new Exception("Error during shipping confirmation ".json_encode($reponse));
+            }
             $this->logger->info('Validated');
         } else {
             $this->logger->info('Already validated');
