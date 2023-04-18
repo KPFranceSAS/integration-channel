@@ -11,7 +11,7 @@ class LeroyMerlinIntegrator extends MiraklIntegratorParent
 {
     public const LEROYMERLIN_FR = '000802';
     public const LEROYMERLIN_ES = '000803';
-    public const LEROYMERLIN_IT = '000804';
+    public const LEROYMERLIN_IT = '000816';
        
 
     public function getChannel()
