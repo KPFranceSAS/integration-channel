@@ -255,8 +255,10 @@ class ImportPricingCrudController extends AdminCrudController
             $reader = ReaderEntityFactory::createCSVReader();
             $reader->setFieldDelimiter(';');
             $reader->setFieldEnclosure('"');
+            $isExcel= false;
         } else {
             $reader = ReaderEntityFactory::createReaderFromFile($uploadedFile->getClientOriginalName());
+            $isExcel= true;
         }
 
         $reader->open($uploadedFile->getPathname());
@@ -270,6 +272,12 @@ class ImportPricingCrudController extends AdminCrudController
                 } else {
                     $cells = $row->toArray();
                     if (count($cells) == count($header)) {
+                        $dataLines = array_combine($header, $cells);
+                        $datas[] = $dataLines;
+                    } elseif($isExcel && count($cells) < count($header)) {
+                        while(count($cells) != count($header)) {
+                            $cells[]=null;
+                        }
                         $dataLines = array_combine($header, $cells);
                         $datas[] = $dataLines;
                     }
