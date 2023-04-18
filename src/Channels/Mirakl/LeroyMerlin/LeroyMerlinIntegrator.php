@@ -27,7 +27,7 @@ class LeroyMerlinIntegrator extends MiraklIntegratorParent
             return self::LEROYMERLIN_FR;
         } elseif ($codeChannel == '002') {
             return self::LEROYMERLIN_ES;
-        } elseif ($codeChannel == '003') {
+        } elseif ($codeChannel == '005') {
             return self::LEROYMERLIN_IT;
         } else {
             throw new Exception('No customer has been setup for LeroyMerlin on channel '.$codeChannel);
