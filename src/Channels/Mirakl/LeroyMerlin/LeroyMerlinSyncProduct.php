@@ -39,7 +39,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $flatProduct ['product_category'] =  '200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002';
             $flatProduct['feature_08547_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ='LOV_239437'; // Panneau solaire d'appoint
             $flatProduct['feature_22088_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ='LOV_070969'; // Panneau solaire d'appoint
-        } elseif($familyPim = 'power_station') {
+        } elseif($familyPim == 'power_station') {
             $flatProduct ['product_category'] =  "200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
             $flatProduct['ATT_15344'] ='LOV_000001'; // included battery
             $flatProduct['feature_08547_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005'] ='LOV_066641'; // Nom du produit : Station d'énergie
@@ -47,11 +47,10 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $flatProduct['feature_11733_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005']= 'LOV_000275'; // Groupe électrogène|Type de démarrage
             $flatProduct['feature_22088_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005']= 'LOV_211666'; // Description du produit| Groupe électrogène|
             $flatProduct['ATT_20185']= 'LOV_000001'; // Régulation électronique du voltage
-        } elseif($familyPim = 'robot_piscine') {
+        } elseif($familyPim == 'robot_piscine') {
             $flatProduct ['product_category'] =  "201697|2043|R09-018-004";
             $flatProduct ['feature_08547_201697|2043|R09-018-004'] = 'LOV_207112'; // robot de piscine
             $flatProduct ['feature_22088_201697|2043|R09-018-004'] = 'LOV_207112'; // robot de piscine
-            
         }
 
 
