@@ -39,8 +39,6 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $flatProduct ['product_category'] =  '200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002';
             $flatProduct['feature_08547_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ='LOV_239437'; // Panneau solaire d'appoint
             $flatProduct['feature_22088_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ='LOV_070969'; // Panneau solaire d'appoint
-
-
         } elseif($familyPim = 'power_station') {
             $flatProduct ['product_category'] =  "200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
             $flatProduct['ATT_15344'] ='LOV_000001'; // included battery
@@ -49,6 +47,11 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $flatProduct['feature_11733_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005']= 'LOV_000275'; // Groupe électrogène|Type de démarrage
             $flatProduct['feature_22088_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005']= 'LOV_211666'; // Description du produit| Groupe électrogène|
             $flatProduct['ATT_20185']= 'LOV_000001'; // Régulation électronique du voltage
+        } elseif($familyPim = 'robot_piscine') {
+            $flatProduct ['product_category'] =  "201697|2043|R09-018-004";
+            $flatProduct ['feature_08547_201697|2043|R09-018-004'] = 'LOV_207112'; // robot de piscine
+            $flatProduct ['feature_22088_201697|2043|R09-018-004'] = 'LOV_207112'; // robot de piscine
+            
         }
 
 
@@ -57,7 +60,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
 
         foreach ($locales as $locale) {
             $localePim = $locale.'_'.strtoupper($locale);
-            $localeMirakl = $locale.'_'.strtoupper($locale);
+            $localeMirakl = $locale.'-'.strtoupper($locale);
             $flatProduct['i18n_'.$locale.'_12963_title'] = $this->getAttributeSimple($product, "article_name", $localePim);
 
             $description = $this->getAttributeSimple($product, "description", $localePim);
@@ -68,7 +71,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             }
 
             for ($i = 1; $i <= 5;$i++) {
-                $attributeImageLoc = $this->getAttributeSimpleScopable($product, 'image_url_loc_'.$i, 'Marketplace', $localePim);
+                $attributeImageLoc = $this->getAttributeSimple($product, 'image_url_loc_'.$i, $localePim);
                 $keyArray = $locale == 'fr' ? 'media_'.$i : 'media_'.$i.'_'.$localeMirakl;
                 $flatProduct[$keyArray] = $attributeImageLoc ? $attributeImageLoc : $this->getAttributeSimple($product, 'image_url_'.$i);
             }

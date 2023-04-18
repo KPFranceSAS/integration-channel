@@ -28,7 +28,7 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
             "product_id_type" => "SHOP_SKU",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "logistic_class" => "FREE",
-            "description" => 'Offer '.$product->getDescription(),
+            "description" => $product->getDescription(),
             "leadtime_to_ship" => "2",
             "all_prices" => [],
             "offer_additional_fields" => [
