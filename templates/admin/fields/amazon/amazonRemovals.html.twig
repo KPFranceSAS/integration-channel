@@ -44,7 +44,9 @@
 								<td data-label="Sku" class=" text-left field-text">
 									{% if item.product %}{{item.product.sku}}{% else %}{{item.sku}}{% endif %}
 								</td>
-								
+								<td data-label="Asin" class=" text-left field-text">
+									{% if item.product %}{{item.product.asin}}{% else %}{{item.fnsku}}{% endif %}
+								</td>
 								<td data-label="Fnsku" class=" text-left field-text">
 									{{item.fnsku}}
 								</td>
