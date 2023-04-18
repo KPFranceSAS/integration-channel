@@ -50,7 +50,7 @@ class AddMissingProductsCommand extends Command
         $i = 1;
         $q = $this->manager->createQuery('select a from App\Entity\AmazonReturn a where a.product IS NULL');
         foreach ($q->toIterable() as $amz) {
-            $this->addProductByFnsku($amz);
+            $this->addProductByFnskuSku($amz);
             ++$i;
             if (($i % $batchSize) === 0) {
                 $this->logger->info("Saved  $i returns ");
@@ -65,7 +65,7 @@ class AddMissingProductsCommand extends Command
         $i = 1;
         $q = $this->manager->createQuery('select a from App\Entity\AmazonReimbursement a where a.product IS NULL');
         foreach ($q->toIterable() as $amz) {
-            $this->addProductByFnsku($amz);
+            $this->addProductByFnskuSku($amz);
             ++$i;
             if (($i % $batchSize) === 0) {
                 $this->logger->info("Saved  $i Reimbursement ");
@@ -87,7 +87,7 @@ class AddMissingProductsCommand extends Command
 
 
 
-    protected function addProductByFnsku($amz)
+    protected function addProductByFnskuSku($amz)
     {
         $product = $this->manager->getRepository(Product::class)->findOneBy([
             'fnsku' => $amz->getFnsku(),

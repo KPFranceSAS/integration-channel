@@ -6,6 +6,7 @@
 	<thead>
 		<tr>
 			<th style="padding:5px; border: 1px solid #aeabab;" align="left">Sku</th>
+			<th style="padding:5px; border: 1px solid #aeabab;" align="left">Fnsku</th>
 			<th style="padding:5px; border: 1px solid #aeabab;" align="left">Name</th>
 			<th style="padding:5px; border: 1px solid #aeabab;" align="left">Brand</th>
 			<th style="padding:5px; border: 1px solid #aeabab;" align="left">Qty</th>
@@ -14,9 +15,13 @@
 	<tbody>
 
 		{% for item in removal.amazonRemovalOrders %}
+			{% if item.product %}
 			<tr>
 				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
 					{{item.product.sku}}
+				</td>
+				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
+					{{item.fnsku}}
 				</td>
 				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
 					{{item.product.description}}
@@ -28,6 +33,26 @@
 					{{item.requestedQuantity}}
 				</td>
 			</tr>
+			{% else %}
+				<tr>
+				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
+					{{item.sku}}
+				</td>
+				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
+					{{item.fnsku}}
+				</td>
+				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
+					-
+				</td>
+				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
+					-
+				</td>
+				<td style="padding:5px; border: 1px solid #aeabab;" align="left">
+					{{item.requestedQuantity}}
+				</td>
+			</tr>
+			{% endif %}
+
 		{% endfor %}
 	</tbody>
 </table>

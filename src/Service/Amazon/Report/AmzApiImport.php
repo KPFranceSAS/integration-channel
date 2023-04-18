@@ -147,16 +147,15 @@ abstract class AmzApiImport
     }
 
 
-    protected function addProductByFnsku($amz)
+    protected function addProductByFnskuSku($amz)
     {
-        $fnsku = $amz->getFnsku();
+        
         $params = [
-            'fnsku' => $fnsku
+            'fnsku' => $amz->getFnsku()
         ];
 
         if ($amz->getSku()) {
-            $sku = $this->getProductCorrelationSku($amz->getSku());
-            $params ['sku'] = $sku;
+            $params ['sku'] = $this->getProductCorrelationSku($amz->getSku());
         }
 
         $product = $this->manager
@@ -164,8 +163,33 @@ abstract class AmzApiImport
                         ->findOneBy($params);
         if ($product) {
             $amz->setProduct($product);
+            return;
         }
+
+
+        $product = $this->manager
+            ->getRepository(Product::class)
+            ->findOneBySku($this->getProductCorrelationSku($amz->getSku()));
+            
+        if ($product) {
+            $amz->setProduct($product);
+            return;
+        }
+
+
+        $product = $this->manager
+            ->getRepository(Product::class)
+            ->findOneByFnsku($amz->getFnsku());
+            
+        if ($product) {
+            $amz->setProduct($product);
+            return;
+        }
+
     }
+
+
+
 
 
     protected function getProductCorrelationSku(string $sku): string

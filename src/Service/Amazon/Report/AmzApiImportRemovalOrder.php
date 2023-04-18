@@ -31,7 +31,7 @@ class AmzApiImportRemovalOrder extends AmzApiImport
             $this->manager->persist($orderAmz);
         }
         $orderAmz->importData($this->exchangeRate, $importOrder);
-        $this->addProductByFnsku($orderAmz);
+        $this->addProductByFnskuSku($orderAmz);
 
         return $orderAmz;
     }

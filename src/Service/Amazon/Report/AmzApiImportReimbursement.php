@@ -48,7 +48,7 @@ class AmzApiImportReimbursement extends AmzApiImport
             }
         }
         
-        $this->addProductByFnsku($reimbursementAmz);
+        $this->addProductByFnskuSku($reimbursementAmz);
         if ($importOrder['original-reimbursement-id']) {
             $reimbursementOriginalAmz = $this->manager->getRepository(AmazonReimbursement::class)->findOneBy([
                 "reimbursementId" => $importOrder['original-reimbursement-id'],

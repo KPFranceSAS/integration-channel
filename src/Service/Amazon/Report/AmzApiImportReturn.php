@@ -45,11 +45,8 @@ class AmzApiImportReturn extends AmzApiImport
             }
         }
 
-        
 
-        
-
-        $this->addProductByFnsku($returnAmz);
+        $this->addProductByFnskuSku($returnAmz);
         return $returnAmz;
     }
 }

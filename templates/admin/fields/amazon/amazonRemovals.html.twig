@@ -6,6 +6,9 @@
 								Sku
 							</th>
 							<th>
+								Fnsku
+							</th>
+							<th>
 								Description
 							</th>
 							<th>
@@ -39,19 +42,21 @@
 							<tr>
 								
 								<td data-label="Sku" class=" text-left field-text">
-									{{item.product.sku}}
+									{% if item.product %}{{item.product.sku}}{% else %}{{item.sku}}{% endif %}
+								</td>
+								
+								<td data-label="Fnsku" class=" text-left field-text">
+									{{item.fnsku}}
 								</td>
 								<td data-label="Description" class=" text-left field-text">
-									{{item.product.description}}
+									{% if item.product %}{{item.product.description}}{% else %}-{% endif %}
 								</td>
 								<td data-label="Brand" class=" text-left field-text">
-									{{item.product.brand}}
+									{% if item.product %}{{item.product.brand}}{% else %}-{% endif %}
 								</td>
 								<td data-label="Status" class=" text-left field-text">
 									{% include "admin/fields/amazon/partialStatus.html.twig" with {'status':item.calculateStatus } %}
 								</td>
-	
-								
 								<td data-label="Disposition" class=" text-left field-text">
 									{{item.disposition}}
 								</td>
