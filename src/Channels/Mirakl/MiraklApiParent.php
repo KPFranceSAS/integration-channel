@@ -2,7 +2,6 @@
 
 namespace App\Channels\Mirakl;
 
-use App\Channels\Mirakl\MiraklClient;
 use App\Service\Aggregator\ApiInterface;
 use Exception;
 use GuzzleHttp\Client;
@@ -58,11 +57,6 @@ abstract class MiraklApiParent implements ApiInterface
     
     /**
      * Summary of GetOrdersRequest
-     * order_ids
-     * order_references_for_customer
-     * start_date end_date
-     * order_state_codes
-     * STAGING, WAITING_ACCEPTANCE, WAITING_DEBIT, WAITING_DEBIT_PAYMENT, SHIPPING, SHIPPED, TO_COLLECT, RECEIVED, CLOSED, REFUSED, CANCELED
      * @param array $params
      * @return array
      */
@@ -99,13 +93,26 @@ abstract class MiraklApiParent implements ApiInterface
     public function getAllOrdersToSend()
     {
         $params = [
-            'order_state_codes' => [
-                'WAITING_ACCEPTANCE',
+            'order_states' => [
                 "SHIPPING"
             ]
         ];
         return $this->getOrders($params);
     }
+
+
+
+
+    public function getAllOrdersToAccept()
+    {
+        $params = [
+            'order_states' => [
+                'WAITING_ACCEPTANCE',
+            ]
+        ];
+        return $this->getOrders($params);
+    }
+
 
 
     

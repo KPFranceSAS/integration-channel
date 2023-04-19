@@ -181,14 +181,4 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         return $saleOrderLines;
     }
 
-
-    protected function checkAfterPersist(WebOrder $order, $orderApi)
-    {
-        $accepted = $this->getMiraklApi()->markOrderAsAccepted($orderApi);
-        if ($accepted) {
-            $this->addLogToOrder($order, 'Marked as accepted on '.$this->getChannel());
-        } else {
-            $this->addLogToOrder($order, 'Order already accepted on '.$this->getChannel());
-        }
-    }
 }
