@@ -13,7 +13,7 @@ class ConnectBoulangerCommand extends Command
     protected static $defaultDescription = 'Connection to Boulanger';
 
     public function __construct(
-        BoulangerApi $boulangerApi,
+        BoulangerApi $boulangerApi
     ) {
         $this->boulangerApi = $boulangerApi;
         parent::__construct();

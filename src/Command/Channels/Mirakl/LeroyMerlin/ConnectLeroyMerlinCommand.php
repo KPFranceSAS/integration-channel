@@ -13,7 +13,7 @@ class ConnectLeroyMerlinCommand extends Command
     protected static $defaultDescription = 'Connection to Leroy Merlin';
 
     public function __construct(
-        LeroyMerlinApi $leroyMerlinApi,
+        LeroyMerlinApi $leroyMerlinApi
     ) {
         $this->leroyMerlinApi = $leroyMerlinApi;
         parent::__construct();
