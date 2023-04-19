@@ -38,14 +38,13 @@ abstract class UpdateStatusParent
 
 
     public function __construct(
-        ManagerRegistry $manager, 
-        LoggerInterface $logger, 
-        MailService $mailer, 
-        BusinessCentralAggregator $businessCentralAggregator, 
+        ManagerRegistry $manager,
+        LoggerInterface $logger,
+        MailService $mailer,
+        BusinessCentralAggregator $businessCentralAggregator,
         ApiAggregator $apiAggregator,
         TrackingAggregator $trackingAggregator
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
@@ -130,16 +129,25 @@ abstract class UpdateStatusParent
         $statusSaleOrder = $this->getSaleOrderStatus($order);
 
         if (in_array($statusSaleOrder['statusCode'], ["99", "-1", "0", "1", "2"])) {
-            $this->addOnlyLogToOrderIfNotExists($order, 'Order status in BC >'.$statusSaleOrder['statusLabel'] .' statusCode '.$statusSaleOrder['statusCode']);
             if ($statusSaleOrder['statusCode']=="99" || $statusSaleOrder['statusCode']=="-1") {
+                $this->addOnlyLogToOrderIfNotExists($order, 'Order status in BC >'.$statusSaleOrder['statusLabel']);
                 $this->checkShipmentIsLate($order);
+            } else {
+                if($statusSaleOrder['statusCode']=="0") {
+                    $statusLabel = 'Waiting for picking';
+                } elseif($statusSaleOrder['statusCode']=="1") {
+                    $statusLabel = 'Processing picking';
+                } else {
+                    $statusLabel = 'Ended picking';
+                }
+                $this->addOnlyLogToOrderIfNotExists($order, 'Order status in BC >'.$statusLabel);
             }
             $this->checkOrderIsLate($order);
             return;
         }
 
         if (in_array($statusSaleOrder['statusCode'], ["3", "4"]) && strlen($statusSaleOrder['InvoiceNo'])) {
-            $this->addOnlyLogToOrderIfNotExists($order, 'Warehouse shipment created in the ERP with number ' . $statusSaleOrder['ShipmentNo']);
+            $this->addOnlyLogToOrderIfNotExists($order, 'Warehouse shipment posted in the ERP with number ' . $statusSaleOrder['ShipmentNo']);
             $this->addOnlyLogToOrderIfNotExists($order, 'Invoice created in the ERP with number ' . $statusSaleOrder['InvoiceNo']);
             $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
             $invoice =  $businessCentralConnector->getSaleInvoiceByNumber($statusSaleOrder['InvoiceNo']);
@@ -166,11 +174,11 @@ abstract class UpdateStatusParent
 
 
                 if ($order->getCarrierService() == WebOrder::CARRIER_UPS) {
-                        $tracking = $statusSaleOrder['trackingNumber'];
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by UPS with tracking number ' . $tracking);
-                        $order->setTrackingUrl(UpsGetTracking::getTrackingUrlBase($tracking));
-                        $order->setTrackingCode($tracking);
-                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
+                    $tracking = $statusSaleOrder['trackingNumber'];
+                    $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by UPS with tracking number ' . $tracking);
+                    $order->setTrackingUrl(UpsGetTracking::getTrackingUrlBase($tracking));
+                    $order->setTrackingCode($tracking);
+                    $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
                 }
 
 

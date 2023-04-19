@@ -47,7 +47,7 @@ class IntegrateAmzFbaReturn
 
     public function transformAllSaleReturns()
     {
-        $amazonReturns = $this->manager->getRepository(AmazonReturn::class)->findAll();
+        $amazonReturns = $this->manager->getRepository(AmazonReturn::class)->findBy([], ['returnDate' => 'DESC']);
         foreach ($amazonReturns as $amazonReturn) {
             $this->logger->info('Integration sale return '.$amazonReturn);
             $integrated = $this->transformSaleReturn($amazonReturn);
@@ -72,6 +72,8 @@ class IntegrateAmzFbaReturn
         if (!$invoice) {
             $this->logger->error('The invoice '.$webOrder->getInvoiceErp().' has not been found in ERP');
             return false;
+        } else {
+            $this->logger->error('Invoice '.$webOrder->getInvoiceErp().' has been found in ERP');
         }
 
         $saleReturnIntegrated = $this->kpFranceConnector->getSaleReturnByInvoiceAndLpn($webOrder->getInvoiceErp(), $amazonReturn->getLicensePlateNumber());
@@ -105,7 +107,7 @@ class IntegrateAmzFbaReturn
 
         $locationCode= $this->defineLocationCode($amazonReturn);
 
-
+        $lineNumber = 10000;
         $saleReturnLine = null;
         $item = $this->kpFranceConnector->getItemByNumber($skuProduct);
         foreach ($invoice['salesInvoiceLines'] as $saleInvoiceLine) {
@@ -124,16 +126,18 @@ class IntegrateAmzFbaReturn
 
         
         if ($saleReturnLine) {
-            $this->logger->error('Line with '.$skuProduct.' was not found');
-            // return false;
+            $this->logger->error('Line with '.$skuProduct.' was found');
         }
        
+
+
+        $saleReturn->salesReturnOrderLines[]=$saleReturnLine;
 
         dump(json_encode($saleReturn->transformToArray()));
         $createdSaleReturnOrder = $this->kpFranceConnector->createSaleReturnOrder($saleReturn->transformToArray());
         dump($createdSaleReturnOrder);
 
-        $saleReturnLine->number= $createdSaleReturnOrder['number'];
+        $saleReturnLine->documentNo= $createdSaleReturnOrder['number'];
 
         dump(json_encode($saleReturnLine->transformToArray()));
 
