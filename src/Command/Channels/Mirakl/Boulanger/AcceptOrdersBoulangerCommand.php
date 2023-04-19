@@ -10,7 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AcceptOrdersBoulangerCommand extends Command
 {
     protected static $defaultName = 'app:accept-orders-boulanger';
-    protected static $defaultDescription = 'Accept orders on Leroy Merlin';
+    protected static $defaultDescription = 'Accept orders on Boulnager';
 
     public function __construct(
         BoulangerAcceptOrder $boulangerAcceptOrder
