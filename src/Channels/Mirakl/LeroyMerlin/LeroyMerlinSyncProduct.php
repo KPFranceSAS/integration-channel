@@ -50,7 +50,9 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         } elseif($familyPim == 'robot_piscine') {
             $flatProduct ['product_category'] =  "201697|2043|R09-018-004";
             $flatProduct ['feature_08547_201697|2043|R09-018-004'] = 'LOV_207112'; // robot de piscine
-            $flatProduct ['feature_22088_201697|2043|R09-018-004'] = 'LOV_207112'; // robot de piscine
+        } elseif($familyPim == 'cutting_machine') {
+            $flatProduct ['product_category'] =  "200595|IMPRIMANTE_3D|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
+            $flatProduct ['ATT_15344'] = 'LOV_000002'; // robot de piscine
         }
 
 
