@@ -29,95 +29,81 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $this->logger->info('Flat product '.$product['identifier']);
 
         $flatProduct = [
-            'shop_sku' => $product['identifier'],
-            'gtin_EAN13' => $this->getAttributeSimple($product, 'ean'),
+            'REF_UNIV' => $product['identifier'],
+            "TYPE_REF_UNIVERSELLE" => "SKU"
         ];
 
+        $flatProduct["SKU_MARCHAND"] = $product['identifier'];
+        
+        $flatProduct["ACCROCHE"]  =$this->getAttributeSimple($product, 'article_name', 'fr_FR');
+        $flatProduct["PARTNUMBER"]  = $this->getAttributeSimple($product, 'ean');
+        
+
+        $description = $this->getAttributeSimple($product, "description", "fr_FR");
+        if($description) {
+            $flatProduct["DESCRIPTIF"]  = substr($description, 0, 5000);
+        }
+
+        $attributeImageMain = $this->getAttributeSimple($product, 'image_url_loc_1', "fr_FR");
+        $flatProduct["VISUEL_PRINC"] = $attributeImageMain ? $attributeImageMain : $this->getAttributeSimple($product, 'image_url_1');
+
+        for ($i = 2; $i <= 9;$i++) {
+            $j=$i-1;
+            $attributeImageLoc = $this->getAttributeSimple($product, 'image_url_loc_'.$i, "fr_FR");
+            $flatProduct["VISUEL_SEC_".$j] = $attributeImageLoc ? $attributeImageLoc : $this->getAttributeSimple($product, 'image_url_'.$i);
+        }
+
+        $flatProduct["FICHE_TECHNIQUE"]  = $this->getAttributeSimple($product, 'user_guide_url', "fr_FR");
+
+        $flatProduct["LARGEUR_PRODUIT"] = $this->getAttributeUnit($product, 'product_lenght', 'CENTIMETER', 0).' cm';
+        $flatProduct["HAUTEUR_PRODUIT"] = $this->getAttributeUnit($product, 'product_height', 'CENTIMETER', 0).' cm';
+        $flatProduct["PROFONDEUR"] = $this->getAttributeUnit($product, 'product_width', 'CENTIMETER', 0).' cm';
+        $flatProduct["POIDS_NET"] = $this->getAttributeUnit($product, 'product_weight', 'KILOGRAM', 0).' kg';
+        
         $familyPim =$product['family'];
 
-        if($familyPim == 'solar_panel') {
-            $flatProduct ['product_category'] =  '200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002';
-            $flatProduct['feature_08547_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ='LOV_239437'; // Panneau solaire d'appoint
-            $flatProduct['feature_22088_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ='LOV_070969'; // Panneau solaire d'appoint
-
-
-        } elseif($familyPim = 'power_station') {
-            $flatProduct ['product_category'] =  "200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
-            $flatProduct['ATT_15344'] ='LOV_000001'; // included battery
-            $flatProduct['feature_08547_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005'] ='LOV_066641'; // Nom du produit : Station d'énergie
-            $flatProduct['feature_00212_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005']= 'LOV_217105'; // Type de moteur à batterie
-            $flatProduct['feature_11733_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005']= 'LOV_000275'; // Groupe électrogène|Type de démarrage
-            $flatProduct['feature_22088_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005']= 'LOV_211666'; // Description du produit| Groupe électrogène|
-            $flatProduct['ATT_20185']= 'LOV_000001'; // Régulation électronique du voltage
+        if($familyPim == 'solar_panel' || $familyPim == 'power_station') {
+            $flatProduct["CATEGORIE"] = "603";
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/categorie']= $familyPim == 'solar_panel' ? "Panneau solaire" : "Batterie nomade";
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/specifique_samsung']="Non";
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/specifique_apple']="Non";
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/mise_en_place']=  $familyPim == 'solar_panel' ? "Externe" : "Interne et Externe";
+            $flatProduct['LISTE_CENTRALE_BATTERIE/batterie_nomade/cable_inclus']= "Aucun";
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/appareil_compatible']= "Universel";
+            $flatProduct["CENTRALE_BATTERIE/caracteristiques_generales/modele_s_compatible_s"]=$this->getAttributeSimple($product, 'compatible_devices', "fr_FR");
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/courant_de_sortie_en_ma']='Non précisé';
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/connectique']="Aucun";
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/nombre_de_port_usb']=$this->getAttributeSimple($product, 'number_usb_port');
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/puissance_de_sortie']="Non précisé";
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/capacite__en_wh']=$this->getAttributeUnit($product, 'battery_capacity_wh', 'WATTHOUR', 0).' Wh';
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/UTILISATION']="Alimentez 99,99 % des appareils à usage intensif à la maison, à l'extérieur ou au travail.";
+            $flatProduct['CENTRALE_BATTERIE/batterie_nomade/capacite__en_wh']=$this->getAttributeUnit($product, 'battery_capacity_wh', 'WATTHOUR', 0).' Wh';;
+            $flatProduct['CENTRALE_BATTERIE/batterie_nomade/temperature_optimale_de_fonctionnement']="-10°C à 40°C";
+            $flatProduct['CENTRALE_BATTERIE/batterie_nomade/nombre_de_port_usb']=$this->getAttributeSimple($product, 'number_usb_port');
+            $flatProduct['CENTRALE_BATTERIE/batterie_nomade/cable_inclus']="Aucun";
+        } else if ($familyPim == 'robot_piscine'){
+            $flatProduct["CATEGORIE"] = "7205";
+            $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/type_de_piscine']="Enterrée, Hors-sol";
+            $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/forme_de_piscine']="Toutes formes";
+            $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/fond_de_piscine']="Pente composée, Pente douce, Plat, Pointe diamant";
+            $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/longueur_de_piscine_en_m']="12m";
+            $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/revetement']="Carrelage, Liner, Coque polyester, PVC armé, Béton peint";
+            $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/type_de_robot']="Electrique";
+            $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/type_de_deplacement']="Intelligent";
+            $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/type_de_nettoyage']=$this->getAttributeSimple($product, 'swim_cleaning_type', "fr_FR");
+            $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/debit_d_aspiration_m3-h']="Non précisé";
+            $flatProduct['CENTRALE_ROBOT_PISCINE/services_inclus/fabrique_en']="Chine";
         }
-
-
-
-        $locales = ['fr', 'es', 'it'];
-
-        foreach ($locales as $locale) {
-            $localePim = $locale.'_'.strtoupper($locale);
-            $localeMirakl = $locale.'_'.strtoupper($locale);
-            $flatProduct['i18n_'.$locale.'_12963_title'] = $this->getAttributeSimple($product, "article_name", $localePim);
-
-            $description = $this->getAttributeSimple($product, "description", $localePim);
-            if($description) {
-                $descriptionFormate = str_replace('</p>', '</p><p>&nbsp;</p>', $description);
-                $descriptionFormate = str_replace('</li>', '<br/><br/></li>', $descriptionFormate);
-                $flatProduct['i18n_'.$locale.'_01022_longdescription'] = substr($descriptionFormate, 0, 5000);
-            }
-
-            for ($i = 1; $i <= 5;$i++) {
-                $attributeImageLoc = $this->getAttributeSimpleScopable($product, 'image_url_loc_'.$i, 'Marketplace', $localePim);
-                $keyArray = $locale == 'fr' ? 'media_'.$i : 'media_'.$i.'_'.$localeMirakl;
-                $flatProduct[$keyArray] = $attributeImageLoc ? $attributeImageLoc : $this->getAttributeSimple($product, 'image_url_'.$i);
-            }
-
-            $keyArrayMedia = $locale == 'fr' ? 'media_instruction' : 'media_instruction_'.$localeMirakl;
-            $flatProduct[$keyArrayMedia]  = $this->getAttributeSimple($product, 'user_guide_url', $localePim);
-        
-        }
-
-        $flatProduct["ATT_00053"] = $this->getAttributeUnit($product, 'product_lenght', 'CENTIMETER', 0);
-        $flatProduct["ATT_00054"] = $this->getAttributeUnit($product, 'product_height', 'CENTIMETER', 0);
-        $flatProduct["ATT_00055"] = $this->getAttributeUnit($product, 'product_width', 'CENTIMETER', 0);
-
-        
-     
         
 
-        $fieldsToConvert = [
-            "feature_06575_brand" => [
-                "field" => "brand",
-                "type" => "choice",
-                "locale" => "en_GB",
-            ],
-         ];
+        $value = $this->getAttributeChoice($product, 'brand', "fr_FR");
+        $flatProduct["REF_COM"]  = substr(trim(str_replace([$value, strtoupper($value)], '', $this->getAttributeSimple($product, 'article_name', 'fr_FR'))),0,40);
 
-        foreach ($fieldsToConvert as $fieldMirakl => $fieldPim) {
-            $value = null;
-            if ($fieldPim['type']=='choice') {
-                $value = $this->getAttributeChoice($product, $fieldPim['field'], $fieldPim['locale']);
-                if ($value) {
-                    $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'], $fieldMirakl, $value);
-                    if ($codeMirakl) {
-                        $flatProduct[$fieldMirakl] = $codeMirakl;
-                    }
-                }
-            } elseif ($fieldPim['type']=='multichoice') {
-                $values = $this->getAttributeMultiChoice($product, $fieldPim['field'], $fieldPim['locale']);
-                if (count($values)>0) {
-                    $valuesMirakls= [];
-                    foreach ($values as $value) {
-                        $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'], $fieldMirakl, $value);
-                        if ($codeMirakl) {
-                            $flatProduct[$fieldMirakl] = $codeMirakl;
-                        }
-                    }
-                    if (count($valuesMirakls)>0) {
-                        $flatProduct[$fieldMirakl] = implode('|', $valuesMirakls);
-                    }
-                }
+
+        if ($value) {
+            $codeMirakl = $this->getCodeMarketplace($flatProduct ['CATEGORIE'], "MARQUE", $value);
+            if ($codeMirakl) {
+                $flatProduct["MARQUE"] = $codeMirakl;
             }
         }
 

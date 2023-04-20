@@ -28,6 +28,10 @@ class SaleReturnOrderLine
 
     public $unitPrice;
 
+    public $allowLineDisc = true;
+    
+    public $allowItemChargeAssignment = true;
+
     public $applFromItemEntry;
 
     public $locationCode;
@@ -45,4 +49,3 @@ class SaleReturnOrderLine
         return $transformArray;
     }
 }
-

@@ -2,13 +2,10 @@
 
 namespace App\BusinessCentral\Model;
 
-use App\BusinessCentral\Model\PostalAddress;
-
 class SaleReturnOrder
 {
 
-
-    public $number;
+    public $no;
     public $documentType;
     public $externalDocumentNo;
     public $postingDate;
@@ -24,21 +21,17 @@ class SaleReturnOrder
 
     public function __construct()
     {
-        $this->salesReturnOrderLines = [];
+
     }
 
-    public $salesReturnOrderLines = [];
+    
 
 
     public function transformToArray(): array
     {
-        $transformArray = ['salesReturnOrderLines' => []];
+        $transformArray = [];
         foreach ($this as $key => $value) {
-            if ($key == 'salesReturnOrderLines') {
-                foreach ($this->salesReturnOrderLines as $saleReturnOrderLine) {
-                    $transformArray['salesReturnOrderLines'][] = $saleReturnOrderLine->transformToArray();
-                }
-            } elseif ($value !== null) {
+            if ($value !== null) {
                 $transformArray[$key] = $value;
             }
         }

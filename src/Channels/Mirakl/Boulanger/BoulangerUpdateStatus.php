@@ -18,9 +18,9 @@ class BoulangerUpdateStatus extends MiraklUpdateStatusParent
     protected function getCodeCarrier(string $carrierCode): ?string
     {
         if ($carrierCode ==  WebOrder::CARRIER_DHL) {
-            return "ES_DHL_Parcel";
+            return "DHL";
         } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
-            return "ES_UPS";
+            return "UPS";
         }
         return null;
     }
@@ -29,7 +29,7 @@ class BoulangerUpdateStatus extends MiraklUpdateStatusParent
     protected function getNameCarrier(string $carrierCode): ?string
     {
         if ($carrierCode ==  WebOrder::CARRIER_DHL) {
-            return "DHL (Spain)";
+            return "DHL Express";
         } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "UPS";
         }

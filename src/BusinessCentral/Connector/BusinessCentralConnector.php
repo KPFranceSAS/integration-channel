@@ -53,10 +53,9 @@ abstract class BusinessCentralConnector
 
     public const EP_SALES_CREDITS = "salesCreditMemos";
 
-    public const EP_SALES_RETURNS_LINE = "salesReturnOrderLines";
+    public const EP_SALES_RETURNS_LINE = "SalesReturnLine";
 
-    public const EP_SALES_RETURNS = "salesReturnOrders";
-
+    public const EP_SALES_RETURNS = "SalesReturnHeader";
 
     public const EP_PURCHASES_INVOICES_LINE = "purchaseInvoiceLines";
 
@@ -656,51 +655,38 @@ abstract class BusinessCentralConnector
 
 
 
-    /**
-     * Sale return order
-     */
-
-    public function updateSaleReturnOrder(string $id, string $etag, array $order): ?array
-    {
-        return $this->doPatchRequest(
-            self::EP_SALES_RETURNS . '(' . $id . ')',
-            $etag,
-            $order
-        );
-    }
-
 
 
 
     public function getSaleReturnByNumber(string $number): ?array
     {
-        return $this->getElementByNumber(
-            self::EP_SALES_RETURNS,
-            $number,
-            'number',
-            ['$expand' => 'salesReturnOrderLines,customer']
-        );
+        return $this->getSaleReturnBy("number eq '$number'");
     }
 
-    public function getSaleReturnBy(string $condition, string $number): ?array
+    public function getSaleReturnBy(string $condition): ?array
     {
-        return $this->getElementsByArray(
+        $return = $this->getElementsByArray(
             self::EP_SALES_RETURNS,
-            "$condition eq '$number'",
+            "$condition",
             false,
-            ['$expand' => 'salesReturnOrderLines,customer']
+            ['$expand' => 'customer']
         );
+
+        if($return){
+            $documentNo =$return['no'];
+            $return['salesReturnOrderLines'] = $this->getElementsByArray(
+                self::EP_SALES_RETURNS_LINE,
+                "documentNo eq '$documentNo'",
+                true
+            );
+        }
+        return $return;
     }
 
 
     public function getSaleReturnByInvoiceAndLpn($invoiceNumber, $lpn): ?array
     {
-        return $this->getElementsByArray(
-            self::EP_SALES_RETURNS,
-            "correctedInvoiceNo eq '$invoiceNumber' and packageTrackingNo eq '$lpn'",
-            false,
-            ['$expand' => 'salesReturnOrderLines,customer']
-        );
+        return $this->getSaleReturnBy("correctedInvoiceNo eq '$invoiceNumber' and packageTrackingNo eq '$lpn'");
     }
 
 
@@ -708,31 +694,26 @@ abstract class BusinessCentralConnector
 
     public function getSaleReturnByExternalNumber(string $number): ?array
     {
-        return $this->getSaleReturnBy("externalDocumentNo", $number);
+        return $this->getSaleReturnBy("externalDocumentNo  eq '$number'");
     }
 
 
     public function getSaleReturnByInvoice(string $number): ?array
     {
-        return $this->getSaleReturnBy("correctedInvoiceNo", $number);
+        return $this->getSaleReturnBy("correctedInvoiceNo eq '$number'");
     }
 
 
     public function getSaleReturnByPackageTrackingNo(string $number): ?array
     {
-        return $this->getSaleReturnBy("packageTrackingNo", $number);
+        return $this->getSaleReturnBy("packageTrackingNo eq '$number'");
     }
 
 
 
     public function getSaleReturnByLpnAndExternalNumber(string $lpn, string $number): array
     {
-        return $this->getElementsByArray(
-            self::EP_SALES_RETURNS,
-            "packageTrackingNo eq '$lpn' and externalDocumentNo eq '$number'",
-            false,
-            ['$expand' => 'salesReturnOrderLines,customer']
-        );
+        return $this->getSaleReturnBy("packageTrackingNo eq '$lpn' and externalDocumentNo eq '$number'");
     }
 
 

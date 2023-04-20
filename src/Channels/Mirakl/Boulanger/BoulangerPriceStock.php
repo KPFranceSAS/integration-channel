@@ -27,7 +27,7 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             "product_id" => $product->getSku(),
             "product_id_type" => "SHOP_SKU",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
-            "logistic_class" => "FREE",
+            "logistic_class" => "XXS",
             "description" => $product->getDescription(),
             "leadtime_to_ship" => "2",
             "all_prices" => [],
@@ -40,7 +40,7 @@ class BoulangerPriceStock extends MiraklPriceStockParent
 
             if ($productMarketplace->getEnabled()) {
 
-                $mirakCode= substr($saleChannel->getCode(), -3);
+                $mirakCode= "INIT";
                 $offer['price'] = $productMarketplace->getPrice();
                 $priceChannel = [];
                 $priceChannel ['channel_code'] = $mirakCode;

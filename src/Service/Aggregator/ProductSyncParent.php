@@ -257,7 +257,14 @@ abstract class ProductSyncParent
             "KILOGRAM" => 1.0,
             "GRAM" => 0.001,
             "MILLIGRAM" => 0.000001,
-            
+            "MILLIAMPEREHOUR" => 0.001,
+            "AMPEREHOUR" => 1,
+            "MILLIAMPERE" => 0.001,
+            "CENTIAMPERE" => 0.01,
+            "DECIAMPERE" => 0.1,
+            "AMPERE" => 1,
+            "WATTHOUR" => 1,
+            "MILLIWATTHOUR" => 0.001
         ];
 
         if (!array_key_exists($unitBase, $factors) || !array_key_exists($unitFinal, $factors)) {

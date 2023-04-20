@@ -78,7 +78,7 @@ class IntegrateAmzFbaReturn
 
         $saleReturnIntegrated = $this->kpFranceConnector->getSaleReturnByInvoiceAndLpn($webOrder->getInvoiceErp(), $amazonReturn->getLicensePlateNumber());
         if ($saleReturnIntegrated) {
-            $this->logger->error('Sale return already integrated in Business central '. $saleReturnIntegrated['number']);
+            $this->logger->error('Sale return already integrated in Business central '. $saleReturnIntegrated['no']);
             return false;
         }
 
@@ -94,20 +94,20 @@ class IntegrateAmzFbaReturn
         $saleReturn->documentType = 'Return Order';
         $saleReturn->correctedInvoiceNo = $invoice['number'];
         $saleReturn->sellToCustomerNo = $invoice['customerNumber'];
-        $saleReturn->billToCustomerNo = $invoice['customerNumber'];
+        
         $saleReturn->externalDocumentNo = $webOrder->getExternalNumber();
         $dateAmzonReturnBc= $amazonReturn->getReturnDateFormatYmd();
-        $saleReturn->shipmentDate = $dateAmzonReturnBc;
+        
         $saleReturn->documentDate = $dateAmzonReturnBc;
         $saleReturn->orderDate = $dateAmzonReturnBc;
 
         $saleReturn->packageTrackingNo = $amazonReturn->getLicensePlateNumber();
-        $saleReturn->comentSAT = "Reason: ".$amazonReturn->getReason() ." Fulfillment Center: ".$amazonReturn->getFulfillmentCenterId();
-
+        //$saleReturn->comentSAT = "Reason: ".$amazonReturn->getReason() ." Fulfillment Center: ".$amazonReturn->getFulfillmentCenterId();
+        //$saleReturn->shipmentDate = $dateAmzonReturnBc;
+        //$saleReturn->billToCustomerNo = $invoice['customerNumber'];
 
         $locationCode= $this->defineLocationCode($amazonReturn);
 
-        $lineNumber = 10000;
         $saleReturnLine = null;
         $item = $this->kpFranceConnector->getItemByNumber($skuProduct);
         foreach ($invoice['salesInvoiceLines'] as $saleInvoiceLine) {
@@ -119,6 +119,7 @@ class IntegrateAmzFbaReturn
                 $saleReturnLine->quantity =  1;
                 $saleReturnLine->documentType = 'Return Order';
                 $saleReturnLine->returnReasonCode = 'C07';
+                $saleReturnLine->lineNo = '1000';
                 $saleReturnLine->applFromItemEntry = 0;
             }
         }
@@ -130,20 +131,17 @@ class IntegrateAmzFbaReturn
         }
        
 
-
-        $saleReturn->salesReturnOrderLines[]=$saleReturnLine;
-
         dump(json_encode($saleReturn->transformToArray()));
         $createdSaleReturnOrder = $this->kpFranceConnector->createSaleReturnOrder($saleReturn->transformToArray());
         dump($createdSaleReturnOrder);
 
-        $saleReturnLine->documentNo= $createdSaleReturnOrder['number'];
+        $saleReturnLine->documentNo= $createdSaleReturnOrder['no'];
 
         dump(json_encode($saleReturnLine->transformToArray()));
 
         $createdSaleReturnOrderLine = $this->kpFranceConnector->createSaleReturnOrderLine($saleReturnLine->transformToArray());
         dump($createdSaleReturnOrderLine);
-        dump($this->kpFranceConnector->getSaleReturnByNumber($createdSaleReturnOrder['number']));
+        dump($this->kpFranceConnector->getSaleReturnByNumber($createdSaleReturnOrder['no']));
 
 
         return true;
