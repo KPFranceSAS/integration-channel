@@ -33,6 +33,7 @@ class IntegrationChannel
     public const CHANNEL_MANOMANO_ES='MANOMANO_ES';
     public const CHANNEL_MANOMANO_DE='MANOMANO_DE';
     public const CHANNEL_MANOMANO_IT='MANOMANO_IT';
+    public const CHANNEL_CDISCOUNT='CDISCOUNT';
 
 
     use TraitTimeUpdated;
