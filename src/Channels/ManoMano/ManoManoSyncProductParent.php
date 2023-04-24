@@ -88,10 +88,6 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 }
             }
 
-           
-
-
-
             $headerProduct = array_keys($productToArray);
             foreach ($headerProduct as $headerP) {
                 if (!in_array($headerP, $finalHeader)) {

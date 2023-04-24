@@ -62,7 +62,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         foreach ($locales as $locale) {
             $localePim = $locale.'_'.strtoupper($locale);
             $localeMirakl = $locale.'-'.strtoupper($locale);
-            $flatProduct['i18n_'.$locale.'_12963_title'] = $this->getAttributeSimple($product, "article_name", $localePim);
+            $flatProduct['i18n_'.$locale.'_12963_title'] = substr($this->getAttributeSimple($product, "article_name", $localePim), 0, 150);
 
             $description = $this->getAttributeSimple($product, "description", $localePim);
             if($description) {
