@@ -53,6 +53,7 @@ class ProductCrudController extends AdminCrudController
     {
         return [
             TextField::new('sku')->setDisabled(),
+            TextField::new('ean')->setDisabled(),
             AssociationField::new('brand'),
             AssociationField::new('category'),
             TextField::new('description', 'Product name'),

@@ -372,6 +372,11 @@ class Product
      */
     private $productCorrelations;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $ean;
+
 
 
 
@@ -1323,6 +1328,18 @@ class Product
     public function setUk3plPurchaseBusinessCentralStock(?int $uk3plPurchaseBusinessCentralStock): self
     {
         $this->uk3plPurchaseBusinessCentralStock = $uk3plPurchaseBusinessCentralStock;
+
+        return $this;
+    }
+
+    public function getEan(): ?string
+    {
+        return $this->ean;
+    }
+
+    public function setEan(?string $ean): self
+    {
+        $this->ean = $ean;
 
         return $this;
     }

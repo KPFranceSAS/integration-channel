@@ -52,9 +52,9 @@ class ProductDataIntegrationCommand extends Command
 
         $saleChannels = $this->manager->getRepository(SaleChannel::class)->findAll();
 
+        $i=1;
         foreach ($products as $product) {
             $sku = $product['identifier'];
-
             $output->writeln('Check Sku '.$sku);
             $productDb = $this->manager->getRepository(Product::class)->findOneBy([
                 'sku' => $sku
@@ -69,6 +69,12 @@ class ProductDataIntegrationCommand extends Command
                     $productDb = new Product();
                     $productDb->setSku($sku);
                     $productDb->setDescription($itemBc["displayName"]);
+                    if (array_key_exists("ean", $product['values'])) {
+                        $ean = $product['values']['ean'][0]['data'];        
+                        if($ean!=$productDb->getEan()){
+                            $productDb->setEan($ean);
+                        }
+                    }
                     $this->manager->persist($productDb);
                     $this->manager->flush();
 
@@ -77,6 +83,7 @@ class ProductDataIntegrationCommand extends Command
                         $productSaleChannel->setProduct($productDb);
                         $saleChannel->addProductSaleChannel($productSaleChannel);
                     }
+                    $this->manager->flush();
 
                    
                     if (array_key_exists("brand", $product['values'])) {
@@ -85,15 +92,32 @@ class ProductDataIntegrationCommand extends Command
                             $brand->addProduct($productDb);
                         }
                     }
-                    $output->writeln('Product creation >> ' . $sku);
                     $this->manager->flush();
+                    $output->writeln('Product creation >> ' . $sku);
+                 
                     $messages[] = "Product with SKU ".$sku." has been added to Patxira. You need to enable it on Marketplace.";
                 } else {
                     $output->writeln('Do no exists in Business central '.$sku);
                     $errors[] = "Product with SKU ".$sku." exists in PIM but not in Business central. Please correct product in PIM to Business central SKU.";
                 }
+            } else {
+                if (array_key_exists("ean", $product['values'])) {
+                    $ean = $product['values']['ean'][0]['data'];        
+                    if($ean!=$productDb->getEan()){
+                        $productDb->setEan($ean);
+                    }
+                }
             }
+
+            if($i%50 == 0){
+                $this->manager->flush();
+                $this->manager->clear();
+                $saleChannels = $this->manager->getRepository(SaleChannel::class)->findAll();
+            }
+            $i++;
         }
+
+        $this->manager->flush();
 
 
         if (count($errors)>0) {
