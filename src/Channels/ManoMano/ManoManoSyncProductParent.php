@@ -160,32 +160,10 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         $valueComplementTitle = $this->getAttributeSimple($product, "article_name_additional_information", $this->getLocale());
 
         $flatProduct['title'] = $valueTitle.$valueComplementTitle;
-       
-        $localizablesTextFields= [
-            'description' => 'description',
-            'brand' => 'brand',
-            'manufacturer' => 'brand',
-        ];
         
-
-
-        foreach ($localizablesTextFields as $localizableMirakl => $localizablePim) {
-            $value = $this->getAttributeSimple($product, $localizablePim, $this->getLocale());
-            if ($value) {
-                if ($localizableMirakl == 'description') {
-                    $value = $this->removeNewLine($value);
-                } else {
-                    $value = $this->sanitizeHtml($value);
-                }
-            }
-
-            $flatProduct[$localizableMirakl] = $value;
-        }
-
-       
-
-        
-
+        $descriptionRich = $this->getAttributeSimple($product, 'description_enrichie', $this->getLocale());
+        $descriptionFinal = strlen($descriptionRich)> 5  ? $descriptionRich : $this->getAttributeSimple($product, 'description', $this->getLocale());
+        $flatProduct['description'] = $descriptionFinal ?  $this->removeNewLine($descriptionFinal) : '';
 
         $fieldsToConvert = [
             "brand" => [
