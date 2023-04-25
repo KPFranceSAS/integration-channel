@@ -34,8 +34,8 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         ];
 
         $flatProduct["SKU_MARCHAND"] = $product['identifier'];
-        
-        $flatProduct["ACCROCHE"]  =$this->getAttributeSimple($product, 'article_name', 'fr_FR');
+        $flatProduct["REF_COM"]  = substr($this->getAttributeSimple($product, 'erp_name_title', 'fr_FR'), 0, 40);
+        $flatProduct["ACCROCHE"]  = substr($this->getAttributeSimple($product, 'article_name', 'fr_FR'), 0, 95);
         $flatProduct["PARTNUMBER"]  = $this->getAttributeSimple($product, 'ean');
         
 
@@ -72,7 +72,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             $flatProduct['LISTE_CENTRALE_BATTERIE/batterie_nomade/cable_inclus']= "Aucun";
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/appareil_compatible']= "Universel";
             $flatProduct["CENTRALE_BATTERIE/caracteristiques_generales/modele_s_compatible_s"]=$this->getAttributeSimple($product, 'compatible_devices', "fr_FR");
-            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/courant_de_sortie_en_ma']='Non précisé';
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/courant_de_sortie_en_ma']=$this->getAttributeUnit($product, 'output_power', 'MILLIAMPERE', 0);
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/connectique']="Aucun";
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/nombre_de_port_usb']=$this->getAttributeSimple($product, 'number_usb_port');
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/puissance_de_sortie']="Non précisé";
@@ -97,12 +97,12 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         }
         
 
-        $value = $this->getAttributeChoice($product, 'brand', "fr_FR");
-        $flatProduct["REF_COM"]  = substr(trim(str_replace([$value, strtoupper($value)], '', $this->getAttributeSimple($product, 'article_name', 'fr_FR'))), 0, 40);
+       
+        
 
-
-        if ($value) {
-            $codeMirakl = $this->getCodeMarketplace($flatProduct ['CATEGORIE'], "MARQUE", $value);
+        $brandName = $this->getAttributeChoice($product, 'brand', "fr_FR");
+        if ($brandName) {
+            $codeMirakl = $this->getCodeMarketplace($flatProduct ['CATEGORIE'], "MARQUE", $brandName);
             if ($codeMirakl) {
                 $flatProduct["MARQUE"] = $codeMirakl;
             }
