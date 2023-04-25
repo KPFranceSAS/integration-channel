@@ -62,7 +62,6 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         
         $familyPim =$product['family'];
 
-
         if($familyPim == 'solar_panel' || $familyPim == 'power_station') {
             $flatProduct["CATEGORIE"] = "603";
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/categorie']= $familyPim == 'solar_panel' ? "Panneau solaire" : "Batterie nomade";
@@ -76,9 +75,9 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/connectique']="Aucun";
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/nombre_de_port_usb']=$this->getAttributeSimple($product, 'number_usb_port');
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/puissance_de_sortie']="Non précisé";
-            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/capacite__en_wh']=$this->getAttributeUnit($product, 'battery_capacity_wh', 'WATTHOUR', 0);
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/capacite__en_wh']=$familyPim == 'solar_panel'  ? "0" : $this->getAttributeUnit($product, 'battery_capacity_wh', 'WATTHOUR', 0);
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/UTILISATION']="Alimentez 99,99 % des appareils à usage intensif à la maison, à l'extérieur ou au travail.";
-            $flatProduct['CENTRALE_BATTERIE/batterie_nomade/capacite__en_wh']=$this->getAttributeUnit($product, 'battery_capacity_wh', 'WATTHOUR', 0);
+            $flatProduct['CENTRALE_BATTERIE/batterie_nomade/capacite__en_wh']= $familyPim == 'solar_panel'  ? "0" :  $this->getAttributeUnit($product, 'battery_capacity_wh', 'WATTHOUR', 0);
             $flatProduct['CENTRALE_BATTERIE/batterie_nomade/temperature_optimale_de_fonctionnement']="-10°C à 40°C";
             $flatProduct['CENTRALE_BATTERIE/batterie_nomade/nombre_de_port_usb']=$this->getAttributeSimple($product, 'number_usb_port');
             $flatProduct['CENTRALE_BATTERIE/batterie_nomade/cable_inclus']="Aucun";
@@ -95,10 +94,6 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/debit_d_aspiration_m3-h']="Non précisé";
             $flatProduct['CENTRALE_ROBOT_PISCINE/services_inclus/fabrique_en']="Chine";
         }
-        
-
-       
-        
 
         $brandName = $this->getAttributeChoice($product, 'brand', "fr_FR");
         if ($brandName) {
