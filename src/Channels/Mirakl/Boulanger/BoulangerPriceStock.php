@@ -30,8 +30,11 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             "logistic_class" => "XXS",
             "description" => $product->getDescription(),
             "leadtime_to_ship" => "2",
-            "garantie-mois" => "24",
+           
             "all_prices" => [],
+            "offer_additional_fields" => [
+                ['code'=>"garantie-mois", 'value' => "24"],
+            ]
         ];
 
             
