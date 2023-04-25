@@ -13,11 +13,6 @@ class BoulangerPriceStock extends MiraklPriceStockParent
         return IntegrationChannel::CHANNEL_BOULANGER;
     }
 
-
-
-   
-
-
     protected function addProduct(Product $product, array $saleChannels): array
     {
         $offer = [
@@ -30,7 +25,6 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             "logistic_class" => "XXS",
             "description" => $product->getDescription(),
             "leadtime_to_ship" => "2",
-           
             "all_prices" => [],
             "offer_additional_fields" => [
                 ['code'=>"garantie-mois", 'value' => "24"],

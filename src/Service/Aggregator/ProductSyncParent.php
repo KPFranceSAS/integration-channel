@@ -248,21 +248,30 @@ abstract class ProductSyncParent
     protected function transformUnit($unitBase, $unitFinal, $value, $nbRound)
     {
         $factors = [
+            "SQUARE_METER" =>1,
+            "SQUARE_CENTIMETER" =>0.0001,
+            "SQUARE_MILLIMETER" =>0.000001,
+            "SQUARE_KILOMETER" =>1000000,
+
             "KILOMETER" => 1000.0,
             "METER" => 1.0,
             "DECIMETER" => 0.1,
             "CENTIMETER" => 0.01,
             "MILLIMETER" => 0.001,
+
             "TON" => 1000.0,
             "KILOGRAM" => 1.0,
             "GRAM" => 0.001,
             "MILLIGRAM" => 0.000001,
+
             "MILLIAMPEREHOUR" => 0.001,
             "AMPEREHOUR" => 1,
+
             "MILLIAMPERE" => 0.001,
             "CENTIAMPERE" => 0.01,
             "DECIAMPERE" => 0.1,
             "AMPERE" => 1,
+            
             "WATTHOUR" => 1,
             "MILLIWATTHOUR" => 0.001
         ];
