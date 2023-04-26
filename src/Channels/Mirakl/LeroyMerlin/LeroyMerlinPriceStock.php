@@ -39,6 +39,8 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
             ]
         ];
 
+
+        
             
       
         foreach ($saleChannels as $saleChannel) {

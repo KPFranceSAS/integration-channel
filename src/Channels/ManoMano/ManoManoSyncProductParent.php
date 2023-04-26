@@ -162,7 +162,8 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         $flatProduct['title'] = $valueTitle.$valueComplementTitle;
         
         $descriptionRich = $this->getAttributeSimple($product, 'description_enrichie', $this->getLocale());
-        $descriptionFinal = strlen($descriptionRich)> 5  ? $descriptionRich : $this->getAttributeSimple($product, 'description', $this->getLocale());
+        $descriptionSimple = $this->getAttributeSimple($product, 'description', $this->getLocale());
+        $descriptionFinal = strlen($descriptionRich)> 5  ? $descriptionRich."<p></p>".$descriptionSimple : $descriptionSimple;
         $flatProduct['description'] = $descriptionFinal ?  $this->removeNewLine($descriptionFinal) : '';
 
         $fieldsToConvert = [
@@ -213,7 +214,6 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
          ];
 
         foreach ($fieldsToConvert as $fieldMirakl => $fieldPim) {
-            $value = null;
             if ($fieldPim['type']=='unit') {
                 $valueConverted = $this->getAttributeUnit($product, $fieldPim['field'], $fieldPim['unit'], $fieldPim['round']);
                 $flatProduct[$fieldMirakl] = $valueConverted;
