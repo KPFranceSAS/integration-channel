@@ -4,6 +4,7 @@ namespace App\Channels\Cdiscount;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\ProductStockFinder;
+use App\BusinessCentral\ProductTaxFinder;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
 use App\Entity\SaleChannel;
@@ -27,10 +28,11 @@ class CdiscountPriceStock extends PriceStockParent
         BusinessCentralAggregator $businessCentralAggregator,
         ApiAggregator $apiAggregator,
         ProductStockFinder $productStockFinder,
+        ProductTaxFinder $productTaxFinder,
         $projectDir
     ) {
         $this->projectDir =  $projectDir.'/public/cdiscount/';
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator, $productStockFinder);
+        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator, $productStockFinder,$productTaxFinder);
     }
 
 
