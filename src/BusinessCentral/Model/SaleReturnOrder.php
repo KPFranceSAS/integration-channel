@@ -15,7 +15,7 @@ class SaleReturnOrder
     public $sellToCustomerNo;
     public $billToCustomerNo;
     public $shipToCode;
-    public $correctedInvoiceNo;
+    public $correctInvoiceNo;
     public $packageTrackingNo;
     public $comentSAT;
 

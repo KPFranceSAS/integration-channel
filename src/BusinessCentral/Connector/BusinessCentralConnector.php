@@ -672,7 +672,7 @@ abstract class BusinessCentralConnector
             ['$expand' => 'customer']
         );
 
-        if($return){
+        if($return) {
             $documentNo =$return['no'];
             $return['salesReturnOrderLines'] = $this->getElementsByArray(
                 self::EP_SALES_RETURNS_LINE,
@@ -686,7 +686,7 @@ abstract class BusinessCentralConnector
 
     public function getSaleReturnByInvoiceAndLpn($invoiceNumber, $lpn): ?array
     {
-        return $this->getSaleReturnBy("correctedInvoiceNo eq '$invoiceNumber' and packageTrackingNo eq '$lpn'");
+        return $this->getSaleReturnBy("correctInvoiceNo eq '$invoiceNumber' and packageTrackingNo eq '$lpn'");
     }
 
 
@@ -700,7 +700,7 @@ abstract class BusinessCentralConnector
 
     public function getSaleReturnByInvoice(string $number): ?array
     {
-        return $this->getSaleReturnBy("correctedInvoiceNo eq '$number'");
+        return $this->getSaleReturnBy("correctInvoiceNo eq '$number'");
     }
 
 

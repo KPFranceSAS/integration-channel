@@ -4,6 +4,7 @@ namespace App\Channels\ManoMano;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\ProductStockFinder;
+use App\BusinessCentral\ProductTaxFinder;
 use App\Entity\Product;
 use App\Entity\SaleChannel;
 use App\Helper\MailService;
@@ -25,10 +26,11 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
         BusinessCentralAggregator $businessCentralAggregator,
         ApiAggregator $apiAggregator,
         ProductStockFinder $productStockFinder,
+        ProductTaxFinder $productTaxFinder,
         $projectDir
     ) {
         $this->projectDir =  $projectDir.'/public/manomano/catalogue/';
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator, $productStockFinder);
+        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator, $productStockFinder, $productTaxFinder);
     }
 
 

@@ -163,7 +163,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         
         $descriptionRich = $this->getAttributeSimple($product, 'description_enrichie', $this->getLocale());
         $descriptionSimple = $this->getAttributeSimple($product, 'description', $this->getLocale());
-        $descriptionFinal = strlen($descriptionRich)> 5  ? $descriptionRich."<p></p>".$descriptionSimple : $descriptionSimple;
+        $descriptionFinal = strlen($descriptionRich) > 5  ? $descriptionRich."<p></p>".$descriptionSimple : $descriptionSimple;
         $flatProduct['description'] = $descriptionFinal ?  $this->removeNewLine($descriptionFinal) : '';
 
         $fieldsToConvert = [

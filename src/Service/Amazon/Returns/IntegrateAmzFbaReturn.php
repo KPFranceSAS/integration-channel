@@ -92,7 +92,7 @@ class IntegrateAmzFbaReturn
         
         $saleReturn = new SaleReturnOrder();
         $saleReturn->documentType = 'Return Order';
-        $saleReturn->correctedInvoiceNo = $invoice['number'];
+        $saleReturn->correctInvoiceNo = $invoice['number'];
         $saleReturn->sellToCustomerNo = $invoice['customerNumber'];
         
         $saleReturn->externalDocumentNo = $webOrder->getExternalNumber();

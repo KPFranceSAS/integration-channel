@@ -28,8 +28,10 @@ class ProductTaxFinder
     public function getAdditionalTaxes(string $itemId, string $company, string $shippingCountry, ?string $billingCountry = null): float
     {
         $taxes = 0;
-        $taxes +=$this->getCanonDigitalForItem($itemId, $company, $shippingCountry, $billingCountry);
-        $taxes +=$this->getEcoTaxForItem($itemId, $company, $shippingCountry, $billingCountry);
+        $bcConnector= $this->getBusinessCentralConnector($company);
+        $item = $bcConnector->getItem($itemId);
+        $taxes +=$this->getCanonDigitalForItem($item, $company, $shippingCountry, $billingCountry);
+        $taxes +=$this->getEcoTaxForItem($item, $company, $shippingCountry, $billingCountry);
         return $taxes;
     }
 
@@ -37,11 +39,10 @@ class ProductTaxFinder
 
 
 
-    public function getCanonDigitalForItem(string $itemId, string $company, string $shippingCountry, ?string $billingCountry = null): float
+    public function getCanonDigitalForItem(array $item, string $company, string $shippingCountry, ?string $billingCountry = null): float
     {
         if ($shippingCountry == 'ES' || $billingCountry == 'ES') {
             $bcConnector= $this->getBusinessCentralConnector($company);
-            $item = $bcConnector->getItem($itemId);
             if ($item && $item['DigitalCopyTax'] && strlen($item['CanonDigitalCode'])>0) {
                 $taxes = $bcConnector->getTaxesByCodeAndByFeeType($item['CanonDigitalCode'], 'Canon Digital');
                 if ($taxes) {
@@ -62,11 +63,11 @@ class ProductTaxFinder
 
 
 
-    public function getEcoTaxForItem(string $itemId, string $company, string $shippingCountry, ?string $billingCountry = null): float
+    public function getEcoTaxForItem(array $item, string $company, string $shippingCountry, ?string $billingCountry = null): float
     {
         if ($shippingCountry == 'FR' || $billingCountry == 'FR') {
             $bcConnector= $this->getBusinessCentralConnector($company);
-            $item = $bcConnector->getItem($itemId);
+            
             if ($item && $item['WEEE'] && strlen($item['WEEEcategorycode'])>0) {
                 $taxes = $bcConnector->getTaxesByCodeAndByFeeType($item['WEEEcategorycode'], 'WEEE');
                 if ($taxes) {

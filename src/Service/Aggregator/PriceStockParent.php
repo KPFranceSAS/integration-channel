@@ -4,6 +4,7 @@ namespace App\Service\Aggregator;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\ProductStockFinder;
+use App\BusinessCentral\ProductTaxFinder;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
 use App\Entity\SaleChannel;
@@ -27,6 +28,7 @@ abstract class PriceStockParent
 
     protected $productStockFinder;
 
+    protected $productTaxFinder;
 
     public function __construct(
         ManagerRegistry $manager,
@@ -34,7 +36,8 @@ abstract class PriceStockParent
         MailService $mailer,
         BusinessCentralAggregator $businessCentralAggregator,
         ApiAggregator $apiAggregator,
-        ProductStockFinder $productStockFinder
+        ProductStockFinder $productStockFinder,
+        ProductTaxFinder $productTaxFinder
     ) {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
@@ -42,6 +45,7 @@ abstract class PriceStockParent
         $this->apiAggregator = $apiAggregator;
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->productStockFinder = $productStockFinder;
+        $this->productTaxFinder = $productTaxFinder;
     }
 
     abstract public function sendStocksPrices(array $products, array $saleChannels);
