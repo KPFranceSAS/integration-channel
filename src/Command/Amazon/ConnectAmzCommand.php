@@ -36,7 +36,7 @@ class ConnectAmzCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dump($this->api->getProductData('B0BQWBFS75'));
+        dump($this->api->getShipmentSent());
 
 
 

@@ -67,7 +67,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $description = $this->getAttributeSimple($product, "description", $localePim);
             if($description) {
                 $descriptionFormate = str_replace('</p>', '</p><p>&nbsp;</p>', $description);
-                $descriptionFormate = str_replace('</li>', '<br/><br/></li>', $descriptionFormate);
+                $descriptionFormate = str_replace(['<strong>', '</strong>'], ['<b>', '</b>'], $descriptionFormate);
                 $flatProduct['i18n_'.$locale.'_01022_longdescription'] = substr($descriptionFormate, 0, 5000);
             }
 
