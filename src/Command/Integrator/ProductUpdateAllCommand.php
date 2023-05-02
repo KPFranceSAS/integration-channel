@@ -65,7 +65,7 @@ class ProductUpdateAllCommand extends Command
                 $this->logger->info('');
                 sleep(30);
             } catch (Exception $e) {
-                $this->mailService->sendEmail("[".$channel->getCode()."] Error in Product update on PIM', $e->getMessage());
+                $this->mailService->sendEmail("[".$channel->getCode()."] Error in Product update on PIM", $e->getMessage());
             }
         }
 
