@@ -105,8 +105,10 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
             if ($promotion) {
                 $offer['product_price_vat_inc']= $promotion->getPromotionPrice() ;
                 $offer['retail_price_vat_inc']= $productMarketplace->getPrice() ;
+                $offer['sales']= 1 ;
             } else {
                 $offer['product_price_vat_inc']= $productMarketplace->getPrice() ;
+                $offer['sales']= 0 ;
             }
             return $offer;
         } else {
