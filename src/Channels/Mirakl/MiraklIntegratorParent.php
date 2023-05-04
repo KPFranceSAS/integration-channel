@@ -156,6 +156,11 @@ abstract class MiraklIntegratorParent extends IntegratorParent
 
     protected function shouldBeSentByUps($orderApi): bool
     {
+        if($orderApi['customer']['shipping_address']["country"]=='DE') {
+            return true;
+        }
+
+
         $skus = [];
         foreach ($orderApi["order_lines"] as $line) {
             $skus[] = $line['offer']['sku'];
