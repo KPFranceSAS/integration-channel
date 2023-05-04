@@ -69,57 +69,11 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
 
    
-    protected function convertHtmlToMarkdown(string $text): string
-    {
-        $caractèreSautLigne = "  \n";
-
-        $conversion = [
-            "<h3>" => '###',
-            "</h3>" => $caractèreSautLigne,
-            "<h2>" => '###',
-            "</h2>" => $caractèreSautLigne,
-            "<h4>" => '####',
-            "</h4>" => $caractèreSautLigne,
-            "<hr/>" => "$caractèreSautLigne---$caractèreSautLigne",
-            "<hr>" => "$caractèreSautLigne---$caractèreSautLigne",
-            "<li>" => "$caractèreSautLigne- ",
-            "</li>" => '',
-            "<ul>" => "",
-            "</ul>" => $caractèreSautLigne,
-            "<ol>" => "",
-            "</ol>" => $caractèreSautLigne,
-            "<p>" => "",
-            "</p>" => $caractèreSautLigne,
-            "<br/>" => $caractèreSautLigne,
-            "<br>" => $caractèreSautLigne,
-            "<br />" => $caractèreSautLigne,
-            "<b>" => '**',
-            "</b>" => '**',
-            "<strong>" => '**',
-            "</strong>" => '**',
-            "<i>" => '*',
-            "</i>" => '*',
-            "<em>" => '*',
-            "</em>" => '*',
-            
-        ];
-        $strReplace = str_replace(array_keys($conversion), array_values($conversion), $text);
-        return strip_tags($strReplace);
-    }
-
 
     protected function sanitizeHtml(string $text): string
     {
         return str_replace(["\r\n", "\n"], '', strip_tags($text));
     }
-
-
-
-    
-   
-
-
-    
 
 
     public function sendProducts(array $products, $header)

@@ -29,10 +29,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
     protected function flatProduct(array $product):array
     {
         $this->logger->info('Flat product '.$product['identifier']);
-
-
         $categoryCode = str_replace('_', '-', $this->getAttributeSimple($product, 'decathlon_category_id'));
-
 
         $flatProduct = [
             'category' =>  $categoryCode,
@@ -109,8 +106,6 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 "type" => "multichoice",
                 "locale" => "en_GB",
             ],
-                        
-
             "CHARACTERISTIC_575" => [
                 "field" => 'product_lenght',
                 "type" => "unit",
