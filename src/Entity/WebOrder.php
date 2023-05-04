@@ -488,6 +488,7 @@ class WebOrder
                 $webOrder = WebOrder::createOneFromManoMano($orderApi);
                 $webOrder->setChannel(IntegrationChannel::CHANNEL_MANOMANO_DE);
                 $webOrder->setSubchannel('Manomano.de');
+                $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
                 return $webOrder;
     
             case IntegrationChannel::CHANNEL_MANOMANO_FR:
@@ -679,6 +680,10 @@ class WebOrder
         }
         $shouldBeSentByUps = UpsGetTracking::shouldBeSentWith($skus);
         if ($shouldBeSentByUps) {
+            $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
+        }
+
+        if($orderApi['customer']['shipping_address']["country"]=='DE') {
             $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
         }
         
