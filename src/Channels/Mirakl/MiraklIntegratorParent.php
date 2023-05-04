@@ -118,7 +118,7 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         }
 
 
-        $orderBC->phoneNumber = $orderApi['customer']['shipping_address']['phone'];
+        $orderBC->phoneNumber = array_key_exists('phone', $orderApi['customer']['shipping_address']) ? $orderApi['customer']['shipping_address']['phone'] : null;
         $orderBC->email = $orderApi['customer_notification_email'];
         $orderBC->externalDocumentNumber = $this->getExternalNumber($orderApi);
         $orderBC->pricesIncludeTax = true;
