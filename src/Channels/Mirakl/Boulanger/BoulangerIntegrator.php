@@ -9,7 +9,7 @@ use Exception;
 
 class BoulangerIntegrator extends MiraklIntegratorParent
 {
-    public const BOULANGER_FR = '000802';
+    public const BOULANGER_FR = '000820';
        
 
     public function getChannel()

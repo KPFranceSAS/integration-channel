@@ -382,7 +382,7 @@ class WebOrder
             case IntegrationChannel::CHANNEL_LEROYMERLIN:
                 return 'https://adeo-marketplace.mirakl.net/mmp/shop/order/' . $this->externalNumber;
             case IntegrationChannel::CHANNEL_DECATHLON:
-                return 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $this->externalNumber;
+                return 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $order['id'];
             case IntegrationChannel::CHANNEL_BOULANGER:
                 return 'https://merchant.boulanger.com/mmp/shop/order/' . $this->externalNumber;
             case IntegrationChannel::CHANNEL_MANOMANO_DE:
