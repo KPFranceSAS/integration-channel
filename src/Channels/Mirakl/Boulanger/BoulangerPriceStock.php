@@ -64,27 +64,19 @@ class BoulangerPriceStock extends MiraklPriceStockParent
     
         }
 
-         
 
-            
-      
-        foreach ($saleChannels as $saleChannel) {
-            $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
-
-            if ($productMarketplace->getEnabled()) {
-
-                $mirakCode= "INIT";
-                $offer['price'] = $productMarketplace->getPrice();
-                $priceChannel = [];
-                $priceChannel ['channel_code'] = $mirakCode;
-                $priceChannel['unit_origin_price']= $productMarketplace->getPrice() ;
-                $promotion = $productMarketplace->getBestPromotionForNow();
-                if ($promotion) {
-                    $priceChannel['unit_discount_price']= $promotion->getPromotionPrice() ;
-                }
-                $offer["all_prices"][] = $priceChannel;
+        $saleChannel = $saleChannels[0];
+        $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
+        if ($productMarketplace->getEnabled()) {
+            $offer['price'] = $productMarketplace->getPrice();
+            $promotion = $productMarketplace->getBestPromotionForNow();
+            if ($promotion) {
+                $offer['unit_origin_price']= $productMarketplace->getPrice() ;
+                $offer['unit_discount_price']= $promotion->getPromotionPrice() ;
             }
         }
+
+            
 
         return $offer;
     }
