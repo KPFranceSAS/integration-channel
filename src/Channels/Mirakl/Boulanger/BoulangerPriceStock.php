@@ -69,11 +69,13 @@ class BoulangerPriceStock extends MiraklPriceStockParent
         $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
         if ($productMarketplace->getEnabled()) {
             $offer['price'] = $productMarketplace->getPrice();
+            $priceChannel = [];
+            $priceChannel['unit_origin_price']= $productMarketplace->getPrice() ;
             $promotion = $productMarketplace->getBestPromotionForNow();
             if ($promotion) {
-                $offer['discount/origin_price']= $productMarketplace->getPrice() ;
-                $offer['discount/discount_price']= $promotion->getPromotionPrice() ;
+                $priceChannel['unit_discount_price']= $promotion->getPromotionPrice() ;
             }
+            $offer["all_prices"][] = $priceChannel;
         }
 
             
