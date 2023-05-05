@@ -126,8 +126,8 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
 
         if ($this->shouldBeSentByUps($orderApi)) {
-            //$orderBC->shippingAgent = "UPS";
-            //$orderBC->shippingAgentService = "1";
+            $orderBC->shippingAgent = "UPS";
+            $orderBC->shippingAgentService = "1";
         }
         
 
