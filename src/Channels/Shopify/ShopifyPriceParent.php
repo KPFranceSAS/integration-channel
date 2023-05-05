@@ -35,7 +35,7 @@ abstract class ShopifyPriceParent extends PriceParent
         foreach ($product['variants'] as $variant) {
             $skuCode = $variant['sku'];
             $this->logger->info('Sku ' . $skuCode);
-            $product=$this->manager->getRepository(Product::class)->findBySku($skuCode);
+            $product=$this->manager->getRepository(Product::class)->findOneBySku($skuCode);
             if($product) {
                 $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
                 if ($productMarketplace->getEnabled()) {
