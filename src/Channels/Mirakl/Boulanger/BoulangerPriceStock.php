@@ -71,8 +71,8 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             $offer['price'] = $productMarketplace->getPrice();
             $promotion = $productMarketplace->getBestPromotionForNow();
             if ($promotion) {
-                $offer['unit_origin_price']= $productMarketplace->getPrice() ;
-                $offer['unit_discount_price']= $promotion->getPromotionPrice() ;
+                $offer['origin-price']= $productMarketplace->getPrice() ;
+                $offer['discount-price']= $promotion->getPromotionPrice() ;
             }
         }
 
