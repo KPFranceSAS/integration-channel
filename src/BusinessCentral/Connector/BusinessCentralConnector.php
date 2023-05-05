@@ -345,6 +345,9 @@ abstract class BusinessCentralConnector
      */
     public function createSaleOrder(array $order): ?array
     {
+
+        $this->logger->debug('Order creation '.json_encode($order));
+
         return $this->doPostRequest(
             self::EP_SALES_ORDERS,
             $order
