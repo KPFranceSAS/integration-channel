@@ -15,32 +15,40 @@ abstract class ShopifyPriceParent extends PriceParent
     }
 
 
-    public function sendPrices(array $products, array $saleChannels)
+    public function sendPrices(array $saleChannels)
     {
-        $this->mainLocation = $this->getShopifyApi()->getMainLocation();
-        $this->organisePriceSaleChannel($products, $saleChannels);
-        $productApis = $this->getShopifyApi()->getAllProducts();
-        foreach ($productApis as $productApi) {
-            $this->sendPrice($productApi);
+        if(count($saleChannels)>0){
+            $this->mainLocation = $this->getShopifyApi()->getMainLocation();
+            $productApis = $this->getShopifyApi()->getAllProducts();
+            foreach ($productApis as $productApi) {
+                $this->sendPrice($productApi, $saleChannels[0]);
+            }
         }
     }
 
     
 
 
-    public function sendPrice($product)
+    public function sendPrice($product, $saleChannel)
     {
         foreach ($product['variants'] as $variant) {
             $skuCode = $variant['sku'];
             $this->logger->info('Sku ' . $skuCode);
-            if (array_key_exists($skuCode, $this->productMarketplaces)) {
-                $productMarketplace = $this->productMarketplaces[$skuCode];
-                $price =  $productMarketplace->getPrice() ;
-                $promotion = $productMarketplace->getBestPromotionForNow();
-                $promotionPrice = $promotion ? $promotion->getPromotionPrice() : null;
-                $this->getShopifyApi()->updateVariantPrice($variant['id'], $price, $promotionPrice);
+            $product=$this->manager->getRepository(Product::class)->findBySku($skuCode);
+            if($product) {
+                $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
+                if ($productMarketplace->getEnabled()) {
+                    $productMarketplace = $this->productMarketplaces[$skuCode];
+                    $price =  $productMarketplace->getPrice() ;
+                    $promotion = $productMarketplace->getBestPromotionForNow();
+                    $promotionPrice = $promotion ? $promotion->getPromotionPrice() : null;
+                    $this->getShopifyApi()->updateVariantPrice($variant['id'], $price, $promotionPrice);
+                } else {
+                    $this->logger->info('Desactivate and put stock to 0');
+                    $this->getShopifyApi()->setInventoryLevel($this->mainLocation['id'],$variant["inventory_item_id"],  0);
+                }
             } else {
-                $this->logger->info('Desactivate and put stock to 0');
+                $this->logger->info('No product in BC >>> disable');
                 $this->getShopifyApi()->setInventoryLevel($this->mainLocation['id'],$variant["inventory_item_id"],  0);
             }
         }

@@ -47,34 +47,44 @@ class PriceUpdateAllCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $channels = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
+        $channelCodes = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
             [
                 "active"=>true,
                 "priceSync"=>true,
             ]
         );
+
+
+        $channels=[];
+        foreach ($channelCodes as $channelCode) {
+            $channels[]=$channelCode->getCode();
+        }
+
+
         foreach ($channels as $channel) {
             try {
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('Start price update CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('Start price update CHANNEL >>> '.$channel);
                 $this->logger->info('##########################################');
                 $this->logger->info('');
                     
-                $priceUpdater = $this->priceAggregator->getPrice($channel->getCode());
+                $priceUpdater = $this->priceAggregator->getPrice($channel);
                 if(!$priceUpdater){
-                    $priceUpdater = $this->priceStockAggregator->getPriceStock($channel->getCode());
+                    $priceUpdater = $this->priceStockAggregator->getPriceStock($channel);
                 }
                 $priceUpdater->send();
                 
                 
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('End price update CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('End price update CHANNEL >>> '.$channel);
                 $this->logger->info('##########################################');
                 $this->logger->info('');
+                $this->managerRegistry->clear();
+                
             } catch (Exception $e) {
-                $this->mailService->sendEmail('Error in PriceUpdateAllCommand', $e->getMessage());
+                $this->mailService->sendEmail('Error in PriceUpdateAllCommand '.$channel, $e->getMessage());
             }
         }
 

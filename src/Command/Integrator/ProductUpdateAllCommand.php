@@ -43,29 +43,36 @@ class ProductUpdateAllCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $channels = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
+        $channelCodes = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
             [
                 "active"=>true,
                 "productSync"=>true,
             ]
         );
+
+
+        $channels=[];
+        foreach ($channelCodes as $channelCode) {
+            $channels[]=$channelCode->getCode();
+        }
+
         foreach ($channels as $channel) {
             try {
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('Start product update CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('Start product update CHANNEL >>> '.$channel);
                 $this->logger->info('##########################################');
                 $this->logger->info('');
-                $productUpdater = $this->productSyncAggregator->getProductSync($channel->getCode());
+                $productUpdater = $this->productSyncAggregator->getProductSync($channel);
                 $productUpdater->syncProducts();
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('End product update CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('End product update CHANNEL >>> '.$channel);
                 $this->logger->info('##########################################');
                 $this->logger->info('');
-                sleep(30);
+                $this->managerRegistry->clear();
             } catch (Exception $e) {
-                $this->mailService->sendEmail("[".$channel->getCode()."] Error in Product update on PIM", $e->getMessage());
+                $this->mailService->sendEmail("[".$channel."] Error in Product update on PIM", $e->getMessage());
             }
         }
 

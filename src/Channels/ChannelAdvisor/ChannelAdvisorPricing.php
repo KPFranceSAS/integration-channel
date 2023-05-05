@@ -42,8 +42,9 @@ class ChannelAdvisorPricing extends PriceParent
 
 
 
-    public function sendPrices(array $products, array $saleChannels)
+    public function sendPrices(array $saleChannels)
     {
+        $products = $this->getFilteredProducts($saleChannels);
         $header = ['sku'];
         foreach ($saleChannels as $saleChannel) {
             $code = $saleChannel->getCode().'-';

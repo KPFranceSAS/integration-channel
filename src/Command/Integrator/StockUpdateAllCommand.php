@@ -45,33 +45,41 @@ class StockUpdateAllCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $channels = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
+        $channelCodes = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
             [
                 "active"=>true,
                 "stockSync"=>true,
             ]
         );
+
+        $channels=[];
+        foreach ($channelCodes as $channelCode) {
+            $channels[]=$channelCode->getCode();
+        }
+
+
         foreach ($channels as $channel) {
             try {
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('Start stock update CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('Start stock update CHANNEL >>> '.$channel);
                 $this->logger->info('##########################################');
                 $this->logger->info('');
-                $stockUpdate = $this->stockAggregator->getStock($channel->getCode());
+                $stockUpdate = $this->stockAggregator->getStock($channel);
                 if($stockUpdate){
                     $stockUpdate->send();
                 } else {
-                    $this->logger->critical('No stock update CHANNEL >>> '.$channel->getCode());
+                    $this->logger->critical('No stock update CHANNEL >>> '.$channel);
                 }
                 
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('End stock update CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('End stock update CHANNEL >>> '.$channel);
                 $this->logger->info('##########################################');
                 $this->logger->info('');
+                $this->managerRegistry->clear();
             } catch (Exception $e) {
-                $this->mailService->sendEmail('Error in StockUpdateAllCommand', $e->getMessage());
+                $this->mailService->sendEmail('Error in StockUpdateAllCommand '.$channel, $e->getMessage());
             }
         }
 

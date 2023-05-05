@@ -55,29 +55,36 @@ class OrderIntegrateAllCommand extends Command
         }
 
 
-        $channels = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
+        $channelCodes = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
             [
                 "active"=>true,
                 "orderSync"=>true,
             ]
         );
+
+        $channels=[];
+        foreach ($channelCodes as $channelCode) {
+            $channels[]=$channelCode->getCode();
+        }
+
         foreach ($channels as $channel) {
             try {
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('Start integration CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('Start integration CHANNEL >>> '.$channel);
                 $this->logger->info('##########################################');
                 $this->logger->info('');
-                $integrator = $this->integrateAggregator->getIntegrator($channel->getCode());
+                $integrator = $this->integrateAggregator->getIntegrator($channel);
                 $retryIntegration = boolval($input->getArgument('retryIntegration'));
                 $integrator->processOrders($retryIntegration);
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('End integration CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('End integration CHANNEL >>> '.$channel);
                 $this->logger->info('##########################################');
                 $this->logger->info('');
+                $this->managerRegistry->clear();
             } catch (Exception $e) {
-                $this->mailService->sendEmail('Error in OrderIntegrateChannelCommand', $e->getMessage());
+                $this->mailService->sendEmail('Error in OrderIntegrateChannelCommand '.$channel, $e->getMessage());
             }
         }
 

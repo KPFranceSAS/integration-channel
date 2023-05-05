@@ -52,28 +52,37 @@ class UpdateDeliveryAllCommand extends Command
             return Command::SUCCESS;
         }
 
-        $channels = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
+        $channelCodes = $this->managerRegistry->getRepository(IntegrationChannel::class)->findBy(
             [
                 "active"=>true,
                 "orderSync"=>true,
             ]
         );
+
+        $channels=[];
+        foreach ($channelCodes as $channelCode) {
+            $channels[]=$channelCode->getCode();
+        }
+
+
+
         foreach ($channels as $channel) {
             try {
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('Start update status CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('Start update status CHANNEL >>> '.$channel);
                 $this->logger->info('##########################################');
                 $this->logger->info('');
-                $integrator = $this->deliveryAggregator->getDelivery($channel->getCode());
+                $integrator = $this->deliveryAggregator->getDelivery($channel);
                 $integrator->updateStatusDeliveries();
                 $this->logger->info('');
                 $this->logger->info('##########################################');
-                $this->logger->info('End update status CHANNEL >>> '.$channel->getCode());
+                $this->logger->info('End update status CHANNEL >>> '.$channel);
                 $this->logger->info('##########################################');
                 $this->logger->info('');
+                $this->managerRegistry->clear();
             } catch (Exception $e) {
-                $this->mailService->sendEmail('Error in UpdateDeliveryAllCommand', $e->getMessage());
+                $this->mailService->sendEmail('Error in UpdateDeliveryAllCommand '.$channel, $e->getMessage());
             }
         }
 

@@ -4,6 +4,7 @@ namespace App\Service\Aggregator;
 
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
+use App\Entity\ProductSaleChannel;
 use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
@@ -34,7 +35,7 @@ abstract class PriceParent
         $this->apiAggregator = $apiAggregator;
     }
 
-    abstract public function sendPrices(array $products, array $saleChannels);
+    abstract public function sendPrices(array $saleChannels);
 
     abstract public function getChannel(): string;
 
@@ -50,8 +51,7 @@ abstract class PriceParent
                 'integrationChannel' => $integrationChannel
             ]);
 
-            $products = $this->manager->getRepository(Product::class)->findAll();
-            $this->sendPrices($products, $saleChannels);
+            $this->sendPrices($saleChannels);
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
             $this->mailer->sendEmailChannel($this->getChannel(), 'Update prices Error class '. get_class($this), $e->getMessage());
@@ -60,8 +60,9 @@ abstract class PriceParent
 
     protected $productMarketplaces;
 
-    protected function organisePriceSaleChannel($products, $saleChannels)
+    protected function organisePriceSaleChannel($saleChannels)
     {
+        $products = $this->getFilteredProducts($saleChannels);
         $this->productMarketplaces = [];
         foreach ($products as $product) {
             foreach ($saleChannels as $saleChannel) {
@@ -72,6 +73,27 @@ abstract class PriceParent
             }
         }
     }
+
+    protected function getFilteredProducts($saleChannels): array
+    {
+        $productsFiltererd=[];
+        foreach($saleChannels as $saleChannel) {
+            $productMarketplaces = $this->manager->getRepository(ProductSaleChannel::class)->findBy(
+                [
+                    'saleChannel'=> $saleChannel,
+                    'enabled' => true
+                ]
+            );
+
+            foreach ($productMarketplaces as $productMarketplace) {
+                $product = $productMarketplace->getProduct();
+                $productsFiltererd[$product->getSku()] = $product;
+            }
+        }
+
+        return array_values($productsFiltererd);
+    }
+
 
 
     public function getApi()

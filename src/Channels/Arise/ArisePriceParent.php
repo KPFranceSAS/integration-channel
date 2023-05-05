@@ -12,9 +12,9 @@ abstract class ArisePriceParent extends PriceParent
         return $this->getApi();
     }
 
-    public function sendPrices(array $products, array $saleChannels)
+    public function sendPrices(array $saleChannels)
     {
-        $this->organisePriceSaleChannel($products, $saleChannels);
+        $this->organisePriceSaleChannel($saleChannels);
         $productApis = $this->getAriseApi()->getAllProducts();
         foreach ($productApis as $productApi) {
             $this->sendPrice($productApi);
