@@ -3,6 +3,7 @@
 namespace App\Channels\Shopify;
 
 use App\Channels\Shopify\ShopifyApiParent;
+use App\Entity\Product;
 use App\Service\Aggregator\PriceParent;
 
 abstract class ShopifyPriceParent extends PriceParent
@@ -38,7 +39,6 @@ abstract class ShopifyPriceParent extends PriceParent
             if($product) {
                 $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
                 if ($productMarketplace->getEnabled()) {
-                    $productMarketplace = $this->productMarketplaces[$skuCode];
                     $price =  $productMarketplace->getPrice() ;
                     $promotion = $productMarketplace->getBestPromotionForNow();
                     $promotionPrice = $promotion ? $promotion->getPromotionPrice() : null;
