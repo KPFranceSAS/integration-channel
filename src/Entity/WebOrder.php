@@ -380,11 +380,11 @@ class WebOrder
             case IntegrationChannel::CHANNEL_ARISE:
                 return 'https://sellercenter.miravia.es/apps/order/detail?tradeOrderId=' . $this->externalNumber;
             case IntegrationChannel::CHANNEL_LEROYMERLIN:
-                return 'https://adeo-marketplace.mirakl.net/mmp/shop/order/' . $this->externalNumber;
+                return 'https://adeo-marketplace.mirakl.net/mmp/shop/order/' . $order['id'];
             case IntegrationChannel::CHANNEL_DECATHLON:
                 return 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $order['id'];
             case IntegrationChannel::CHANNEL_BOULANGER:
-                return 'https://merchant.boulanger.com/mmp/shop/order/' . $this->externalNumber;
+                return 'https://merchant.boulanger.com/mmp/shop/order/' . $order['id'];
             case IntegrationChannel::CHANNEL_MANOMANO_DE:
             case IntegrationChannel::CHANNEL_MANOMANO_IT:
             case IntegrationChannel::CHANNEL_MANOMANO_ES:
@@ -686,8 +686,13 @@ class WebOrder
         if($orderApi['customer']['shipping_address']["country"]=='DE') {
             $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
         }
+        if(array_key_exists('channel', $orderApi)) {
+            $webOrder->addLog('Retrieved from '.$orderApi['channel']['code'].' '.$orderApi['channel']['label']);
+        } else {
+            $webOrder->addLog('Retrieved from marketplace');
+
+        }
         
-        $webOrder->addLog('Retrieved from '.$orderApi['channel']['code'].' '.$orderApi['channel']['label']);
         return $webOrder;
     }
 
