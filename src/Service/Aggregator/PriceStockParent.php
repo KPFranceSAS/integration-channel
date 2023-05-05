@@ -7,6 +7,7 @@ use App\BusinessCentral\ProductStockFinder;
 use App\BusinessCentral\ProductTaxFinder;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
+use App\Entity\ProductSaleChannel;
 use App\Entity\SaleChannel;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
@@ -63,10 +64,14 @@ abstract class PriceStockParent
             $saleChannels = $this->manager->getRepository(SaleChannel::class)->findBy([
                 'integrationChannel' => $integrationChannel
             ]);
+            $this->logger->info('Has '.count($saleChannels).' sale channels enabled');
 
-            $products = $this->manager->getRepository(Product::class)->findAll();
-            $productFiltered = $this->getFilteredProducts($products, $saleChannels);
-            $this->sendStocksPrices($productFiltered, $saleChannels);
+            $productFiltered = $this->getFilteredProducts($saleChannels);
+            $this->logger->info('Has '.count($productFiltered).' products enabled');
+            if(count($productFiltered)>0) {
+                $this->sendStocksPrices($productFiltered, $saleChannels);
+            }
+            
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
             $this->mailer->sendEmailChannel($this->getChannel(), 'Update prices and stock Error class '. get_class($this), $e->getMessage());
@@ -74,37 +79,30 @@ abstract class PriceStockParent
     }
 
     
-    protected function isEnabledProducts(Product $product, $saleChannels) : bool
-    {
-        foreach ($saleChannels as $saleChannel) {
-            $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
-            $this->logger->info('Check product '.$product->getSku() . ' '.$saleChannel->getCode());
-            if ($productMarketplace) {
-                if($productMarketplace->getEnabled()) {
-                    return true;
-                }
-            } else {
-                $this->logger->error('Not found product '.$product->getSku() . ' '.$saleChannel->getCode());
-            }
-        }
-        return false;
-    }
-
 
     public function getStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA): int
     {
         return $this->productStockFinder->getFinalStockProductWarehouse($sku, $depot);
     }
 
-    protected function getFilteredProducts(array $products, $saleChannels): array
+    protected function getFilteredProducts($saleChannels): array
     {
         $productsFiltererd=[];
-        foreach ($products as $product) {
-            if ($this->isEnabledProducts($product, $saleChannels)) {
-                $productsFiltererd[] = $product;
+        foreach($saleChannels as $saleChannel) {
+            $productMarketplaces = $this->manager->getRepository(ProductSaleChannel::class)->findBy(
+                [
+                    'saleChannel'=> $saleChannel,
+                    'enabled' => true
+                ]
+            );
+
+            foreach ($productMarketplaces as $productMarketplace) {
+                $product = $productMarketplace->getProduct();
+                $productsFiltererd[$product->getSku()] = $product;
             }
         }
-        return $productsFiltererd;
+
+        return array_values($productsFiltererd);
     }
 
 

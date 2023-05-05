@@ -16,7 +16,7 @@ class SaleReturnOrderLine
 
     public $type;
 
-    public $number;
+    public $ItemNo;
 
     public $quantity;
 

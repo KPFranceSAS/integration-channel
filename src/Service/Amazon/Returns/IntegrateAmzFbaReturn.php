@@ -114,13 +114,13 @@ class IntegrateAmzFbaReturn
             if ($item['id']==$saleInvoiceLine['itemId']) {
                 $saleReturnLine = new SaleReturnOrderLine();
                 $saleReturnLine->type = SaleOrderLine::TYPE_ITEM;
-                $saleReturnLine->number = $skuProduct;
+                $saleReturnLine->ItemNo = $skuProduct;
                 $saleReturnLine->locationCode =  $locationCode;
                 $saleReturnLine->quantity =  1;
                 $saleReturnLine->documentType = 'Return Order';
                 $saleReturnLine->returnReasonCode = 'C07';
-                $saleReturnLine->lineNo = '1000';
-                $saleReturnLine->applFromItemEntry = 0;
+                $saleReturnLine->lineNo = 1000;
+                
             }
         }
 
