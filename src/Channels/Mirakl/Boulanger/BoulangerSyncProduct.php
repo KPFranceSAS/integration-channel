@@ -39,10 +39,10 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $flatProduct["PARTNUMBER"]  = $this->getAttributeSimple($product, 'ean');
         
 
-        $description = $this->getAttributeSimple($product, "description", "fr_FR");
-        if($description) {
-            $flatProduct["DESCRIPTIF"]  = substr($description, 0, 5000);
-        }
+        $descriptionRich = $this->getAttributeSimple($product, 'description_enrichie', 'fr_FR');
+        $descriptionSimple = $this->getAttributeSimple($product, 'description', 'fr_FR');
+        $descriptionFinal = strlen($descriptionRich) > 5  ? $descriptionRich."<p></p>".$descriptionSimple : $descriptionSimple;
+        $flatProduct['DESCRIPTIF'] = substr($descriptionFinal, 0, 5000);
 
         $attributeImageMain = $this->getAttributeSimple($product, 'image_url_loc_1', "fr_FR");
         $flatProduct["VISUEL_PRINC"] = $attributeImageMain ? $attributeImageMain : $this->getAttributeSimple($product, 'image_url_1');
