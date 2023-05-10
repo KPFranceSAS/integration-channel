@@ -81,8 +81,11 @@ abstract class UpdateDeliveryParent
             foreach ($ordersToSend as $orderToSend) {
                 $this->logLine('>>> Update sale Order '.$orderToSend->getChannel().' '. $orderToSend->getExternalNumber());
                 $this->updateDeliverySaleOrder($orderToSend);
-                $this->logLine('>>> Wait 5s');
-                sleep(5);
+                if($orderToSend->getCarrierService() == WebOrder::CARRIER_DHL) {
+                    $this->logLine('>>> Wait 6s');
+                    sleep(6);
+                }
+               
             }
             $this->logger->info('Ended updating delivery sale orders ' . $this->getChannel());
             if (count($this->errors) > 0) {
