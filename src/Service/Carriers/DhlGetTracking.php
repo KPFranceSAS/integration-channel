@@ -39,14 +39,14 @@ class DhlGetTracking
             $client = new Client();
             $response = $client->get(
                 'https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $externalOrderNumber,
-                ['connect_timeout' => 2]
+                ['connect_timeout' => 5]
             );
             $body = json_decode((string) $response->getBody(), true);
             if ($body) {
                 return $body;
             }
         } catch (Exception $e) {
-            error_log('DHL is not accessible');
+            error_log('DHL is not accessible '.$e->getMessage());
         }
 
         return null;
