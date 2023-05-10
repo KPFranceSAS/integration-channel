@@ -32,15 +32,15 @@ class ShippyProTracking
 
     public function checkIfDelivered($trackingNumber)
     {
-       $tracking = $this->getTracking($trackingNumber);
-       if(array_key_exists('StatusCode', $tracking) && $tracking['StatusCode']==6){
-            foreach($tracking['Details'] as $detail){
-                if($detail['StatusCode']==6){
+        $tracking = $this->getTracking($trackingNumber);
+        if(array_key_exists('StatusCode', $tracking) && $tracking['StatusCode']==6) {
+            foreach($tracking['Details'] as $detail) {
+                if($detail['StatusCode']==6) {
                     return DateTime::createFromFormat("U", $detail['date']);
                 }
             }
-       }
-       return false;
+        }
+        return null;
     }
 
 
@@ -50,7 +50,7 @@ class ShippyProTracking
         $tracking = $this->getTracking($trackingNumber);
         if (array_key_exists('StatusCode', $tracking)) {
             $steps = [];
-            foreach($tracking['Details'] as $step){
+            foreach($tracking['Details'] as $step) {
                 $dateEvent = DateTime::createFromFormat('U', $step['date']);
                 $description = $step['message']. ' - '.$step['city'];
                 $steps[ $dateEvent->format('YmdHis')]=[
@@ -68,7 +68,7 @@ class ShippyProTracking
 
 
 
-    public function sendRequest($endPoint, $params = [] )
+    public function sendRequest($endPoint, $params = [])
     {
         $client = new Client();
         $headers = [

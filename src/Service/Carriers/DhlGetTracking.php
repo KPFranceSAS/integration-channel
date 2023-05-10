@@ -39,7 +39,7 @@ class DhlGetTracking
             $client = new Client();
             $response = $client->get(
                 'https://clientesparcel.dhl.es/LiveTracking/api/expediciones?numeroExpedicion=' . $externalOrderNumber,
-                ['connect_timeout' => 1]
+                ['connect_timeout' => 2]
             );
             $body = json_decode((string) $response->getBody(), true);
             if ($body) {
@@ -59,7 +59,7 @@ class DhlGetTracking
         $body = self::getDHLResponse($externalOrderNumber);
         if ($body) {
             $steps = [];
-            foreach($body['Seguimiento'] as $step){
+            foreach($body['Seguimiento'] as $step) {
                 $dateEvent = DateTime::createFromFormat('d/m/Y H:i', $step['Fecha']. ' '.$step['Hora']);
                 $description = $step['Descripcion']. ' '.$step['Ciudad'];
                 $steps[ $dateEvent->format('YmdHis')]=[
