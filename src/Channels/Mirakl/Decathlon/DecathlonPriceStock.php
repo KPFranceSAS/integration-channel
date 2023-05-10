@@ -57,7 +57,7 @@ class DecathlonPriceStock extends MiraklPriceStockParent
             }
         }
 
-        $offer["offer_additional_fields"][] = ['code'=>"active_channels", 'value' => implode(',', $channelsActive)];
+        $offer["offer_additional_fields"][] = ['code'=>"active-channels", 'value' => implode(',', $channelsActive)];
 
         return $offer;
     }
