@@ -33,13 +33,12 @@ abstract class UpdateDeliveryParent
 
 
     public function __construct(
-        ManagerRegistry $manager, 
-        LoggerInterface $logger, 
-        MailService $mailer, 
-        ApiAggregator $apiAggregator, 
+        ManagerRegistry $manager,
+        LoggerInterface $logger,
+        MailService $mailer,
+        ApiAggregator $apiAggregator,
         TrackingAggregator $trackingAggregator
-    )
-    {
+    ) {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
@@ -82,6 +81,8 @@ abstract class UpdateDeliveryParent
             foreach ($ordersToSend as $orderToSend) {
                 $this->logLine('>>> Update sale Order '.$orderToSend->getChannel().' '. $orderToSend->getExternalNumber());
                 $this->updateDeliverySaleOrder($orderToSend);
+                $this->logLine('>>> Wait 5s');
+                sleep(5);
             }
             $this->logger->info('Ended updating delivery sale orders ' . $this->getChannel());
             if (count($this->errors) > 0) {
@@ -107,22 +108,22 @@ abstract class UpdateDeliveryParent
         try {
             $dateDelivery = $this->checkifDelivered($webOrder);
             if ($dateDelivery) {
-                    $this->logger->info('Is delivered '.$dateDelivery->format('d/m/Y'));
-                    $messageDelivery = 'Mark as delivered on '.$dateDelivery->format('d/m/Y');
-                    if ($webOrder->haveNoLogWithMessage($messageDelivery)) {
-                        $markOk =  $this->postUpdateDelivery($webOrder);
-                        if ($markOk) {
-                            $this->logger->info($messageDelivery);
-                            $webOrder->addLog($messageDelivery);
-                            $webOrder->setStatus(WebOrder::STATE_COMPLETE);
-                        }
-                    } else {
-                        $this->logger->info('Already marked as delivered');
+                $this->logger->info('Is delivered '.$dateDelivery->format('d/m/Y'));
+                $messageDelivery = 'Mark as delivered on '.$dateDelivery->format('d/m/Y');
+                if ($webOrder->haveNoLogWithMessage($messageDelivery)) {
+                    $markOk =  $this->postUpdateDelivery($webOrder);
+                    if ($markOk) {
+                        $this->logger->info($messageDelivery);
+                        $webOrder->addLog($messageDelivery);
                         $webOrder->setStatus(WebOrder::STATE_COMPLETE);
                     }
                 } else {
-                    $this->logger->info('Not yet delivered ');
+                    $this->logger->info('Already marked as delivered');
+                    $webOrder->setStatus(WebOrder::STATE_COMPLETE);
                 }
+            } else {
+                $this->logger->info('Not yet delivered ');
+            }
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
             $this->addErrorToOrder($webOrder, $webOrder->getExternalNumber() . ' >> ' . $message);
@@ -135,13 +136,13 @@ abstract class UpdateDeliveryParent
     protected function checkifDelivered(WebOrder $webOrder): ?DateTime
     {
         $trackingCode = $webOrder->getTrackingCode();
-        if($webOrder->getCarrierService() == WebOrder::CARRIER_ARISE){
+        if($webOrder->getCarrierService() == WebOrder::CARRIER_ARISE) {
             $orderContent=$webOrder->getOrderContent();
             $zipCode = $orderContent->address_shipping->post_code;
         } else {
             $zipCode = null;
         }
 
-        return $trackingCode ? $this->trackingAggregator->checkIfDelivered($webOrder->getCarrierService(),$trackingCode, $zipCode ) : null;
+        return $trackingCode ? $this->trackingAggregator->checkIfDelivered($webOrder->getCarrierService(), $trackingCode, $zipCode) : null;
     }
 }

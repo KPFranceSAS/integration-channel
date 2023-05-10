@@ -113,6 +113,8 @@ abstract class UpdateStatusParent
         try {
             if ($order->isFulfiledBySeller()) {
                 $this->updateStatusSaleOrderFulfiledBySeller($order);
+                $this->logLine('>>> Wait 5s');
+                sleep(5);
             } else {
                 $this->updateStatusSaleOrderFulfiledByExternal($order);
             }
@@ -321,6 +323,7 @@ abstract class UpdateStatusParent
         foreach ($ordersToSend as $orderToSend) {
             $this->logLine('>>> Update sale Order '.$orderToSend->getChannel().' '. $orderToSend->getExternalNumber());
             $this->updateStatusSaleOrder($orderToSend);
+
         }
     }
 
