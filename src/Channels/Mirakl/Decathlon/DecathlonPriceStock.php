@@ -30,8 +30,11 @@ class DecathlonPriceStock extends MiraklPriceStockParent
             "logistic_class" => "M",
             "description" => 'Offer '.$product->getDescription(),
             "leadtime_to_ship" => "2",
-            "all_prices" => []
+            "all_prices" => [],
+            "offer_additional_fields" => []
         ];
+
+        $channelsActive = [];
 
 
       
@@ -39,6 +42,7 @@ class DecathlonPriceStock extends MiraklPriceStockParent
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
           
             if ($productMarketplace->getEnabled()) {
+                $channelsActive[]=$saleChannel->getCountryCode();
                 $offer['price'] = $productMarketplace->getPrice();
                 $priceChannel = [];
                 $priceChannel ['channel_code'] = $saleChannel->getCountryCode();
@@ -52,6 +56,8 @@ class DecathlonPriceStock extends MiraklPriceStockParent
                 $offer["all_prices"][] = $priceChannel;
             }
         }
+
+        $offer["offer_additional_fields"][] = ['code'=>"active_channels", 'value' => implode(',', $channelsActive)];
 
         return $offer;
     }
