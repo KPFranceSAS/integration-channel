@@ -38,8 +38,9 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
                 ['code'=>"shipment-origin" , 'value' => "ES"],
             ]
         ];
+        $channelsActive = [];
 
-
+     
         
             
       
@@ -47,7 +48,7 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
 
             if ($productMarketplace->getEnabled()) {
-
+                $channelsActive[]='LM'.$saleChannel->getCountryCode();
                 $mirakCode= substr($saleChannel->getCode(), -3);
                 $offer['price'] = $productMarketplace->getPrice();
                 $priceChannel = [];
@@ -62,6 +63,8 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
                 $offer["all_prices"][] = $priceChannel;
             }
         }
+
+        $offer["offer_additional_fields"][] = ['code'=>"exclusive-channels", 'value' => implode(',', $channelsActive)];
 
         return $offer;
     }

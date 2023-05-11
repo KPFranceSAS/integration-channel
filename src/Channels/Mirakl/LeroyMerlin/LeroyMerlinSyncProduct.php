@@ -86,7 +86,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         $flatProduct["ATT_00054"] = $this->getAttributeUnit($product, 'product_height', 'CENTIMETER', 0);
         $flatProduct["ATT_00055"] = $this->getAttributeUnit($product, 'product_width', 'CENTIMETER', 0);
 
-        
+
      
         
 

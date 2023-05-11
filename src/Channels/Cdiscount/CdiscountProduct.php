@@ -7,7 +7,6 @@ use App\Channels\Cdiscount\CdiscountApi;
 use App\Entity\IntegrationChannel;
 use App\Service\Aggregator\ProductSyncParent;
 
-
 /**
  * Services that will get through the API the order from Cdiscount
  *
@@ -21,10 +20,27 @@ class CdiscountProduct extends ProductSyncParent
         $products = $this->getProductsEnabledOnChannel();
         $productToArrays=[];
         foreach ($products as $product) {
-            $productToArrays[]= $this->flatProduct($product);
+            if($this->doNoExistsInCdiscount($product)) {
+                $productToArrays[]= $this->flatProduct($product);
+            }
+           
         }
-        $packageId = $this->getCdiscountApi()->sendProducts($productToArrays);
-        $this->logger->info('PackageId '.json_encode($packageId));
+        if(count($productToArrays)>0) {
+            $packageId = $this->getCdiscountApi()->sendProducts($productToArrays);
+            $this->logger->info('PackageId '.json_encode($packageId));
+        } else {
+            $this->logger->info('Products already exists ');
+        }
+
+        
+    }
+
+
+    protected function doNoExistsInCdiscount($product)
+    {
+        $ean = $this->getAttributeSimple($product, 'ean');
+        $productCdisoucnt = $this->getCdiscountApi()->searchProductByGtin($ean);
+        return $productCdisoucnt ? false : true;
     }
 
 
@@ -54,7 +70,7 @@ class CdiscountProduct extends ProductSyncParent
         ];
 
         $description = $this->getAttributeSimple($product, "short_description", 'fr_FR');
-        $flatProduct['description'] = substr($this->sanitizeHtml($description),0,250);
+        $flatProduct['description'] = substr($this->sanitizeHtml($description), 0, 250);
 
         
         $familyPim =$product['family'];
@@ -73,10 +89,11 @@ class CdiscountProduct extends ProductSyncParent
         for ($i = 1; $i <= 9;$i++) {
             $attributeImageLoc = $this->getAttributeSimple($product, 'image_url_loc_'.$i, 'fr_FR');
             $attributeImage = $this->getAttributeSimple($product, 'image_url_'.$i);
-            if($attributeImageLoc || $attributeImage){
+            if($attributeImageLoc || $attributeImage) {
+                $urlImage = $attributeImageLoc ? $attributeImageLoc : $attributeImage;
                 $flatProduct ['sellerPictureUrls'][]= [
                     'index'=> $i,
-                    'url' => $attributeImageLoc ? $attributeImageLoc : $attributeImage
+                    'url' => $urlImage
                 ];
             }
         }
