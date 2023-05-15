@@ -180,10 +180,14 @@ abstract class UpdateStatusParent
 
                 if ($order->getCarrierService() == WebOrder::CARRIER_UPS) {
                     $tracking = $statusSaleOrder['trackingNumber'];
-                    $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by UPS with tracking number ' . $tracking);
-                    $order->setTrackingUrl(UpsGetTracking::getTrackingUrlBase($tracking));
-                    $order->setTrackingCode($tracking);
-                    $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
+                    if(substr($tracking, 0, 4)=='1ZB5') {
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by UPS with tracking number ' . $tracking);
+                        $order->setTrackingUrl(UpsGetTracking::getTrackingUrlBase($tracking));
+                        $order->setTrackingCode($tracking);
+                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
+                    } else {
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from UPS for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
+                    }
                 }
 
 
