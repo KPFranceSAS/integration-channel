@@ -166,8 +166,5 @@ services:
             $manoManoItContractId :  '%env(resolve:MANOMANO_IT_CONTRAT)%'
             $manoManoItKey :  '%env(resolve:MANOMANO_IT_KEY)%'
 
-            $cdiscountClientId :  '%env(resolve:CDISCOUNT_CLIENT_ID)%'
-            $cdiscountClientSecret : '%env(resolve:CDISCOUNT_CLIENT_SECRET)%'
-            $cdiscountSellerId : '%env(resolve:CDISCOUNT_CLIENT_SELLERID)%'
-          
+         
             
