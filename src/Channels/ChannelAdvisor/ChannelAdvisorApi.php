@@ -43,7 +43,7 @@ class ChannelAdvisorApi implements ApiInterface
         $this->refreshToken = $channelRefreshToken;
         $this->applicationId = $channelApplicationId;
         $this->sharedSecret = $channelSharedSecret;
-        $this->getAccessToken();
+        
     }
 
 
@@ -59,6 +59,7 @@ class ChannelAdvisorApi implements ApiInterface
 
     private function getAccessToken()
     {
+        $this->logger->info('Iniatialise token Channeladvisor');
         $client = new Client();
         $response = $client->request('POST', $this->getAuthEndPoint(), [
             'auth' => [$this->applicationId, $this->sharedSecret],
@@ -70,6 +71,7 @@ class ChannelAdvisorApi implements ApiInterface
         ]);
         $body = json_decode($response->getBody());
         $this->accessToken = $body->access_token;
+        $this->logger->info('Iniatialised token Channeladvisor '.$this->accessToken);
         $this->dateInitialisationToken = new DateTime();
     }
 
@@ -84,6 +86,10 @@ class ChannelAdvisorApi implements ApiInterface
 
     private function checkIfTokenTooOld(): bool
     {
+        if(!$this->dateInitialisationToken) {
+            return true;
+        }
+
         $dateNow = new DateTime();
         $diffMin = abs($dateNow->getTimestamp() - $this->dateInitialisationToken->getTimestamp()) / 60;
 
@@ -116,6 +122,7 @@ class ChannelAdvisorApi implements ApiInterface
 
     public function getNewOrdersByBatch($notExported = true)
     {
+        $this->logger->info('Get orders Channeladvisor');
         $params = [
             '$expand' => 'Items($expand=Adjustments,Promotions,BundleComponents),Fulfillments($expand=Items),Adjustments',
             '$filter' => "PaymentStatus eq 'Cleared' and CheckoutStatus eq 'Completed' and CreatedDateUtc gt 2022-04-01",
