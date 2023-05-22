@@ -144,9 +144,17 @@ class ChannelAdvisorApi implements ApiInterface
         return $this->sendRequest('Orders(' . $orderId . ')/Export', [], 'DELETE');
     }
 
-    public function notifyShipping($orderId, $toSend)
+    public function markOrderAsFulfill($orderId, $trackingNumber,$trackingUrl, $carrierService)
     {
-        return $this->sendRequest('Orders(' . $orderId . ')/Ship', [], 'POST', $toSend);
+        $params = [
+            'TrackingNumber' => $trackingNumber,
+            'ShippingCarrier' => $carrierService,
+            'ShippingClass' => 'Standard',
+            'TrackingUrl' =>  $trackingUrl,
+        ];
+
+
+        return $this->sendRequest('Orders(' . $orderId . ')/Ship', [], 'POST', $params);
     }
 
     public function sendInvoice(

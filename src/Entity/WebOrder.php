@@ -413,7 +413,16 @@ class WebOrder
         } elseif ($orderApi->DistributionCenterTypeRollup == 'SellerManaged') {
             $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
             $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
-            $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
+            $skus = [];
+            foreach ($orderApi->Items as $line) {
+                $skus[] = $line->Sku;
+            }
+            $shouldBeSentByUps = UpsGetTracking::shouldBeSentWith($skus);
+            if ($shouldBeSentByUps) {
+                $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
+            } else {
+                $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
+            }            
         } else {
             $webOrder->setWarehouse(WebOrder::DEPOT_MIXED);
             $webOrder->setFulfilledBy(WebOrder::FULFILLED_MIXED);

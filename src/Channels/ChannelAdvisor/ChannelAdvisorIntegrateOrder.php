@@ -9,6 +9,7 @@ use App\Channels\ChannelAdvisor\ChannelAdvisorApi;
 use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\IntegratorParent;
+use App\Service\Carriers\UpsGetTracking;
 use Exception;
 use stdClass;
 
@@ -18,6 +19,21 @@ use stdClass;
  */
 class ChannelAdvisorIntegrateOrder extends IntegratorParent
 {
+
+
+    public const AMZ_KP_FR = '000222';
+    public const AMZ_KP_ES = '000230';
+    public const AMZ_KP_IT = '000163';
+    public const AMZ_KP_DE = '000193';
+    public const AMZ_KP_UK = '000223';
+
+    public const AMZ_GI_ES = '003315';
+
+    public const CDISC_KP_FR = '000809';
+
+ 
+
+
     public function getChannel()
     {
         return IntegrationChannel::CHANNEL_CHANNELADVISOR;
@@ -85,6 +101,12 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
         ) {
             $this->logger->info('Status OK');
             return true;
+        } elseif(
+            $orderApi->DistributionCenterTypeRollup == 'ExternallyManaged'
+            && $orderApi->ShippingStatus == 'Shipped'
+        ) {
+            $this->logger->info('Status OK');
+            return true;
         } else {
             $this->logger->info("X__Bad " . $orderApi->DistributionCenterTypeRollup . " " . $orderApi->ShippingStatus);
             return false;
@@ -112,9 +134,6 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             $orderBC->sellingPostalAddress->state = substr($orderApi->BillingStateOrProvinceName, 0, 30);
         }
 
-        $orderBC->locationCode = WebOrder::DEPOT_FBA_AMAZON;
-
-
         $orderBC->shipToName = $orderApi->ShippingFirstName . ' ' . $orderApi->ShippingLastName;
         if ($orderApi->ShippingAddressLine1) {
             $orderBC->shippingPostalAddress->street = substr($orderApi->ShippingAddressLine1, 0, 100);
@@ -139,13 +158,41 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             $orderBC->currencyCode =  $orderApi->Currency;
         }
 
-        $orderBC->shippingAgent = 'FBA';
-        $orderBC->shippingAgentService = '1';
 
         $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
+
+        if($orderApi->DistributionCenterTypeRollup=='ExternallyManaged'){
+            $orderBC->shippingAgent = 'FBA';
+            $orderBC->shippingAgentService = '1';
+            $orderBC->locationCode = WebOrder::DEPOT_FBA_AMAZON;
+        } else {
+            if($this->shouldBeSentByUps($orderApi)){
+                $orderBC->shippingAgent = "UPS";
+                $orderBC->shippingAgentService = "1";
+            }
+            
+            $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
+        }
+        
+
+        
         return $orderBC;
     }
+
+
+
+    protected function shouldBeSentByUps($orderApi): bool
+    {
+        $skus = [];
+        foreach ($orderApi->Items as $line) {
+            $skus[] = $line->Sku;
+        }
+        return UpsGetTracking::shouldBeSentWith($skus);
+    }
+
+
+
 
 
     private function getSalesOrderLines($orderApi): array
@@ -223,18 +270,28 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
     private function matchChannelAdvisorOrderToCustomer($orderApi): string
     {
         $profileId = $orderApi->ProfileID;
+        $siteID = $orderApi->SiteID;
+
+        $keyMatch = $profileId.'_'.$siteID;
+
         $mapCustomer = [
-            "12010024" =>   "000223", // Customer Amazon UK KP France
-            "12010025" =>   "000163", // Customer Amazon IT KP France
-            "12010023" =>   "000193", // Customer Amazon DE KP France
-            "12009934" =>   "000222", // Customer Amazon FR KP France
-            "12010026" =>   "000230", // Customer Amazon ES KP France
-            "12044694" =>   "003315", // Customer Amazon ES GI
+            "12010024_641" =>  self::AMZ_KP_UK, // Customer Amazon UK KP France
+            "12010025_645" =>  self::AMZ_KP_IT , // Customer Amazon IT KP France
+            "12010023_642" =>  self::AMZ_KP_DE, // Customer Amazon DE KP France
+            "12009934_643" =>  self::AMZ_KP_FR, // Customer Amazon FR KP France
+            "12010026_683" =>  self::AMZ_KP_ES, // Customer Amazon ES KP France
+
+            "12009934_967" =>  self::CDISC_KP_FR, // Customer Cdiscount FR KP France
+
+            "12044694_683" =>  self::AMZ_GI_ES, // Customer Amazon ES GI
         ];
-        if (array_key_exists($profileId, $mapCustomer)) {
-            return $mapCustomer[$profileId];
+
+        if (array_key_exists($keyMatch, $mapCustomer)) {
+            
+            return $mapCustomer[$keyMatch];
         } else {
-            throw new Exception("Profile Id $profileId is not mapped to a customer");
+            throw new Exception("Profile Id $profileId and Siteid $siteID is not mapped to a customer");
         }
     }
+
 }

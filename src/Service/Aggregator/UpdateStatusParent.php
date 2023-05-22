@@ -277,13 +277,16 @@ abstract class UpdateStatusParent
         $this->logger->info('Check if shipment is late ');
         $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
         $orderBc =  $businessCentralConnector->getSaleOrderByNumber($order->getOrderErp());
-        $documentDate = DatetimeUtils::transformFromIso8601($orderBc['lastModifiedDateTime']);
-        $now = new DateTime();
-        $interval = $now->diff($documentDate, true);
-        $nbHours = $interval->format('%a') * 24 + $interval->format('%h');
-        if ($nbHours > 2) {
-            $this->addOnlyErrorToOrderIfNotExists($order, $order . ' has been created but warehouse shipment has not been created for  ' . $order->getOrderErp() . '. Please check what is delaying  release of the sale order');
+        if($orderBc) {
+            $documentDate = DatetimeUtils::transformFromIso8601($orderBc['lastModifiedDateTime']);
+            $now = new DateTime();
+            $interval = $now->diff($documentDate, true);
+            $nbHours = $interval->format('%a') * 24 + $interval->format('%h');
+            if ($nbHours > 2) {
+                $this->addOnlyErrorToOrderIfNotExists($order, $order . ' has been created but warehouse shipment has not been created for  ' . $order->getOrderErp() . '. Please check what is delaying  release of the sale order');
+            }
         }
+        
     }
 
 
