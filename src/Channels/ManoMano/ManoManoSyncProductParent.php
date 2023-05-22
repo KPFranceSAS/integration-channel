@@ -136,7 +136,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             'Sample_SKU' => "",
             'Unit_count' => "",
             "unit_count_type" => '',
-            "shipping_time" => "3#7",
+            "shipping_time" => "3#5",
             "carrier" => $carrierCode,
             "shipping_price_vat_inc" => 0,
             "use_grid" => 0,
