@@ -26,9 +26,7 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
     public const AMZ_KP_IT = '000163';
     public const AMZ_KP_DE = '000193';
     public const AMZ_KP_UK = '000223';
-
     public const AMZ_GI_ES = '003315';
-
     public const CDISC_KP_FR = '000809';
 
  
@@ -162,12 +160,12 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
         $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
 
-        if($orderApi->DistributionCenterTypeRollup=='ExternallyManaged'){
+        if($orderApi->DistributionCenterTypeRollup=='ExternallyManaged') {
             $orderBC->shippingAgent = 'FBA';
             $orderBC->shippingAgentService = '1';
             $orderBC->locationCode = WebOrder::DEPOT_FBA_AMAZON;
         } else {
-            if($this->shouldBeSentByUps($orderApi)){
+            if($this->shouldBeSentByUps($orderApi)) {
                 $orderBC->shippingAgent = "UPS";
                 $orderBC->shippingAgentService = "1";
             }

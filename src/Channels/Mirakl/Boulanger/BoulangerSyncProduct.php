@@ -62,9 +62,9 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         
         $familyPim =$product['family'];
 
-        if($familyPim == 'solar_panel' || $familyPim == 'power_station') {
+        if($familyPim == 'power_station') {
             $flatProduct["CATEGORIE"] = "603";
-            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/categorie']= $familyPim == 'solar_panel' ? "Panneau solaire" : "Batterie nomade";
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/categorie']=  "Batterie nomade";
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/specifique_samsung']="Non";
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/specifique_apple']="Non";
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/mise_en_place']=  $familyPim == 'solar_panel' ? "Externe" : "Interne et Externe";
@@ -75,12 +75,20 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/connectique']="Aucun";
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/nombre_de_port_usb']=$this->getAttributeSimple($product, 'number_usb_port');
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/puissance_de_sortie']="Non précisé";
-            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/capacite__en_wh']=$familyPim == 'solar_panel'  ? "0" : $this->getAttributeUnit($product, 'battery_capacity_wh', 'WATTHOUR', 0);
+            $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/capacite__en_wh']= $this->getAttributeUnit($product, 'battery_capacity_wh', 'WATTHOUR', 0);
             $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/UTILISATION']="Alimentez 99,99 % des appareils à usage intensif à la maison, à l'extérieur ou au travail.";
-            $flatProduct['CENTRALE_BATTERIE/batterie_nomade/capacite__en_wh']= $familyPim == 'solar_panel'  ? "0" :  $this->getAttributeUnit($product, 'battery_capacity_wh', 'WATTHOUR', 0);
+            $flatProduct['CENTRALE_BATTERIE/batterie_nomade/capacite__en_wh']= $this->getAttributeUnit($product, 'battery_capacity_wh', 'WATTHOUR', 0);
             $flatProduct['CENTRALE_BATTERIE/batterie_nomade/temperature_optimale_de_fonctionnement']="-10°C à 40°C";
             $flatProduct['CENTRALE_BATTERIE/batterie_nomade/nombre_de_port_usb']=$this->getAttributeSimple($product, 'number_usb_port');
             $flatProduct['CENTRALE_BATTERIE/batterie_nomade/cable_inclus']="Aucun";
+        } elseif($familyPim == 'solar_panel' || $familyPim == 'fixed_solor_panel') {
+            $flatProduct["CATEGORIE"] = "31809";
+            $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/type"] = "Panneau solaire";
+            $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/alimentation"] = "Non concerné";
+            $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/connectivite/technologie"] = "Wifi";
+            $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/compatible_assistant_vocal/compatible_google_assistant"] = "Non";
+            $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/compatible_assistant_vocal/compatible_alexa"] = "Non";
+            $flatProduct["CCENTRALE_CHAUFFAGE_CONNECTE/services_inclus/fabrique_en"] = "Chine";
         } elseif ($familyPim == 'robot_piscine') {
             $flatProduct["CATEGORIE"] = "7205";
             $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/type_de_piscine']="Enterrée, Hors-sol";

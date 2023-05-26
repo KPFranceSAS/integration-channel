@@ -163,12 +163,6 @@ abstract class IntegratorParent
                 $webOrder->setOrderErp($erpOrder['number']);
                 $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
 
-                // check if limit of 40 is overlimited
-                if ($webOrder->getFulfilledBy() == WebOrder::FULFILLED_BY_SELLER  && $webOrder->getCarrierService() == WebOrder::CARRIER_DHL &&  strlen($orderBC->shippingPostalAddress->street) > 40) {
-                    $errorLength = 'The BC sale order ' . $erpOrder['number'] . ' corresponding to the weborder  ' . $webOrder->getExternalNumber() . ' has been created with an address length of the street over 40 characters. ' . $orderBC->shippingPostalAddress->street . ". Please modify it on Business central";
-                    $this->addLogToOrder($webOrder, $errorLength);
-                    $this->addError($errorLength);
-                }
                 $this->checkAfterIntegration($webOrder, $order);
             } catch (Exception $e) {
                 $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
