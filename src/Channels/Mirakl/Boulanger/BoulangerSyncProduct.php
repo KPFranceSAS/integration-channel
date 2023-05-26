@@ -84,7 +84,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         } elseif($familyPim == 'solar_panel' || $familyPim == 'fixed_solor_panel') {
             $flatProduct["CATEGORIE"] = "31809";
             $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/type"] = "Panneau solaire";
-            $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/alimentation"] = "Non concerné";
+            $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/alimentation"] = "Secteur";
             $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/connectivite/technologie"] = "Wifi";
             $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/compatible_assistant_vocal/compatible_google_assistant"] = "Non";
             $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/compatible_assistant_vocal/compatible_alexa"] = "Non";
