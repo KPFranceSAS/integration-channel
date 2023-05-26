@@ -88,7 +88,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/connectivite/technologie"] = "Wifi";
             $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/compatible_assistant_vocal/compatible_google_assistant"] = "Non";
             $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/compatible_assistant_vocal/compatible_alexa"] = "Non";
-            $flatProduct["CCENTRALE_CHAUFFAGE_CONNECTE/services_inclus/fabrique_en"] = "Chine";
+            $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/services_inclus/fabrique_en"] = "Chine";
         } elseif ($familyPim == 'robot_piscine') {
             $flatProduct["CATEGORIE"] = "7205";
             $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/type_de_piscine']="Enterrée, Hors-sol";
