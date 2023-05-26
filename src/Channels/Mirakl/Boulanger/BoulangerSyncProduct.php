@@ -41,6 +41,9 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
         $descriptionRich = $this->getAttributeSimple($product, 'description_enrichie', 'fr_FR');
         $descriptionSimple = $this->getAttributeSimple($product, 'description', 'fr_FR');
+        $descriptionSimple = preg_replace('/<(ul|ol|li|p|hr)[^>]*>/', '<br>', $descriptionSimple);
+        $descriptionSimple = strip_tags($descriptionSimple, '<br>');
+
         $descriptionFinal = strlen($descriptionRich) > 5  ? $descriptionRich."<p></p>".$descriptionSimple : $descriptionSimple;
         $flatProduct['DESCRIPTIF'] = substr($descriptionFinal, 0, 5000);
 
