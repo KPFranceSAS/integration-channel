@@ -84,7 +84,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             $flatProduct['CENTRALE_BATTERIE/batterie_nomade/temperature_optimale_de_fonctionnement']="-10°C à 40°C";
             $flatProduct['CENTRALE_BATTERIE/batterie_nomade/nombre_de_port_usb']=$this->getAttributeSimple($product, 'number_usb_port');
             $flatProduct['CENTRALE_BATTERIE/batterie_nomade/cable_inclus']="Aucun";
-        } elseif($familyPim == 'solar_panel' || $familyPim == 'fixed_solor_panel') {
+        } elseif($familyPim == 'solar_panel' || $familyPim == 'fixed_solar_panel') {
             $flatProduct["CATEGORIE"] = "31809";
             $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/type"] = "Panneau solaire";
             $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/alimentation"] = "Secteur";
