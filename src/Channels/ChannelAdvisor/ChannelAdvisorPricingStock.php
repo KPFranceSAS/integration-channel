@@ -52,7 +52,7 @@ class ChannelAdvisorPricingStock extends PriceStockParent
 
     public function sendStocksPrices(array $products, array $saleChannels)
     {
-        $header = ['sku', 'stock_laroca'];
+        $header = ['sku', 'stock_laroca', 'ecotax'];
         foreach ($saleChannels as $saleChannel) {
             $code = $saleChannel->getCode().'-';
             array_push($header, $code.'enabled', $code.'price', $code.'promoprice');
