@@ -30,7 +30,7 @@ class TestConnectCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->channelAdvisorApi->refreshAccessToken();
+        $this->channelAdvisorApi->markOrderAsFulfill('15380141', '1ZB5K5656822600309', 'https://www.ups.com/track?loc=en_IT&trackNums=1ZB5K5656822600309&requester=ST/trackdetails', 'UPS');
         return Command::SUCCESS;
     }
 }

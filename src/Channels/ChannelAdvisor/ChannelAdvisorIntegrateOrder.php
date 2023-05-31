@@ -254,7 +254,8 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             "12010023" =>   BusinessCentralConnector::KP_FRANCE,
             "12009934" =>   BusinessCentralConnector::KP_FRANCE,
             "12010026" =>   BusinessCentralConnector::KP_FRANCE,
-            "12044694" =>   BusinessCentralConnector::GADGET_IBERIA
+            "12044694" =>   BusinessCentralConnector::GADGET_IBERIA,
+            "12047712" => BusinessCentralConnector::KP_FRANCE, // test
         ];
         if (array_key_exists($profileId, $mapCustomer)) {
             return $mapCustomer[$profileId];
@@ -278,10 +279,10 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             "12010023_642" =>  self::AMZ_KP_DE, // Customer Amazon DE KP France
             "12009934_643" =>  self::AMZ_KP_FR, // Customer Amazon FR KP France
             "12010026_683" =>  self::AMZ_KP_ES, // Customer Amazon ES KP France
-
             "12009934_967" =>  self::CDISC_KP_FR, // Customer Cdiscount FR KP France
-
             "12044694_683" =>  self::AMZ_GI_ES, // Customer Amazon ES GI
+            
+            '12047712_967' =>  self::CDISC_KP_FR, // Customer Test Cdiscount FR KP France
         ];
 
         if (array_key_exists($keyMatch, $mapCustomer)) {
