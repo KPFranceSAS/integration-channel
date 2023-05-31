@@ -3,6 +3,7 @@
 namespace App\Channels\ChannelAdvisor;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\ProductStockFinder;
 use App\BusinessCentral\ProductTaxFinder;
 use App\Entity\IntegrationChannel;
@@ -100,6 +101,16 @@ class ChannelAdvisorPricingStock extends PriceStockParent
                 $productArray[$code.'enabled']= 0;
             }
         }
+
+        $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
+
+        $itemBc = $businessCentralConnector->getItemByNumber($product->getSku());
+        $productArray['ecotax'] =  $this->productTaxFinder->getEcoTaxForItem(
+            $itemBc,
+            BusinessCentralConnector::KP_FRANCE,
+            'FR'
+        );
+
 
         return $productArray;
     }
