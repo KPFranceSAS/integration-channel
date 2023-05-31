@@ -29,7 +29,7 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "logistic_class" => "XXS",
             "description" => $product->getDescription(),
-            "leadtime_to_ship" => in_array($product->getSku(), ['ANK-PCK7', 'ANK-PCK8', 'ANK-PCK9','ANK-PCK10']) ? "10" : "2",
+            "leadtime_to_ship" => in_array($product->getSku(), ['ANK-PCK-7', 'ANK-PCK-8', 'ANK-PCK-9','ANK-PCK-10']) ? "10" : "2",
             "all_prices" => [],
             "offer_additional_fields" => [
                 [
