@@ -21,11 +21,11 @@ class TrackingAggregator
     public function checkIfDelivered($carrier, $codeTracking, $zipCode=null): ?DateTime
     {
         switch ($carrier) {
-            /*case WebOrder::CARRIER_DHL:
-                return DhlGetTracking::checkIfDelivered($codeTracking);*/
+            case WebOrder::CARRIER_DHL:
+                return DhlGetTracking::checkIfDelivered($codeTracking);
             case WebOrder::CARRIER_ARISE:
                 return AriseTracking::checkIfDelivered($codeTracking, $zipCode);
-            case WebOrder::CARRIER_DHL:
+                //case WebOrder::CARRIER_DHL:
             case WebOrder::CARRIER_UPS:
                 return $this->shippyProTracking->checkIfDelivered($codeTracking);
         }

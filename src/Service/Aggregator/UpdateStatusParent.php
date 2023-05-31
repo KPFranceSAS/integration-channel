@@ -168,17 +168,16 @@ abstract class UpdateStatusParent
                         $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
                     } else {
                         $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
+                        $tracking =  DhlGetTracking::getTrackingExternalWeb($statusSaleOrder['ShipmentNo']);
+                        if (!$tracking) {
+                            $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo']);
+                        } else {
+                            $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DHL with tracking number ' . $tracking);
+                            $order->setTrackingUrl(DhlGetTracking::getTrackingUrlBase($tracking));
+                            $order->setTrackingCode($tracking);
+                            $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
+                        }
                     }
-
-                    /*$tracking =  DhlGetTracking::getTrackingExternalWeb($statusSaleOrder['ShipmentNo']);
-                    if (!$tracking) {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo']);
-                    } else {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DHL with tracking number ' . $tracking);
-                        $order->setTrackingUrl(DhlGetTracking::getTrackingUrlBase($tracking));
-                        $order->setTrackingCode($tracking);
-                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
-                    }*/
                 }
 
 
