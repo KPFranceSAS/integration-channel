@@ -136,11 +136,12 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             'Sample_SKU' => "",
             'Unit_count' => "",
             "unit_count_type" => '',
-            "shipping_time" => "3#5",
+            "shipping_time" => in_array($product['identifier'], ['ANK-PCK7', 'ANK-PCK8', 'ANK-PCK9','ANK-PCK10']) ? "10#20" : "3#5",
             "carrier" => $carrierCode,
             "shipping_price_vat_inc" => 0,
             "use_grid" => 0,
         ];
+
 
         $valueGarantee =  $this->getAttributeChoice($product, 'manufacturer_guarantee', $this->getLocale());
         if ($valueGarantee) {
