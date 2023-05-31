@@ -63,6 +63,14 @@ class ProductStockFinder
     public function getFinalStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA, $ponderated=true): int
     {
         $this->logger->info('------ Check stock '.$sku.' in depot '.$depot.' ------ ');
+
+        if(in_array($sku, ['ANK-PCK7', 'ANK-PCK8', 'ANK-PCK9','ANK-PCK10'])) {
+            return 10;
+        }
+
+
+
+
         if ($this->isBundle($sku)) {
             $this->logger->info('Sku '.$sku.' is bundle');
             
