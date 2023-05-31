@@ -64,7 +64,7 @@ class ProductStockFinder
     {
         $this->logger->info('------ Check stock '.$sku.' in depot '.$depot.' ------ ');
 
-        if(in_array($sku, ['ANK-PCK7', 'ANK-PCK8', 'ANK-PCK9','ANK-PCK10'])) {
+        if(in_array($sku, ['ANK-PCK-7', 'ANK-PCK-8', 'ANK-PCK-9','ANK-PCK-10'])) {
             return 10;
         }
 
