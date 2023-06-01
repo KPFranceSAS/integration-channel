@@ -244,6 +244,7 @@ class WebOrderCrudController extends AdminCrudController
             'Amazon ES' => "Amazon Seller Central - ES",
             'Amazon FR' => "Amazon Seller Central - FR",
             'Boulanger' => "Boulanger",
+            'CDiscount' => "CDiscount",
             'Decathlon FR' => "Decathlon FR",
             'Decathlon ES' => "Decathlon ES",
             'Decathlon DE' => "Decathlon DE",
