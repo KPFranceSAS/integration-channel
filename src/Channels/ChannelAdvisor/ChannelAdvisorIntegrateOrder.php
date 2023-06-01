@@ -100,8 +100,8 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             $this->logger->info('Status OK');
             return true;
         } elseif(
-            $orderApi->DistributionCenterTypeRollup == 'ExternallyManaged'
-            && $orderApi->ShippingStatus == 'Shipped'
+            $orderApi->DistributionCenterTypeRollup == 'SellerManaged'
+            && $orderApi->ShippingStatus == 'Unshipped'
         ) {
             $this->logger->info('Status OK');
             return true;
@@ -282,7 +282,7 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             "12009934_967" =>  self::CDISC_KP_FR, // Customer Cdiscount FR KP France
             "12044694_683" =>  self::AMZ_GI_ES, // Customer Amazon ES GI
             
-            '12047712_967' =>  self::CDISC_KP_FR, // Customer Test Cdiscount FR KP France
+            '12047712_967' =>  self::AMZ_KP_FR, // Customer Test Cdiscount FR KP France
         ];
 
         if (array_key_exists($keyMatch, $mapCustomer)) {

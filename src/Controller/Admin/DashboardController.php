@@ -5,9 +5,10 @@ namespace App\Controller\Admin;
 use App\Controller\Configuration\ProductCrudController;
 use App\Controller\Fba\StockCrudController;
 use App\Controller\Order\AliexpressOrderCrudController;
+use App\Controller\Order\AmazonOrderCrudController;
 use App\Controller\Order\AriseOrderCrudController;
 use App\Controller\Order\BoulangerOrderCrudController;
-use App\Controller\Order\ChannelAdvisorOrderCrudController;
+use App\Controller\Order\CdiscountOrderCrudController;
 use App\Controller\Order\DecathlonOrderCrudController;
 use App\Controller\Order\DeliveryOrderCrudController;
 use App\Controller\Order\ErrorOrderCrudController;
@@ -90,9 +91,11 @@ class DashboardController extends AbstractDashboardController
                     MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)
                         ->setController(AliexpressOrderCrudController::class),
                     MenuItem::linkToCrud('Amazon', 'fab fa-amazon', WebOrder::class)
-                        ->setController(ChannelAdvisorOrderCrudController::class),
+                        ->setController(AmazonOrderCrudController::class),
                      MenuItem::linkToCrud('Boulanger', 'fas fa-tv', WebOrder::class)
                         ->setController(BoulangerOrderCrudController::class),
+                    MenuItem::linkToCrud('Cdiscount', 'fas fa-compact-disc', WebOrder::class)
+                        ->setController(CdiscountOrderCrudController::class),
                     MenuItem::linkToCrud('Decathlon', 'fas fa-volleyball-ball', WebOrder::class)
                         ->setController(DecathlonOrderCrudController::class),
                     MenuItem::linkToCrud('Fitbit Corporate', 'fas fa-running', WebOrder::class)

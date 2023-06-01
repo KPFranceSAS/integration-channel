@@ -133,7 +133,6 @@ abstract class MiraklApiParent implements ApiInterface
     {
         $request = new UpdateOffersRequest();
         $request->setOffers($offers);
-
         $result = $this->client->updateOffers($request);
         return $result;
     }

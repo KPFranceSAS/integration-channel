@@ -422,7 +422,7 @@ class WebOrder
                 $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
             } else {
                 $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
-            }            
+            }
         } else {
             $webOrder->setWarehouse(WebOrder::DEPOT_MIXED);
             $webOrder->setFulfilledBy(WebOrder::FULFILLED_MIXED);
