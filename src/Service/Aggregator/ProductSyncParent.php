@@ -273,7 +273,16 @@ abstract class ProductSyncParent
             "AMPERE" => 1,
             
             "WATTHOUR" => 1,
-            "MILLIWATTHOUR" => 0.001
+            "MILLIWATTHOUR" => 0.001,
+
+            "WATT_CRETE" => 1,
+            "KILLOWATT_CRETE" => 1000,
+
+            "WATT" => 1,
+            "KILOWATT" => 1000,
+            "MEGAWATT" => 1000000,
+
+
         ];
 
         if (!array_key_exists($unitBase, $factors) || !array_key_exists($unitFinal, $factors)) {

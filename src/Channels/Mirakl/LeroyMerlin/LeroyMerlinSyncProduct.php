@@ -36,11 +36,15 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         $familyPim =$product['family'];
 
         if($familyPim == 'solar_panel') {
+            $flatProduct['ATT_15344'] ='LOV_000002'; // not included battery
+            $flatProduct["ATT_13704"] = $this->getAttributeUnit($product, 'solar_panel_power', 'WATT_CRETE', 0);
+
+            $flatProduct['feature_00277_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ="LOV_257736"; // power station
             $flatProduct ['product_category'] =  '200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002';
             $flatProduct['feature_08547_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ='LOV_239437'; // Panneau solaire d'appoint
             $flatProduct['feature_22088_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ='LOV_070969'; // Panneau solaire d'appoint
         } elseif($familyPim == 'fixed_solar_panel') {
-            $flatProduct['ATT_15344'] ='LOV_000002'; // included battery
+            $flatProduct['ATT_15344'] ='LOV_000002'; // not included battery
             $flatProduct ['product_category'] =  '200260|KIT_DE_PRODUCTION_D_ENERGIE_PHOTOVOLTAIQUE|TOITURE_SOLAIRE|R08-013-001';
             $flatProduct['feature_00277_200260|KIT_DE_PRODUCTION_D_ENERGIE_PHOTOVOLTAIQUE|TOITURE_SOLAIRE|R08-013-001'] ='LOV_210469'; // Destination
         } elseif($familyPim == 'power_station') {

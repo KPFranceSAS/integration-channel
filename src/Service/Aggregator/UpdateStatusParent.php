@@ -161,7 +161,7 @@ abstract class UpdateStatusParent
                 $postUpdateStatus = false;
                 if ($order->getCarrierService() == WebOrder::CARRIER_DHL) {
                     $tracking = $statusSaleOrder['trackingNumber'];
-                    if(substr($tracking, 0, 3)=='JJD') {
+                    if(substr($tracking, 0, 1)=='J') {
                         $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DHL with tracking number ' . $tracking);
                         $order->setTrackingUrl(DhlGetTracking::getTrackingUrlBase($tracking));
                         $order->setTrackingCode($tracking);

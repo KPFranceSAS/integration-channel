@@ -34,8 +34,8 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         ];
 
         $flatProduct["SKU_MARCHAND"] = $product['identifier'];
-        $flatProduct["REF_COM"]  = substr($this->getAttributeSimple($product, 'erp_name'), 0, 40);
-        $flatProduct["ACCROCHE"]  = substr($this->getAttributeSimple($product, 'article_name', 'fr_FR'), 0, 95);
+        $flatProduct["REF_COM"]  = substr($this->getAttributeSimple($product, 'short_article_name', 'fr_FR'), 0, 40);
+        $flatProduct["ACCROCHE"] = substr($this->getAttributeSimple($product, 'article_name', 'fr_FR'), 0, 95);
         $flatProduct["PARTNUMBER"]  = $this->getAttributeSimple($product, 'ean');
         
 
