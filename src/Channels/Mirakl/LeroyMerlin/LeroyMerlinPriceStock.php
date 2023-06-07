@@ -32,7 +32,7 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
             "leadtime_to_ship" => in_array($product->getSku(), ['ANK-PCK-7', 'ANK-PCK-8', 'ANK-PCK-9','ANK-PCK-10']) ? "10" : "2",
             "all_prices" => [],
             "offer_additional_fields" => [
-                ['code'=>"vat_lmfr", 'value' => "Standard"],
+                ['code'=>"vat-lmfr", 'value' => "Standard"],
                 ['code'=>"vat-lmes" , 'value' => "Standard"],
                 ['code'=>"vat-lmit", 'value' =>"Standard"],
                 ['code'=>"shipment-origin" , 'value' => "ES"],
@@ -40,10 +40,6 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
         ];
         $channelsActive = [];
 
-     
-        
-            
-      
         foreach ($saleChannels as $saleChannel) {
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
 
