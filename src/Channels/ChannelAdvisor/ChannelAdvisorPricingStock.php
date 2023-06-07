@@ -57,13 +57,27 @@ class ChannelAdvisorPricingStock extends PriceStockParent
             $code = $saleChannel->getCode().'-';
             array_push($header, $code.'enabled', $code.'price', $code.'promoprice');
         }
+
+        $skus = [];
+
         $datasToExport=[implode(';', $header)];
         $this->logger->info("start export ".count($products)." products on ".count($saleChannels)." sale channels");
         foreach ($products as $product) {
             $productArray = $this->addProduct($product, $header, $saleChannels);
+            $skus[] = $product->getSku();
             $datasToExport[]=implode(';', array_values($productArray));
         }
 
+
+        $products = $this->manager->getRepository(Product::class)->findAll();
+        $this->logger->info("Add other disabled products");
+        foreach($products as $product) {
+            if(!in_array($product->getSku(), $skus)) {
+                $productArray = array_fill_keys($header, 0);
+                $productArray['sku'] = $product->getSku();
+                $datasToExport[]=implode(';', array_values($productArray));
+            }
+        }
         $dataArray = implode("\r\n", $datasToExport);
         $filename = 'pricing_'.date('Ymd_His').'.PRICE.csv';
         $this->logger->info("start export pricing locally");
@@ -77,6 +91,7 @@ class ChannelAdvisorPricingStock extends PriceStockParent
         $this->channelAdvisorStorage->write('/accounts/12010026/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12044694/Inventory/Transform/'.$filename, $dataArray);
         $this->channelAdvisorStorage->write('/accounts/12044693/Inventory/Transform/'.$filename, $dataArray);
+        
     }
 
 
