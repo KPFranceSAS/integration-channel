@@ -58,7 +58,7 @@ class ChannelAdvisorUpdateStatus extends UpdateStatusParent
         $orderApi=$order->getOrderContent();
 
         $result = $this->getChannelApi()->markOrderAsFulfill(
-            $orderApi['id'],
+            $orderApi->ID,
             $trackingNumber,
             $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $trackingNumber),
             $order->getCarrierService()
@@ -69,7 +69,6 @@ class ChannelAdvisorUpdateStatus extends UpdateStatusParent
             $contentPdf  = $businessCentralConnector->getContentInvoicePdf($invoice['id']);
             $this->addLogToOrder($order, 'Retrieved invoice content ' . $invoice['number']);
             $this->addLogToOrder($order, 'Start sending invoice to Channel Advisor');
-            $orderApi = $order->getOrderContent();
             $sendFile = $this->getChannelApi()->sendInvoice($orderApi->ProfileID, $orderApi->ID, $invoice['totalAmountIncludingTax'], $invoice['totalTaxAmount'], $invoice['number'], $contentPdf);
             if (!$sendFile) {
                 throw new \Exception('Upload  was not done uploaded on ChannelAdvisor for ' . $invoice['number']);

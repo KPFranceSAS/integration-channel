@@ -160,7 +160,7 @@ abstract class MiraklIntegratorParent extends IntegratorParent
     protected function shouldBeSentByUps($orderApi): bool
     {
         if($orderApi['customer']['shipping_address']["country"]=='DE') {
-            return true;
+            //return true;
         }
 
 

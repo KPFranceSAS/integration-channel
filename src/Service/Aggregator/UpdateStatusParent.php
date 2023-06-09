@@ -157,6 +157,7 @@ abstract class UpdateStatusParent
             $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
             $invoice =  $businessCentralConnector->getSaleInvoiceByNumber($statusSaleOrder['InvoiceNo']);
             if ($invoice) {
+                $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and marked as fulfilled by '.$statusSaleOrder['shipmentCompany']);
                 $order->cleanErrors();
                 $postUpdateStatus = false;
                 if ($order->getCarrierService() == WebOrder::CARRIER_DHL) {
