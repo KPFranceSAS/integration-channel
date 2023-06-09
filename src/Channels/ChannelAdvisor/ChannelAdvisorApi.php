@@ -153,6 +153,7 @@ class ChannelAdvisorApi implements ApiInterface
             'TrackingUrl' =>  $trackingUrl,
         ]];
 
+        $this->logger->info('Send request '.json_encode($params));
 
         return $this->sendRequest('Orders(' . $orderId . ')/Ship', [], 'POST', $params);
     }
