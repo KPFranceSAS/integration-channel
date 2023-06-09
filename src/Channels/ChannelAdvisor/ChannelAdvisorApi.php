@@ -154,8 +154,10 @@ class ChannelAdvisorApi implements ApiInterface
         ]];
 
         $this->logger->info('Send request '.json_encode($params));
+        $request = $this->sendRequest('Orders(' . $orderId . ')/Ship', [], 'POST', $params);
+        $this->logger->info('Response  '.json_encode($request));
 
-        return $this->sendRequest('Orders(' . $orderId . ')/Ship', [], 'POST', $params);
+        return $request;
     }
 
     public function sendInvoice(
@@ -235,7 +237,9 @@ class ChannelAdvisorApi implements ApiInterface
         $client = new Client();
         $response = $client->request($method, $this->getApiEndPoint() . $endPoint, $parameters);
 
-        return json_decode($response->getBody());
+        $decodeResponse = json_decode($response->getBody());
+
+        return $decodeResponse;
     }
 
     public function getOrderByNumber($number)
