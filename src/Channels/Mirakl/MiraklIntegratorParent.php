@@ -131,6 +131,9 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         if ($this->shouldBeSentByUps($orderApi)) {
             $orderBC->shippingAgent = "UPS";
             $orderBC->shippingAgentService = "1";
+        } elseif($orderBC->shippingPostalAddress->countryLetterCode=='DE') {
+            $orderBC->shippingAgent = "DHLDE";
+            $orderBC->shippingAgentService = "DHLGE";
         }
         
 
@@ -151,7 +154,7 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         return $orderBC;
     }
 
-
+    
 
 
     abstract protected function getExternalNumber($orderApi);
@@ -159,18 +162,12 @@ abstract class MiraklIntegratorParent extends IntegratorParent
 
     protected function shouldBeSentByUps($orderApi): bool
     {
-        if($orderApi['customer']['shipping_address']["country"]=='DE') {
-            //return true;
-        }
-
-
         $skus = [];
         foreach ($orderApi["order_lines"] as $line) {
             $skus[] = $line['offer']['sku'];
         }
         return UpsGetTracking::shouldBeSentWith($skus);
     }
-
 
 
     protected function getSalesOrderLines($orderApi): array

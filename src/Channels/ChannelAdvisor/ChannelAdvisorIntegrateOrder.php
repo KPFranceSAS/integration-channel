@@ -165,9 +165,12 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             $orderBC->shippingAgentService = '1';
             $orderBC->locationCode = WebOrder::DEPOT_FBA_AMAZON;
         } else {
-            if($this->shouldBeSentByUps($orderApi)) {
+            if ($this->shouldBeSentByUps($orderApi)) {
                 $orderBC->shippingAgent = "UPS";
                 $orderBC->shippingAgentService = "1";
+            } elseif($orderBC->shippingPostalAddress->countryLetterCode=='DE') {
+                $orderBC->shippingAgent = "DHLDE";
+                $orderBC->shippingAgentService = "DHLGE";
             }
             
             $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
