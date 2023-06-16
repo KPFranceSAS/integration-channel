@@ -13,8 +13,6 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
     {
         $searchBuilder = new SearchBuilder();
         $searchBuilder
-            ->addFilter('decathlon_category_id', 'NOT EMPTY')
-            ->addFilter('decathlon_product_type', 'NOT EMPTY')
             ->addFilter('brand', 'NOT EMPTY')
             ->addFilter('ean', 'NOT EMPTY')
             ->addFilter('enabled_channel', '=', true, ['scope' => 'Marketplace'])
@@ -29,16 +27,27 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
     protected function flatProduct(array $product):array
     {
         $this->logger->info('Flat product '.$product['identifier']);
-        $categoryCode = str_replace('_', '-', $this->getAttributeSimple($product, 'decathlon_category_id'));
-
         $flatProduct = [
-            'category' =>  $categoryCode,
             'ProductIdentifier' => $product['identifier'],
-            'PRODUCT_TYPE' => $this->getAttributeSimple($product, 'decathlon_product_type'),
             'ean_codes' => $this->getAttributeSimple($product, 'ean'),
             'main_image' => $this->getAttributeSimple($product, 'image_url_1'),
             'mainTitle' => $this->getAttributeSimple($product, 'erp_name'),
         ];
+
+
+        $familyPim =$product['family'];
+
+        if($familyPim == 'solar_panel') {
+            $categoryCode = '30061';
+            $flatProduct ['PRODUCT_TYPE'] = "solar panel";
+        } elseif($familyPim == 'power_station') {
+            $categoryCode = '30060';
+            $flatProduct ['PRODUCT_TYPE'] = "power bank";
+        } elseif($familyPim == 'robot_piscine') {
+            $categoryCode = 'N-1148912';
+            $flatProduct ['PRODUCT_TYPE'] = "aspirateur piscine";
+        }
+        $flatProduct ['category'] = $categoryCode;
 
         for ($i = 2; $i <= 7;$i++) {
             $flatProduct['image_'.$i] = $this->getAttributeSimple($product, 'image_url_'.$i);
