@@ -359,7 +359,7 @@ class ImportPricingsImporter
                 $weekDays = [];
                 foreach ($weekDaysValue as $weekDayValue) {
                     if (in_array((int)$weekDayValue, range(1, 7))) {
-                        $weekDays[] = $weekDaysValue;
+                        $weekDays[] = $weekDayValue;
                     }
                 }
                 $weekDays = array_unique($weekDays);
