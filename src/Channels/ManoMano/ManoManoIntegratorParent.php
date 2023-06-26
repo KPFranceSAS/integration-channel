@@ -80,9 +80,8 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
 
         foreach ($valuesAddress as $bcVal => $miraklVal) {
             $adress =  $orderApi['addresses'][$miraklVal]["address_line1"];
-            if (strlen($orderApi['addresses'][$miraklVal]["address_line2"]) > 0) {
+            if (array_key_exists('address_line2', $orderApi['addresses'][$miraklVal]) && strlen($orderApi['addresses'][$miraklVal]["address_line2"]) > 0) {
                 $adress .= ', ' . $orderApi['addresses'][$miraklVal]["address_line2"];
-                ;
             }
             $adress = $this->simplifyAddress($adress);
 
