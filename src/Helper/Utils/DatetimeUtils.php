@@ -18,16 +18,16 @@ class DatetimeUtils
     public static function transformFromIso8601(string $value): DateTime
     {
         $date = explode('T', $value);
-        return DateTime::createFromFormat('Y-m-d H:i:s', $date[0] . ' ' . substr($date[1], 0, 8));
+        return DateTime::createFromFormat('Y-m-d H:i', $date[0] . ' ' . substr($date[1], 0, 5));
     }
 
 
     
 
-    public static function createDateTimeFromDateWithDelay(string $date,int $addHour = 8,  $format='Y-m-d H:i:s'): DateTime
+    public static function createDateTimeFromDateWithDelay(string $date, int $addHour = 8, $format='Y-m-d H:i:s'): DateTime
     {
         $dateTime = DateTime::createFromFormat($format, $date);
-        if($addHour > 0){
+        if($addHour > 0) {
             $dateTime->add(new DateInterval('PT'.$addHour.'H'));
         }
         return $dateTime;

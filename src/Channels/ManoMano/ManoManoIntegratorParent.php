@@ -67,6 +67,7 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
     {
         $orderBC = new SaleOrder();
         $orderBC->customerNumber = $this->getCustomerBC($orderApi);
+        
         $dateDelivery = DatetimeUtils::transformFromIso8601($orderApi['created_at']);
         $orderBC->requestedDeliveryDate = $dateDelivery->format('Y-m-d');
         $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
