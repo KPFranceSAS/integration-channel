@@ -122,10 +122,6 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
     {
         $this->logger->info('Flat product '.$product['identifier']);
 
-
-        $carrierCode = UpsGetTracking::isThisSkuShouldBeSendWithUps($product['identifier']) ? 'UPS' : 'DHL Parcel';
-
-
         $flatProduct = [
             'sku' => $product['identifier'],
             'ean' => $this->getAttributeSimple($product, 'ean'),
@@ -136,10 +132,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             'Sample_SKU' => "",
             'Unit_count' => "",
             "unit_count_type" => '',
-            "shipping_time" => in_array($product['identifier'], ['ANK-PCK-7', 'ANK-PCK-8', 'ANK-PCK-9','ANK-PCK-10']) ? "10#20" : "3#5",
-            "carrier" => $carrierCode,
-            "shipping_price_vat_inc" => 0,
-            "use_grid" => 0,
+
         ];
 
 

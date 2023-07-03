@@ -10,6 +10,7 @@ use App\Entity\SaleChannel;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\PriceStockParent;
+use App\Service\Carriers\UpsGetTracking;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Csv\Writer;
 use Psr\Log\LoggerInterface;
@@ -94,11 +95,17 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
     public function flatProduct(Product $product, SaleChannel $saleChannel): ?array
     {
         $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
+        $carrierCode = UpsGetTracking::isThisSkuShouldBeSendWithUps($product->getSku()) ? 'UPS' : 'DHL Parcel';
+
         if ($productMarketplace->getEnabled()) {
             $offer = [
                 'sku' =>$product->getSku(),
                 "min_quantity" => "",
                 "quantity"=> $this->getStockProductWarehouse($product->getSku()),
+                "shipping_time" => in_array($product->getSku(), ['ANK-PCK-7', 'ANK-PCK-8', 'ANK-PCK-9','ANK-PCK-10']) ? "10#20" : "3#5",
+                "carrier" => $carrierCode,
+                "shipping_price_vat_inc" => 0,
+                "use_grid" => 0,
             ];
     
             $promotion = $productMarketplace->getBestPromotionForNow();
