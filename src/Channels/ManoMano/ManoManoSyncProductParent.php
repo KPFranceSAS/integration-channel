@@ -127,13 +127,28 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             'ean' => $this->getAttributeSimple($product, 'ean'),
             'sku_manufacturer' => $product['identifier'],
             'merchant_category' => $this->getFamilyName($product['family'], $this->getLocale()),
+            'mm_category_id' => null,
             'product_url' => "",
             'min_quantity' => "",
             'Sample_SKU' => "",
             'Unit_count' => "",
             "unit_count_type" => '',
-
         ];
+
+        $familyPim = $product['family'];
+
+        if($familyPim == 'solar_panel') {
+            $flatProduct['mm_category_id'] = 21255;
+        } elseif($familyPim == 'fixed_solar_panel') {
+            $flatProduct['mm_category_id'] = 21255;
+        } elseif($familyPim == 'power_station') {
+            $flatProduct['mm_category_id'] = 22185;
+        } elseif($familyPim == 'robot_piscine') {
+            $flatProduct['mm_category_id'] = 20008;
+        }
+
+
+        
 
 
         $valueGarantee =  $this->getAttributeChoice($product, 'manufacturer_guarantee', $this->getLocale());
