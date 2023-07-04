@@ -5,8 +5,8 @@ namespace App\Channels\Shopify;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\Entity\WebOrder;
-use App\Service\Aggregator\IntegratorParent;
 use App\Helper\Utils\DatetimeUtils;
+use App\Service\Aggregator\IntegratorParent;
 
 abstract class ShopifyIntegrateOrder extends IntegratorParent
 {
@@ -28,7 +28,7 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
         $dateCreated = DatetimeUtils::transformFromIso8601($orderApi['processed_at']);
         $dateCreated->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $dateCreated->format('Y-m-d');
-        $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
+        $orderBC->locationCode = $this->getDefaultWarehouse();
         $orderBC->billToName = $orderApi['billing_address']['name'];
         $orderBC->shipToName = $orderApi['shipping_address']['name'];
 
@@ -36,7 +36,7 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
         $this->transformAddress($orderBC, $orderApi['shipping_address'], 'shipping');
         $this->transformAddress($orderBC, $orderApi['billing_address'], 'selling');
 
-        if ($orderApi['currency'] != 'EUR') {
+        if ($orderApi['currency'] != $this->getLabelCurrency()) {
             $orderBC->currencyCode =  $orderApi['currency'];
         }
 
@@ -52,13 +52,8 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
         $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
 
-
-
-        $livraisonFees = floatval($orderApi['total_shipping_price_set']['shop_money']['amount']);
         // ajout livraison
         $company = $this->getCompanyIntegration($orderApi);
-
-
         foreach ($orderApi['shipping_lines'] as $line) {
             if (floatval($line['price']) > 0) {
                 $account = $this->getBusinessCentralConnector($company)->getAccountForExpedition();
@@ -67,7 +62,7 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
                 $saleLineDelivery->quantity = 1;
                 $saleLineDelivery->accountId = $account['id'];
                 $saleLineDelivery->unitPrice = floatval($line['price']);
-                $saleLineDelivery->description = substr('GASTOS DE ENVIO ' . strtoupper($line['code']), 0, 100);
+                $saleLineDelivery->description = substr('SHIPPING ' . strtoupper($line['code']), 0, 100);
                 $orderBC->salesLines[] = $saleLineDelivery;
             }
         }
@@ -93,6 +88,15 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
 
 
 
+    protected function getDefaultWarehouse()
+    {
+        return WebOrder::DEPOT_LAROCA;
+    }
+
+
+
+
+
     private function getDescriptionDiscount($discountApplication)
     {
         if (array_key_exists('code', $discountApplication)) {
@@ -107,12 +111,20 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
     }
 
 
+    protected function getLabelCurrency()
+    {
+        return 'EUR';
+    }
+
+
+
+
     private function getValueDiscount($discountApplication)
     {
         if ($discountApplication['value_type'] == 'percentage') {
             return $discountApplication['value'] . '%';
         } else {
-            return $discountApplication['value'] . 'EUR';
+            return $discountApplication['value'] . $this->getLabelCurrency();
         }
     }
 
@@ -127,7 +139,7 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
                 $discountApplication = $orderApi["discount_applications"][$discountLine["discount_application_index"]];
                 $discounts[] = [
                     'value' => floatval($discountLine['amount']),
-                    'description' => 'DISCUENTO ' .  $line["sku"] . " / " . $this->getValueDiscount($discountApplication) . " / " . $this->getDescriptionDiscount($discountApplication)
+                    'description' => 'DISCOUNT ' .  $line["sku"] . " / " . $this->getValueDiscount($discountApplication) . " / " . $this->getDescriptionDiscount($discountApplication)
                 ];
             }
         }
@@ -138,7 +150,7 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
                 $discountApplication = $orderApi["discount_applications"][$discountLine["discount_application_index"]];
                 $discounts[] = [
                     'value' => floatval($discountLine['amount']),
-                    'description' => "DISCUENTO GASTOS DE ENVIO / " . $this->getValueDiscount($discountApplication) . " / " . $this->getDescriptionDiscount($discountApplication)
+                    'description' => "DISCOUNT SHIPPING / " . $this->getValueDiscount($discountApplication) . " / " . $this->getDescriptionDiscount($discountApplication)
                 ];
             }
         }
@@ -187,4 +199,10 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
 
         return $saleOrderLines;
     }
+
+   
+
+
+
+
 }

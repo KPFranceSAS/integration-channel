@@ -168,9 +168,6 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             if ($this->shouldBeSentByUps($orderApi)) {
                 $orderBC->shippingAgent = "UPS";
                 $orderBC->shippingAgentService = "1";
-            } elseif($orderBC->shippingPostalAddress->countryLetterCode=='DE') {
-                $orderBC->shippingAgent = "DHLDE";
-                $orderBC->shippingAgentService = "DHLGE";
             }
             
             $orderBC->locationCode = WebOrder::DEPOT_LAROCA;

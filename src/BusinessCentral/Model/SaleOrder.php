@@ -40,9 +40,9 @@ class SaleOrder
 
     public $shipmentMethodId;
 
-    public $shippingAgent = "DHL PARCEL";
+    public $shippingAgent = "DHLB2C";
 
-    public $shippingAgentService = "DHL1";
+    public $shippingAgentService = "DHLB2C";
 
     public $partialShipping;
 

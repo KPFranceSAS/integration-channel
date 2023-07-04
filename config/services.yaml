@@ -143,6 +143,14 @@ services:
             $fitbitCorporateVersion : '%env(resolve:FITBITCORPORATE_VERSION)%'
             $fitbitCorporateScopes : '%env(resolve:FITBITCORPORATE_SCOPES)%'
 
+            $paxUkToken : '%env(resolve:PAX_UK_TOKEN)%'
+            $paxUkClientId : '%env(resolve:PAX_UK_CLIENTID)%'
+            $paxUkClientSecret : '%env(resolve:PAX_UK_CLIENTSECRET)%'
+            $paxUkShopDomain : '%env(resolve:PAX_UK_SHOPDOMAINE)%'
+            $paxUkVersion : '%env(resolve:PAX_UK_VERSION)%'
+            $paxUkScopes : '%env(resolve:PAX_UK_SCOPES)%'
+          
+
             $decathlonClientUrl :  '%env(resolve:DECATHLON_URL)%'
             $decathlonClientKey : '%env(resolve:DECATHLON_KEY)%'
 

@@ -372,6 +372,7 @@ class Product
      */
     private $productCorrelations;
 
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */

@@ -18,7 +18,7 @@ abstract class ShopifyPriceParent extends PriceParent
 
     public function sendPrices(array $saleChannels)
     {
-        if(count($saleChannels)>0){
+        if(count($saleChannels)>0) {
             $this->mainLocation = $this->getShopifyApi()->getMainLocation();
             $productApis = $this->getShopifyApi()->getAllProducts();
             foreach ($productApis as $productApi) {
@@ -35,7 +35,8 @@ abstract class ShopifyPriceParent extends PriceParent
         foreach ($product['variants'] as $variant) {
             $skuCode = $variant['sku'];
             $this->logger->info('Sku ' . $skuCode);
-            $product=$this->manager->getRepository(Product::class)->findOneBySku($skuCode);
+            $product = $this->getProduct($skuCode);
+
             if($product) {
                 $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
                 if ($productMarketplace->getEnabled()) {
@@ -45,14 +46,23 @@ abstract class ShopifyPriceParent extends PriceParent
                     $this->getShopifyApi()->updateVariantPrice($variant['id'], $price, $promotionPrice);
                 } else {
                     $this->logger->info('Desactivate and put stock to 0');
-                    $this->getShopifyApi()->setInventoryLevel($this->mainLocation['id'],$variant["inventory_item_id"],  0);
+                    $this->getShopifyApi()->setInventoryLevel($this->mainLocation['id'], $variant["inventory_item_id"], 0);
                 }
             } else {
                 $this->logger->info('No product in BC >>> disable');
-                $this->getShopifyApi()->setInventoryLevel($this->mainLocation['id'],$variant["inventory_item_id"],  0);
+                $this->getShopifyApi()->setInventoryLevel($this->mainLocation['id'], $variant["inventory_item_id"], 0);
             }
         }
         $this->logger->info('---------------');
     }
+
+
+
+    public function getProduct($skuCode): ?Product
+    {
+        return $this->manager->getRepository(Product::class)->findOneBySku($skuCode);
+    }
+
+
 
 }

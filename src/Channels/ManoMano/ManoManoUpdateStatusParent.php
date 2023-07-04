@@ -43,10 +43,11 @@ abstract class ManoManoUpdateStatusParent extends UpdateStatusParent
 
 
 
-    protected function getCodeCarrier(string $carrierCode): ?string {
-        if($carrierCode ==  WebOrder::CARRIER_DHL){
+    protected function getCodeCarrier(string $carrierCode): ?string
+    {
+        if($carrierCode ==  WebOrder::CARRIER_DHL) {
             return "DHL Parcel";
-        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS){
+        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "UPS";
         }
         return null;

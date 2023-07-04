@@ -140,7 +140,7 @@ class ProductStockFinder
     /**
      * Check if it is a bundle
      */
-    protected function isBundle($sku): bool
+    public function isBundle($sku): bool
     {
         $item =  $this->getConnector()->getItemByNumber($sku);
 

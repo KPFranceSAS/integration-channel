@@ -3,6 +3,7 @@
 namespace App\Channels\Shopify;
 
 use App\Channels\Shopify\ShopifyApiParent;
+use App\Entity\WebOrder;
 use App\Service\Aggregator\StockParent;
 
 abstract class ShopifyStockParent extends StockParent
@@ -19,10 +20,10 @@ abstract class ShopifyStockParent extends StockParent
         $mainLocation = $this->getShopifyApi()->getMainLocation();
         $inventoLevelies = $this->getShopifyApi()->getAllInventoryLevelsFromProduct();
         foreach ($inventoLevelies as $inventoLeveli) {
-            $sku = $inventoLeveli['sku'];
-            if ($this->isNotBundle($sku)) {
+            $sku = $this->getCorrelatedSku($inventoLeveli['sku']);
+            if (!$this->productStockFinder->isBundle($sku)) {
                 if ($this->checkIfProductSellableOnChannel($sku)) {
-                    $stockLevel = $this->getStockProductWarehouse($sku);
+                    $stockLevel = $this->getStockProductWarehouse($sku, $this->getDefaultWarehouse());
                     $this->logger->info('Update modified ' . $sku  . ' >>> ' . $stockLevel);
                 } else {
                     $stockLevel = 0;
@@ -41,21 +42,35 @@ abstract class ShopifyStockParent extends StockParent
     }
 
 
+    protected function getDefaultWarehouse()
+    {
+        return WebOrder::DEPOT_LAROCA;
+    }
+
+
+
 
     public function checkStocks(): array
     {
         $errors=[];
         $inventoLevelies = $this->getShopifyApi()->getAllInventoryLevelsFromProduct();
         foreach ($inventoLevelies as $inventoLeveli) {
-            $sku = $inventoLeveli['sku'];
-            if ($this->isNotBundle($sku)) {
+            $sku = $this->getCorrelatedSku($inventoLeveli['sku']);
+            if ($this->productStockFinder->isBundle($sku)) {
+                $this->logger->info('Bundle ' . $sku  . ' no check');
+            } else {
                 if (!$this->isSkuExists($sku)) {
                     $errors[] = 'Sku '.$sku. ' do not exist in BC and no sku mappings have been done also.';
                 }
-            } else {
-                $this->logger->info('Bundle ' . $sku  . ' no check');
             }
         }
         return $errors;
     }
+
+
+    public function getCorrelatedSku($sku)
+    {
+        return $sku;
+    }
+
 }
