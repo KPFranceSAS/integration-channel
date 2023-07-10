@@ -62,78 +62,91 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         } elseif($familyPim == 'cutting_machine') {
             $flatProduct ['product_category'] =  "200595|IMPRIMANTE_3D|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
             $flatProduct ['ATT_15344'] = 'LOV_000002'; // robot de piscine
+        } elseif($familyPim == 'smart_home') {
+            if(in_array('marketplace_blender', $product['categories'])) { // blender
+                $flatProduct ['product_category'] =  "205634|1024|R1001-1002-1004"; // blender
+                $flatProduct ['ATT_15344'] = $this->getAttributeUnit($product, 'liquid_capacity', 'LITER', 1); // blender
+            } elseif (in_array('marketplace_air_fryer', $product['categories'])) {
+                $flatProduct ['product_category'] =  "206283|2056|R1001-1002"; // friteuse
+            }
         }
 
 
+        if(array_key_exists('product_category', $flatProduct)) {
+            $locales = ['fr', 'es', 'it'];
 
-        $locales = ['fr', 'es', 'it'];
+            foreach ($locales as $locale) {
+                $localePim = $locale.'_'.strtoupper($locale);
+                $localeMirakl = $locale.'-'.strtoupper($locale);
+                $flatProduct['i18n_'.$locale.'_12963_title'] = substr($this->getAttributeSimple($product, "article_name", $localePim), 0, 150);
 
-        foreach ($locales as $locale) {
-            $localePim = $locale.'_'.strtoupper($locale);
-            $localeMirakl = $locale.'-'.strtoupper($locale);
-            $flatProduct['i18n_'.$locale.'_12963_title'] = substr($this->getAttributeSimple($product, "article_name", $localePim), 0, 150);
+                $description = $this->getAttributeSimple($product, "description", $localePim);
+                if($description) {
+                    $descriptionFormate = str_replace('</p>', '</p><p>&nbsp;</p>', $description);
+                    $descriptionFormate = str_replace(['<strong>', '</strong>'], ['<b>', '</b>'], $descriptionFormate);
+                    $flatProduct['i18n_'.$locale.'_01022_longdescription'] = substr($descriptionFormate, 0, 5000);
+                }
 
-            $description = $this->getAttributeSimple($product, "description", $localePim);
-            if($description) {
-                $descriptionFormate = str_replace('</p>', '</p><p>&nbsp;</p>', $description);
-                $descriptionFormate = str_replace(['<strong>', '</strong>'], ['<b>', '</b>'], $descriptionFormate);
-                $flatProduct['i18n_'.$locale.'_01022_longdescription'] = substr($descriptionFormate, 0, 5000);
-            }
+                for ($i = 1; $i <= 5;$i++) {
+                    $attributeImageLoc = $this->getAttributeSimple($product, 'image_url_loc_'.$i, $localePim);
+                    $keyArray = $locale == 'fr' ? 'media_'.$i : 'media_'.$i.'_'.$localeMirakl;
+                    $flatProduct[$keyArray] = $attributeImageLoc ? $attributeImageLoc : $this->getAttributeSimple($product, 'image_url_'.$i);
+                }
 
-            for ($i = 1; $i <= 5;$i++) {
-                $attributeImageLoc = $this->getAttributeSimple($product, 'image_url_loc_'.$i, $localePim);
-                $keyArray = $locale == 'fr' ? 'media_'.$i : 'media_'.$i.'_'.$localeMirakl;
-                $flatProduct[$keyArray] = $attributeImageLoc ? $attributeImageLoc : $this->getAttributeSimple($product, 'image_url_'.$i);
-            }
-
-            $keyArrayMedia = $locale == 'fr' ? 'media_instruction' : 'media_instruction_'.$localeMirakl;
-            $flatProduct[$keyArrayMedia]  = $this->getAttributeSimple($product, 'user_guide_url', $localePim);
+                $keyArrayMedia = $locale == 'fr' ? 'media_instruction' : 'media_instruction_'.$localeMirakl;
+                $flatProduct[$keyArrayMedia]  = $this->getAttributeSimple($product, 'user_guide_url', $localePim);
         
-        }
+            }
 
-        $flatProduct["ATT_00053"] = $this->getAttributeUnit($product, 'product_lenght', 'CENTIMETER', 0);
-        $flatProduct["ATT_00054"] = $this->getAttributeUnit($product, 'product_height', 'CENTIMETER', 0);
-        $flatProduct["ATT_00055"] = $this->getAttributeUnit($product, 'product_width', 'CENTIMETER', 0);
+            $flatProduct["ATT_00053"] = $this->getAttributeUnit($product, 'product_lenght', 'CENTIMETER', 0);
+            $flatProduct["ATT_00054"] = $this->getAttributeUnit($product, 'product_height', 'CENTIMETER', 0);
+            $flatProduct["ATT_00055"] = $this->getAttributeUnit($product, 'product_width', 'CENTIMETER', 0);
 
 
      
         
 
-        $fieldsToConvert = [
-            "feature_06575_brand" => [
-                "field" => "brand",
-                "type" => "choice",
-                "locale" => "en_GB",
-            ],
-         ];
+            $fieldsToConvert = [
+                "feature_06575_brand" => [
+                    "field" => "brand",
+                    "type" => "choice",
+                    "locale" => "en_GB",
+                ],
+             ];
 
-        foreach ($fieldsToConvert as $fieldMirakl => $fieldPim) {
-            $value = null;
-            if ($fieldPim['type']=='choice') {
-                $value = $this->getAttributeChoice($product, $fieldPim['field'], $fieldPim['locale']);
-                if ($value) {
-                    $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'], $fieldMirakl, $value);
-                    if ($codeMirakl) {
-                        $flatProduct[$fieldMirakl] = $codeMirakl;
-                    }
-                }
-            } elseif ($fieldPim['type']=='multichoice') {
-                $values = $this->getAttributeMultiChoice($product, $fieldPim['field'], $fieldPim['locale']);
-                if (count($values)>0) {
-                    $valuesMirakls= [];
-                    foreach ($values as $value) {
+            foreach ($fieldsToConvert as $fieldMirakl => $fieldPim) {
+                $value = null;
+                if ($fieldPim['type']=='choice') {
+                    $value = $this->getAttributeChoice($product, $fieldPim['field'], $fieldPim['locale']);
+                    if ($value) {
                         $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'], $fieldMirakl, $value);
                         if ($codeMirakl) {
                             $flatProduct[$fieldMirakl] = $codeMirakl;
                         }
                     }
-                    if (count($valuesMirakls)>0) {
-                        $flatProduct[$fieldMirakl] = implode('|', $valuesMirakls);
+                } elseif ($fieldPim['type']=='multichoice') {
+                    $values = $this->getAttributeMultiChoice($product, $fieldPim['field'], $fieldPim['locale']);
+                    if (count($values)>0) {
+                        $valuesMirakls= [];
+                        foreach ($values as $value) {
+                            $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'], $fieldMirakl, $value);
+                            if ($codeMirakl) {
+                                $flatProduct[$fieldMirakl] = $codeMirakl;
+                            }
+                        }
+                        if (count($valuesMirakls)>0) {
+                            $flatProduct[$fieldMirakl] = implode('|', $valuesMirakls);
+                        }
                     }
                 }
             }
+
+        } else {
+            $this->logger->info('Product not categorized');
         }
 
+
+        
         
         return $flatProduct;
     }

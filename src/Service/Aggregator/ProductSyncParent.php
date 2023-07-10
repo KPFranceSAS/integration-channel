@@ -259,6 +259,15 @@ abstract class ProductSyncParent
             "CENTIMETER" => 0.01,
             "MILLIMETER" => 0.001,
 
+            "MILLILITER" => 0.000001,
+            "CENTILITER" => 0.00001,
+            "LITER" => 0.001,
+            "CUBIC_MILLIMETER" => 0.000000001,
+            "CUBIC_CENTIMETER" => 0.000001,
+            "CUBIC_DECIMETER" => 0.001,
+            "CUBIC_METER" => 1.0,
+
+
             "TON" => 1000.0,
             "KILOGRAM" => 1.0,
             "GRAM" => 0.001,
