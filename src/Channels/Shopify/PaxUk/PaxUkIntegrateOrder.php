@@ -19,17 +19,6 @@ class PaxUkIntegrateOrder extends ShopifyIntegrateOrder
     }
 
 
-    public function transformToAnBcOrder($orderApi): SaleOrder
-    {
-        $saleOrder = parent::transformToAnBcOrder($orderApi);
-        $saleOrder->shippingAgent="DPD1";
-        $saleOrder->shippingAgentService="DPD32";
-
-
-        return $saleOrder;
-    }
-
-
 
     public function getCustomerBC($orderApi)
     {

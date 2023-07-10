@@ -156,41 +156,11 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             $orderBC->currencyCode =  $orderApi->Currency;
         }
 
-
         $orderBC->pricesIncludeTax = true; // enables BC to do VAT autocalculation
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
-
-        if($orderApi->DistributionCenterTypeRollup=='ExternallyManaged') {
-            $orderBC->shippingAgent = 'FBA';
-            $orderBC->shippingAgentService = '1';
-            $orderBC->locationCode = WebOrder::DEPOT_FBA_AMAZON;
-        } else {
-            if ($this->shouldBeSentByUps($orderApi)) {
-                $orderBC->shippingAgent = "UPS";
-                $orderBC->shippingAgentService = "1";
-            }
-            
-            $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
-        }
-        
-
         
         return $orderBC;
     }
-
-
-
-    protected function shouldBeSentByUps($orderApi): bool
-    {
-        $skus = [];
-        foreach ($orderApi->Items as $line) {
-            $skus[] = $line->Sku;
-        }
-        return UpsGetTracking::shouldBeSentWith($skus);
-    }
-
-
-
 
 
     private function getSalesOrderLines($orderApi): array

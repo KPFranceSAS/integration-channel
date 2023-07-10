@@ -26,6 +26,8 @@ class TrackingAggregator
                 return $shippyProSteps ? $shippyProSteps :  DhlGetTracking::checkIfDelivered($codeTracking);
             case WebOrder::CARRIER_ARISE:
                 return AriseTracking::checkIfDelivered($codeTracking, $zipCode);
+            case WebOrder::CARRIER_DPDUK:
+                return DpdUkTracking::checkIfDelivered($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
                 return $this->shippyProTracking->checkIfDelivered($codeTracking);
         }
@@ -44,6 +46,8 @@ class TrackingAggregator
             case WebOrder::CARRIER_DHL:
                 $shippyProSteps = $this->shippyProTracking->getStepsTrackings($codeTracking);
                 return $shippyProSteps ? $shippyProSteps : DhlGetTracking::getStepsTrackings($codeTracking);
+            case WebOrder::CARRIER_DPDUK:
+                return DpdUkTracking::getStepsTrackings($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
                 return $this->shippyProTracking->getStepsTrackings($codeTracking);
         }
@@ -58,6 +62,8 @@ class TrackingAggregator
                 return DhlGetTracking::getTrackingUrlBase($codeTracking);
             case WebOrder::CARRIER_ARISE:
                 return AriseTracking::getTrackingUrlBase($codeTracking, $zipCode);
+            case WebOrder::CARRIER_DPDUK:
+                return DpdUkTracking::getTrackingUrlBase($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
                 return UpsGetTracking::getTrackingUrlBase($codeTracking);
         }

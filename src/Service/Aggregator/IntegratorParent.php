@@ -7,6 +7,7 @@ use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\BusinessCentral\ProductTaxFinder;
+use App\Entity\IntegrationChannel;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
@@ -149,6 +150,10 @@ abstract class IntegratorParent
                 $orderBC = $this->transformToAnBcOrder($order);
                 $this->addLogToOrder($webOrder, 'Order transformation adjustements prices regarding to taxes');
                 $this->adjustSaleOrder($webOrder, $orderBC);
+                
+                $this->addLogToOrder($webOrder, 'Define best carriers');
+                $this->defineBestCarrier($webOrder, $orderBC);
+                
                 $webOrder->setWarehouse($orderBC->locationCode);
                 $webOrder->setCustomerNumber($orderBC->customerNumber);
 
@@ -157,12 +162,13 @@ abstract class IntegratorParent
                 $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
                 // creation in Business central
                 $erpOrder = $businessCentralConnector->createSaleOrder($orderBC->transformToArray());
-
-                $this->addLogToOrder($webOrder, 'Order created in the ERP ' . $businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number']);
+                $this->addLogToOrder($webOrder, 'Order created in the ERP ' . $businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number'].' and content '.json_encode($orderBC->transformToArray()));
                 $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
                 $webOrder->setOrderErp($erpOrder['number']);
-                $this->addLogToOrder($webOrder, 'Integration done ' . $erpOrder['number']);
-
+                if($webOrder->getFulfilledBy()==WebOrder::FULFILLED_BY_SELLER) {
+                    $this->createReservationEntries($webOrder);
+                }
+                $this->addLogToOrder($webOrder, 'Integration finished ' . $erpOrder['number']);
                 $this->checkAfterIntegration($webOrder, $order);
             } catch (Exception $e) {
                 $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
@@ -212,6 +218,37 @@ abstract class IntegratorParent
 
 
 
+
+    public function defineBestCarrier(WebOrder $order, SaleOrder $saleOrder)
+    {
+        if($order->isFulfiledBySeller()) {
+            if($saleOrder->shippingAgent=='ARISE') {
+                $order->setCarrierService(WebOrder::CARRIER_ARISE);
+            } elseif($order->getChannel()==IntegrationChannel::CHANNEL_PAXUK) {
+                $order->setCarrierService(WebOrder::CARRIER_DPDUK);
+                $saleOrder->shippingAgent="DPD1";
+                $saleOrder->shippingAgentService="DPD32";
+                $saleOrder->locationCode=WebOrder::DEPOT_3PLUK;
+            } else { // case DHL Parcel
+                $order->setCarrierService(WebOrder::CARRIER_DHL);
+                if(in_array($saleOrder->shippingPostalAddress->countryLetterCode, ['ES', 'PT'])) {
+                    $saleOrder->shippingAgent="DHL PARCEL";
+                    $saleOrder->shippingAgentService="DHL1";
+                }
+            }
+        } else { // case Aamzon
+            $saleOrder->shippingAgent = 'FBA';
+            $saleOrder->shippingAgentService = '1';
+            $saleOrder->locationCode = WebOrder::DEPOT_FBA_AMAZON;
+            $order->setCarrierService(WebOrder::CARRIER_FBA);
+        }
+    }
+
+
+
+
+
+
     public function reIntegrateOrder(WebOrder $order)
     {
         try {
@@ -223,6 +260,9 @@ abstract class IntegratorParent
             $orderBC = $this->transformToAnBcOrder($orderApi);
             $this->adjustSaleOrder($order, $orderBC);
             $order->setWarehouse($orderBC->locationCode);
+            $this->addLogToOrder($order, 'Define best carriers');
+            $this->defineBestCarrier($order, $orderBC);
+            $order->setWarehouse($orderBC->locationCode);
             $order->setCustomerNumber($orderBC->customerNumber);
 
             $this->addLogToOrder($order, 'Order creation in the ERP');
@@ -232,12 +272,11 @@ abstract class IntegratorParent
             $order->setStatus(WebOrder::STATE_SYNC_TO_ERP);
             $order->setOrderErp($erpOrder['number']);
             $this->addLogToOrder($order, 'Integration done ' . $erpOrder['number']);
-            // check if limit of 40 is overlimited
-            if ($order->getFulfilledBy() == WebOrder::FULFILLED_BY_SELLER && $order->getCarrierService() == WebOrder::CARRIER_DHL &&  strlen($orderBC->shippingPostalAddress->street) > 40) {
-                $errorLength = 'The BC sale order ' . $erpOrder['number'] . ' corresponding to the weborder  ' . $order->getExternalNumber() . ' has been created with an address length of the street over 40 characters. ' . $orderBC->shippingPostalAddress->street . ". Please modify it on Business central";
-                $this->addLogToOrder($order, $errorLength);
-                $this->addError($errorLength);
+            
+            if($order->getFulfilledBy()==WebOrder::FULFILLED_BY_SELLER) {
+                $this->createReservationEntries($order);
             }
+
             $this->checkAfterIntegration($order, $orderApi);
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
@@ -249,6 +288,38 @@ abstract class IntegratorParent
         $this->manager->flush();
         $this->logger->info('Reintegration finished');
         return true;
+    }
+
+
+
+
+    public function createReservationEntries(WebOrder $orderDb)
+    {
+        try {
+          
+            $this->addLogToOrder($orderDb, 'Add reservation to sale order lines');
+            $connector = $this->businessCentralAggregator->getBusinessCentralConnector($orderDb->getCompany());
+            $orderBc = $connector->getFullSaleOrderByNumber($orderDb->getOrderErp());
+
+            foreach($orderBc['salesOrderLines'] as $saleOrderLine) {
+                if($saleOrderLine['lineType'] == SaleOrderLine::TYPE_ITEM) {
+                    $reservation = [
+                        "QuantityBase" => $saleOrderLine['quantity'],
+                        "CreationDate" => date('Y-m-d'),
+                        "ItemNo" => $saleOrderLine['lineDetails']['number'],
+                        "LocationCode" =>  $orderBc['locationCode'],
+                        "SourceID" => $orderDb->getOrderErp(),
+                        "SourceRefNo"=> $saleOrderLine['sequence'],
+                    ];
+                    $connector->createReservation($reservation);
+
+                    $this->addLogToOrder($orderDb, 'Add reservation for line '.$saleOrderLine['sequence'].' for '.$saleOrderLine['quantity'].' '.$saleOrderLine['lineDetails']['number']);
+                }
+            }
+        } catch(Exception $e) {
+            $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
+            $$this->addError($orderDb, 'Error during reservation creation in BC '.$message);
+        }
     }
 
 

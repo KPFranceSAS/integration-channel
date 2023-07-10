@@ -70,7 +70,6 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
         
         $dateDelivery = DatetimeUtils::transformFromIso8601($orderApi['created_at']);
         $orderBC->requestedDeliveryDate = $dateDelivery->format('Y-m-d');
-        $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
       
         $orderBC->shipToName = $orderApi['addresses']["shipping"]['lastname']." ".$orderApi['addresses']["shipping"]['firstname'];
         $orderBC->billToName = $orderApi['addresses']["billing"]['lastname']." ".$orderApi['addresses']["billing"]['firstname'];
@@ -103,11 +102,6 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
         $orderBC->pricesIncludeTax = true;
 
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
-
-        if ($this->shouldBeSentByUps($orderApi)) {
-            $orderBC->shippingAgent = "UPS";
-            $orderBC->shippingAgentService = "1";
-        }
 
         $livraisonFees = floatval($orderApi['shipping_price']['amount']);
         // ajout livraison

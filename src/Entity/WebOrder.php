@@ -48,6 +48,7 @@ class WebOrder
 
 
     public const  CARRIER_DHL = 'DHL';
+    public const  CARRIER_DPDUK = 'DPDUK';
     public const  CARRIER_ARISE = 'ARISE';
     public const  CARRIER_FBA = 'FBA';
     public const  CARRIER_UPS = 'UPS';
@@ -97,7 +98,7 @@ class WebOrder
     /**
      * @ORM\Column(type="integer")
      */
-    private $status;
+    private $status = self::STATE_CREATED;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -112,12 +113,12 @@ class WebOrder
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $warehouse;
+    private $warehouse=self::DEPOT_LAROCA;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $erpDocument;
+    private $erpDocument = self::DOCUMENT_ORDER;
 
 
     /**
@@ -149,7 +150,7 @@ class WebOrder
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $fulfilledBy;
+    private $fulfilledBy = self::FULFILLED_BY_SELLER;
 
     public $deliverySteps;
     public $amzEvents;
@@ -162,7 +163,7 @@ class WebOrder
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $carrierService;
+    private $carrierService = self::CARRIER_DHL;
 
 
 
@@ -170,6 +171,15 @@ class WebOrder
     {
         return $this->fulfilledBy == self::FULFILLED_BY_SELLER;
     }
+
+
+    public function isFulfiledByExternal()
+    {
+        return $this->fulfilledBy == self::FULFILLED_BY_EXTERNAL;
+    }
+
+
+    
 
     public function isFulfiledByDhl()
     {
@@ -373,6 +383,8 @@ class WebOrder
                 return 'https://minibattstore.myshopify.com/admin/orders/' . $order['id'];
             case IntegrationChannel::CHANNEL_FLASHLED:
                 return 'https://testflashled.myshopify.com/admin/orders/' . $order['id'];
+            case IntegrationChannel::CHANNEL_PAXUK:
+                return 'https://paxlabsuk.myshopify.com/admin/orders/' . $order['id'];
             case IntegrationChannel::CHANNEL_FITBITCORPORATE:
                 return 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'];
             case IntegrationChannel::CHANNEL_AMAZFIT_ARISE:
@@ -400,10 +412,8 @@ class WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->SiteOrderID);
-        $webOrder->setStatus(WebOrder::STATE_CREATED);
         $webOrder->setChannel(IntegrationChannel::CHANNEL_CHANNELADVISOR);
         $webOrder->setSubchannel($orderApi->SiteName);
-        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $webOrder->setPurchaseDateFromString($orderApi->CreatedDateUtc);
 
         if ($orderApi->DistributionCenterTypeRollup == 'ExternallyManaged') {
@@ -411,18 +421,7 @@ class WebOrder
             $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_EXTERNAL);
             $webOrder->setCarrierService(WebOrder::CARRIER_FBA);
         } elseif ($orderApi->DistributionCenterTypeRollup == 'SellerManaged') {
-            $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
-            $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
-            $skus = [];
-            foreach ($orderApi->Items as $line) {
-                $skus[] = $line->Sku;
-            }
-            $shouldBeSentByUps = UpsGetTracking::shouldBeSentWith($skus);
-            if ($shouldBeSentByUps) {
-                $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
-            } else {
-                $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
-            }
+            
         } else {
             $webOrder->setWarehouse(WebOrder::DEPOT_MIXED);
             $webOrder->setFulfilledBy(WebOrder::FULFILLED_MIXED);
@@ -484,6 +483,9 @@ class WebOrder
             case IntegrationChannel::CHANNEL_OWLETCARE:
                 return WebOrder::createOneFromOwletcare($orderApi);
 
+            case IntegrationChannel::CHANNEL_PAXUK:
+                return WebOrder::createOneFromPaxUK($orderApi);
+
             case IntegrationChannel::CHANNEL_FLASHLED:
                 return WebOrder::createOneFromFlashled($orderApi);
 
@@ -534,6 +536,17 @@ class WebOrder
     }
 
 
+    public static function createOneFromPaxUK($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromShopify($orderApi);
+        $webOrder->setExternalNumber('PAXUK-' . $orderApi['order_number']);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_PAXUK);
+        $webOrder->setSubchannel('uk.pax.com');
+        $webOrder->addLog('Retrieved from uk.pax.com');
+        return $webOrder;
+    }
+
+
     public static function createOneFromMinibatt($orderApi): WebOrder
     {
         $webOrder = WebOrder::createOrderFromShopify($orderApi);
@@ -571,18 +584,9 @@ class WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['processed_at']));
-        $webOrder->setStatus(WebOrder::STATE_CREATED);
-        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
-        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
-        $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
         $webOrder->setContent($orderApi);
         return $webOrder;
     }
-
-
-
-    
 
 
 
@@ -590,15 +594,10 @@ class WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->id);
-        $webOrder->setStatus(WebOrder::STATE_CREATED);
         $webOrder->setChannel(IntegrationChannel::CHANNEL_ALIEXPRESS);
         $webOrder->setSubchannel('AliExpress');
-        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $datePurchase = DatetimeUtils::createDateTimeFromDateWithDelay($orderApi->gmt_pay_success);
         $webOrder->setPurchaseDate($datePurchase);
-        $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
-        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
-        $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
         $webOrder->addLog('Retrieved from Aliexpress');
         $webOrder->setContent($orderApi);
         return $webOrder;
@@ -611,16 +610,12 @@ class WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setExternalNumber($orderApi->order_id);
-        $webOrder->setStatus(WebOrder::STATE_CREATED);
         $webOrder->setChannel(IntegrationChannel::CHANNEL_ARISE);
         $webOrder->setSubchannel('Miravia.es');
-        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
         $datePurchase = new DateTime($orderApi->created_at, new DateTimeZone('Europe/London'));
         $datePurchase->setTimezone(new DateTimeZone('Europe/Paris'));
         $webOrder->setPurchaseDate($datePurchase);
-        $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
-        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
-        
+       
         foreach ($orderApi->lines as $line) {
             if ($line->delivery_option_sof==1) {
                 $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
@@ -672,25 +667,8 @@ class WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['created_date']));
-        $webOrder->setStatus(WebOrder::STATE_CREATED);
-        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
-        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
-        $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
         $webOrder->setContent($orderApi);
-        
-        
         $webOrder->setExternalNumber($orderApi['id']);
-        
-        $skus = [];
-        foreach ($orderApi["order_lines"] as $line) {
-            $skus[] = $line['offer']['sku'];
-        }
-        $shouldBeSentByUps = UpsGetTracking::shouldBeSentWith($skus);
-        if ($shouldBeSentByUps) {
-            $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
-        }
-
         if(array_key_exists('channel', $orderApi)) {
             $webOrder->addLog('Retrieved from '.$orderApi['channel']['code'].' '.$orderApi['channel']['label']);
         } else {
@@ -706,34 +684,11 @@ class WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['created_at']));
-        $webOrder->setStatus(WebOrder::STATE_CREATED);
-        $webOrder->setErpDocument(WebOrder::DOCUMENT_ORDER);
-        $webOrder->setWarehouse(WebOrder::DEPOT_LAROCA);
-        $webOrder->setFulfilledBy(WebOrder::FULFILLED_BY_SELLER);
-        $webOrder->setCarrierService(WebOrder::CARRIER_DHL);
         $webOrder->setContent($orderApi);
         $webOrder->setExternalNumber($orderApi['order_reference']);
-        
-        $skus = [];
-        foreach ($orderApi["products"] as $line) {
-            $skus[] = $line['seller_sku'];
-        }
-        $shouldBeSentByUps = UpsGetTracking::shouldBeSentWith($skus);
-        if ($shouldBeSentByUps) {
-            $webOrder->setCarrierService(WebOrder::CARRIER_UPS);
-        }
-        
         $webOrder->addLog('Retrieved from ManoMano');
         return $webOrder;
     }
-
-
-    
-
-
-
-
-
 
     /**
      * Undocumented function
@@ -764,6 +719,7 @@ class WebOrder
     {
         if (in_array($this->channel, [
             IntegrationChannel::CHANNEL_OWLETCARE,
+            IntegrationChannel::CHANNEL_PAXUK,
             IntegrationChannel::CHANNEL_FLASHLED,
             IntegrationChannel::CHANNEL_MINIBATT,
             IntegrationChannel::CHANNEL_FITBITCORPORATE,

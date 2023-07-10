@@ -89,9 +89,7 @@ abstract class MiraklIntegratorParent extends IntegratorParent
             $dateDelivery = DatetimeUtils::transformFromIso8601($orderApi['delivery_date']['earliest']);
             $orderBC->requestedDeliveryDate = $dateDelivery->format('Y-m-d');
         }
-        
-        $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
-      
+              
         $orderBC->shipToName = $orderApi['customer']['shipping_address']['lastname']." ".$orderApi['customer']['shipping_address']['firstname'];
         $orderBC->billToName = $orderApi['customer']['billing_address']['lastname']." ".$orderApi['customer']['billing_address']['firstname'];
         

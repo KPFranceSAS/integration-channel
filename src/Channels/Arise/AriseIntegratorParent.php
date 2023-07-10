@@ -99,7 +99,6 @@ abstract class AriseIntegratorParent extends IntegratorParent
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->created_at, 0, 10));
         $datePayment->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
-        $orderBC->locationCode = WebOrder::DEPOT_LAROCA;
 
         $bilingIndex= (strlen($orderApi->address_billing->city)==0) ? 'shipping' : 'billing';
         $orderBC->shipToName = $orderApi->address_shipping->last_name." ".$orderApi->address_shipping->first_name;

@@ -9,6 +9,7 @@ use App\Helper\Traits\TraitServiceLog;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Carriers\DhlGetTracking;
+use App\Service\Carriers\DpdUkTracking;
 use App\Service\Carriers\TrackingAggregator;
 use App\Service\Carriers\UpsGetTracking;
 use DateTime;
@@ -160,6 +161,7 @@ abstract class UpdateStatusParent
                 $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and marked as fulfilled by '.$statusSaleOrder['shipmentCompany']);
                 $order->cleanErrors();
                 $postUpdateStatus = false;
+                
                 if ($order->getCarrierService() == WebOrder::CARRIER_DHL) {
                     $tracking = $statusSaleOrder['trackingNumber'];
                     if(substr($tracking, 0, 1)=='J') {
@@ -181,11 +183,31 @@ abstract class UpdateStatusParent
                     }
                 }
 
-
                 if ($order->getCarrierService() == WebOrder::CARRIER_ARISE) {
                     $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and waiting to be collected by Arise');
                     $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice);
                 }
+
+
+                if ($order->getCarrierService() == WebOrder::CARRIER_DPDUK) {
+                    $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and waiting to be collected by Arise');
+                    $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice);
+                }
+
+
+                if ($order->getCarrierService() == WebOrder::CARRIER_DPDUK) {
+                    $tracking = $statusSaleOrder['trackingNumber'];
+                    if(strlen($tracking)>0) {
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DPD UK with tracking number ' . $tracking);
+                        $order->setTrackingUrl(DpdUkTracking::getTrackingUrlBase($tracking, $invoice));
+                        $order->setTrackingCode($tracking);
+                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
+                    } else {
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from UPS for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
+                    }
+                }
+
+
 
 
                 if ($order->getCarrierService() == WebOrder::CARRIER_UPS) {
@@ -199,8 +221,6 @@ abstract class UpdateStatusParent
                         $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from UPS for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
                     }
                 }
-
-
 
                 if ($postUpdateStatus) {
                     $order->setInvoiceErp($invoice['number']);

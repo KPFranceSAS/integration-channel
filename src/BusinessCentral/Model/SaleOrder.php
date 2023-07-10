@@ -3,6 +3,7 @@
 namespace App\BusinessCentral\Model;
 
 use App\BusinessCentral\Model\PostalAddress;
+use App\Entity\WebOrder;
 use App\Service\Carriers\UpsGetTracking;
 
 class SaleOrder
@@ -28,7 +29,7 @@ class SaleOrder
 
     public $number;
 
-    public $locationCode;
+    public $locationCode = WebOrder::DEPOT_LAROCA;
 
     public $currencyCode;
 

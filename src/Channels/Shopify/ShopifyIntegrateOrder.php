@@ -28,7 +28,6 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
         $dateCreated = DatetimeUtils::transformFromIso8601($orderApi['processed_at']);
         $dateCreated->add(new \DateInterval('P3D'));
         $orderBC->requestedDeliveryDate = $dateCreated->format('Y-m-d');
-        $orderBC->locationCode = $this->getDefaultWarehouse();
         $orderBC->billToName = $orderApi['billing_address']['name'];
         $orderBC->shipToName = $orderApi['shipping_address']['name'];
 
@@ -85,14 +84,6 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
 
         return $orderBC;
     }
-
-
-
-    protected function getDefaultWarehouse()
-    {
-        return WebOrder::DEPOT_LAROCA;
-    }
-
 
 
 

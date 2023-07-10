@@ -330,6 +330,14 @@ abstract class BusinessCentralConnector
 
 
 
+    public function createReservation($reservation)
+    {
+        return $this->doPostRequest(
+            'CreateReserves',
+            $reservation
+        );
+    }
+
 
     public function getStockAvailabilityPerProduct(string $sku)
     {
@@ -645,9 +653,9 @@ abstract class BusinessCentralConnector
 
 
 
-     /**
-     * Sale return order
-     */
+    /**
+    * Sale return order
+    */
     public function createSaleReturnOrderLine(array $orderLine): ?array
     {
         return $this->doPostRequest(
