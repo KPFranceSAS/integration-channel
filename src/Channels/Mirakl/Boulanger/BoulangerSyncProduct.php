@@ -117,15 +117,19 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             }
         }
 
-        $brandName = $this->getAttributeChoice($product, 'brand', "fr_FR");
-        if ($brandName) {
-            $codeMirakl = $this->getCodeMarketplace($flatProduct ['CATEGORIE'], "MARQUE", $brandName);
-            if ($codeMirakl) {
-                $flatProduct["MARQUE"] = $codeMirakl;
+
+        if(array_key_exists('CATEGORIE', $flatProduct)) {
+            $brandName = $this->getAttributeChoice($product, 'brand', "fr_FR");
+            if ($brandName) {
+                $codeMirakl = $this->getCodeMarketplace($flatProduct ['CATEGORIE'], "MARQUE", $brandName);
+                if ($codeMirakl) {
+                    $flatProduct["MARQUE"] = $codeMirakl;
+                }
             }
+        } else {
+            $this->logger->info('Product not categorized');
         }
 
-        
         return $flatProduct;
     }
 
