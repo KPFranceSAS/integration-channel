@@ -116,12 +116,15 @@ abstract class StockParent
 
         $product = $this->manager->getRepository(Product::class)->findOneBySku($skuFinal);
 
-        foreach ($saleChannels as $saleChannel) {
-            $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
-            if ($productMarketplace->getEnabled()) {
-                return true;
+        if($product) {
+            foreach ($saleChannels as $saleChannel) {
+                $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
+                if ($productMarketplace->getEnabled()) {
+                    return true;
+                }
             }
         }
+       
 
         return false;
     }
