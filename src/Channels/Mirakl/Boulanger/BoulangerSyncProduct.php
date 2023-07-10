@@ -109,6 +109,12 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/type_de_nettoyage']=$this->getAttributeSimple($product, 'swim_cleaning_type', "fr_FR");
             $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/debit_d_aspiration_m3-h']=10;
             $flatProduct['CENTRALE_ROBOT_PISCINE/services_inclus/fabrique_en']="Chine";
+        } elseif($familyPim == 'smart_home') {
+            if(in_array('marketplace_blender', $product['categories'])) { // blender
+                $flatProduct ['product_category'] =  "5603"; // blender
+            } elseif (in_array('marketplace_air_fryer', $product['categories'])) {
+                $flatProduct ['product_category'] =  "8004"; // friteuse
+            }
         }
 
         $brandName = $this->getAttributeChoice($product, 'brand', "fr_FR");
