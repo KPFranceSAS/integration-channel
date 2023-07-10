@@ -189,11 +189,6 @@ abstract class UpdateStatusParent
                 }
 
 
-                if ($order->getCarrierService() == WebOrder::CARRIER_DPDUK) {
-                    $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and waiting to be collected by Arise');
-                    $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice);
-                }
-
 
                 if ($order->getCarrierService() == WebOrder::CARRIER_DPDUK) {
                     $tracking = $statusSaleOrder['trackingNumber'];
