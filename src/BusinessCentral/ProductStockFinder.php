@@ -143,15 +143,18 @@ class ProductStockFinder
     public function isBundle($sku): bool
     {
         $item =  $this->getConnector()->getItemByNumber($sku);
-
-        if ($item['AssemblyBOM']==false) {
-            return false;
+        if($item) {
+            if ($item['AssemblyBOM']==false) {
+                return false;
+            }
+    
+            if ($item['AssemblyBOM']==true && in_array($item['AssemblyPolicy'], ["Assemble-to-Stock", "Ensamblar para stock"])) {
+                return false;
+            }
+            return true;
         }
-
-        if ($item['AssemblyBOM']==true && in_array($item['AssemblyPolicy'], ["Assemble-to-Stock", "Ensamblar para stock"])) {
-            return false;
-        }
-        return true;
+        $this->logger->alert('Product with SKU '.$sku.' do not exists in BC');
+        return false;
     }
 
 

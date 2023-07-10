@@ -3,8 +3,6 @@
 namespace App\BusinessCentral\Connector;
 
 use App\BusinessCentral\Connector\BusinessCentralConnector;
-use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
-use App\BusinessCentral\Connector\KpFranceConnector;
 use Exception;
 
 class BusinessCentralAggregator

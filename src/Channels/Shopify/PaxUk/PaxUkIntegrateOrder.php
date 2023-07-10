@@ -43,12 +43,6 @@ class PaxUkIntegrateOrder extends ShopifyIntegrateOrder
     }
 
 
-    protected function getDefaultWarehouse()
-    {
-        return WebOrder::DEPOT_3PLUK;
-    }
-
-
     protected function getProductCorrelationSku(string $sku, $company): string
     {
         return PaxHelper::getBusinessCentralSku($sku);
