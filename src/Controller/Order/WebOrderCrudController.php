@@ -230,6 +230,7 @@ class WebOrderCrudController extends AdminCrudController
             BusinessCentralConnector::GADGET_IBERIA => BusinessCentralConnector::GADGET_IBERIA,
             BusinessCentralConnector::KIT_PERSONALIZACION_SPORT => BusinessCentralConnector::KIT_PERSONALIZACION_SPORT,
             BusinessCentralConnector::KP_FRANCE => BusinessCentralConnector::KP_FRANCE,
+            BusinessCentralConnector::KP_UK => BusinessCentralConnector::KP_UK
         ];
     }
 
@@ -261,6 +262,8 @@ class WebOrderCrudController extends AdminCrudController
             'Miravia.es' => 'Miravia.es',
             'Minibatt.com' => 'Minibatt.com',
             'Owletbaby.es' => 'Owletbaby.es',
+            'Uk.pax.com' => 'Uk.pax.com',
+            'Eu.pax.com' => 'Eu.pax.com',
         ];
     }
 
