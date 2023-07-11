@@ -63,9 +63,9 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $flatProduct ['product_category'] =  "200595|IMPRIMANTE_3D|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
             $flatProduct ['ATT_15344'] = 'LOV_000002'; // robot de piscine
         } elseif($familyPim == 'smart_home') {
-            if(in_array('marketplace_blender', $product['categories'])) { // blender
+            if(in_array('markerplace_blender', $product['categories'])) { // blender
                 $flatProduct ['product_category'] =  "205634|1024|R1001-1002-1004"; // blender
-                $flatProduct ['ATT_15344'] = $this->getAttributeUnit($product, 'liquid_capacity', 'LITER', 1); // blender
+                $flatProduct ['ATT_00056'] = $this->getAttributeUnit($product, 'liquid_capacity', 'LITER', 1); // blender
             } elseif (in_array('marketplace_air_fryer', $product['categories'])) {
                 $flatProduct ['product_category'] =  "206283|2056|R1001-1002"; // friteuse
             }
