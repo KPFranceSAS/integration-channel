@@ -541,7 +541,7 @@ class WebOrder
         $webOrder = WebOrder::createOrderFromShopify($orderApi);
         $webOrder->setExternalNumber('PAXUK-' . $orderApi['order_number']);
         $webOrder->setChannel(IntegrationChannel::CHANNEL_PAXUK);
-        $webOrder->setSubchannel('uk.pax.com');
+        $webOrder->setSubchannel('Uk.pax.com');
         $webOrder->addLog('Retrieved from uk.pax.com');
         return $webOrder;
     }

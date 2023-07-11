@@ -139,9 +139,10 @@ abstract class UpdateDeliveryParent
     protected function checkifDelivered(WebOrder $webOrder): ?DateTime
     {
         $trackingCode = $webOrder->getTrackingCode();
-        if($webOrder->getCarrierService() == WebOrder::CARRIER_ARISE) {
-            $orderContent=$webOrder->getOrderContent();
-            $zipCode = $orderContent->address_shipping->post_code;
+        $bcConnector =  $this->businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
+        $saleInvoice = $bcConnector->getFullSaleInvoiceByNumber($webOrder->getInvoiceErp());
+        if($saleInvoice){
+            $zipCode = $saleInvoice['shippingPostalAddress']['postalCode'];
         } else {
             $zipCode = null;
         }

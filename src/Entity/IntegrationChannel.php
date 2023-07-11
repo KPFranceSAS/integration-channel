@@ -35,6 +35,7 @@ class IntegrationChannel
     public const CHANNEL_MANOMANO_IT='MANOMANO_IT';
     public const CHANNEL_CDISCOUNT='CDISCOUNT';
     public const CHANNEL_PAXUK='PAXUK';
+    public const CHANNEL_PAXEU='PAXEU';
     
 
 

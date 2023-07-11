@@ -47,7 +47,7 @@ class AmazonEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        
+    
 
         if (in_array($entity->getStatus(), [WebOrder::STATE_SYNC_TO_ERP, WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])) {
             try {
@@ -70,14 +70,11 @@ class AmazonEventSubscriber implements EventSubscriberInterface
 
         if ($entity->getTrackingCode()) {
             try {
-              
-                if($entity->getCarrierService() == WebOrder::CARRIER_ARISE){
-                    $orderContent=$entity->getOrderContent();
-                    $zipCode = $orderContent->address_shipping->post_code;
+                if(is_array($entity->orderBCContent) && array_key_exists('shippingPostalAddress', $entity->orderBCContent) ){
+                    $zipCode = $entity->orderBCContent['shippingPostalAddress']['postalCode'];
                 } else {
                     $zipCode = null;
                 }
-        
                  $entity->deliverySteps = $this->trackingAggregator->getFormattedSteps($entity->getCarrierService(),$entity->getTrackingCode(), $zipCode );
             } catch (Exception $e) {
             }

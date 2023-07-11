@@ -19,6 +19,7 @@ use App\Controller\Order\LeroyMerlinOrderCrudController;
 use App\Controller\Order\ManoManoOrderCrudController;
 use App\Controller\Order\MinibattOrderCrudController;
 use App\Controller\Order\OwletCareOrderCrudController;
+use App\Controller\Order\PaxB2COrderCrudController;
 use App\Controller\Order\PreparationOrderCrudController;
 use App\Controller\Order\WebOrderCrudController;
 use App\Controller\Pricing\PricingCrudController;
@@ -112,7 +113,8 @@ class DashboardController extends AbstractDashboardController
                         ->setController(AriseOrderCrudController::class),
                     MenuItem::linkToCrud('Owlet Care', 'fas fa-baby', WebOrder::class)
                         ->setController(OwletCareOrderCrudController::class),
-                    
+                    MenuItem::linkToCrud('Pax B2C', 'fas fa-cannabis', WebOrder::class)
+                        ->setController(PaxB2COrderCrudController::class),
                     
                     
                    
