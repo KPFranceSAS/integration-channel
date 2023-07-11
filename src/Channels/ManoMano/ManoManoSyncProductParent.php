@@ -145,6 +145,12 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             $flatProduct['mm_category_id'] = 22185;
         } elseif($familyPim == 'robot_piscine') {
             $flatProduct['mm_category_id'] = 20008;
+        } elseif($familyPim == 'smart_home') {
+            if(in_array('markerplace_blender', $product['categories'])) {
+                $flatProduct ['mm_category_id'] = 20597;
+            } elseif (in_array('marketplace_air_fryer', $product['categories'])) {
+                $flatProduct ['mm_category_id'] = 20562;
+            }
         }
 
 
