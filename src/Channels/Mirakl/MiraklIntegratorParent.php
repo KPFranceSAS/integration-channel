@@ -173,8 +173,7 @@ abstract class MiraklIntegratorParent extends IntegratorParent
             $saleLine = new SaleOrderLine();
             $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
             $saleLine->itemId = $this->getProductCorrelationSku($line['offer']['sku'], $company);
-
-            $saleLine->unitPrice = floatval($line['price']);
+            $saleLine->unitPrice = floatval($line['price']) / $line['quantity'];
             $saleLine->quantity = $line['quantity'];
             $saleOrderLines[] = $saleLine;
         }

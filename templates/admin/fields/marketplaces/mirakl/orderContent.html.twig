@@ -28,7 +28,7 @@
 							{{line.offer.description|slice(0,20)}}
 						</td>
 						<td data-label="Unit Price" class="text-left field-text">
-							{{line.price}}
+							{{line.price / line.quantity}}
 							EUR
 						</td>
 						<td data-label="Qty" class="text-left field-text">
