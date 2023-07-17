@@ -15,21 +15,29 @@ class DecathlonUpdateStatus extends MiraklUpdateStatusParent
 
 
 
-    protected function getCodeCarrier(string $carrierCode): ?string {
-        if($carrierCode ==  WebOrder::CARRIER_DHL){
+    protected function getCodeCarrier(string $carrierCode): ?string
+    {
+        if($carrierCode ==  WebOrder::CARRIER_DHL) {
             return "DHLESP";
-        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS){
+        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "UPS";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
+            return "DBSchenker";
         }
+
+        
         return null;
     }
 
 
-    protected function getNameCarrier(string $carrierCode): ?string {
-        if($carrierCode ==  WebOrder::CARRIER_DHL){
+    protected function getNameCarrier(string $carrierCode): ?string
+    {
+        if($carrierCode ==  WebOrder::CARRIER_DHL) {
             return "DHL (Spain)";
-        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS){
+        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "UPS";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
+            return "DB Schenker";
         }
         return null;
     }
