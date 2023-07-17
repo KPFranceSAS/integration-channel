@@ -229,11 +229,18 @@ abstract class IntegratorParent
                 $saleOrder->shippingAgent="DPD1";
                 $saleOrder->shippingAgentService="DPD32";
                 $saleOrder->locationCode=WebOrder::DEPOT_3PLUK;
-            } else { // case DHL Parcel
-                $order->setCarrierService(WebOrder::CARRIER_DHL);
-                if(in_array($saleOrder->shippingPostalAddress->countryLetterCode, ['ES', 'PT'])) {
-                    $saleOrder->shippingAgent="DHL PARCEL";
-                    $saleOrder->shippingAgentService="DHL1";
+            } else { // case Default
+
+                if($this->containHazmatProducts($order, $saleOrder)) {
+                    $saleOrder->shippingAgent="SCHENKER";
+                    $saleOrder->shippingAgentService="SYSTEM";
+                    $order->setCarrierService(WebOrder::CARRIER_DBSCHENKER);
+                } else {
+                    $order->setCarrierService(WebOrder::CARRIER_DHL);
+                    if(in_array($saleOrder->shippingPostalAddress->countryLetterCode, ['ES', 'PT'])) {
+                        $saleOrder->shippingAgent="DHL PARCEL";
+                        $saleOrder->shippingAgentService="DHL1";
+                    }
                 }
             }
         } else { // case Aamzon
@@ -245,6 +252,27 @@ abstract class IntegratorParent
     }
 
 
+
+
+
+    public function containHazmatProducts(WebOrder $webOrder, SaleOrder $saleOrder)
+    {
+        
+        $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
+        $this->addLogToOrder($webOrder, 'Check if sale order contains HAzmat products');
+        foreach($saleOrder->salesLines as $saleLine) {
+            if($saleLine->lineType == SaleOrderLine::TYPE_ITEM) {
+                $itemBc = $businessCentralConnector->getItem($saleLine->itemId);
+                if($itemBc && substr($itemBc['number'], 0, 3) == 'ANK') {
+                    $this->addLogToOrder($webOrder, 'Contains sku '.$itemBc['number']);
+                    return true;
+                }
+            }
+        }
+        $this->addLogToOrder($webOrder, 'Sale order do not contain Hazmat products');
+
+        return false;
+    }
 
 
 

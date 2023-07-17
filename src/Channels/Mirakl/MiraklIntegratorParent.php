@@ -126,12 +126,6 @@ abstract class MiraklIntegratorParent extends IntegratorParent
 
         $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
 
-        if ($this->shouldBeSentByUps($orderApi)) {
-            $orderBC->shippingAgent = "UPS";
-            $orderBC->shippingAgentService = "1";
-        }
-        
-
         $livraisonFees = floatval($orderApi['shipping']['price']);
         // ajout livraison
         $company = $this->getCompanyIntegration($orderApi);
@@ -154,16 +148,6 @@ abstract class MiraklIntegratorParent extends IntegratorParent
 
     abstract protected function getExternalNumber($orderApi);
    
-
-    protected function shouldBeSentByUps($orderApi): bool
-    {
-        $skus = [];
-        foreach ($orderApi["order_lines"] as $line) {
-            $skus[] = $line['offer']['sku'];
-        }
-        return UpsGetTracking::shouldBeSentWith($skus);
-    }
-
 
     protected function getSalesOrderLines($orderApi): array
     {

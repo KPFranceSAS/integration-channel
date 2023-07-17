@@ -9,7 +9,6 @@ use App\Channels\ManoMano\ManoManoApiParent;
 use App\Entity\WebOrder;
 use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\IntegratorParent;
-use App\Service\Carriers\UpsGetTracking;
 use Exception;
 
 abstract class ManoManoIntegratorParent extends IntegratorParent
@@ -119,17 +118,6 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
         }
         return $orderBC;
     }
-
-
-    protected function shouldBeSentByUps($orderApi): bool
-    {
-        $skus = [];
-        foreach ($orderApi["products"] as $line) {
-            $skus[] = $line['seller_sku'];
-        }
-        return UpsGetTracking::shouldBeSentWith($skus);
-    }
-
    
 
     protected function getSalesOrderLines($orderApi): array

@@ -162,11 +162,9 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             $flatProduct['ManufacturerWarrantyTime'] = (int)$valueGarantee;
         }
 
-        //mm_category_id
 
         for ($i = 1; $i <= 5;$i++) {
             $imageLocale = $this->getAttributeSimple($product, 'image_url_loc_'.$i, $this->getLocale());
-
             $flatProduct['image_'.$i] =$imageLocale ? $imageLocale : $this->getAttributeSimple($product, 'image_url_'.$i);
         }
 

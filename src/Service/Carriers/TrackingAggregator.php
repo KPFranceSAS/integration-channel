@@ -3,10 +3,10 @@
 namespace App\Service\Carriers;
 
 use App\Entity\WebOrder;
+use App\Service\Carriers\DbSchenkerGetTracking;
 use App\Service\Carriers\DhlGetTracking;
 use App\Service\Carriers\ShippyProTracking;
 use DateTime;
-use Exception;
 
 class TrackingAggregator
 {
@@ -66,6 +66,8 @@ class TrackingAggregator
                 return DpdUkTracking::getTrackingUrlBase($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
                 return UpsGetTracking::getTrackingUrlBase($codeTracking);
+            case WebOrder::CARRIER_DBSCHENKER:
+                return DbSchenkerGetTracking::getTrackingUrlBase($codeTracking);
         }
         return null;
     }

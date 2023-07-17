@@ -196,6 +196,7 @@ class WebOrderCrudController extends AdminCrudController
 
         $choicesCarrier = [
             WebOrder::CARRIER_ARISE => WebOrder::CARRIER_ARISE,
+            WebOrder::CARRIER_DBSCHENKER  => WebOrder::CARRIER_DBSCHENKER,
             WebOrder::CARRIER_DHL  => WebOrder::CARRIER_DHL,
             WebOrder::CARRIER_FBA  => WebOrder::CARRIER_FBA,
             WebOrder::CARRIER_UPS  => WebOrder::CARRIER_UPS

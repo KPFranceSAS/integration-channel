@@ -4,11 +4,14 @@ namespace App\Service\Carriers;
 
 use function Symfony\Component\String\u;
 
-class UpsGetTracking
+class DbSchenkerGetTracking
 {
     public static function getTrackingUrlBase($codeTracking)
     {
-        return "https://wwwapps.ups.com/WebTracking/track?loc=en_IT&trackNums=" . $codeTracking;
+        return "https://www.dbschenker.com/app/tracking-public/?refNumber=".$codeTracking."&refType=ShippersRefNo";
     }
+
+
+
 
 }

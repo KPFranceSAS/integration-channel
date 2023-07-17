@@ -52,6 +52,7 @@ class WebOrder
     public const  CARRIER_ARISE = 'ARISE';
     public const  CARRIER_FBA = 'FBA';
     public const  CARRIER_UPS = 'UPS';
+    public const  CARRIER_DBSCHENKER = 'DBSCHENKER';
 
     public const  STATE_ERROR_INVOICE = -2;
     public const  STATE_ERROR = -1;

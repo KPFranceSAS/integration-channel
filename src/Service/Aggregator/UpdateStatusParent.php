@@ -198,7 +198,20 @@ abstract class UpdateStatusParent
                         $order->setTrackingCode($tracking);
                         $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
                     } else {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from UPS for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DpdUK for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
+                    }
+                }
+
+
+                if ($order->getCarrierService() == WebOrder::CARRIER_DBSCHENKER) {
+                    $tracking = $statusSaleOrder['trackingNumber'];
+                    if(strlen($tracking)>0) {
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DB schenker with tracking number ' . $tracking);
+                        $order->setTrackingUrl(DpdUkTracking::getTrackingUrlBase($tracking, $invoice));
+                        $order->setTrackingCode($tracking);
+                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
+                    } else {
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from Db Schencker for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
                     }
                 }
 
