@@ -49,6 +49,8 @@ abstract class ManoManoUpdateStatusParent extends UpdateStatusParent
             return "DHL Parcel";
         } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "UPS";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
+            return "DB Schenker";
         }
         return null;
     }
