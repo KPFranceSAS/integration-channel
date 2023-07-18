@@ -95,7 +95,6 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
     public function flatProduct(Product $product, SaleChannel $saleChannel): ?array
     {
         $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
-        $carrierCode = UpsGetTracking::isThisSkuShouldBeSendWithUps($product->getSku()) ? 'UPS' : 'DHL Parcel';
 
         if ($productMarketplace->getEnabled()) {
             $offer = [
@@ -103,7 +102,7 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
                 "min_quantity" => "",
                 "quantity"=> $this->getStockProductWarehouse($product->getSku()),
                 "shipping_time" => in_array($product->getSku(), ['ANK-PCK-7', 'ANK-PCK-8', 'ANK-PCK-9','ANK-PCK-10']) ? "10#20" : "3#5",
-                "carrier" => $carrierCode,
+                "carrier" =>  'DHL Parcel',
                 "shipping_price_vat_inc" => 0,
                 "use_grid" => 0,
             ];
