@@ -215,8 +215,8 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $flatProduct['CENTRALE_FRITEUSE/fonctions/cuire_comme_dans_un_four']='Oui';
         $flatProduct['CENTRALE_FRITEUSE/fonctions/deshydrater']='Oui';
         $flatProduct['CENTRALE_FRITEUSE/fonctions/maintenir_au_chaud']='Oui';
-        $flatProduct['CENTRALE_FRITEUSE/volume_et_capacite/capacite_de_frites_fraiches']='Oui';
-        $flatProduct['CENTRALE_FRITEUSE/volume_et_capacite/capacite_de_frites_surgelees']='Oui';
+        $flatProduct['CENTRALE_FRITEUSE/volume_et_capacite/capacite_de_frites_fraiches']=0.8;
+        $flatProduct['CENTRALE_FRITEUSE/volume_et_capacite/capacite_de_frites_surgelees']=0.8;
         $flatProduct['CENTRALE_FRITEUSE/volume_et_capacite/type_de_friture']='air chaud';
         $flatProduct['CENTRALE_FRITEUSE/volume_et_capacite/nombre_de_bacs_et_paniers']='1 bac';
         $flatProduct['CENTRALE_FRITEUSE/confort_d_utilisation/puissance']=1600;
