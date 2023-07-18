@@ -378,6 +378,11 @@ class Product
      */
     private $ean;
 
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $dangerousGood;
+
 
 
 
@@ -1341,6 +1346,24 @@ class Product
     public function setEan(?string $ean): self
     {
         $this->ean = $ean;
+
+        return $this;
+    }
+
+    public function isDangerousGood(): ?bool
+    {
+        return $this->dangerousGood;
+    }
+
+
+    public function getDangerousGood(): ?bool
+    {
+        return $this->isDangerousGood();
+    }
+
+    public function setDangerousGood(?bool $dangerousGood): self
+    {
+        $this->dangerousGood = $dangerousGood;
 
         return $this;
     }

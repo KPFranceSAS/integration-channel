@@ -8,6 +8,7 @@ use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\BusinessCentral\ProductTaxFinder;
 use App\Entity\IntegrationChannel;
+use App\Entity\Product;
 use App\Entity\ProductCorrelation;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
@@ -263,9 +264,13 @@ abstract class IntegratorParent
         foreach($saleOrder->salesLines as $saleLine) {
             if($saleLine->lineType == SaleOrderLine::TYPE_ITEM) {
                 $itemBc = $businessCentralConnector->getItem($saleLine->itemId);
-                if($itemBc && substr($itemBc['number'], 0, 3) == 'ANK') {
-                    $this->addLogToOrder($webOrder, 'Contains sku '.$itemBc['number']);
-                    return true;
+                
+                if($itemBc) {
+                    $productDb = $this->manager->getRepository(Product::class)->findOneBySku($itemBc['number']);
+                    if($productDb && $productDb->isDangerousGood()) {
+                        $this->addLogToOrder($webOrder, 'Contains sku '.$itemBc['number']);
+                        return true;
+                    }
                 }
             }
         }

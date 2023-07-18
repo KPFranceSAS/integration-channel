@@ -9,6 +9,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
@@ -57,6 +58,8 @@ class ProductCrudController extends AdminCrudController
             AssociationField::new('brand'),
             AssociationField::new('category'),
             TextField::new('description', 'Product name'),
+            BooleanField::new('active')->renderAsSwitch(true),
+            BooleanField::new('dangerousGood')->renderAsSwitch(true),
             DateTimeField::new('createdAt', "Created at")
         ];
     }
