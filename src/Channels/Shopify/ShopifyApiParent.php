@@ -192,6 +192,16 @@ abstract class ShopifyApiParent implements ApiInterface
         return $this->getPaginatedElements('inventory_levels', [], ['location_ids' => $locationId]);
     }
 
+
+
+
+    public function getFulfilmentOrder(string $orderId)
+    {
+        return $this->client->get('orders/'.$orderId.'/fulfillment_orders')->getDecodedBody();
+    }
+
+
+
     public function setInventoryLevel(int $locationId, int $inventoryItemId, int $avalaible)
     {
         return $this->client->post(
@@ -207,29 +217,37 @@ abstract class ShopifyApiParent implements ApiInterface
 
     public function markAsFulfilled(
         int $orderId,
-        int $locationId,
-        array $itemLineId,
         string $trackingNumber = null,
         string $trackingUrl = null
     ) {
+
+        $fulfilmentOrder = $this->getFulfilmentOrder($orderId);
         $params = [
-            "location_id" =>  $locationId,
-            "line_items" => $itemLineId
+            'line_items_by_fulfillment_order' => [
+                ['fulfillment_order_id'=>$fulfilmentOrder['fulfillment_orders'][0]['id']]
+            ],
+            'tracking_info' => []
         ];
+            
 
         if ($trackingNumber) {
-            $params['tracking_number'] = $trackingNumber;
+            $params['tracking_info']['number'] = $trackingNumber;
         }
 
         if ($trackingUrl) {
-            $params['tracking_url'] = $trackingUrl;
+            $params['tracking_info']['url'] = $trackingUrl;
         }
 
         return $this->client->post(
-            "orders/$orderId/fulfillments",
+            "fulfillments",
             ["fulfillment" => $params]
         );
     }
+
+
+    
+
+
 
 
     protected function extractLinkNext($links)
@@ -344,26 +362,26 @@ abstract class ShopifyApiParent implements ApiInterface
         return $this->client->post('products/'.$idProduct.'/variants', ['variant' => $productVariant]);
     }
  
-     public function updateProductVariant($idVariant, array $productVariant)
-     {
-         return $this->client->put('variants/'.$idVariant, ['variant' => $productVariant]);
-     }
+    public function updateProductVariant($idVariant, array $productVariant)
+    {
+        return $this->client->put('variants/'.$idVariant, ['variant' => $productVariant]);
+    }
 
 
-     public function updateVariantPrice($idVariant, $priceVariant, $promotionPriceVariant=null)
-     {
-         $productVariant = [
-             'id' => $idVariant,
-         ];
-         if ($promotionPriceVariant) {
-             $this->logger->info('Update variant ' . $idVariant . 'regular price >> ' . $priceVariant . ' && discount price >>> ' . $promotionPriceVariant);
-             $productVariant['compare_at_price']=$priceVariant;
-             $productVariant['price']=$promotionPriceVariant;
-         } else {
-             $this->logger->info('Update variant ' . $idVariant . 'regular price >> ' . $priceVariant);
-             $productVariant['price']=$priceVariant;
-             $productVariant['compare_at_price']=null;
-         }
-         return $this->updateProductVariant($idVariant, $productVariant);
-     }
+    public function updateVariantPrice($idVariant, $priceVariant, $promotionPriceVariant=null)
+    {
+        $productVariant = [
+            'id' => $idVariant,
+        ];
+        if ($promotionPriceVariant) {
+            $this->logger->info('Update variant ' . $idVariant . 'regular price >> ' . $priceVariant . ' && discount price >>> ' . $promotionPriceVariant);
+            $productVariant['compare_at_price']=$priceVariant;
+            $productVariant['price']=$promotionPriceVariant;
+        } else {
+            $this->logger->info('Update variant ' . $idVariant . 'regular price >> ' . $priceVariant);
+            $productVariant['price']=$priceVariant;
+            $productVariant['compare_at_price']=null;
+        }
+        return $this->updateProductVariant($idVariant, $productVariant);
+    }
 }

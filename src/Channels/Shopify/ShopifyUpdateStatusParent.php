@@ -20,16 +20,9 @@ abstract class ShopifyUpdateStatusParent extends UpdateStatusParent
     protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber=null)
     {
         $jsonOrder = $order->getOrderContent();
-        $mainLocation = $this->getShopifyApi()->getMainLocation();
-        foreach ($jsonOrder['line_items'] as $item) {
-            $ids[] = ['id' => $item['id']];
-        }
-
         $postCode = $invoice['shippingPostalAddress']['postalCode'];
         $result = $this->getShopifyApi()->markAsFulfilled(
             $jsonOrder['id'],
-            $mainLocation['id'],
-            $ids,
             $trackingNumber,
             $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $trackingNumber, $postCode)
         );
