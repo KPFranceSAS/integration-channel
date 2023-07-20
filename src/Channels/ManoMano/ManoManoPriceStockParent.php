@@ -95,7 +95,7 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
             $items[]=[
                 'sku' => $offer['sku'],
                 "stock" => [
-                    "quantity" => $offer['stock']
+                    "quantity" => $offer['quantity']
                 ]
             ];
         }
