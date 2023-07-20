@@ -68,12 +68,8 @@ class ProductStockFinder
             return 10;
         }
 
-
-
-
         if ($this->isBundle($sku)) {
             $this->logger->info('Sku '.$sku.' is bundle');
-            
             $stock =  $this->getFinalStockBundleWarehouse($sku, $depot, $ponderated);
         } else {
             $stock = $this->getFinalStockComponentWarehouse($sku, $depot, $ponderated);

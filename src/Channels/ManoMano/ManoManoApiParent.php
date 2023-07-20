@@ -131,6 +131,25 @@ abstract class ManoManoApiParent implements ApiInterface
         return true;
     }
 
+
+    public function sendStocks($stocks): bool
+    {
+      
+        $body = [
+            'content' => [
+                [
+                    'seller_contract_id' => $this->contractId,
+                    'items' => $stocks
+                ]
+            ]
+          ];
+        $reponse =  $this->sendRequest('api/v2/offer-information/offers', [], 'PATCH', json_encode($body));
+        return true;
+    }
+
+
+
+
     public function sendRequest($endPoint, $queryParams = [], $method = 'GET', $body = null)
     {
         $client = new Client();

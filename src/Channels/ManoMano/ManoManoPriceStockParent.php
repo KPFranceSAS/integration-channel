@@ -87,6 +87,21 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
 
         $fs = new Filesystem();
         $fs->dumpFile($filename, $csvContent);
+
+
+
+        $items = [];
+        foreach($offers as $offer) {
+            $items[]=[
+                'sku' => $offer['sku'],
+                "stock" => [
+                    "quantity" => $offer['stock']
+                ]
+            ];
+        }
+
+        $this->getManoManoApi()->sendStocks($items);
+        $this->logger->info('stock send');
     }
 
    
@@ -97,10 +112,15 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
         $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
 
         if ($productMarketplace->getEnabled()) {
+
+
+
+            $quantity = $this->getStockProductWarehouse($product->getSku());
+           
             $offer = [
                 'sku' =>$product->getSku(),
                 "min_quantity" => "",
-                "quantity"=> $this->getStockProductWarehouse($product->getSku()),
+                "quantity"=>  $quantity > 0 ? $quantity : 0,
                 "shipping_time" => in_array($product->getSku(), ['ANK-PCK-7', 'ANK-PCK-8', 'ANK-PCK-9','ANK-PCK-10']) ? "10#20" : "3#5",
                 "carrier" =>  'DHL Parcel',
                 "shipping_price_vat_inc" => 0,
