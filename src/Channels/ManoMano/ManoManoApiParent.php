@@ -166,7 +166,6 @@ abstract class ManoManoApiParent implements ApiInterface
             $url.='?'.implode('&', $urlSegments);
         }
         $request = new Request($method, $url, $headers, $body);
-        $response = $client->sendRequest($request);
-        return json_decode($response->getBody(), true);
+        return $client->sendRequest($request);
     }
 }
