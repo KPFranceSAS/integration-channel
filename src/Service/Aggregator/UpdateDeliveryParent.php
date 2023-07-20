@@ -2,6 +2,7 @@
 
 namespace App\Service\Aggregator;
 
+use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
 use App\Helper\Traits\TraitServiceLog;
@@ -32,18 +33,21 @@ abstract class UpdateDeliveryParent
     protected $errors;
 
 
+
     public function __construct(
         ManagerRegistry $manager,
         LoggerInterface $logger,
         MailService $mailer,
         ApiAggregator $apiAggregator,
-        TrackingAggregator $trackingAggregator
+        TrackingAggregator $trackingAggregator,
+        BusinessCentralAggregator $businessCentralAggregator
     ) {
         $this->logger = $logger;
         $this->manager = $manager->getManager();
         $this->mailer = $mailer;
         $this->apiAggregator = $apiAggregator;
         $this->trackingAggregator = $trackingAggregator;
+        $this->businessCentralAggregator = $businessCentralAggregator;
     }
 
 
@@ -141,7 +145,7 @@ abstract class UpdateDeliveryParent
         $trackingCode = $webOrder->getTrackingCode();
         $bcConnector =  $this->businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
         $saleInvoice = $bcConnector->getFullSaleInvoiceByNumber($webOrder->getInvoiceErp());
-        if($saleInvoice){
+        if($saleInvoice) {
             $zipCode = $saleInvoice['shippingPostalAddress']['postalCode'];
         } else {
             $zipCode = null;
