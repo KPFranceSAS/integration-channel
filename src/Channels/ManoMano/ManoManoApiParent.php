@@ -143,6 +143,7 @@ abstract class ManoManoApiParent implements ApiInterface
                 ]
             ]
           ];
+        $this->logger->info(json_encode($body));
         $reponse =  $this->sendRequest('api/v2/offer-information/offers', [], 'PATCH', json_encode($body));
         return json_decode($reponse->getBody(), true);
     }
