@@ -138,7 +138,7 @@ abstract class ManoManoApiParent implements ApiInterface
         $body = [
             'content' => [
                 [
-                    'seller_contract_id' => $this->contractId,
+                    'seller_contract_id' => (int)$this->contractId,
                     'items' => $stocks
                 ]
             ]
