@@ -132,7 +132,7 @@ abstract class ManoManoApiParent implements ApiInterface
     }
 
 
-    public function sendStocks($stocks): bool
+    public function sendStocks($stocks)
     {
       
         $body = [
@@ -144,7 +144,7 @@ abstract class ManoManoApiParent implements ApiInterface
             ]
           ];
         $reponse =  $this->sendRequest('api/v2/offer-information/offers', [], 'PATCH', json_encode($body));
-        return true;
+        return json_decode($reponse->getBody(), true);
     }
 
 
