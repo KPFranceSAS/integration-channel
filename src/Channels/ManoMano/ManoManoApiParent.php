@@ -53,6 +53,8 @@ abstract class ManoManoApiParent implements ApiInterface
             $params ['page'] = $offset;
             $this->logger->info('Get orders batch n°' . $offset . ' / ' . $max_page . ' >>' . json_encode($params));
             $reponse =  $this->sendRequest('orders/v1/orders', $params);
+
+    $reponse= json_decode($reponse->getBody(), true);
             $orders = array_merge($orders, $reponse['content']);
             $max_page  = $reponse['pagination']['pages'];
             $this->logger->info('Pagination '.json_encode($reponse['pagination']));
