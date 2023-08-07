@@ -77,7 +77,8 @@ abstract class ManoManoApiParent implements ApiInterface
     {
         $this->logger->info('Get Order  ' . $orderNumber);
         $reponse =  $this->sendRequest('orders/v1/orders/'.$orderNumber, ['seller_contract_id'=>$this->contractId]);
-        return $reponse['content'];
+
+        $response =  json_decode($reponse->getBody(), true);        return $response['content'];
     }
 
     public const PAGINATION = 50;
