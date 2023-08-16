@@ -53,6 +53,9 @@ class WebOrder
     public const  CARRIER_FBA = 'FBA';
     public const  CARRIER_UPS = 'UPS';
     public const  CARRIER_DBSCHENKER = 'DBSCHENKER';
+    public const  CARRIER_SENDING = 'SENDING';
+    public const  CARRIER_CORREOSEXP = 'CORREOSEXP';
+    
 
     public const  STATE_ERROR_INVOICE = -2;
     public const  STATE_ERROR = -1;

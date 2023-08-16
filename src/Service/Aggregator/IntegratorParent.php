@@ -230,6 +230,10 @@ abstract class IntegratorParent
                 $saleOrder->shippingAgent="DPD1";
                 $saleOrder->shippingAgentService="DPD32";
                 $saleOrder->locationCode=WebOrder::DEPOT_3PLUK;
+            } elseif($order->getChannel()==IntegrationChannel::CHANNEL_FLASHLED) {
+                $order->setCarrierService(WebOrder::CARRIER_SENDING);
+                $saleOrder->shippingAgent="SENDING";
+                $saleOrder->shippingAgentService="SENDEXP";
             } else { // case Default
 
                 if($this->containHazmatProducts($order, $saleOrder)) {

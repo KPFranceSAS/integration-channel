@@ -181,54 +181,24 @@ abstract class UpdateStatusParent
                             $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
                         }
                     }
-                }
-
-                if ($order->getCarrierService() == WebOrder::CARRIER_ARISE) {
+                } elseif ($order->getCarrierService() == WebOrder::CARRIER_ARISE) {
                     $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and waiting to be collected by Arise');
                     $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice);
-                }
-
-
-
-                if ($order->getCarrierService() == WebOrder::CARRIER_DPDUK) {
+                } else {
                     $tracking = $statusSaleOrder['trackingNumber'];
-                    if(strlen($tracking)>0) {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DPD UK with tracking number ' . $tracking);
-                        $order->setTrackingUrl(DpdUkTracking::getTrackingUrlBase($tracking, $invoice));
+                    $zipCode =$invoice ? $invoice['shippingPostalAddress']['postalCode'] :  null;
+                    $trackingUrl = $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $tracking, $zipCode);
+                    if(strlen($tracking) &&  $trackingUrl) {
+                        $order->setTrackingUrl($trackingUrl);
                         $order->setTrackingCode($tracking);
                         $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
                     } else {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DpdUK for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from '.$order->getCarrierService().' for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
                     }
                 }
 
 
-                if ($order->getCarrierService() == WebOrder::CARRIER_DBSCHENKER) {
-                    $tracking = $statusSaleOrder['trackingNumber'];
-                    if(strlen($tracking)>0) {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DB schenker with tracking number ' . $tracking);
-                        $order->setTrackingUrl(DpdUkTracking::getTrackingUrlBase($tracking, $invoice));
-                        $order->setTrackingCode($tracking);
-                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
-                    } else {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from Db Schencker for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
-                    }
-                }
-
-
-
-
-                if ($order->getCarrierService() == WebOrder::CARRIER_UPS) {
-                    $tracking = $statusSaleOrder['trackingNumber'];
-                    if(substr($tracking, 0, 4)=='1ZB5') {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by UPS with tracking number ' . $tracking);
-                        $order->setTrackingUrl(UpsGetTracking::getTrackingUrlBase($tracking));
-                        $order->setTrackingCode($tracking);
-                        $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
-                    } else {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from UPS for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
-                    }
-                }
+                
 
                 if ($postUpdateStatus) {
                     $order->setInvoiceErp($invoice['number']);

@@ -3,8 +3,10 @@
 namespace App\Service\Carriers;
 
 use App\Entity\WebOrder;
+use App\Service\Carriers\CorreosExpTracking;
 use App\Service\Carriers\DbSchenkerGetTracking;
 use App\Service\Carriers\DhlGetTracking;
+use App\Service\Carriers\SendingGetTracking;
 use App\Service\Carriers\ShippyProTracking;
 use DateTime;
 
@@ -29,6 +31,8 @@ class TrackingAggregator
             case WebOrder::CARRIER_DPDUK:
                 return DpdUkTracking::checkIfDelivered($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
+            case WebOrder::CARRIER_SENDING:
+            case WebOrder::CARRIER_CORREOSEXP:
                 return $this->shippyProTracking->checkIfDelivered($codeTracking);
         }
         return null;
@@ -49,6 +53,8 @@ class TrackingAggregator
             case WebOrder::CARRIER_DPDUK:
                 return DpdUkTracking::getStepsTrackings($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
+            case WebOrder::CARRIER_CORREOSEXP:
+            case WebOrder::CARRIER_SENDING:
                 return $this->shippyProTracking->getStepsTrackings($codeTracking);
         }
         return null;
@@ -64,10 +70,16 @@ class TrackingAggregator
                 return AriseTracking::getTrackingUrlBase($codeTracking, $zipCode);
             case WebOrder::CARRIER_DPDUK:
                 return DpdUkTracking::getTrackingUrlBase($codeTracking, $zipCode);
+            case WebOrder::CARRIER_DPDUK:
+                return DpdUkTracking::getTrackingUrlBase($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
                 return UpsGetTracking::getTrackingUrlBase($codeTracking);
             case WebOrder::CARRIER_DBSCHENKER:
                 return DbSchenkerGetTracking::getTrackingUrlBase($codeTracking);
+            case WebOrder::CARRIER_SENDING:
+                return SendingGetTracking::getTrackingUrlBase($codeTracking);
+            case WebOrder::CARRIER_CORREOSEXP:
+                return CorreosExpTracking::getTrackingUrlBase($codeTracking);
         }
         return null;
     }
