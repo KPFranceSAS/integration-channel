@@ -335,7 +335,7 @@ abstract class IntegratorParent
             $orderBc = $connector->getFullSaleOrderByNumber($orderDb->getOrderErp());
 
             foreach($orderBc['salesOrderLines'] as $saleOrderLine) {
-                if($saleOrderLine['lineType'] == SaleOrderLine::TYPE_ITEM) {
+                if(in_array($saleOrderLine['lineType'], [SaleOrderLine::TYPE_ITEM, 'Producto'])) {
                     $reservation = [
                         "QuantityBase" => $saleOrderLine['quantity'],
                         "CreationDate" => date('Y-m-d'),
