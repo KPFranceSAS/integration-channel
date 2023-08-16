@@ -96,8 +96,10 @@ class ProductStockFinder
             return round(0.8 * $stock, 0, PHP_ROUND_HALF_DOWN);
         } elseif ($stock >= 50) {
             return round(0.75 * $stock, 0, PHP_ROUND_HALF_DOWN);
-        } elseif ($stock >= 10) {
+        } elseif ($stock >= 5) {
             return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
+        } elseif ($stock >= 4) {
+            return $stock - 2;
         }
         return 0;
     }
