@@ -99,9 +99,9 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
                 ]
             ];
         }
-/*
+
         $reponse = $this->getManoManoApi()->sendStocks($items);
-        $this->logger->info('stock send '.json_encode($reponse));*/
+        $this->logger->info('stock send '.json_encode($reponse));
     }
 
    
