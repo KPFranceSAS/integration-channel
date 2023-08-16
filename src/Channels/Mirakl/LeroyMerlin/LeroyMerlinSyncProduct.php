@@ -46,7 +46,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         } elseif($familyPim == 'fixed_solar_panel') {
             $flatProduct['ATT_15344'] ='LOV_000002'; // not included battery
             $flatProduct["ATT_13704"] = $this->getAttributeUnit($product, 'solar_panel_power', 'WATT_CRETE', 0);
-            $flatProduct ['product_category'] =  '200260|KIT_DE_PRODUCTION_D_ENERGIE_PHOTOVOLTAIQUE|TOITURE_SOLAIRE|R08-013-001';
+            $flatProduct ['product_category'] =  '200260|2228|R03-2003-2007';
             $flatProduct['feature_00277_200260|KIT_DE_PRODUCTION_D_ENERGIE_PHOTOVOLTAIQUE|TOITURE_SOLAIRE|R08-013-001'] ='LOV_210469'; // Destination
         } elseif($familyPim == 'power_station') {
             $flatProduct ['product_category'] =  "200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
