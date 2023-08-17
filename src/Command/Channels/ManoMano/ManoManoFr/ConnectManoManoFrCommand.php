@@ -25,7 +25,7 @@ class ConnectManoManoFrCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dump(count($this->manoManoFrApi->getAllOrdersToSend()));
+        dump($this->manoManoFrApi->getAllOffers());
         
         return Command::SUCCESS;
     }

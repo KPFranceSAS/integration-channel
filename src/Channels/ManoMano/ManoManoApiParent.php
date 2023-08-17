@@ -54,7 +54,7 @@ abstract class ManoManoApiParent implements ApiInterface
             $this->logger->info('Get orders batch n°' . $offset . ' / ' . $max_page . ' >>' . json_encode($params));
             $reponse =  $this->sendRequest('orders/v1/orders', $params);
 
-    $reponse= json_decode($reponse->getBody(), true);
+            $reponse= json_decode($reponse->getBody(), true);
             $orders = array_merge($orders, $reponse['content']);
             $max_page  = $reponse['pagination']['pages'];
             $this->logger->info('Pagination '.json_encode($reponse['pagination']));
@@ -78,7 +78,8 @@ abstract class ManoManoApiParent implements ApiInterface
         $this->logger->info('Get Order  ' . $orderNumber);
         $reponse =  $this->sendRequest('orders/v1/orders/'.$orderNumber, ['seller_contract_id'=>$this->contractId]);
 
-        $response =  json_decode($reponse->getBody(), true);        return $response['content'];
+        $response =  json_decode($reponse->getBody(), true);
+        return $response['content'];
     }
 
     public const PAGINATION = 50;
@@ -149,6 +150,31 @@ abstract class ManoManoApiParent implements ApiInterface
         $this->logger->info(json_encode($body));
         $reponse =  $this->sendRequest('api/v2/offer-information/offers', [], 'PATCH', json_encode($body));
         return json_decode($reponse->getBody(), true);
+    }
+
+
+
+
+    public function getAllOffers()
+    {
+        $offset = 1;
+        $offers = [];
+        $continue = true;
+        $params = ['seller_contract_id' => (int)$this->contractId];
+        while ($continue) {
+            $params ['page'] = $offset;
+            $reponse =  $this->sendRequest('api/v1/offer-information/offers', $params);
+            $reponse= json_decode($reponse->getBody(), true);
+            $offers = array_merge($offers, $reponse['content']);
+            if(count($offers)==$reponse['pagination']['items']) {
+                $continue= false;
+            } else {
+                $this->logger->info('Pagination '.json_encode($reponse['pagination']));
+            }
+            $offset++;
+        }
+        
+        return $offers;
     }
 
 

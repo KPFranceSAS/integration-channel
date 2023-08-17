@@ -90,8 +90,12 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
 
 
 
+        $skusIntegrated = [];
+
+       
         $items = [];
         foreach($offers as $offer) {
+            $skusIntegrated[]= $offer['sku'];
             $items[]=[
                 'sku' => $offer['sku'],
                 "stock" => [
@@ -99,6 +103,19 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
                 ]
             ];
         }
+
+        $offerManomanos = $this->getManoManoApi()->getAllOffers();
+        foreach($offerManomanos as $offerManomano) {
+            if(!in_array($offerManomano['sku'], $skusIntegrated)) {
+                $items[]=[
+                    'sku' => $offerManomano['sku'],
+                    "stock" => [
+                        "quantity" => 0
+                    ]
+                ];
+            }
+        }
+
 
         $reponse = $this->getManoManoApi()->sendStocks($items);
         $this->logger->info('stock send '.json_encode($reponse));
