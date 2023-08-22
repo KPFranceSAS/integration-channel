@@ -25,6 +25,14 @@ class ConnectBoulangerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+
+        $messages = $this->boulangerApi->getMessages();
+        $messageJsons = [];
+        foreach($messages as $message) {
+            $messageJsons[]=$this->boulangerApi->getMessage($message['id'])->toArray();
+        }
+
+        file_put_contents('messages_boulanger.json', json_encode($messageJsons));
         return Command::SUCCESS;
     }
 

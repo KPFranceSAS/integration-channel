@@ -31,8 +31,20 @@ class ConnectDecathlonCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $messages = $this->decathlonApi->getMessages();
+        $messageJsons = [];
+        foreach($messages as $message) {
+            $messageJsons[]=$this->decathlonApi->getMessage($message['id'])->toArray();
+        }
+
+        file_put_contents('messages_decathlon.json', json_encode($messageJsons));
+
+
         return Command::SUCCESS;
     }
+
+
+
 
 
 }

@@ -46,8 +46,8 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         } elseif($familyPim == 'fixed_solar_panel') {
             $flatProduct['ATT_15344'] ='LOV_000002'; // not included battery
             $flatProduct["ATT_13704"] = $this->getAttributeUnit($product, 'solar_panel_power', 'WATT_CRETE', 0);
-            $flatProduct ['product_category'] =  '200260|2228|R03-2003-2007';
-            $flatProduct['feature_00277_200260|KIT_DE_PRODUCTION_D_ENERGIE_PHOTOVOLTAIQUE|TOITURE_SOLAIRE|R08-013-001'] ='LOV_210469'; // Destination
+            $flatProduct ['product_category'] =  '200259|2230|R03-2003-2008';
+            $flatProduct['feature_00277_200259|2230|R03-2003-2008'] ='LOV_032096'; // Destination
         } elseif($familyPim == 'power_station') {
             $flatProduct ['product_category'] =  "200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
             $flatProduct['ATT_15344'] ='LOV_000001'; // included battery
@@ -69,8 +69,13 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             } elseif (in_array('marketplace_air_fryer', $product['categories'])) {
                 $flatProduct ['product_category'] =  "206283|2056|R1001-1002"; // friteuse
             }
+        } elseif($familyPim == 'home_security') {
+            $flatProduct ['product_category'] =   "201931|SERRURE_ELECTRIQUE|SERRURE_ET_CYLINDRE_DE_SERRURE|R10-007-009";
+            $flatProduct ['ATT_15344'] = 'LOV_000001';
         }
 
+
+       
 
         if(array_key_exists('product_category', $flatProduct)) {
             $locales = ['fr', 'es', 'it'];

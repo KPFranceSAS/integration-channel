@@ -58,10 +58,10 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
         $flatProduct["FICHE_TECHNIQUE"]  = $this->getAttributeSimple($product, 'user_guide_url', "fr_FR");
 
-        $flatProduct["LARGEUR_PRODUIT"] = $this->getAttributeUnit($product, 'product_lenght', 'CENTIMETER', 0);
-        $flatProduct["HAUTEUR_PRODUIT"] = $this->getAttributeUnit($product, 'product_height', 'CENTIMETER', 0);
-        $flatProduct["PROFONDEUR"] = $this->getAttributeUnit($product, 'product_width', 'CENTIMETER', 0);
-        $flatProduct["POIDS_NET"] = $this->getAttributeUnit($product, 'product_weight', 'KILOGRAM', 0);
+        $flatProduct["LARGEUR_PRODUIT"] = $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0);
+        $flatProduct["HAUTEUR_PRODUIT"] = $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0);
+        $flatProduct["PROFONDEUR"] = $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
+        $flatProduct["POIDS_NET"] = $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0);
         
         $familyPim =$product['family'];
 
@@ -71,6 +71,8 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             $flatProduct = $this->addInfoSolarPanel($product, $flatProduct);
         } elseif ($familyPim == 'robot_piscine') {
             $flatProduct = $this->addInfoPoolRobot($product, $flatProduct);
+        } elseif ($familyPim == 'home_security') {
+            $flatProduct = $this->addInfoHomeSecurity($product, $flatProduct);
         } elseif($familyPim == 'smart_home') {
             if(in_array('markerplace_blender', $product['categories'])) { // blender
                 $flatProduct = $this->addInfoBlender($product, $flatProduct);
@@ -95,6 +97,42 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         return $flatProduct;
     }
 
+
+    public function addInfoHomeSecurity(array $product, array $flatProduct): array
+    {
+        $flatProduct["CATEGORIE"] = "2402";
+
+        if(in_array('marketplace_smart_lock', $product['categories'])) {
+            $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/type_de_produit"] = "Serrure";
+            $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/usage"] = "Déverrouiller ou verrouiller votre porte avec Smartphone";
+        } elseif (in_array('marketplace_smart_lock_accesories', $product['categories'])) {
+            $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/type_de_produit"] = "Accessoire pour serrure connectée";
+            $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/usage"] = "Déverrouiller ou verrouiller votre porte sans Smartphone";
+        }
+        $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/mode_d_installation"] = "Non concerné";
+        $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/installation"] = "Le Smart Lock Cylinder de Bold est conçu pour une installation facile, s'intégrant parfaitement à votre système de verrouillage existant.";
+        $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/coloris"] = "Gris";
+        $flatProduct["CENTRALE_SECURITE_MAISON/compatibilite/wifi"] = "Oui";
+        $flatProduct["CENTRALE_SECURITE_MAISON/compatibilite/bluetooth"] = "Oui";
+        $flatProduct["CENTRALE_SECURITE_MAISON/services_inclus/fabrique_en"] = "Chine";
+        $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/nombre_de_camera"] = "Non concerné";
+        $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/technologie_utilisee"] = "Bluetooth et Wi-Fi ";
+        $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/ecran"] = "Non";
+        $flatProduct["CENTRALE_SECURITE_MAISON/alimentation/fonctionne"] = "Sur batterie";
+        $flatProduct["CENTRALE_SECURITE_MAISON/alimentation/autonomie"] = " Jusqu'à 2 ans";
+        $flatProduct["CENTRALE_SECURITE_MAISON/compatibilite/protocole"] = "Non";
+        $flatProduct["CENTRALE_SECURITE_MAISON/assistant_vocal_integre/assistant_vocal"] = "Non concernée";
+        $flatProduct["CENTRALE_SECURITE_MAISON/assistant_vocal_integre/google_assistant"] = "Non";
+        $flatProduct["CENTRALE_SECURITE_MAISON/assistant_vocal_integre/alexa"] = "Non";
+        $flatProduct["CENTRALE_SECURITE_MAISON/assistant_vocal_integre/siri"] = "Non";
+        $flatProduct["CENTRALE_SECURITE_MAISON/dimensions/largeur_produit"] = $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0);
+        $flatProduct["CENTRALE_SECURITE_MAISON/dimensions/hauteur_produit"] = $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0);
+        $flatProduct["CENTRALE_SECURITE_MAISON/dimensions/profondeur_produit"] = $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
+        $flatProduct["CENTRALE_SECURITE_MAISON/dimensions/poids_net"] = $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0);
+        $flatProduct["CENTRALE_SECURITE_MAISON/dimensions/poids_brut"] = $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0);
+
+        return $flatProduct;
+    }
 
 
     public function addInfoPowerStation(array $product, array $flatProduct): array

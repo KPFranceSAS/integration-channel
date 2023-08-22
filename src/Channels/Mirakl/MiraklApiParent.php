@@ -11,6 +11,8 @@ use Mirakl\MCI\Common\Domain\Product\ProductImportTracking;
 use Mirakl\MCI\Shop\Client\ShopApiClient;
 use Mirakl\MCI\Shop\Request\Product\ProductImportRequest;
 use Mirakl\MMP\Common\Domain\Order\Accept\AcceptOrderLine;
+use Mirakl\MMP\OperatorShop\Request\Message\GetThreadDetailsRequest;
+use Mirakl\MMP\OperatorShop\Request\Message\GetThreadsRequest;
 use Mirakl\MMP\Shop\Request\Offer\UpdateOffersRequest;
 use Mirakl\MMP\Shop\Request\Order\Accept\AcceptOrderRequest;
 use Mirakl\MMP\Shop\Request\Order\Document\UploadOrdersDocumentsRequest;
@@ -52,6 +54,57 @@ abstract class MiraklApiParent implements ApiInterface
     public function getClient(): ShopApiClient
     {
         return $this->client;
+    }
+
+
+
+    public function getMessage($idMessage){
+        $request = new GetThreadDetailsRequest($idMessage);
+        return $this->client->getThreadDetails($request);
+    }
+
+
+    /**
+         * Summary of GetOrdersRequest
+         * @param array $params
+         * @return array
+         */
+    public function getMessages(array $params = [])
+    {
+        $continue = true;
+        $orders = [];
+        $nextToken = null;
+        $realOffset = 1;
+        while ($continue) {
+            $req = new GetThreadsRequest();
+            foreach ($params as $key => $param) {
+                $req->setData($key, $param);
+            }
+
+            $req->setMax(self::PAGINATION);
+            if($nextToken){ 
+                $req->setPageToken($nextToken);
+            }
+            
+           
+            $this->logger->info('Get threads batch n°' . $realOffset .  ' >>' . json_encode($params));
+            $reponse = $this->client->getThreads($req);
+            if (count($reponse->getCollection()->getItems()) > 0) {
+                $orders = array_merge($orders, $reponse->getCollection()->getItems());
+            }
+            $realOffset++;
+            if($reponse->getNextPageToken()){
+                $nextToken = $reponse->getNextPageToken();
+            } else {
+                $continue = false;
+            }
+            
+        }
+        $ordersSanitized = [];
+        foreach ($orders as $order) {
+            $ordersSanitized[]=$order->toArray();
+        }
+        return $ordersSanitized;
     }
 
     
@@ -169,6 +222,9 @@ abstract class MiraklApiParent implements ApiInterface
         return true;
     }
    
+
+    
+
 
 
 

@@ -151,8 +151,9 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             } elseif (in_array('marketplace_air_fryer', $product['categories'])) {
                 $flatProduct ['mm_category_id'] = 20562;
             }
+        } elseif($familyPim == 'home_security') {
+            $flatProduct ['mm_category_id'] = 21503;
         }
-
 
         
 
@@ -189,21 +190,21 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 "type" => "choice",
             ],
             "length" => [
-                "field" => 'product_lenght',
+                "field" => 'package_lenght',
                 "type" => "unit",
                 "unit" => 'CENTIMETER',
                 "convertUnit" => 'cm' ,
                 'round' => 0
             ],
             "width" => [
-                "field" => 'product_width',
+                "field" => 'package_width',
                 "unit" => 'CENTIMETER',
                 "type" => "unit",
                 "convertUnit" => 'cm' ,
                 'round' => 0
             ],
             "height" => [
-                "field" => 'product_height',
+                "field" => 'package_height',
                 "unit" => 'CENTIMETER',
                 "type" => "unit",
                 "convertUnit" => 'cm',
