@@ -90,7 +90,6 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
         $orderBC->customerNumber = $this->getClientNumber();
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->gmt_pay_success, 0, 10));
         $datePayment->add(new DateInterval('P3D'));
-        $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
         $orderBC->billToName = $orderApi->receipt_address->contact_person;
         $orderBC->shipToName = $orderApi->receipt_address->contact_person;
 

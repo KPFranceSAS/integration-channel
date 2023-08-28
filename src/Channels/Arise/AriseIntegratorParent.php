@@ -98,7 +98,6 @@ abstract class AriseIntegratorParent extends IntegratorParent
         $orderBC->customerNumber = $this->getCustomerBC($orderApi);
         $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->created_at, 0, 10));
         $datePayment->add(new \DateInterval('P3D'));
-        $orderBC->requestedDeliveryDate = $datePayment->format('Y-m-d');
 
         $bilingIndex= (strlen($orderApi->address_billing->city)==0) ? 'shipping' : 'billing';
         $orderBC->shipToName = $orderApi->address_shipping->last_name." ".$orderApi->address_shipping->first_name;
