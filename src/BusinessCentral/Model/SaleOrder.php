@@ -21,6 +21,8 @@ class SaleOrder
 
     public $billToName;
 
+    public $orderOrigin = 'MARKETPLACE';
+
     public $customerNumber;
 
     public $customerId;

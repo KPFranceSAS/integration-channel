@@ -26,6 +26,7 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
         $orderBC->customerNumber = $this->getCustomerBC($orderApi);
         $orderBC->billToName = $orderApi['billing_address']['name'];
         $orderBC->shipToName = $orderApi['shipping_address']['name'];
+        $orderBC->orderOrigin = 'B2C';
 
 
         $this->transformAddress($orderBC, $orderApi['shipping_address'], 'shipping');
