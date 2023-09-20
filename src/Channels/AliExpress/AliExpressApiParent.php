@@ -11,6 +11,7 @@ use AliexpressSolutionOrderInfoGetRequest;
 use AliexpressSolutionProductInfoGetRequest;
 use AliexpressSolutionProductListGetRequest;
 use App\Service\Aggregator\ApiInterface;
+use Exception;
 use ItemListQuery;
 use OrderDetailQuery;
 use OrderQuery;
@@ -41,6 +42,7 @@ abstract class AliExpressApiParent implements ApiInterface
         $this->clientSecret = $clientSecret;
         $this->client = new TopClient($this->clientId, $this->clientSecret);
         $this->client->format = 'json';
+        $this->client->gatewayUrl = 'https://api-sg.aliexpress.com/sync';
         $this->logger = $logger;
     }
 
@@ -199,7 +201,12 @@ abstract class AliExpressApiParent implements ApiInterface
         $req->setParam1(json_encode($param1));
         $this->logger->info('Get Order  ' . $orderNumber);
         $resp = $this->client->execute($req, $this->clientAccessToken);
-        return $resp->result->data;
+        if(property_exists($resp, 'result')) {
+            return $resp->result->data;
+        } else {
+            throw new Exception('Error Get order '.json_encode($resp));
+        }
+        
     }
 
 
