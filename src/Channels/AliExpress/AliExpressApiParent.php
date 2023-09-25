@@ -153,19 +153,17 @@ abstract class AliExpressApiParent implements ApiInterface
      */
     public function updatePrice($productId, $productSku, $price, $discountPrice = null)
     {
-        $req = new AliexpressSolutionBatchProductPriceUpdateRequest();
-        $mutipleProductUpdateList = new SynchronizeProductRequestDto();
-        $mutipleProductUpdateList->product_id = $productId;
-        $multipleSkuUpdateList = new SynchronizeSkuRequestDto();
-        $multipleSkuUpdateList->sku_code = $productSku;
-        $multipleSkuUpdateList->price = $price;
-        if ($discountPrice) {
-            $multipleSkuUpdateList->discount_price = $discountPrice;
-        } else {
-            $multipleSkuUpdateList->discount_price = null;
-        }
-        $mutipleProductUpdateList->multiple_sku_update_list = $multipleSkuUpdateList;
-        $req->setMutipleProductUpdateList(json_encode($mutipleProductUpdateList));
+
+        $req = new AliExpressRequest('aliexpress.solution.batch.product.price.update');
+        $mutipleProductUpdateList = ['product_id'=> $productId];
+        $mutipleProductUpdateList['multiple_sku_update_list'] = [
+            [
+                'price'=>$price, 
+                'sku_code' =>$productSku, 
+                'discount_price'=> $discountPrice? $discountPrice: null
+            ]
+        ];
+        $req->addApiParam('mutiple_product_update_list', $mutipleProductUpdateList);
         $this->logger->info('Update price ' . $productId . ' / SKU ' . $productSku . 'regular price >> ' . $price . ' && discount price >>> ' . $discountPrice);
         return $this->client->execute($req, $this->clientAccessToken);
     }
