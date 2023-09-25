@@ -36,7 +36,7 @@ class ConnectAeCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dump($this->aliExpress->getOrder("3016506064585909"));
+        dump($this->aliExpress->updateStockLevel(1005002778809836, 'X-GDS4147GL', 41));
         return Command::SUCCESS;
     }
 

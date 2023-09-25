@@ -70,8 +70,8 @@ class ProductDataIntegrationCommand extends Command
                     $productDb->setSku($sku);
                     $productDb->setDescription($itemBc["displayName"]);
                     if (array_key_exists("ean", $product['values'])) {
-                        $ean = $product['values']['ean'][0]['data'];        
-                        if($ean!=$productDb->getEan()){
+                        $ean = $product['values']['ean'][0]['data'];
+                        if($ean!=$productDb->getEan()) {
                             $productDb->setEan($ean);
                         }
                     }
@@ -102,14 +102,14 @@ class ProductDataIntegrationCommand extends Command
                 }
             } else {
                 if (array_key_exists("ean", $product['values'])) {
-                    $ean = $product['values']['ean'][0]['data'];        
-                    if($ean!=$productDb->getEan()){
+                    $ean = $product['values']['ean'][0]['data'];
+                    if($ean!=$productDb->getEan()) {
                         $productDb->setEan($ean);
                     }
                 }
             }
 
-            if($i%50 == 0){
+            if($i%50 == 0) {
                 $this->manager->flush();
                 $this->manager->clear();
                 $saleChannels = $this->manager->getRepository(SaleChannel::class)->findAll();
@@ -128,13 +128,6 @@ class ProductDataIntegrationCommand extends Command
         if (count($messages)>0) {
             $this->mailService->sendEmailRole('ROLE_PRICING', '[Pricing] New products to configure', implode('<br/>', $messages));
         }
-            
-
-
-
-        
-
-
         return Command::SUCCESS;
     }
 

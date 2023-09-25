@@ -2,23 +2,12 @@
 
 namespace App\Channels\AliExpress;
 
-use AliexpressLogisticsRedefiningListlogisticsserviceRequest;
-use AliexpressSolutionBatchProductInventoryUpdateRequest;
-use AliexpressSolutionBatchProductPriceUpdateRequest;
-use AliexpressSolutionOrderFulfillRequest;
-use AliexpressSolutionOrderGetRequest;
-use AliexpressSolutionOrderInfoGetRequest;
-use AliexpressSolutionProductInfoGetRequest;
-use AliexpressSolutionProductListGetRequest;
+use App\Channels\AliExpress\AliExpressClient;
+use App\Channels\AliExpress\AliExpressRequest;
 use App\Service\Aggregator\ApiInterface;
 use Exception;
-use ItemListQuery;
-use OrderDetailQuery;
-use OrderQuery;
 use Psr\Log\LoggerInterface;
-use SynchronizeProductRequestDto;
-use SynchronizeSkuRequestDto;
-use TopClient;
+use stdClass;
 
 abstract class AliExpressApiParent implements ApiInterface
 {
@@ -40,9 +29,8 @@ abstract class AliExpressApiParent implements ApiInterface
         $this->clientAccessToken = $clientAccessToken;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->client = new TopClient($this->clientId, $this->clientSecret);
-        $this->client->format = 'json';
-        $this->client->gatewayUrl = 'https://api-sg.aliexpress.com/sync';
+        $this->client = new AliExpressClient();
+        $this->client->addParams($logger, $clientId, $clientSecret, $clientAccessToken);
         $this->logger = $logger;
     }
 
@@ -55,10 +43,11 @@ abstract class AliExpressApiParent implements ApiInterface
      */
     public function getAllOrdersToSend()
     {
-        $param0 = new OrderQuery();
-        $param0->modified_date_start = "2021-12-08 00:00:00";
-        $param0->order_status = "WAIT_SELLER_SEND_GOODS";
-        return $this->getAllOrders($param0);
+        $params = [
+            'modified_date_start' => "2021-12-08 00:00:00",
+            'order_status' => "WAIT_SELLER_SEND_GOODS",
+        ];
+        return $this->getAllOrders($params);
     }
 
     public const PAGINATION = 50;
@@ -67,24 +56,30 @@ abstract class AliExpressApiParent implements ApiInterface
      * https://developers.aliexpress.com/en/doc.htm?docId=42270&docType=2
      *
      */
-    public function getAllOrders(OrderQuery $param)
+    public function getAllOrders(array $params)
     {
         $current_page = 1;
         $max_page = 1;
         $orders = [];
         while ($current_page  <= $max_page) {
-            $req = new AliexpressSolutionOrderGetRequest();
-            $param->page_size = self::PAGINATION;
-            $param->current_page = $current_page;
-            $req->setParam0(json_encode($param));
-            $this->logger->info('Get batch n°' . $current_page . ' / ' . $max_page . ' >>' . json_encode($param));
+            $req = new AliExpressRequest('aliexpress.solution.order.get');
+            $params['page_size'] = self::PAGINATION;
+            $params['current_page'] = $current_page;
+            $req->addApiParams($params);
+            $this->logger->info('Get batch n°' . $current_page . ' / ' . $max_page . ' >>' . json_encode($params));
             $reponse = $this->client->execute($req, $this->clientAccessToken);
-            if ($reponse->result->total_count > 0) {
-                $orders = array_merge($orders, $reponse->result->target_list->order_dto);
+            $this->logger->info('Response >>' . json_encode($reponse));
+            if(property_exists($reponse, 'aliexpress_solution_order_get_response')){
+                if ($reponse->aliexpress_solution_order_get_response->result->total_count > 0) {
+                    $orders = array_merge($orders, $reponse->aliexpress_solution_order_get_response->result->target_list->order_dto);
+                }
+            } else {
+                throw new Exception('ALiexpress error on getting orders '. json_encode($reponse));
             }
+           
 
             $current_page++;
-            $max_page  = $reponse->result->total_page;
+            $max_page  = $reponse->aliexpress_solution_order_get_response->result->total_page;
         }
 
         return $orders;
@@ -95,9 +90,7 @@ abstract class AliExpressApiParent implements ApiInterface
 
     public function getAllActiveProducts()
     {
-        $productQuery = new ItemListQuery();
-        $productQuery->product_status_type = "onSelling";
-        return $this->getAllProducts($productQuery);
+        return $this->getAllProducts(['product_status_type'=>"onSelling"]);
     }
 
 
@@ -108,25 +101,31 @@ abstract class AliExpressApiParent implements ApiInterface
      * https://developers.aliexpress.com/en/doc.htm?docId=42384&docType=2
      *
      */
-    public function getAllProducts(ItemListQuery $param)
+    public function getAllProducts(array $params)
     {
         $current_page = 1;
         $max_page = 1;
         $products = [];
         while ($current_page  <= $max_page) {
-            $req = new AliexpressSolutionProductListGetRequest();
+            $req = new AliExpressRequest('aliexpress.solution.product.list.get');
+            $param = new stdClass();
             $param->page_size = self::PAGINATION;
             $param->current_page = $current_page;
-            $req->setAeopAEProductListQuery(json_encode($param));
+            foreach($params as $key=>$value){
+                $param->{$key} = $value;
+            }
+            $req->addApiParam('aeop_a_e_product_list_query', $param);
             $this->logger->info('Get batch n°' . $current_page . ' / ' . $max_page . ' >>' . json_encode($param));
             $reponse = $this->client->execute($req, $this->clientAccessToken);
 
-            if ($reponse->result->product_count > 0) {
-                $products = array_merge($products, $reponse->result->aeop_a_e_product_display_d_t_o_list->item_display_dto);
+            if (property_exists($reponse, 'aliexpress_solution_product_list_get_response' ) && $reponse->aliexpress_solution_product_list_get_response->result->product_count > 0) {
+                $products = array_merge($products, $reponse->aliexpress_solution_product_list_get_response->result->aeop_a_e_product_display_d_t_o_list->item_display_dto);
+            } else {
+                $this->logger->error(json_encode($reponse));
             }
 
             $current_page++;
-            $max_page  = $reponse->result->total_page;
+            $max_page  = $reponse->aliexpress_solution_product_list_get_response->result->total_page;
         }
 
         return $products;
@@ -137,14 +136,12 @@ abstract class AliExpressApiParent implements ApiInterface
      */
     public function updateStockLevel($productId, $productSku, $inventory)
     {
-        $req = new AliexpressSolutionBatchProductInventoryUpdateRequest();
-        $mutipleProductUpdateList = new SynchronizeProductRequestDto();
-        $mutipleProductUpdateList->product_id = $productId;
-        $multipleSkuUpdateList = new SynchronizeSkuRequestDto();
-        $multipleSkuUpdateList->sku_code = $productSku;
-        $multipleSkuUpdateList->{'inventory'} = $inventory;
-        $mutipleProductUpdateList->multiple_sku_update_list = $multipleSkuUpdateList;
-        $req->setMutipleProductUpdateList(json_encode($mutipleProductUpdateList));
+        $req = new AliExpressRequest('aliexpress.solution.batch.product.inventory.update');
+        $mutipleProductUpdateList = ['product_id'=> $productId];
+        $mutipleProductUpdateList['multiple_sku_update_list'] = [
+            ['inventory'=>$inventory, 'sku_code' =>$productSku ]
+        ];
+        $req->addApiParam('mutiple_product_update_list', $mutipleProductUpdateList);
         $this->logger->info('Update Stock Level ' . $productId . ' / SKU ' . $productSku . ' >> ' . $inventory . ' units');
         return $this->client->execute($req, $this->clientAccessToken);
     }
@@ -181,11 +178,12 @@ abstract class AliExpressApiParent implements ApiInterface
      */
     public function getProductInfo($productId)
     {
-        $req = new AliexpressSolutionProductInfoGetRequest();
-        $req->setProductId($productId);
+        $req = new AliExpressRequest('aliexpress.solution.product.info.get');
+        $req->addApiParam('product_id', $productId);
         $this->logger->info('Get Product info ' . $productId);
         $reponse = $this->client->execute($req, $this->clientAccessToken);
-        return (property_exists($reponse, 'result')) ? $reponse->result : null;
+        return (property_exists($reponse, 'aliexpress_solution_product_info_get_response') 
+                && property_exists($reponse->aliexpress_solution_product_info_get_response, 'result')) ? $reponse->aliexpress_solution_product_info_get_response->result : null;
     }
 
 
@@ -195,14 +193,14 @@ abstract class AliExpressApiParent implements ApiInterface
      */
     public function getOrder(string $orderNumber)
     {
-        $req = new AliexpressSolutionOrderInfoGetRequest();
-        $param1 = new OrderDetailQuery();
-        $param1->order_id = $orderNumber;
-        $req->setParam1(json_encode($param1));
+        $req = new AliExpressRequest('aliexpress.solution.order.info.get');
+        $params=new stdClass();
+        $params->order_id = $orderNumber;
+        $req->addApiParam('param1', $params);
         $this->logger->info('Get Order  ' . $orderNumber);
         $resp = $this->client->execute($req, $this->clientAccessToken);
-        if(property_exists($resp, 'result')) {
-            return $resp->result->data;
+        if(property_exists($resp, 'aliexpress_solution_order_info_get_response')) {
+            return $resp->aliexpress_solution_order_info_get_response->result->data;
         } else {
             throw new Exception('Error Get order '.json_encode($resp));
         }
@@ -216,9 +214,9 @@ abstract class AliExpressApiParent implements ApiInterface
      */
     public function getCarriers()
     {
-        $req = new AliexpressLogisticsRedefiningListlogisticsserviceRequest();
+        $req = new AliExpressRequest('aliexpress.logistics.redefining.listlogisticsservice');
         $resp = $this->client->execute($req, $this->clientAccessToken);
-        return $resp->result_list->aeop_logistics_service_result;
+        return $resp->aliexpress_logistics_redefining_listlogisticsservice_response->result_list->aeop_logistics_service_result;
     }
 
     protected function checkIfAlreadySent($orderId)
@@ -241,16 +239,17 @@ abstract class AliExpressApiParent implements ApiInterface
     {
         if (!$this->checkIfAlreadySent($orderId)) {
             $this->logger->info('Order is not marked as sent');
-            $req = new AliexpressSolutionOrderFulfillRequest();
-            $req->setServiceName($serviceName);
-            $req->setOutRef($orderId);
-            $req->setSendType($sendType);
-            $req->setLogisticsNo($trackingNumber);
+            $req = new AliExpressRequest("aliexpress.solution.order.fulfill");
+            $req->addApiParam('service_name', $serviceName);
+            $req->addApiParam('out_ref', $orderId);
+            $req->addApiParam('send_type', $sendType);
+            $req->addApiParam('logistics_no', $trackingNumber);
             try {
                 $result = $this->client->execute($req, $this->clientAccessToken);
-                $positive = property_exists($result, 'result')
-                            && property_exists($result->result, 'result_success')
-                            && $result->result->result_success == true;
+                $positive = property_exists($result, 'aliexpress_solution_order_fulfill_response') 
+                            && property_exists($result->aliexpress_solution_order_fulfill_response, 'result')
+                            && property_exists($result->aliexpress_solution_order_fulfill_response->result, 'result_success')
+                            && $result->aliexpress_solution_order_fulfill_response->result->result_success == true;
                 return $positive;
             } catch (\Exception $e) {
                 $this->logger->info('Exception ' . $e->getMessage());
