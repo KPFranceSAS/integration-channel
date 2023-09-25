@@ -145,9 +145,6 @@
     "illuminate/support": {
         "version": "v8.73.2"
     },
-    "kps/aliexpress": {
-        "version": "dev-master"
-    },
     "kriswallsmith/buzz": {
         "version": "1.2",
         "recipe": {
