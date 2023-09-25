@@ -123,7 +123,7 @@ abstract class ManoManoApiParent implements ApiInterface
                 ]
               ];
             $reponse =  $this->sendRequest('orders/v1/accept-orders', [], 'POST', json_encode($body));
-            if($reponse) {
+            if(!$reponse) {
                 throw new Exception("Error during accept confirmation ".json_encode($reponse));
             }
             $this->logger->info('Validated');

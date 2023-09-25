@@ -31,11 +31,11 @@ abstract class ManoManoUpdateStatusParent extends UpdateStatusParent
             $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $trackingNumber),
             $trackingNumber
         );
-        if ($result) {
+        if (!$result) {
             $this->addLogToOrder($order, 'Mark as fulfilled on '.$this->getChannel());
             return true;
         } else {
-            $this->addLogToOrder($order, 'Error posting tracking number ' . $trackingNumber);
+            $this->addLogToOrder($order, 'Error posting tracking number ' . $trackingNumber.' >>> '.json_encode($result));
             return false;
         }
     
