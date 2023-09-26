@@ -35,7 +35,7 @@ abstract class ManoManoUpdateStatusParent extends UpdateStatusParent
             $this->addLogToOrder($order, 'Mark as fulfilled on '.$this->getChannel());
             return true;
         } else {
-            $this->addLogToOrder($order, 'Error posting tracking number ' . $trackingNumber.' >>> '.json_encode($result));
+            $this->addLogToOrder($order, 'Error posting tracking number ' . $trackingNumber);
             return false;
         }
     
