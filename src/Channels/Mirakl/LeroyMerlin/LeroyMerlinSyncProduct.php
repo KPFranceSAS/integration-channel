@@ -58,20 +58,41 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $flatProduct['ATT_20185']= 'LOV_000001'; // Régulation électronique du voltage
         } elseif($familyPim == 'robot_piscine') {
             $flatProduct ['product_category'] =  "201697|2043|R09-018-004";
-            $flatProduct ['feature_08547_201697|2043|R09-018-004'] = 'LOV_207112'; // robot de piscine
+            $flatProduct ['feature_08547_201697|2043|R09-018-004'] = 'LOV_207112';
         } elseif($familyPim == 'cutting_machine') {
             $flatProduct ['product_category'] =  "200595|IMPRIMANTE_3D|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
-            $flatProduct ['ATT_15344'] = 'LOV_000002'; // robot de piscine
+            $flatProduct ['ATT_15344'] = 'LOV_000002';
         } elseif($familyPim == 'smart_home') {
             if(in_array('markerplace_blender', $product['categories'])) { // blender
                 $flatProduct ['product_category'] =  "205634|1024|R1001-1002-1004"; // blender
                 $flatProduct ['ATT_00056'] = $this->getAttributeUnit($product, 'liquid_capacity', 'LITER', 1); // blender
             } elseif (in_array('marketplace_air_fryer', $product['categories'])) {
                 $flatProduct ['product_category'] =  "206283|2056|R1001-1002"; // friteuse
+            } elseif(in_array('marketplace_computers_components_accessories', $product['categories'])) {
+                $flatProduct ['product_category'] =  "200377|CPL_ET_ROUTEUR_WIFI|RESEAU_INFORMATIQUE_ET_TELEPHONIE|R03-008"; // router
             }
         } elseif($familyPim == 'home_security') {
             $flatProduct ['product_category'] =   "201931|SERRURE_ELECTRIQUE|SERRURE_ET_CYLINDRE_DE_SERRURE|R10-007-009";
             $flatProduct ['ATT_15344'] = 'LOV_000001';
+        } elseif($familyPim == 'vacuum') {
+            if(in_array('marketplace_accessories_home', $product['categories'])) {
+                $flatProduct ['product_category'] = '200816|BROSSE_POUR_ASIPRATEUR|ASPIRATEUR_ET_ACCESSOIRES|R04-010-001';
+            } else {
+                $flatProduct ['product_category'] = '200550|2045|R04-010-001';
+                $flatProduct ['ATT_15344'] = 'LOV_000001';
+            }
+        } elseif($familyPim == 'snow_chain') {
+            $flatProduct ['product_category'] = "202727|PIECES_DETACHEES_POUR_TONDEUSE|TONDEUSE_ET_ROBOT_TONDEUSE|R09-005-004";
+        } elseif($familyPim == 'car_accessories') {
+            $flatProduct ['product_category'] = "205373|ENSEMBLE_DE_BATTERIE_ET_CHARGEUR|BATTERIES_ET_CHARGEURS|R04-001-018";
+        } elseif($familyPim == 'telephony') {
+            $flatProduct ['product_category'] = "200372|CHARGEUR_DE_TELEPHONE|CABLE_ET_CHARGEUR_DE_TELEPHONE|R03-008-005";
+        } elseif($familyPim == 'smart_light') {
+            $flatProduct ['product_category'] = "202358|AMPOULE_CONNECTEE|AMPOULE_CONNECTEE_ET_INTELLIGENTE|R13-003-004";
+        } elseif($familyPim == 'screwdriver') {
+            $flatProduct ['product_category'] = "200474|TOURNEVIS|TOURNEVIS_ET_ACCESSOIRES|R04-003-001";
+        } elseif($familyPim == 'camera') {
+            $flatProduct ['product_category'] = "200401|CAMERA_DE_SURVEILLANCE|VIDEOSURVEILLANCE|R03-001-003";
         }
 
 
