@@ -46,6 +46,11 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
         } elseif($familyPim == 'robot_piscine') {
             $categoryCode = 'N-1148912';
             $flatProduct ['PRODUCT_TYPE'] = "aspirateur piscine";
+            $flatProduct ['SPORT_69'] = "50";
+        } elseif($familyPim == 'projector') {
+            $categoryCode = '10309';
+            $flatProduct ['PRODUCT_TYPE'] = "26258";
+            $flatProduct ['SPORT_6'] = "191";
         }
         $flatProduct ['category'] = $categoryCode;
 
@@ -110,11 +115,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             ],
 
 
-            "SPORT_69" => [
-                "field" => "decathlon_sport_69",
-                "type" => "multichoice",
-                "locale" => "en_GB",
-            ],
+           
             "CHARACTERISTIC_575" => [
                 "field" => 'product_lenght',
                 "type" => "unit",
