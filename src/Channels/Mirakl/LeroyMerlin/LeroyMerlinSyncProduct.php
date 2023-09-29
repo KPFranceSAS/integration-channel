@@ -93,8 +93,10 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $flatProduct ['product_category'] = "200372|CHARGEUR_DE_TELEPHONE|CABLE_ET_CHARGEUR_DE_TELEPHONE|R03-008-005";
         } elseif($familyPim == 'smart_light') {
             $flatProduct ['product_category'] = "202358|AMPOULE_CONNECTEE|AMPOULE_CONNECTEE_ET_INTELLIGENTE|R13-003-004";
+            $flatProduct ['ATT_15344'] = 'LOV_000002';
         } elseif($familyPim == 'screwdriver') {
             $flatProduct ['product_category'] = "200474|TOURNEVIS|TOURNEVIS_ET_ACCESSOIRES|R04-003-001";
+            $flatProduct ['ATT_15344'] = 'LOV_000002'
         } elseif($familyPim == 'camera') {
             $flatProduct ['product_category'] = "200401|CAMERA_DE_SURVEILLANCE|VIDEOSURVEILLANCE|R03-001-003";
         } elseif($familyPim == 'usb_cable') {
