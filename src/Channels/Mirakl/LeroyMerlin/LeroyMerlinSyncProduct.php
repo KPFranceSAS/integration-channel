@@ -74,8 +74,8 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         } elseif($familyPim == 'home_security') {
             $flatProduct ['product_category'] =   "201931|SERRURE_ELECTRIQUE|SERRURE_ET_CYLINDRE_DE_SERRURE|R10-007-009";
             $flatProduct ['ATT_15344'] = 'LOV_000001';
-        } elseif($familyPim == 'vacuum') {
-            if(in_array('marketplace_accessories_home', $product['categories'])) {
+        } elseif($familyPim == 'vacuums') {
+            if(!in_array('marketplace_vacuums_floorcare', $product['categories'])) {
                 $flatProduct ['product_category'] = '200816|BROSSE_POUR_ASIPRATEUR|ASPIRATEUR_ET_ACCESSOIRES|R04-010-001';
             } else {
                 $flatProduct ['product_category'] = '200550|2045|R04-010-001';
