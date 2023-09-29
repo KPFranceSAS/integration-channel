@@ -97,6 +97,8 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $flatProduct ['product_category'] = "200474|TOURNEVIS|TOURNEVIS_ET_ACCESSOIRES|R04-003-001";
         } elseif($familyPim == 'camera') {
             $flatProduct ['product_category'] = "200401|CAMERA_DE_SURVEILLANCE|VIDEOSURVEILLANCE|R03-001-003";
+        } elseif($familyPim == 'usb_cable') {
+            $flatProduct ['product_category'] = "200372|CHARGEUR_DE_TELEPHONE|CABLE_ET_CHARGEUR_DE_TELEPHONE|R03-008-005";
         }
 
 
