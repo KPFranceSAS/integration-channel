@@ -96,7 +96,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $flatProduct ['ATT_15344'] = 'LOV_000002';
         } elseif($familyPim == 'screwdriver') {
             $flatProduct ['product_category'] = "200474|TOURNEVIS|TOURNEVIS_ET_ACCESSOIRES|R04-003-001";
-            $flatProduct ['ATT_15344'] = 'LOV_000002'
+            $flatProduct ['ATT_21148'] = 'LOV_000002'
         } elseif($familyPim == 'camera') {
             $flatProduct ['product_category'] = "200401|CAMERA_DE_SURVEILLANCE|VIDEOSURVEILLANCE|R03-001-003";
         } elseif($familyPim == 'usb_cable') {
