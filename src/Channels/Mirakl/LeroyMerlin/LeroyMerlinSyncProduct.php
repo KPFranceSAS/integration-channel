@@ -70,10 +70,13 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                 $flatProduct ['product_category'] =  "206283|2056|R1001-1002"; // friteuse
             } elseif(in_array('marketplace_computers_components_accessories', $product['categories'])) {
                 $flatProduct ['product_category'] =  "200377|CPL_ET_ROUTEUR_WIFI|RESEAU_INFORMATIQUE_ET_TELEPHONIE|R03-008"; // router
+                $flatProduct ['ATT_15344'] = 'LOV_000002';
             } elseif(in_array('marketplace_router_wireless', $product['categories'])) {
                 $flatProduct ['product_category'] =  "200377|CPL_ET_ROUTEUR_WIFI|RESEAU_INFORMATIQUE_ET_TELEPHONIE|R03-008"; // router
+                $flatProduct ['ATT_15344'] = 'LOV_000002';
             } elseif(in_array('marketplace_accessories_home', $product['categories'])) {
                 $flatProduct ['product_category'] =  "200727|NIVEAU_LASER|OUTILS_DE_MESURE_ET_DE_TRACAGE|R04-003-007";
+                $flatProduct ['ATT_15344'] = 'LOV_000002';
             }
         } elseif($familyPim == 'home_security') {
             $flatProduct ['product_category'] =   "201931|SERRURE_ELECTRIQUE|SERRURE_ET_CYLINDRE_DE_SERRURE|R10-007-009";
@@ -99,6 +102,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             $flatProduct ['ATT_21148'] = 'LOV_000002';
         } elseif($familyPim == 'camera') {
             $flatProduct ['product_category'] = "200401|CAMERA_DE_SURVEILLANCE|VIDEOSURVEILLANCE|R03-001-003";
+            $flatProduct ['ATT_15344'] = 'LOV_000002';
         } elseif($familyPim == 'usb_cable') {
             $flatProduct ['product_category'] = "200372|CHARGEUR_DE_TELEPHONE|CABLE_ET_CHARGEUR_DE_TELEPHONE|R03-008-005";
         }
