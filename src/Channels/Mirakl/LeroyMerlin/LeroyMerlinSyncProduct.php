@@ -130,40 +130,13 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
 
 
      
-        
 
-            $fieldsToConvert = [
-                "feature_06575_brand" => [
-                    "field" => "brand",
-                    "type" => "choice",
-                    "locale" => "en_GB",
-                ],
-             ];
 
-            foreach ($fieldsToConvert as $fieldMirakl => $fieldPim) {
-                $value = null;
-                if ($fieldPim['type']=='choice') {
-                    $value = $this->getAttributeChoice($product, $fieldPim['field'], $fieldPim['locale']);
-                    if ($value) {
-                        $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'], $fieldMirakl, $value);
-                        if ($codeMirakl) {
-                            $flatProduct[$fieldMirakl] = $codeMirakl;
-                        }
-                    }
-                } elseif ($fieldPim['type']=='multichoice') {
-                    $values = $this->getAttributeMultiChoice($product, $fieldPim['field'], $fieldPim['locale']);
-                    if (count($values)>0) {
-                        $valuesMirakls= [];
-                        foreach ($values as $value) {
-                            $codeMirakl = $this->getCodeMarketplace($flatProduct ['product_category'], $fieldMirakl, $value);
-                            if ($codeMirakl) {
-                                $flatProduct[$fieldMirakl] = $codeMirakl;
-                            }
-                        }
-                        if (count($valuesMirakls)>0) {
-                            $flatProduct[$fieldMirakl] = implode('|', $valuesMirakls);
-                        }
-                    }
+            $valueBrand = $this->getAttributeChoice($product, "brand", "en_GB");
+            if ($valueBrand) {
+                $codeMirakl = $this->getCodeMarketplaceInList('ATT_06575', $valueBrand);
+                if ($codeMirakl) {
+                    $flatProduct["feature_06575_brand"] = $codeMirakl;
                 }
             }
 
