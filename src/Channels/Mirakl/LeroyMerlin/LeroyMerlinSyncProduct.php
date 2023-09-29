@@ -70,6 +70,10 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                 $flatProduct ['product_category'] =  "206283|2056|R1001-1002"; // friteuse
             } elseif(in_array('marketplace_computers_components_accessories', $product['categories'])) {
                 $flatProduct ['product_category'] =  "200377|CPL_ET_ROUTEUR_WIFI|RESEAU_INFORMATIQUE_ET_TELEPHONIE|R03-008"; // router
+            } elseif(in_array('marketplace_router_wireless', $product['categories'])) {
+                $flatProduct ['product_category'] =  "200377|CPL_ET_ROUTEUR_WIFI|RESEAU_INFORMATIQUE_ET_TELEPHONIE|R03-008"; // router
+            } elseif(in_array('marketplace_accessories_home', $product['categories'])) {
+                $flatProduct ['product_category'] =  "200727|NIVEAU_LASER|OUTILS_DE_MESURE_ET_DE_TRACAGE|R04-003-007";
             }
         } elseif($familyPim == 'home_security') {
             $flatProduct ['product_category'] =   "201931|SERRURE_ELECTRIQUE|SERRURE_ET_CYLINDRE_DE_SERRURE|R10-007-009";
