@@ -120,6 +120,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
     {
         if (!array_key_exists($attributeCode, $this->attributeValues)) {
             $attributesReposne= $this->getMiraklApi()->getAllAttributesValueForCode($attributeCode);
+            sleep(10);
             $this->attributeValues[$attributeCode] = reset($attributesReposne->values_lists);
         }
         return $this->attributeValues[$attributeCode];
@@ -146,12 +147,13 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
     
 
-     protected function getAllAttributesForCategory($categoryCode)
-     {
-         if (!array_key_exists($categoryCode, $this->attributes)) {
-             $attributesReposne= $this->getMiraklApi()->getAllAttributesForCategory($categoryCode);
-             $this->attributes[$categoryCode] = $attributesReposne->attributes;
-         }
-         return $this->attributes[$categoryCode];
-     }
+    protected function getAllAttributesForCategory($categoryCode)
+    {
+        if (!array_key_exists($categoryCode, $this->attributes)) {
+            $attributesReposne= $this->getMiraklApi()->getAllAttributesForCategory($categoryCode);
+            sleep(10);
+            $this->attributes[$categoryCode] = $attributesReposne->attributes;
+        }
+        return $this->attributes[$categoryCode];
+    }
 }
