@@ -18,7 +18,7 @@ abstract class AriseUpdateStatusParent extends UpdateStatusParent
     protected function postUpdateStatusDelivery(WebOrder $order, $invoice, $trackingNumber=null)
     {
         if ($order->getCarrierService() == WebOrder::CARRIER_DHL) {
-            $result = $this->getAriseApi()->markOrderAsFulfill($order->getExternalNumber(), "DHL Parcel Spain", $trackingNumber);
+            $result = $this->getAriseApi()->markOrderAsFulfill($order->getExternalNumber(), "DHL Parcel", $trackingNumber);
             if ($result) {
                 $this->addLogToOrder($order, 'Mark as fulfilled on Arise');
                 return true;
@@ -35,7 +35,7 @@ abstract class AriseUpdateStatusParent extends UpdateStatusParent
                 $trackingCode = $line->tracking_code;
             }
 
-            if($trackingCode){
+            if($trackingCode) {
                 $order->setTrackingCode($trackingCode);
                 $postCode =$orderArise->address_shipping->post_code;
                 $order->setTrackingUrl(AriseTracking::getTrackingUrlBase($trackingCode, $postCode));
