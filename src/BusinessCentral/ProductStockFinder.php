@@ -4,7 +4,10 @@ namespace App\BusinessCentral;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\Entity\Brand;
+use App\Entity\Product;
 use App\Entity\WebOrder;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
 class ProductStockFinder
@@ -15,12 +18,18 @@ class ProductStockFinder
 
     protected $stockLevels;
 
+    protected $stockBuffers;
 
-    public function __construct(LoggerInterface $logger, BusinessCentralAggregator $businessCentralAggregator)
+    protected $manager;
+
+
+    public function __construct(LoggerInterface $logger, BusinessCentralAggregator $businessCentralAggregator, ManagerRegistry $managerRegistry)
     {
         $this->logger = $logger;
         $this->businessCentralAggregator = $businessCentralAggregator;
+        $this->manager = $managerRegistry->getManager();
         $this->stockLevels = [];
+        $this->stockBuffers = [];
     }
 
 
@@ -90,7 +99,11 @@ class ProductStockFinder
             return $stock;
         }
 
-        if ($stock >= 150) {
+
+        $buffer = $this->getBufferBrand($sku);
+        $stock = $stock - $buffer;
+
+        /*if ($stock >= 150) {
             return round(0.9 * $stock, 0, PHP_ROUND_HALF_DOWN);
         } elseif ($stock >= 100) {
             return round(0.8 * $stock, 0, PHP_ROUND_HALF_DOWN);
@@ -98,10 +111,10 @@ class ProductStockFinder
             return round(0.75 * $stock, 0, PHP_ROUND_HALF_DOWN);
         } elseif ($stock >= 5) {
             return round(0.7 * $stock, 0, PHP_ROUND_HALF_DOWN);
-        } elseif ($stock >= 4) {
+        } elseif ($stock >= 3) {
             return $stock - 2;
-        }
-        return 0;
+        }*/
+        return $stock > 0 ? $stock : 0;
     }
 
 
@@ -160,4 +173,24 @@ class ProductStockFinder
     {
         return $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KIT_PERSONALIZACION_SPORT);
     }
+
+
+
+    protected function getBufferBrand($sku)
+    {
+
+        if (!array_key_exists($sku, $this->stockBuffers)) {
+            $product = $this->manager->getRepository(Product::class)->findOneBySku($sku);
+            if ($product && $product->getBrand() && $product->getBrand()->getStockBuffer()) {
+                $this->stockBuffers[$sku]=$product->getBrand()->getStockBuffer();
+            } else {
+                $this->stockBuffers[$sku]=Brand::DEFAULT_BUFFER;
+            }
+        }
+        return  $this->stockBuffers[$sku];
+
+        
+    }
+
+
 }

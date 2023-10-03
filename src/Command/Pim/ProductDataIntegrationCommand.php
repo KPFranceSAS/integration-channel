@@ -107,6 +107,16 @@ class ProductDataIntegrationCommand extends Command
                         $productDb->setEan($ean);
                     }
                 }
+
+                if (array_key_exists("brand", $product['values'])) {
+                    $brand = $this->getBrand($product['values']['brand'][0]['data']);
+                    if ($brand) {
+                        $brand->addProduct($productDb);
+                    }
+                }
+
+                $productDb->setActive($product['enabled']);
+
             }
 
             if($i%50 == 0) {

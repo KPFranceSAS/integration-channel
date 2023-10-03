@@ -58,7 +58,7 @@ class ProductCrudController extends AdminCrudController
             AssociationField::new('brand'),
             AssociationField::new('category'),
             TextField::new('description', 'Product name'),
-            BooleanField::new('active')->renderAsSwitch(true),
+            BooleanField::new('active')->setDisabled(),
             BooleanField::new('dangerousGood')->renderAsSwitch(true),
             DateTimeField::new('createdAt', "Created at")
         ];

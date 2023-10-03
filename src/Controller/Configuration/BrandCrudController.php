@@ -7,6 +7,7 @@ use App\Entity\Brand;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class BrandCrudController extends AdminCrudController
@@ -46,7 +47,8 @@ class BrandCrudController extends AdminCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            TextField::new('name'),
+            TextField::new('name')->setDisabled(true),
+            NumberField::new('stockBuffer')->setRequired(true),
         ];
     }
 }

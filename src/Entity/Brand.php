@@ -6,6 +6,7 @@ use App\Helper\Traits\TraitTimeUpdated;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity()
@@ -13,6 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Brand
 {
+    public const DEFAULT_BUFFER = 10;
+
+
     use TraitTimeUpdated;
 
     /**
@@ -36,6 +40,12 @@ class Brand
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="brand")
      */
     private $products;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Assert\GreaterThanOrEqual(0)
+     */
+    private $stockBuffer=self::DEFAULT_BUFFER;
 
     public function __construct()
     {
@@ -105,6 +115,18 @@ class Brand
                 $product->setBrand(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStockBuffer(): ?int
+    {
+        return $this->stockBuffer;
+    }
+
+    public function setStockBuffer(?int $stockBuffer): self
+    {
+        $this->stockBuffer = $stockBuffer;
 
         return $this;
     }
