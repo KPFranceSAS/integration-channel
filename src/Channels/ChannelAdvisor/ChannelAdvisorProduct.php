@@ -135,6 +135,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
         $this->defaultStorage->write('products/'.$filename, $csvContent);
         $this->logger->info("start export products on channeladvisor");
         $this->channelAdvisorStorage->write('/accounts/12044693/Products/'.$filename, $csvContent);
+        
     }
 
 

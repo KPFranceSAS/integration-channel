@@ -25,7 +25,7 @@ class ConnectManoManoFrCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dump($this->manoManoFrApi->getAllOffers());
+        $this->manoManoFrApi->markOrderAsFulfill('M230963938680', 'DBSchenker', 'DBSchenker', 'https://www.dbschenker.com/app/tracking-public/?refNumber=ALVF23%2F015262&refType=ShippersRefNo', 'ALVF23/015262');
         
         return Command::SUCCESS;
     }

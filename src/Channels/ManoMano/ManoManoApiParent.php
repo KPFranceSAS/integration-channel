@@ -107,6 +107,7 @@ abstract class ManoManoApiParent implements ApiInterface
             ]
         ];
         $reponse =  $this->sendRequest('orders/v1/shippings', [], 'POST', json_encode($body));
+        $this->logger->info(json_encode($body));
         if(strlen(json_encode($reponse))>10) {
             throw new Exception("Error during shipping confirmation ".json_encode($reponse));
         }

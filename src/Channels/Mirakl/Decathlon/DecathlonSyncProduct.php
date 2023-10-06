@@ -51,6 +51,11 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             $categoryCode = '10309';
             $flatProduct ['PRODUCT_TYPE'] = "26258";
             $flatProduct ['SPORT_6'] = "191";
+        } elseif($familyPim == 'camera') {
+            $categoryCode = '30041';
+            $flatProduct ['PRODUCT_TYPE'] = "25201";
+        } elseif($familyPim == 'accessories_camera') {
+            $categoryCode = 'N-300351';
         }
         $flatProduct ['category'] = $categoryCode;
 
