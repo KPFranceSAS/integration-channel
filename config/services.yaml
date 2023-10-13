@@ -174,5 +174,7 @@ services:
             $manoManoItContractId :  '%env(resolve:MANOMANO_IT_CONTRAT)%'
             $manoManoItKey :  '%env(resolve:MANOMANO_IT_KEY)%'
 
+            $accessKeyExchangeRate  : '%env(resolve:EXCHANGERATE_KEY)%'
+
          
             

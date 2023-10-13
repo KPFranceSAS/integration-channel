@@ -3,8 +3,7 @@
 namespace App\Helper\Utils;
 
 use DateTimeInterface;
-use Exception;
-use GuzzleHttp\Client;
+use Psr\Log\LoggerInterface;
 
 /**
  * Consumed data from https://exchangerate.host/#/
@@ -15,31 +14,49 @@ class ExchangeRateCalculator
 
     private $changes;
 
+    private $accessKeyExchangeRate;
+
+    private $logger;
+
+    public function __construct(LoggerInterface $logger, $accessKeyExchangeRate)
+    {
+        $this->accessKeyExchangeRate =$accessKeyExchangeRate;
+        $this->logger =$logger;
+    }
+
 
     private function initializeRates($currency)
     {
         $actualYear = date('Y');
-        $guzzle = new Client();
         if (!$this->changes) {
             $this->changes = [];
         }
 
         $this->changes[$currency] = [];
 
-        for ($i = 2019; $i <= $actualYear; $i++) {
-            $response_json = file_get_contents("https://api.exchangerate.host/timeseries?start_date=$i-01-01&end_date=$i-12-31&base=EUR&symbols=$currency");
-            if (false !== $response_json) {
-                $rates = json_decode($response_json, true);
-                if ($rates['success']) {
-                    foreach ($rates['rates'] as $date => $rate) {
-                        if (array_key_exists($currency, $rate)) {
-                            $this->changes[$currency][$date] = $rate[$currency];
-                        }
-                    }
+        for ($i = 2019; $i < $actualYear; $i++) {
+            $this->addData("$i-01-01", "$i-12-31", $currency);
+        }
+        $this->addData("$actualYear-01-01", date('Y-m-d'), $currency);
+    }
+
+
+    private function addData($dateDebut, $dateFin, $currency)
+    {
+        $ch = curl_init("https://api.exchangerate.host/timeframe?start_date=$dateDebut&end_date=$dateFin&source=".self::BASE_EURO."&currencies=$currency&access_key=".$this->accessKeyExchangeRate);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $this->logger->info("Get excahnes rates   for $dateDebut to $dateFin");
+        $response_json = curl_exec($ch);
+        curl_close($ch);
+        $rates = json_decode($response_json, true);
+        if ($rates['success']) {
+            foreach ($rates['quotes'] as $date => $rate) {
+                if (array_key_exists(self::BASE_EURO.$currency, $rate)) {
+                    $this->changes[$currency][$date] = $rate[self::BASE_EURO.$currency];
                 }
-            } else {
-                throw new Exception('Exchange rate is not available');
             }
+        } else {
+            $this->logger->critical("Exchange rate in $currency is not available for $dateDebut to $dateFin ");
         }
     }
 
@@ -52,22 +69,23 @@ class ExchangeRateCalculator
         if (array_key_exists($dateFormate, $this->changes[$currency])) {
             return $this->changes[$currency][$dateFormate];
         } else {
+            $this->logger->critical("Exchange rate in $currency is not available for  $dateFormate ");
             return 1;
             //throw new Exception("Exchange rate in $currency is not available for  $dateFormate ");
         }
     }
 
 
-    public function getConvertedAmount(float $amount, string $currency, string $date): float
+    public function getConvertedAmount(float $amount, string $currencyFrom, string $date): float
     {
         if ($amount == 0) {
             return 0;
         }
-        if ($currency == self::BASE_EURO) {
+        if ($currencyFrom == self::BASE_EURO) {
             return $amount;
         } else {
 
-            $rateForDay = $this->getRateForDay($currency, $date);
+            $rateForDay = $this->getRateForDay($currencyFrom, $date);
             return $amount / $rateForDay;
         }
     }
