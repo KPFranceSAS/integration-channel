@@ -323,6 +323,11 @@ class AmazonOrder
                 }
             }
         }
+
+        if(!$this->merchantOrderId) {
+            $this->merchantOrderId = $this->amazonOrderId;
+        }
+
         if ($this->merchantOrderId != $this->amazonOrderId) {
             $this->isReturn = true;
         }

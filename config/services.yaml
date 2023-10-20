@@ -154,6 +154,9 @@ services:
             $decathlonClientUrl :  '%env(resolve:DECATHLON_URL)%'
             $decathlonClientKey : '%env(resolve:DECATHLON_KEY)%'
 
+            $mediaMarktClientUrl :  '%env(resolve:MEDIAMARKT_URL)%'
+            $mediaMarktClientKey : '%env(resolve:MEDIAMARKT_KEY)%'
+
             $leroyMerlinClientUrl :  '%env(resolve:LEROYMERLIN_URL)%'
             $leroyMerlinClientKey : '%env(resolve:LEROYMERLIN_KEY)%'
 

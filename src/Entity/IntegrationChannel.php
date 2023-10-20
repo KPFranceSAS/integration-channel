@@ -36,6 +36,7 @@ class IntegrationChannel
     public const CHANNEL_CDISCOUNT='CDISCOUNT';
     public const CHANNEL_PAXUK='PAXUK';
     public const CHANNEL_PAXEU='PAXEU';
+    public const CHANNEL_MEDIAMARKT='MEDIAMARKT';
     
 
 
