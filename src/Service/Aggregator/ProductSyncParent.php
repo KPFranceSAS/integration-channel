@@ -105,6 +105,7 @@ abstract class ProductSyncParent
 
 
 
+
     protected function getAttributeSimpleScopable($productPim, $nameAttribute, $scope, $locale=null)
     {
         if (array_key_exists($nameAttribute, $productPim['values'])) {
@@ -211,6 +212,32 @@ abstract class ProductSyncParent
         }
         return [];
     }
+
+
+
+
+    protected function getAllCategories()
+    {
+        $this->categories=[];
+        $categoriePims = $this->akeneoConnector->getAllCategories();
+        foreach($categoriePims as $category) {
+            $this->categories[ $category['code']] = $category;
+        }
+    }
+
+
+    protected $categories;
+
+
+    protected function getCategorieName($categoryCode, $localeCode)
+    {
+        if(!$this->categories) {
+            $this->getAllCategories();
+        }
+        return $this->categories[$categoryCode]['labels'][$localeCode];
+    }
+
+
 
 
 

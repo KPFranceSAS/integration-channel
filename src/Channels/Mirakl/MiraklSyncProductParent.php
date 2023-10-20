@@ -145,15 +145,17 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
     }
 
 
-    protected function getCodeMarketplaceInList($attributeList, $attributeValue)
+    protected function getCodeMarketplaceInList($attributeList, $attributeValue=null)
     {
-      
-        $valuesAttributes = $this->getAllValuesForAttribute($attributeList);
-        foreach ($valuesAttributes->values as $valuesAttribute) {
-            if (StringUtils::compareString($valuesAttribute->label, $attributeValue)) {
-                return $valuesAttribute->code;
+        if($attributeValue){
+            $valuesAttributes = $this->getAllValuesForAttribute($attributeList);
+            foreach ($valuesAttributes->values as $valuesAttribute) {
+                if (StringUtils::compareString($valuesAttribute->label, $attributeValue)) {
+                    return $valuesAttribute->code;
+                }
             }
         }
+        
         return null;
     }
 
