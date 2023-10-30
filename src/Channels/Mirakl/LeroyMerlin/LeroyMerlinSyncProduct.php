@@ -37,17 +37,20 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
 
         if($familyPim == 'solar_panel') {
             $flatProduct['ATT_15344'] ='LOV_000002'; // not included battery
+            $flatProduct ['product_category'] =  '200264|2231|R03-2003-2008';
+            
             $flatProduct["ATT_13704"] = $this->getAttributeUnit($product, 'solar_panel_power', 'WATT_CRETE', 0);
 
             $flatProduct['feature_00277_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ="LOV_257736"; // power station
-            $flatProduct ['product_category'] =  '200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002';
+            
+          
             $flatProduct['feature_08547_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ='LOV_239437'; // Panneau solaire d'appoint
             $flatProduct['feature_22088_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ='LOV_070969'; // Panneau solaire d'appoint
         } elseif($familyPim == 'fixed_solar_panel') {
             $flatProduct['ATT_15344'] ='LOV_000002'; // not included battery
             $flatProduct["ATT_13704"] = $this->getAttributeUnit($product, 'solar_panel_power', 'WATT_CRETE', 0);
-            $flatProduct ['product_category'] =  '200259|2230|R03-2003-2008';
-            $flatProduct['feature_00277_200259|2230|R03-2003-2008'] ='LOV_032096'; // Destination
+            $flatProduct ['product_category'] =  '200260|2228|R03-2003-2007';
+            $flatProduct['feature_00277_200260|2228|R03-2003-2007'] ='LOV_274678'; // Destination
         } elseif($familyPim == 'power_station') {
             $flatProduct ['product_category'] =  "200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005";
             $flatProduct['ATT_15344'] ='LOV_000001'; // included battery
