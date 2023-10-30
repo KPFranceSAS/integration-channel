@@ -102,6 +102,7 @@ class MailService
             'CURLE_OPERATION_TIMEDOUT',
             'Error connecting to the API',
             'Error class',
+            "InternalError",
             'SQLSTATE'
         ];
         if (s($titre)->containsAny($stringForbiddens)) {
