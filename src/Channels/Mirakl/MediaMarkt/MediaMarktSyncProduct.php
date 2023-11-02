@@ -53,13 +53,13 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
             'marketplace_accessories_video' => 'FET_FRA_1143'
         ];
 
-        foreach($equivalences as $pimCategory => $mmCategory){
+        foreach($equivalences as $pimCategory => $mmCategory) {
             if(in_array($pimCategory, $product['categories'])) {
                 $flatProduct['CATEGORY'] = $mmCategory;
                 $flatProduct['PROD_FEAT_10990__ES_ES'] = $this->getCategorieName($pimCategory, 'es_ES');
-                break; 
+                break;
             }
-        } 
+        }
 
 
 
@@ -79,17 +79,14 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $flatProduct["ATTR_PROD_MP_LifeStyleImage1"] =  $this->getAttributeSimple($product, 'image_url_7');
         $flatProduct["ATTR_PROD_MP_LifeStyleImage2"] =  $this->getAttributeSimple($product, 'image_url_8');
         $flatProduct["ATTR_PROD_MP_LifeStyleImage3"] =  $this->getAttributeSimple($product, 'image_url_9');
-
         
         // Dimensions
-
-        
         $flatProduct["PROD_FEAT_16110"] = $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0).' cm';
         $flatProduct["PROD_FEAT_16111"] = $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0).' cm';
         $flatProduct["PROD_FEAT_16112"] = $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0).' cm';
-        $flatProduct["PROD_FEAT_16333"] = $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 3).' kg';    
+        $flatProduct["PROD_FEAT_16333"] = $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 3).' kg';
 
-        // attribtues        
+        // attribtues
         $flatProduct["PROD_FEAT_10134__ES_ES"] = implode(", ", $this->getAttributeMultiChoice($product, 'connectivity_technology', 'es_ES'));
         $colorName = $this->getAttributeChoice($product, "color", "es_ES");
         $flatProduct["PROD_FEAT_10812__ES_ES"] = $colorName ? $colorName : $this->getAttributeChoice($product, "color_generic", "es_ES");
@@ -97,7 +94,11 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $contentBox= $this->getAttributeSimple($product, "in_the_box", "es_ES");
         $flatProduct["PROD_FEAT_11470__ES_ES"] =  $contentBox ? strip_tags(str_replace('</li>', ', </li>', $contentBox)) :'';
 
-        $powerSource = $this->getAttributeUnit($product, 'nominal_power', 'WATT', 3); 
+        // audio
+        $flatProduct["PROD_FEAT_11437__ES_ES"] = implode(", ", $this->getAttributeMultiChoice($product, 'speaker_type', 'es_ES'));
+        $flatProduct["PROD_FEAT_10226__ES_ES"] = $this->getAttributeChoice($product, 'speaker_number', 'es_ES');
+        $flatProduct["PROD_FEAT_10026"] = $this->getCodeMarketplaceInList('LOV_FEAT_Number_of_channels', $this->getAttributeChoice($product, "speaker_channels", "en_GB"));
+        $powerSource = $this->getAttributeUnit($product, 'nominal_power', 'WATT', 3);
         $flatProduct["PROD_FEAT_15961"] = $powerSource ? $powerSource.' W' : null;
         
         $powerSourceType = $this->getAttributeSimple($product, 'power_source_type');
@@ -106,11 +107,16 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
             "ac_and_battery" =>	"40",
             "battery"=>	"20",
         ];
-        if($powerSourceType && array_key_exists($powerSourceType, $equiPower)){
+        if($powerSourceType && array_key_exists($powerSourceType, $equiPower)) {
             $flatProduct["PROD_FEAT_16630"]  = $equiPower[$powerSourceType];
-        } 
+        }
         
-       
+        
+        // videoprojecteur
+        $flatProduct["PROD_FEAT_14702"] = $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0).' cm';
+        $flatProduct["PROD_FEAT_14701"] = $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0).' cm';
+        $flatProduct["PROD_FEAT_14700"] = $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0).' cm';
+        $flatProduct["PROD_FEAT_14704"] = $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 3).' kg';
 
 
         return $flatProduct;

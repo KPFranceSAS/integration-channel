@@ -38,6 +38,8 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $flatProduct["ACCROCHE"] = substr($this->getAttributeSimple($product, 'article_name', 'fr_FR'), 0, 95);
         $flatProduct["PARTNUMBER"]  = $this->getAttributeSimple($product, 'ean');
         
+        $flatProduct["MARQUE"] = $this->getCodeMarketplaceInList('LISTE_MARQUE', $this->getAttributeChoice($product, "brand", "en_GB"));
+
 
         $descriptionRich = $this->getAttributeSimple($product, 'description_enrichie', 'fr_FR');
         $descriptionSimple = $this->getAttributeSimple($product, 'description', 'fr_FR');
@@ -63,45 +65,66 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $flatProduct["PROFONDEUR"] = $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
         $flatProduct["POIDS_NET"] = $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0);
         
-        $familyPim =$product['family'];
 
-        if($familyPim == 'power_station') {
-            $flatProduct = $this->addInfoPowerStation($product, $flatProduct);
-        } elseif($familyPim == 'solar_panel' || $familyPim == 'fixed_solar_panel') {
-            $flatProduct = $this->addInfoSolarPanel($product, $flatProduct);
-        } elseif ($familyPim == 'robot_piscine') {
-            $flatProduct = $this->addInfoPoolRobot($product, $flatProduct);
-        } elseif ($familyPim == 'home_security') {
-            $flatProduct = $this->addInfoHomeSecurity($product, $flatProduct);
-        } elseif($familyPim == 'smart_home') {
-            if(in_array('markerplace_blender', $product['categories'])) { // blender
-                $flatProduct = $this->addInfoBlender($product, $flatProduct);
-            } elseif (in_array('marketplace_air_fryer', $product['categories'])) {
-                $flatProduct = $this->addInfoFryer($product, $flatProduct);
+
+
+        $equivalences = [
+            "marketplace_generator_energy_travel"=>	"603",
+            "marketplace_solar_panel_energy_travel"=>	"31809",
+            "marketplace_garden_spa_home"=>	"7205",
+            "marketplace_smart_lock" =>"2402",
+            "markerplace_blender"=>	"5603",
+            "marketplace_air_fryer" =>	"8004",
+        ];
+
+        foreach($equivalences as $pimCategory => $mmCategory) {
+            if(in_array($pimCategory, $product['categories'])) {
+                $flatProduct['CATEGORIE'] = $mmCategory;
+                break;
             }
         }
 
-
         if(array_key_exists('CATEGORIE', $flatProduct)) {
-            $brandName = $this->getAttributeChoice($product, 'brand', "fr_FR");
-            if ($brandName) {
-                $codeMirakl = $this->getCodeMarketplace($flatProduct ['CATEGORIE'], "MARQUE", $brandName);
-                if ($codeMirakl) {
-                    $flatProduct["MARQUE"] = $codeMirakl;
-                }
-            }
+            switch($flatProduct['CATEGORIE']) {
+                case '603':
+                    $flatProduct = $this->addInfoPowerStation($product, $flatProduct);
+                    break;
+                case '31809':
+                    $flatProduct = $this->addInfoSolarPanel($product, $flatProduct);
+                    break;
+                case '7205':
+                    $flatProduct = $this->addInfoPoolRobot($product, $flatProduct);
+                    break;
+                case '2402':
+                    $flatProduct = $this->addInfoHomeSecurity($product, $flatProduct);
+                    break;
+                case '5603':
+                    $flatProduct = $this->addInfoBlender($product, $flatProduct);
+                    break;
+                case '8004':
+                    $flatProduct = $this->addInfoFryer($product, $flatProduct);
+
+                    break;
+            };
+            
+
+           
         } else {
             $this->logger->info('Product not categorized');
         }
+
 
         return $flatProduct;
     }
 
 
+  
+
+
+
+
     public function addInfoHomeSecurity(array $product, array $flatProduct): array
     {
-        $flatProduct["CATEGORIE"] = "2402";
-
         if(in_array('marketplace_smart_lock', $product['categories'])) {
             $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/type_de_produit"] = "Serrure";
             $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/usage"] = "Déverrouiller ou verrouiller votre porte avec Smartphone";
@@ -137,7 +160,6 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
     public function addInfoPowerStation(array $product, array $flatProduct): array
     {
-        $flatProduct["CATEGORIE"] = "603";
         $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/categorie']=  "Batterie nomade";
         $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/specifique_samsung']="Non";
         $flatProduct['CENTRALE_BATTERIE/caracteristiques_generales/specifique_apple']="Non";
@@ -161,7 +183,6 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
     public function addInfoSolarPanel(array $product, array $flatProduct): array
     {
-        $flatProduct["CATEGORIE"] = "31809";
         $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/type"] = "Panneau solaire";
         $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/alimentation"] = "Secteur";
         $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/connectivite/technologie"] = "Wifi";
@@ -174,7 +195,6 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
     public function addInfoPoolRobot(array $product, array $flatProduct): array
     {
-        $flatProduct["CATEGORIE"] = "7205";
         $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/type_de_piscine']="Enterrée, Hors-sol";
         $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/forme_de_piscine']="Toutes formes";
         if(in_array($product['identifier'], ['APR-ZT2001B', 'APR-ZT2001'])) {
@@ -196,7 +216,6 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
     public function addInfoBlender(array $product, array $flatProduct): array
     {
-        $flatProduct['CATEGORIE'] = "5603"; // blender
         $flatProduct['CENTRALE_BLENDER/contenu_du_carton/notice']='Oui';
         $flatProduct['CENTRALE_BLENDER/performances_du_blender/blender_professionnel']='Non';
         $flatProduct['CENTRALE_BLENDER/performances_du_blender/puissance_moteur__en_watts']=1000;
@@ -231,7 +250,6 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
     public function addInfoFryer(array $product, array $flatProduct): array
     {
-        $flatProduct['CATEGORIE'] =  "8004"; // friteuse
         $flatProduct['CENTRALE_FRITEUSE/contenu_du_carton/notice']='Oui';
         $flatProduct['CENTRALE_FRITEUSE/caracteristiques_generales/type_de_friteuse']='Friteuse connectée';
         $flatProduct['CENTRALE_FRITEUSE/caracteristiques_generales/coloris_friteuse']='Blanc';
@@ -280,10 +298,6 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
         return $flatProduct;
     }
-
-
-
-
    
 
     public function getChannel(): string
