@@ -71,7 +71,7 @@ class MediaMarktPriceStock extends MiraklPriceStockParent
     public function getMappingLogisticClass(): array
     {
         return [
-            "XS" => "LSNT",
+            "XS" => "LST",
             "S" => "LBNT",
             "M" => "LBT",
             "L" => "PST",

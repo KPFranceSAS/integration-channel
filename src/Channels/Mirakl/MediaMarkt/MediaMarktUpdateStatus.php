@@ -18,11 +18,13 @@ class MediaMarktUpdateStatus extends MiraklUpdateStatusParent
     protected function getCodeCarrier(string $carrierCode): ?string
     {
         if ($carrierCode ==  WebOrder::CARRIER_DHL) {
-            return "ES_DHL_Parcel";
+            return "DHLPES";
         } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
-            return "ES_UPS";
+            return "UPS";
         } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
-            return "FR_DBSCHENKER";
+            return "DBS";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_CORREOSEXP) {
+            return "CORREX_ES";
         }
         return null;
     }
@@ -31,11 +33,13 @@ class MediaMarktUpdateStatus extends MiraklUpdateStatusParent
     protected function getNameCarrier(string $carrierCode): ?string
     {
         if ($carrierCode ==  WebOrder::CARRIER_DHL) {
-            return "DHL (Spain)";
+            return "DHL Parcel Spain";
         } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "UPS";
         } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
             return "DB Schenker";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_CORREOSEXP) {
+            return "Correos Express";
         }
         return null;
     }
