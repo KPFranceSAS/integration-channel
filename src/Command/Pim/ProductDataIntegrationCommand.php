@@ -3,6 +3,7 @@
 namespace App\Command\Pim;
 
 use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
+use App\BusinessCentral\LogisticClassFinder;
 use App\Entity\Brand;
 use App\Entity\Product;
 use App\Entity\ProductSaleChannel;
@@ -23,16 +24,20 @@ class ProductDataIntegrationCommand extends Command
         ManagerRegistry $manager,
         AkeneoConnector $akeneoConnector,
         KitPersonalizacionSportConnector $kitPerzonalizacionConnector,
+        LogisticClassFinder $logisticClassFinder,
         MailService $mailService
     ) {
         $this->manager = $manager->getManager();
         $this->akeneoConnector = $akeneoConnector;
         $this->kitPerzonalizacionConnector = $kitPerzonalizacionConnector;
         $this->mailService = $mailService;
+        $this->logisticClassFinder = $logisticClassFinder;
         parent::__construct();
     }
 
     private $kitPerzonalizacionConnector;
+
+    private $logisticClassFinder;
 
     private $mailService;
 
@@ -75,6 +80,9 @@ class ProductDataIntegrationCommand extends Command
                             $productDb->setEan($ean);
                         }
                     }
+
+                    
+
                     $this->manager->persist($productDb);
                     $this->manager->flush();
 

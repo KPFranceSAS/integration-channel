@@ -37,6 +37,8 @@ abstract class BusinessCentralConnector
 
     public const EP_ITEMS = "items";
 
+    public const EP_ITEM_UNITOFMEASURE = "itemUnitOfMeasure";
+
     public const EP_STOCK_PRODUCTS = "itemAvailabilities";
 
     public const EP_SALES_ORDERS = "salesOrders";
@@ -300,6 +302,13 @@ abstract class BusinessCentralConnector
     {
         $response =  $this->doGetRequest(self::EP_COMPANIES);
         return $response['value'];
+    }
+
+
+
+    public function getItemUnitOfMeasure($itemNo, $codeNumber='UDS')
+    {
+        return $this->getElementsByArray(self::EP_ITEM_UNITOFMEASURE, "ItemNo eq '$itemNo' and Code eq '$codeNumber'");
     }
 
 

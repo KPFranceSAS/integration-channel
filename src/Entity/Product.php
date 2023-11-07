@@ -1395,6 +1395,11 @@ class Product
         return $this->freeShipping;
     }
 
+    public function getFreeShipping(): ?bool
+    {
+        return $this->freeShipping;
+    }
+
     public function setFreeShipping(?bool $freeShipping): self
     {
         $this->freeShipping = $freeShipping;

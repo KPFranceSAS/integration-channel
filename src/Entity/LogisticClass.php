@@ -19,7 +19,7 @@ class LogisticClass
 
     public function __toString()
     {
-        return $this->code.' '.$this->label;
+        return $this->code.' - '.$this->label.' - Between '.$this->minimumWeight.' and '.$this->maximumWeight.' kg';
     }
 
     /**
@@ -43,6 +43,16 @@ class LogisticClass
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="logisticClass")
      */
     private $products;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $minimumWeight;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $maximumWeight;
 
     public function __construct()
     {
@@ -104,6 +114,30 @@ class LogisticClass
                 $product->setLogisticClass(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMinimumWeight(): ?float
+    {
+        return $this->minimumWeight;
+    }
+
+    public function setMinimumWeight(float $minimumWeight): self
+    {
+        $this->minimumWeight = $minimumWeight;
+
+        return $this;
+    }
+
+    public function getMaximumWeight(): ?float
+    {
+        return $this->maximumWeight;
+    }
+
+    public function setMaximumWeight(?float $maximumWeight): self
+    {
+        $this->maximumWeight = $maximumWeight;
 
         return $this;
     }

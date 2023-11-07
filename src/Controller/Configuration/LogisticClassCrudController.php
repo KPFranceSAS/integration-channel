@@ -19,7 +19,12 @@ class LogisticClassCrudController extends AdminCrudController
 
     public function getDefautOrder(): array
     {
-        return ['code' => "ASC"];
+        return ['minimumWeight' => "ASC"];
+    }
+
+    public function getPluralName()
+    {
+        return 'Logistic classes';
     }
 
 
@@ -49,6 +54,8 @@ class LogisticClassCrudController extends AdminCrudController
         return [
             TextField::new('code')->setRequired(true),
             TextField::new('label')->setRequired(true),
+            NumberField::new('minimumWeight')->setRequired(true)->setHelp('Minimum weight in Kg'),
+            NumberField::new('maximumWeight')->setRequired(true)->setHelp('Maximum weight in Kg'),
         ];
     }
 }
