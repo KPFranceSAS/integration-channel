@@ -55,6 +55,7 @@ class WebOrder
     public const  CARRIER_DBSCHENKER = 'DBSCHENKER';
     public const  CARRIER_SENDING = 'SENDING';
     public const  CARRIER_CORREOSEXP = 'CORREOSEXP';
+    public const  CARRIER_TNT = 'TNT';
     
 
     public const  STATE_ERROR_INVOICE = -2;

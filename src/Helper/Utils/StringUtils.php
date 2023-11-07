@@ -34,8 +34,9 @@ class StringUtils
     {
         $conversion=[
             " " => "",
-            "." => "_",
-            "," => "_"
+            "." => "",
+            "," => "",
+            "/" => ""
         ];
         return str_replace(array_keys($conversion), array_values($conversion), strtoupper($string));
     }

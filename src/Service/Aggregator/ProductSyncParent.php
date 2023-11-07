@@ -138,19 +138,28 @@ abstract class ProductSyncParent
     }
 
 
+
+    protected $attributeOptionAkeneos= [];
+
    
 
     protected function getTranslationOption($attributeCode, $code, $locale)
     {
-        $attribute = $this->akeneoConnector->getAttributeOption($attributeCode, $code);
-        return array_key_exists($locale, $attribute['labels']) ? $attribute['labels'][$locale] : $code;
+        if(!array_key_exists($attributeCode.'_'.$code, $this->attributeOptionAkeneos)) {
+            $this->attributeOptionAkeneos[$attributeCode.'_'.$code]= $this->akeneoConnector->getAttributeOption($attributeCode, $code);
+        }
+        return array_key_exists($locale, $this->attributeOptionAkeneos[$attributeCode.'_'.$code]['labels']) ? $this->attributeOptionAkeneos[$attributeCode.'_'.$code]['labels'][$locale] : $code;
     }
 
 
+    protected $familiesAkeneo= [];
+
     protected function getFamilyName($identifier, $langage)
     {
-        $family =  $this->akeneoConnector->getFamily($identifier);
-        return array_key_exists($langage, $family['labels']) ? $family['labels'][$langage] : $identifier;
+        if(!array_key_exists($identifier, $this->familiesAkeneo)) {
+            $this->familiesAkeneo[$identifier]=  $this->akeneoConnector->getFamily($identifier);
+        }
+        return array_key_exists($langage, $this->familiesAkeneo[$identifier]['labels']) ? $this->familiesAkeneo[$identifier]['labels'][$langage] : $identifier;
     }
 
     protected function getTitle($productPim, $locale, $isModel=false)

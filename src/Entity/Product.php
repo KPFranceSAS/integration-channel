@@ -381,7 +381,17 @@ class Product
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $dangerousGood;
+    private $dangerousGood = false;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=LogisticClass::class, inversedBy="products")
+     */
+    private $logisticClass;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $freeShipping = false;
 
 
 
@@ -1364,6 +1374,30 @@ class Product
     public function setDangerousGood(?bool $dangerousGood): self
     {
         $this->dangerousGood = $dangerousGood;
+
+        return $this;
+    }
+
+    public function getLogisticClass(): ?LogisticClass
+    {
+        return $this->logisticClass;
+    }
+
+    public function setLogisticClass(?LogisticClass $logisticClass): self
+    {
+        $this->logisticClass = $logisticClass;
+
+        return $this;
+    }
+
+    public function isFreeShipping(): ?bool
+    {
+        return $this->freeShipping;
+    }
+
+    public function setFreeShipping(?bool $freeShipping): self
+    {
+        $this->freeShipping = $freeShipping;
 
         return $this;
     }

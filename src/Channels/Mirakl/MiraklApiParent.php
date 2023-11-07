@@ -58,7 +58,8 @@ abstract class MiraklApiParent implements ApiInterface
 
 
 
-    public function getMessage($idMessage){
+    public function getMessage($idMessage)
+    {
         $request = new GetThreadDetailsRequest($idMessage);
         return $this->client->getThreadDetails($request);
     }
@@ -82,7 +83,7 @@ abstract class MiraklApiParent implements ApiInterface
             }
 
             $req->setMax(self::PAGINATION);
-            if($nextToken){ 
+            if($nextToken) {
                 $req->setPageToken($nextToken);
             }
             
@@ -93,7 +94,7 @@ abstract class MiraklApiParent implements ApiInterface
                 $orders = array_merge($orders, $reponse->getCollection()->getItems());
             }
             $realOffset++;
-            if($reponse->getNextPageToken()){
+            if($reponse->getNextPageToken()) {
                 $nextToken = $reponse->getNextPageToken();
             } else {
                 $continue = false;

@@ -33,6 +33,7 @@ class TrackingAggregator
             case WebOrder::CARRIER_UPS:
             case WebOrder::CARRIER_SENDING:
             case WebOrder::CARRIER_CORREOSEXP:
+            case WebOrder::CARRIER_TNT:
                 return $this->shippyProTracking->checkIfDelivered($codeTracking);
         }
         return null;
@@ -55,6 +56,7 @@ class TrackingAggregator
             case WebOrder::CARRIER_UPS:
             case WebOrder::CARRIER_CORREOSEXP:
             case WebOrder::CARRIER_SENDING:
+            case WebOrder::CARRIER_TNT:
                 return $this->shippyProTracking->getStepsTrackings($codeTracking);
         }
         return null;
@@ -78,6 +80,8 @@ class TrackingAggregator
                 return DbSchenkerGetTracking::getTrackingUrlBase($codeTracking);
             case WebOrder::CARRIER_SENDING:
                 return SendingGetTracking::getTrackingUrlBase($codeTracking);
+            case WebOrder::CARRIER_TNT:
+                return TntGetTracking::getTrackingUrlBase($codeTracking);
             case WebOrder::CARRIER_CORREOSEXP:
                 return CorreosExpTracking::getTrackingUrlBase($codeTracking);
         }

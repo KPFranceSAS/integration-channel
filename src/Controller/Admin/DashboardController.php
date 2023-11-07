@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Controller\Configuration\LogisticClassCrudController;
 use App\Controller\Configuration\ProductCrudController;
 use App\Controller\Fba\StockCrudController;
 use App\Controller\Order\AliexpressOrderCrudController;
@@ -27,9 +28,9 @@ use App\Entity\AmazonFinancialEvent;
 use App\Entity\AmazonRemoval;
 use App\Entity\Brand;
 use App\Entity\Category;
-use App\Entity\FbaReturn;
 use App\Entity\ImportPricing;
 use App\Entity\IntegrationChannel;
+use App\Entity\LogisticClass;
 use App\Entity\OrderLog;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
@@ -42,7 +43,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
-use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Provider\AdminContextProvider;
 use Symfony\Component\HttpFoundation\Response;
@@ -181,6 +181,11 @@ class DashboardController extends AbstractDashboardController
                         'fas fa-sitemap',
                         Category::class
                     )->setPermission('ROLE_ADMIN'),
+                    MenuItem::linkToCrud(
+                        'Logistic class',
+                        'fas fa-shipping-fast',
+                        LogisticClass::class
+                    )->setController(LogisticClassCrudController::class)->setPermission('ROLE_ADMIN'),
                     MenuItem::linkToCrud(
                         'SKU Mapping',
                         'fa fa-exchange',

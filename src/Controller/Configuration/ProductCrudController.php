@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 
@@ -57,9 +58,11 @@ class ProductCrudController extends AdminCrudController
             TextField::new('ean')->setDisabled(),
             AssociationField::new('brand'),
             AssociationField::new('category'),
+            AssociationField::new('logisticClass'),
             TextField::new('description', 'Product name'),
             BooleanField::new('active')->setDisabled(),
             BooleanField::new('dangerousGood')->renderAsSwitch(true),
+            BooleanField::new('freeShipping')->renderAsSwitch(false),
             DateTimeField::new('createdAt', "Created at")
         ];
     }
@@ -70,6 +73,9 @@ class ProductCrudController extends AdminCrudController
         return $filters
             ->add(EntityFilter::new('brand'))
             ->add(EntityFilter::new('category'))
-            ->add(TextFilter::new('sku'));
+            ->add(EntityFilter::new('logisticClass'))
+            ->add(TextFilter::new('sku'))
+            ->add(BooleanFilter::new('dangerousGood'))
+            ->add(BooleanFilter::new('freeShipping'));
     }
 }
