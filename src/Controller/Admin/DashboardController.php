@@ -18,6 +18,7 @@ use App\Controller\Order\FlashledOrderCrudController;
 use App\Controller\Order\LateOrderCrudController;
 use App\Controller\Order\LeroyMerlinOrderCrudController;
 use App\Controller\Order\ManoManoOrderCrudController;
+use App\Controller\Order\MediaMarktOrderCrudController;
 use App\Controller\Order\MinibattOrderCrudController;
 use App\Controller\Order\OwletCareOrderCrudController;
 use App\Controller\Order\PaxB2COrderCrudController;
@@ -107,6 +108,8 @@ class DashboardController extends AbstractDashboardController
                         ->setController(LeroyMerlinOrderCrudController::class),
                     MenuItem::linkToCrud('ManoMano', 'fas fa-screwdriver', WebOrder::class)
                         ->setController(ManoManoOrderCrudController::class),
+                        MenuItem::linkToCrud('MediaMarkt', 'fas fa-certificate', WebOrder::class)
+                        ->setController(MediaMarktOrderCrudController::class),
                     MenuItem::linkToCrud('Minibatt', 'fas fa-car-battery', WebOrder::class)
                         ->setController(MinibattOrderCrudController::class),
                     MenuItem::linkToCrud('Miravia', 'fas fa-sun', WebOrder::class)

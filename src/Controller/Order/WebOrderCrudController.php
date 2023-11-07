@@ -199,11 +199,15 @@ class WebOrderCrudController extends AdminCrudController
             WebOrder::CARRIER_DBSCHENKER  => WebOrder::CARRIER_DBSCHENKER,
             WebOrder::CARRIER_DHL  => WebOrder::CARRIER_DHL,
             WebOrder::CARRIER_FBA  => WebOrder::CARRIER_FBA,
-            WebOrder::CARRIER_UPS  => WebOrder::CARRIER_UPS
+            WebOrder::CARRIER_UPS  => WebOrder::CARRIER_UPS,
+            WebOrder::CARRIER_TNT  =>  WebOrder::CARRIER_TNT,
+            WebOrder::CARRIER_SENDING  =>  WebOrder::CARRIER_SENDING,
+            WebOrder::CARRIER_CORREOSEXP  =>  WebOrder::CARRIER_CORREOSEXP,
         ];
 
         $choicesWarehouse = [
             WebOrder::DEPOT_CENTRAL => WebOrder::DEPOT_CENTRAL,
+            WebOrder::DEPOT_3PLUK => WebOrder::DEPOT_3PLUK,
             WebOrder::DEPOT_LAROCA => WebOrder::DEPOT_LAROCA,
             WebOrder::DEPOT_MADRID => WebOrder::DEPOT_MADRID,
             WebOrder::DEPOT_FBA_AMAZON  => WebOrder::DEPOT_FBA_AMAZON
@@ -260,6 +264,7 @@ class WebOrderCrudController extends AdminCrudController
             'ManoMano ES' => "ManoMano ES",
             'ManoMano DE' => "ManoMano DE",
             'ManoMano IT' => "ManoMano IT",
+            'Mediamarkt.es' => "Mediamarkt.es",
             'Miravia.es' => 'Miravia.es',
             'Minibatt.com' => 'Minibatt.com',
             'Owletbaby.es' => 'Owletbaby.es',

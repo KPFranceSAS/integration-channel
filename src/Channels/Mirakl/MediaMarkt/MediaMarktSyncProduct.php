@@ -151,11 +151,16 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         
         // video
         $flatProduct["PROD_FEAT_13747__ES_ES"] = $this->getAttributeSimple($product, "image_rate");
+        $flatProduct["PROD_FEAT_10463__ES_ES"] = $this->getAttributeSimple($product, "image_rate");
+        $flatProduct["PROD_FEAT_12763__ES_ES"] = $this->getAttributeSimple($product, "image_rate");
+        $flatProduct["PROD_FEAT_10963__ES_ES"] = $this->getAttributeSimple($product, "compatible_devices", 'es_ES');
         
         // battery
         $flatProduct["PROD_FEAT_13648__ES_ES"] =$this->getAttributeSimple($product, "product_certifications");
         $flatProduct["PROD_FEAT_11330__ES_ES"] = $this->getAttributeUnit($product, 'output_power', 'WATT', 0).' W';
         $flatProduct["PROD_FEAT_10928"] = $flatProduct["PROD_FEAT_16246"];
+
+
 
 
         return $flatProduct;
