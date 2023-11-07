@@ -32,5 +32,23 @@ abstract class MiraklPriceStockParent extends PriceStockParent
             
     }
 
+    abstract protected function getMappingLogisticClass(): array;
+
+
+    abstract protected function getFreeLogistic(): string;
+
+
+    protected function defineLogisticClass(Product $product){
+        if($product->isFreeShipping()){
+            return $this->getFreeLogistic();
+        } else {
+            $mappings =$this->getMappingLogisticClass();
+            if($product->getLogisticClass() && array_key_exists($product->getLogisticClass()->getCode(), $mappings)){
+                return $mappings[$product->getLogisticClass()->getCode()];
+            }
+        }
+        return null;
+    }
+
 
 }

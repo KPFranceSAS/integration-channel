@@ -24,7 +24,7 @@ class MediaMarktPriceStock extends MiraklPriceStockParent
             "product_id" => $product->getSku(),
             "product_id_type" => "SHOP_SKU",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
-            "logistic_class" => "FS",
+            "logistic_class" => $this->defineLogisticClass($product),
             "description" => $product->getDescription(),
             "leadtime_to_ship" => "2",
             "all_prices" => [],
@@ -55,4 +55,33 @@ class MediaMarktPriceStock extends MiraklPriceStockParent
 
         return $offer;
     }
+
+
+
+    
+
+
+    protected function getFreeLogistic() : string
+    {
+        return "FS";
+
+    }
+
+
+    public function getMappingLogisticClass(): array
+    {
+        return [
+            "XS" => "LSNT",
+            "S" => "LBNT",
+            "M" => "LBT",
+            "L" => "PST",
+            "XL" => "PMT",
+            "XXL" => "PBT"
+        ];
+    }
+
+
+
+            
+           
 }

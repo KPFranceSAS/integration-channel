@@ -82,4 +82,25 @@ class BoulangerPriceStock extends MiraklPriceStockParent
 
         return $offer;
     }
+
+
+
+    protected function getFreeLogistic() : string
+    {
+        return "FS";
+
+    }
+
+
+    public function getMappingLogisticClass(): array
+    {
+        return [
+            "XS" => "LSNT",
+            "S" => "LBNT",
+            "M" => "LBT",
+            "L" => "PST",
+            "XL" => "PMT",
+            "XXL" => "PBT"
+        ];
+    }
 }

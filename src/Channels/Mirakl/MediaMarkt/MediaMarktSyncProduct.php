@@ -54,10 +54,14 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
             "marketplace_camera_video" =>"FET_FRA_1614",
             "marketplace_generator_energy_travel" =>"FET_FRA_2022",
             "marketplace_solar_panel_energy_travel"	=> "FET_FRA_2013",
-            "marketplace_travel_oven"	=> "FET_FRA_1009",
+            "marketplace_travel_oven" => "FET_FRA_1009",
             "marketplace_garden_spa_home" => "FET_FRA_1650",
             "marketplace_gaming_chair" => "FET_FRA_1382",
-            'marketplace_projector_screen' => 'FET_FRA_1456'
+            'marketplace_projector_screen' => 'FET_FRA_1456',
+            "marketplace_camera_accessories" => "FET_FRA_1200",
+            "marketplace_camera_stands"	=> "FET_FRA_1419",
+            "marketplace_camera_light" => "FET_FRA_1662",
+            "marketplace_camera_selfie" => "FET_FRA_1188"
         ];
 
         foreach($equivalences as $pimCategory => $mmCategory) {
