@@ -3,6 +3,7 @@
 namespace App\Channels\Mirakl\MediaMarkt;
 
 use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Model\SaleOrder;
 use App\Channels\Mirakl\MiraklIntegratorParent;
 use App\Entity\IntegrationChannel;
 use Exception;
@@ -36,4 +37,16 @@ class MediaMarktIntegrator extends MiraklIntegratorParent
     {
         return BusinessCentralConnector::GADGET_IBERIA;
     }
+
+
+
+    public function transformToAnBcOrder($orderApi): SaleOrder
+    {
+        $orderBC = parent::transformToAnBcOrder($orderApi);
+        $orderBC->sellingPostalAddress->countryLetterCode = 'ES';
+        $orderBC->shippingPostalAddress->countryLetterCode = 'ES';
+         
+        return $orderBC;
+    }
+
 }
