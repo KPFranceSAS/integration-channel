@@ -37,8 +37,9 @@ class IntegrationChannel
     public const CHANNEL_PAXUK='PAXUK';
     public const CHANNEL_PAXEU='PAXEU';
     public const CHANNEL_MEDIAMARKT='MEDIAMARKT';
-    public const CHANNEL_FNAC='FNAC';
-    public const CHANNEL_DARTY='DARTY';
+    public const CHANNEL_FNAC_FR='FNAC_FR';
+    public const CHANNEL_FNAC_ES='FNAC_ES';
+    public const CHANNEL_DARTY_FR='DARTY_FR';
 
     use TraitTimeUpdated;
 

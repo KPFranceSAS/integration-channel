@@ -76,8 +76,8 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
 
         
         // text
-        $short_title = $this->getAttributeSimple($product, "short_article_name", 'es_ES');
-        $flatProduct['TITLE__ES_ES'] = $short_title ? $short_title  : substr($this->getAttributeSimple($product, "article_name", 'es_ES'), 0, 100);
+       
+        $flatProduct['TITLE__ES_ES'] = $this->getAttributeSimple($product, "manufacturer_number") ? $this->getAttributeSimple($product, "manufacturer_number") :  $product['identifier'];
         $flatProduct['Product_Description__ES_ES'] = $this->getAttributeSimple($product, "description", 'es_ES');
 
         // Medias

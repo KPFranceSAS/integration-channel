@@ -402,6 +402,8 @@ class WebOrder
                 return 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $order['id'];
             case IntegrationChannel::CHANNEL_BOULANGER:
                 return 'https://merchant.boulanger.com/mmp/shop/order/' . $order['id'];
+            case IntegrationChannel::CHANNEL_MEDIAMARKT:
+                return 'https://mediamarktsaturn.mirakl.net/mmp/shop/order/' . $order['id'];
             case IntegrationChannel::CHANNEL_MANOMANO_DE:
             case IntegrationChannel::CHANNEL_MANOMANO_IT:
             case IntegrationChannel::CHANNEL_MANOMANO_ES:
@@ -481,6 +483,9 @@ class WebOrder
             
             case IntegrationChannel::CHANNEL_BOULANGER:
                 return WebOrder::createOneFromBoulanger($orderApi);
+            
+            case IntegrationChannel::CHANNEL_MEDIAMARKT:
+                return WebOrder::createOneFromMediaMarkt($orderApi);
                 
             case IntegrationChannel::CHANNEL_CHANNELADVISOR:
                 return WebOrder::createOneFromChannelAdvisor($orderApi);
@@ -665,6 +670,20 @@ class WebOrder
         $webOrder->setChannel(IntegrationChannel::CHANNEL_BOULANGER);
         return $webOrder;
     }
+
+
+
+    public static function createOneFromMediaMarkt($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromMirakl($orderApi);
+        $webOrder->setSubchannel("MediaMarkt.es");
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_MEDIAMARKT);
+        return $webOrder;
+    }
+
+
+
+    
 
 
 
