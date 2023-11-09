@@ -52,7 +52,7 @@ class ChannelAdvisorPricingStock extends PriceStockParent
 
     public function sendStocksPrices(array $products, array $saleChannels)
     {
-        $header = ['sku', 'stock_laroca', 'ecotax'];
+        $header = ['sku', 'stock_laroca', 'logistic_class',  'ecotax'];
         foreach ($saleChannels as $saleChannel) {
             $code = $saleChannel->getCode().'-';
             array_push($header, $code.'enabled', $code.'price', $code.'promoprice');
@@ -100,7 +100,16 @@ class ChannelAdvisorPricingStock extends PriceStockParent
         $productArray = array_fill_keys($header, null);
         $productArray['sku'] = $product->getSku();
         $productArray['stock_laroca'] = $this->productStockFinder->getFinalStockProductWarehouse($product->getSku());
+
+        if($product->isFreeShipping()){
+            $logisticClass= 'FREE';
+        } else {
+            $logisticClass = $product->getLogisticClass() ? $product->getLogisticClass()->getCode() : '';
+        }
+
+        $productArray['logistic_class'] = $logisticClass;
         
+
         foreach ($saleChannels as $saleChannel) {
             $code = $saleChannel->getCode().'-';
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
