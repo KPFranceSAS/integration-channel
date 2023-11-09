@@ -16,6 +16,10 @@
 	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_LEROYMERLIN')  
 	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_BOULANGER')  %}
 	{% include "admin/fields/marketplaces/mirakl/billingContent.html.twig" with {'field': field} %}
+{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ARISE')
+		 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_AMAZFIT_ARISE') 
+		 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_SONOS_ARISE')  %}
+	{% include "admin/fields/marketplaces/arise/billingContent.html.twig" with {'field': field} %}
 {% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_FR') 	
 	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_ES')  
 	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_DE')  
