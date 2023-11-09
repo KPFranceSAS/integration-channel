@@ -747,6 +747,7 @@ class WebOrder
             IntegrationChannel::CHANNEL_FLASHLED,
             IntegrationChannel::CHANNEL_MINIBATT,
             IntegrationChannel::CHANNEL_FITBITCORPORATE,
+            IntegrationChannel::CHANNEL_MEDIAMARKT,
             IntegrationChannel::CHANNEL_DECATHLON,
             IntegrationChannel::CHANNEL_LEROYMERLIN,
             IntegrationChannel::CHANNEL_BOULANGER,

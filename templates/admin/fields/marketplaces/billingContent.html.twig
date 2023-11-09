@@ -12,6 +12,7 @@
 {% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_OWLETCARE')  %}
 	{% include "admin/fields/marketplaces/shopify/billingContent.html.twig" with {'field': field} %}
 {% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_DECATHLON') 	
+	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MEDIAMARKT')
 	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_LEROYMERLIN')  
 	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_BOULANGER')  %}
 	{% include "admin/fields/marketplaces/mirakl/billingContent.html.twig" with {'field': field} %}
