@@ -75,6 +75,7 @@ class ChannelAdvisorPricingStock extends PriceStockParent
             if(!in_array($product->getSku(), $skus)) {
                 $productArray = array_fill_keys($header, 0);
                 $productArray['sku'] = $product->getSku();
+                $productArray['logistic_class'] = 'FREE';
                 $datasToExport[]=implode(';', array_values($productArray));
             }
         }
