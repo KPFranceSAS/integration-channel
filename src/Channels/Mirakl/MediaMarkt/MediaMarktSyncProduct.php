@@ -55,13 +55,26 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
             "marketplace_generator_energy_travel" =>"FET_FRA_2022",
             "marketplace_solar_panel_energy_travel"	=> "FET_FRA_2013",
             "marketplace_travel_oven" => "FET_FRA_1009",
+            'marketplace_pizza_peel' =>	"FET_FRA_1604",
+            "marketplace_pizza_cutter" =>	"FET_FRA_1604",
+            "marketplace_pizza_brush"	 =>	"FET_FRA_1604",
+            "marketplace_pizza_scale"	 =>	"FET_FRA_1604",
+            "marketplace_pizza_roller"	 =>	"FET_FRA_1604",
+            "marketplace_pizza_apparel"	 =>	"FET_FRA_1604",
+            "marketplace_pizza_stone"	 =>	"FET_FRA_1604",
+            "marketplace_pizza_cooker"	 =>	"FET_FRA_1604",
+            "marketplace_pizza_table"	 =>	"FET_FRA_1604",
+            "marketplace_pizza_other"	 =>	"FET_FRA_1604",
             "marketplace_garden_spa_home" => "FET_FRA_1650",
             "marketplace_gaming_chair" => "FET_FRA_1382",
             'marketplace_projector_screen' => 'FET_FRA_1456',
             "marketplace_camera_accessories" => "FET_FRA_1200",
             "marketplace_camera_stands"	=> "FET_FRA_1419",
             "marketplace_camera_light" => "FET_FRA_1662",
-            "marketplace_camera_selfie" => "FET_FRA_1188"
+            "marketplace_camera_selfie" => "FET_FRA_1188",
+            "marketplace_camera_tripod"	 => "FET_FRA_1186",
+            "marketplace_audio_protection"	=> "FET_FRA_1536",
+            'marketplace_audio_tv_wall' => "FET_FRA_1421"
         ];
 
         foreach($equivalences as $pimCategory => $mmCategory) {

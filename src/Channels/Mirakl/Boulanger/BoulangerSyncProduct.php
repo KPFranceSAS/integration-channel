@@ -75,6 +75,17 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             "marketplace_smart_lock" =>"2402",
             "markerplace_blender"=>	"5603",
             "marketplace_air_fryer" =>	"8004",
+            "marketplace_travel_oven" => "30602",
+            'marketplace_pizza_peel' =>	"6001",
+            "marketplace_pizza_cutter" =>	"6001",
+            "marketplace_pizza_brush"	 =>	"6001",
+            "marketplace_pizza_scale"	 =>	"6001",
+            "marketplace_pizza_roller"	 =>	"6001",
+            "marketplace_pizza_apparel"	 =>	"6001",
+            "marketplace_pizza_stone"	 =>	"6001",
+            "marketplace_pizza_cooker"	 =>	"6001",
+            "marketplace_pizza_table"	 =>	"6001",
+            "marketplace_pizza_other"	 =>	"6001",
         ];
 
         foreach($equivalences as $pimCategory => $mmCategory) {
@@ -105,6 +116,10 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
                     $flatProduct = $this->addInfoFryer($product, $flatProduct);
 
                     break;
+                case '30602':
+                    $flatProduct = $this->addInfoPizza($product, $flatProduct);
+    
+                    break;
             };
             
 
@@ -118,8 +133,47 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     }
 
 
-  
 
+
+
+    public function addInfoPizza(array $product, array $flatProduct): array
+    {
+     
+
+        $flatProduct['CENTRALE_PIZZA_GRILL/contenu_du_carton/notice']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/nombre_de_personnes']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/diametre_de-des_pizza_s']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/energie']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/thermostat_reglable']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/temperature_maximum_de_cuisson']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/rapidite_de_montee_en_temperature']='';
+      
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/temps_de_cuisson']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/nombre_de_plaques']='';
+      
+        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/thermometre']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/minuteur']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/signal_sonore_de_fin_de_cuisson']='';
+      
+        $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/de_la_plaque']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/de_la_coque']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/coloris']='';
+      
+        $flatProduct['CENTRALE_PIZZA_GRILL/facilite_de_nettoyage/plaque_amovible']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/agencement/mobilite']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/agencement/poignees_de_transport']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/securite/poignee_froide']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/securite/parois_froides']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/services_inclus/fabrique_en']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/caracteristiques_generales/fonction']='';
+
+        $flatProduct['CENTRALE_PIZZA_GRILL/dimensions/hauteur_produit']=$this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0);
+        $flatProduct['CENTRALE_PIZZA_GRILL/dimensions/profondeur_produit']= $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
+        $flatProduct['CENTRALE_PIZZA_GRILL/dimensions/poids_net']= $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0);
+        $flatProduct['CENTRALE_PIZZA_GRILL/dimensions/largeur_produit']=$this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0);
+     
+        return $flatProduct;
+    }
 
 
 

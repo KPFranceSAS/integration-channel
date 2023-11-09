@@ -58,6 +58,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             "marketplace_lightning_home"=>"202358|AMPOULE_CONNECTEE|AMPOULE_CONNECTEE_ET_INTELLIGENTE|R13-003-004",
             "marketplace_accessories_computers"=>"200474|TOURNEVIS|TOURNEVIS_ET_ACCESSOIRES|R04-003-001",
             "marketplace_camera_video"=>"200401|CAMERA_DE_SURVEILLANCE|VIDEOSURVEILLANCE|R03-001-003",
+            "marketplace_travel_oven" => "201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007"
         ];
 
         foreach($equivalences as $pimCategory => $mmCategory) {
@@ -94,6 +95,10 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     break;
                 case  "205634|1024|R1001-1002-1004": // blender
                     $flatProduct ['ATT_00056'] = $this->getAttributeUnit($product, 'liquid_capacity', 'LITER', 1); // blender ;
+                    break;
+                case  "201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007": // pizza
+                    $flatProduct ['ATT_20510'] =  'LOV_000001'; // Food contact ;
+                    $flatProduct ['ATT_21148'] =  'LOV_000002'; // Contain woods ;
                     break;
             };
 
