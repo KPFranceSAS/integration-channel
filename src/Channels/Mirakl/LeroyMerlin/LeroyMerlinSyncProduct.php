@@ -58,7 +58,17 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             "marketplace_lightning_home"=>"202358|AMPOULE_CONNECTEE|AMPOULE_CONNECTEE_ET_INTELLIGENTE|R13-003-004",
             "marketplace_accessories_computers"=>"200474|TOURNEVIS|TOURNEVIS_ET_ACCESSOIRES|R04-003-001",
             "marketplace_camera_video"=>"200401|CAMERA_DE_SURVEILLANCE|VIDEOSURVEILLANCE|R03-001-003",
-            "marketplace_travel_oven" => "201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007"
+            "marketplace_travel_oven" => "201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007",
+            'marketplace_pizza_peel' =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
+            "marketplace_pizza_cutter" =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
+            "marketplace_pizza_brush"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
+            "marketplace_pizza_scale"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
+            "marketplace_pizza_roller"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
+            "marketplace_pizza_apparel"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
+            "marketplace_pizza_stone"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
+            "marketplace_pizza_cooker"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
+            "marketplace_pizza_table"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
+            "marketplace_pizza_other"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
         ];
 
         foreach($equivalences as $pimCategory => $mmCategory) {
