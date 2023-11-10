@@ -163,6 +163,13 @@ services:
             $boulangerClientUrl :  '%env(resolve:BOULANGER_URL)%'
             $boulangerClientKey : '%env(resolve:BOULANGER_KEY)%'
 
+            $fnacFrMiraklClientUrl :  '%env(resolve:FNACFRMIRAKL_URL)%'
+            $fnacFrMiraklClientKey : '%env(resolve:FNACFRMIRAKL_KEY)%'
+            $fnacFrClientUrl : '%env(resolve:FNACFR_URL)%'
+            $fnacFrClientPartnerId : '%env(resolve:FNACFR_PARTNERID)%'
+            $fnacFrClientShopId : '%env(resolve:FNACFR_SHOPID)%'
+            $fnacFrClientKey : '%env(resolve:FNACFR_KEY)%'
+
             $manoManoClientUrl :  '%env(resolve:MANOMANO_URL)%'
 
             $manoManoFrContractId :  '%env(resolve:MANOMANO_FR_CONTRAT)%'

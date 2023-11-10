@@ -410,6 +410,14 @@ class WebOrder
             case IntegrationChannel::CHANNEL_MANOMANO_FR:
                 return 'https://toolbox.manomano.com/orders';
 
+            case IntegrationChannel::CHANNEL_FNAC_FR:
+                return 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber;
+            case IntegrationChannel::CHANNEL_FNAC_ES:
+                return 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber;
+            case IntegrationChannel::CHANNEL_DARTY_FR:
+                return 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber;
+    
+
 
         }
         throw new Exception('No url link of weborder for ' . $this->channel);
@@ -446,9 +454,87 @@ class WebOrder
 
 
 
+    
+
+    public function isAShopifyOrder()
+    {
+        return in_array($this->channel, [
+            IntegrationChannel::CHANNEL_OWLETCARE,
+            IntegrationChannel::CHANNEL_PAXUK,
+            IntegrationChannel::CHANNEL_PAXEU,
+            IntegrationChannel::CHANNEL_FLASHLED,
+            IntegrationChannel::CHANNEL_MINIBATT,
+            IntegrationChannel::CHANNEL_FITBITCORPORATE,
+        ]);
+    }
+
+
+    public function isAFnacOrder()
+    {
+        return in_array($this->channel, [
+            IntegrationChannel::CHANNEL_FNAC_ES,
+            IntegrationChannel::CHANNEL_FNAC_FR,
+            IntegrationChannel::CHANNEL_DARTY_FR,
+        ]);
+    }
+
+
+    public function isAChannelAdvisorOrder()
+    {
+        return in_array($this->channel, [
+            IntegrationChannel::CHANNEL_CHANNELADVISOR
+        ]);
+    }
+
+
+    public function isAMiraklOrder()
+    {
+        return in_array($this->channel, [
+            IntegrationChannel::CHANNEL_MEDIAMARKT,
+            IntegrationChannel::CHANNEL_DECATHLON,
+            IntegrationChannel::CHANNEL_LEROYMERLIN,
+            IntegrationChannel::CHANNEL_BOULANGER,
+        ]);
+    }
+
+
+
+    public function isAManoManoOrder()
+    {
+        return in_array($this->channel, [
+            IntegrationChannel::CHANNEL_MANOMANO_ES,
+            IntegrationChannel::CHANNEL_MANOMANO_DE,
+            IntegrationChannel::CHANNEL_MANOMANO_IT,
+            IntegrationChannel::CHANNEL_MANOMANO_FR
+        ]);
+    }
+
+
+
+    public function isAliexpressOrder()
+    {
+        return in_array($this->channel, [
+            IntegrationChannel::CHANNEL_FITBITEXPRESS,
+            IntegrationChannel::CHANNEL_ALIEXPRESS,
+        ]);
+    }
+
+
+    public function isAMiraviaOrder()
+    {
+        return in_array($this->channel, [
+            IntegrationChannel::CHANNEL_ARISE,
+            IntegrationChannel::CHANNEL_SONOS_ARISE,
+            IntegrationChannel::CHANNEL_AMAZFIT_ARISE,
+        ]);
+    }
+
+
 
    
 
+
+            
 
     
     public static function createOneFrom($orderApi, $channel): WebOrder
@@ -528,6 +614,24 @@ class WebOrder
                 $webOrder->setChannel(IntegrationChannel::CHANNEL_MANOMANO_IT);
                 $webOrder->setSubchannel('Manomano.it');
                 return $webOrder;
+
+            case IntegrationChannel::CHANNEL_FNAC_ES:
+                $webOrder = WebOrder::createOrderFromFnac($orderApi);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_FNAC_ES);
+                $webOrder->setSubchannel('Fnac.es');
+                return $webOrder;
+
+            case IntegrationChannel::CHANNEL_FNAC_FR:
+                $webOrder = WebOrder::createOrderFromFnac($orderApi);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_FNAC_FR);
+                $webOrder->setSubchannel('Fnac.fr');
+                return $webOrder;
+
+            case IntegrationChannel::CHANNEL_DARTY_FR:
+                $webOrder = WebOrder::createOrderFromFnac($orderApi);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_DARTY_FR);
+                $webOrder->setSubchannel('Darty.fr');
+                return $webOrder;
             
         }
 
@@ -553,6 +657,18 @@ class WebOrder
         $webOrder->setChannel(IntegrationChannel::CHANNEL_PAXUK);
         $webOrder->setSubchannel('Uk.pax.com');
         $webOrder->addLog('Retrieved from uk.pax.com');
+        return $webOrder;
+    }
+
+
+
+    public static function createOneFromPaxEU($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromShopify($orderApi);
+        $webOrder->setExternalNumber('PAXEU-' . $orderApi['order_number']);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_PAXEU);
+        $webOrder->setSubchannel('Eu.pax.com');
+        $webOrder->addLog('Retrieved from eu.pax.com');
         return $webOrder;
     }
 
@@ -594,6 +710,20 @@ class WebOrder
     {
         $webOrder = new WebOrder();
         $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['processed_at']));
+        $webOrder->setContent($orderApi);
+        return $webOrder;
+    }
+
+
+
+
+
+
+    public static function createOrderFromFnac($orderApi): WebOrder
+    {
+        $webOrder = new WebOrder();
+        $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['created_at']));
+        $webOrder->setExternalNumber($orderApi['order_id']);
         $webOrder->setContent($orderApi);
         return $webOrder;
     }
@@ -741,24 +871,16 @@ class WebOrder
 
     public function getOrderContent()
     {
-        if (in_array($this->channel, [
-            IntegrationChannel::CHANNEL_OWLETCARE,
-            IntegrationChannel::CHANNEL_PAXUK,
-            IntegrationChannel::CHANNEL_FLASHLED,
-            IntegrationChannel::CHANNEL_MINIBATT,
-            IntegrationChannel::CHANNEL_FITBITCORPORATE,
-            IntegrationChannel::CHANNEL_MEDIAMARKT,
-            IntegrationChannel::CHANNEL_DECATHLON,
-            IntegrationChannel::CHANNEL_LEROYMERLIN,
-            IntegrationChannel::CHANNEL_BOULANGER,
-            IntegrationChannel::CHANNEL_MANOMANO_ES,
-            IntegrationChannel::CHANNEL_MANOMANO_DE,
-            IntegrationChannel::CHANNEL_MANOMANO_IT,
-            IntegrationChannel::CHANNEL_MANOMANO_FR,
-        ])) {
-            return $this->getContent();
-        }
-        return json_decode(json_encode($this->getContent()));
+        if($this->isAFnacOrder()
+            ||$this->isAManoManoOrder()
+            ||$this->isAMiraklOrder()
+            ||$this->isAShopifyOrder()
+            ){
+                return $this->getContent();
+            } else {
+                return json_decode(json_encode($this->getContent()));
+            }
+        
     }
 
 

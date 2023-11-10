@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<offers_update xmlns="http://www.fnac.com/schemas/mp-dialog.xsd" shop_id="{{fnacDartyClientShopId}}" partner_id="{{fnacDartyClientPartnerId}}" token="{{fnacDartyClientToken}}">
+ {% for offer in offers %}
+  <offer>
+    <product_reference type="Ean">{{offer.ean}}</product_reference>
+    <offer_reference type="SellerSku"><![CDATA[{{offer.sku}}]]></offer_reference>
+    <price>{{offer.price}}</price>
+    <product_state>11</product_state>
+    <quantity>{{offer.quantity}}</quantity>
+    <description_fr><![CDATA[{{offer.description}}]]></description_fr>
+    <is_shipping_free>{{offer.is_shipping_free}}</is_shipping_free>
+    {% if offer.promotion is defined  %}
+        <promotion type="{{offer.promotion.type}}">
+          <starts_at>{{offer.promotion.starts_at}}</starts_at>
+          <ends_at>{{offer.promotion.ends_at}}</ends_at>
+          <discount_type>{{offer.promotion.discount_type}}</discount_type>
+          <discount_value>{{offer.promotion.discount_value}}</discount_value>
+      </promotion>
+    {% endif %}
+    {% if offer.deee_tax %}
+    <deee_tax>{{offer.deee_tax}}</deee_tax>
+    {% endif %}
+  </offer>
+{% endfor %}
+</offers_update>

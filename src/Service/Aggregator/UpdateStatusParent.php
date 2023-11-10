@@ -156,7 +156,9 @@ abstract class UpdateStatusParent
             $this->addOnlyLogToOrderIfNotExists($order, 'Warehouse shipment posted in the ERP with number ' . $statusSaleOrder['ShipmentNo']);
             $this->addOnlyLogToOrderIfNotExists($order, 'Invoice created in the ERP with number ' . $statusSaleOrder['InvoiceNo']);
             $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
-            $invoice =  $businessCentralConnector->getSaleInvoiceByNumber($statusSaleOrder['InvoiceNo']);
+
+            //$invoice =  $businessCentralConnector->getSaleInvoiceByNumber($statusSaleOrder['InvoiceNo']);
+            $invoice =  $businessCentralConnector->getSaleInvoiceByNumber("FVF23/1000635");
             if ($invoice) {
                 $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and marked as fulfilled by '.$statusSaleOrder['shipmentCompany']);
                 $order->cleanErrors();

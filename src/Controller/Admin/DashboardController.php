@@ -15,6 +15,7 @@ use App\Controller\Order\DeliveryOrderCrudController;
 use App\Controller\Order\ErrorOrderCrudController;
 use App\Controller\Order\FitbitCorporateOrderCrudController;
 use App\Controller\Order\FlashledOrderCrudController;
+use App\Controller\Order\FnacDartyOrderCrudController;
 use App\Controller\Order\LateOrderCrudController;
 use App\Controller\Order\LeroyMerlinOrderCrudController;
 use App\Controller\Order\ManoManoOrderCrudController;
@@ -102,6 +103,9 @@ class DashboardController extends AbstractDashboardController
                         ->setController(DecathlonOrderCrudController::class),
                     MenuItem::linkToCrud('Fitbit Corporate', 'fas fa-running', WebOrder::class)
                         ->setController(FitbitCorporateOrderCrudController::class),
+                    MenuItem::linkToCrud('Fnac Darty', 'fas fa-video', WebOrder::class)
+                        ->setController(FnacDartyOrderCrudController::class),
+                        
                     MenuItem::linkToCrud('Flashled', 'far fa-lightbulb', WebOrder::class)
                         ->setController(FlashledOrderCrudController::class),
                      MenuItem::linkToCrud('Leroy Merlin', 'fas fa-hammer', WebOrder::class)

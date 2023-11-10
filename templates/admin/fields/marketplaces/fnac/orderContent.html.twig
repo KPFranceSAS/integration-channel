@@ -1,0 +1,53 @@
+{% if field.value|length > 0 %}
+	<div class="">
+		<table class="table datagrid ">
+			<thead>
+				<tr>
+					<th>
+						Sku
+					</th>
+					<th>
+						Title
+					</th>
+
+					<th>
+						Unit Price
+					</th>
+					<th>
+						Qty
+					</th>
+					<th>
+						Shiiping price
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for line in field.value.order_detail %}
+					<tr>
+						<td data-label="Sku" class="text-left field-text">
+							{{line.offer_seller_id}}
+						</td>
+						<td data-label="Title" class="text-left field-text">
+							{{line.product_name|slice(0,20)}}
+						</td>
+						<td data-label="Unit Price" class="text-left field-text">
+							{{line.price}}
+							EUR
+						</td>
+						<td data-label="Qty" class="text-left field-text">
+							{{line.quantity}}
+						</td>
+						<td data-label="Shipping" class="text-left field-text">
+							{{line.shipping_price}}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+			
+		</table>
+	</div>
+{% else %}
+	<span class="badge badge-secondary">
+		Data not accessible from Mirakl
+	</span>
+{% endif %}

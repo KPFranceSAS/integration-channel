@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<orders_query results_count="{{pagination}}" shop_id="{{fnacDartyClientShopId}}" partner_id="{{fnacDartyClientPartnerId}}" token="{{fnacDartyClientToken}}" xmlns="http://www.fnac.com/schemas/mp-dialog.xsd">
+<paging>{{paging}}</paging>
+{% for key,param in params %}
+ <{{key}}>{{param}}</{{key}}>
+{% endfor %}
+</orders_query>

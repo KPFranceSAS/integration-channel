@@ -1,27 +1,17 @@
-
-{% if entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_CHANNELADVISOR')  %}
+{% if entity.instance.isAChannelAdvisorOrder()  %}
 	{% include "admin/fields/marketplaces/channelAdvisor/shippingContent.html.twig" with {'field': field} %}
-{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ALIEXPRESS')
-	 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_FITBITEXPRESS')  %}
+{% elseif entity.instance.isAliexpressOrder() %}
 	{% include "admin/fields/marketplaces/aliExpress/shippingContent.html.twig" with {'field': field} %}
-{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_OWLETCARE') 
-	 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MINIBATT')
-	 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_FLASHLED')  %}
+{% elseif entity.instance.isAShopifyOrder()  %}
 	{% include "admin/fields/marketplaces/shopify/shippingContent.html.twig" with {'field': field} %}
-{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_ARISE')
-		 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_AMAZFIT_ARISE') 
-		 or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_SONOS_ARISE')  %}
-	{% include "admin/fields/marketplaces/arise/shippingContent.html.twig" with {'field': field} %}
-{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_DECATHLON')
-	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MEDIAMARKT')
-	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_LEROYMERLIN')  
-	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_BOULANGER')  %}
+{% elseif entity.instance.isAFnacOrder()  %}
+	{% include "admin/fields/marketplaces/fnac/shippingContent.html.twig" with {'field': field} %}
+{% elseif entity.instance.isAMiraklOrder()  %}
 	{% include "admin/fields/marketplaces/mirakl/shippingContent.html.twig" with {'field': field} %}
-{% elseif entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_FR') 	
-	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_ES')  
-	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_DE')  
-	or entity.instance.channel == constant('App\\Entity\\IntegrationChannel::CHANNEL_MANOMANO_IT')  %}
+{% elseif entity.instance.isAMiraviaOrder()  %}
+	{% include "admin/fields/marketplaces/arise/shippingContent.html.twig" with {'field': field} %}
+{% elseif entity.instance.isAManoManoOrder() %}
 	{% include "admin/fields/marketplaces/manomano/shippingContent.html.twig" with {'field': field} %}
-	{% else  %}
+{% else  %}
 	<div class="">Not instanced {{entity.instance.channel}} </div>
 {% endif %}

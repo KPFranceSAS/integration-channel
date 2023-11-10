@@ -1,0 +1,20 @@
+{% if field.value|length > 0 %}
+	<div class="">
+		{{field.value.shipping_address.firstname}} {{field.value.shipping_address.lastname}}<br/>
+		{{field.value.shipping_address.address1}}<br/>
+		{% if field.value.shipping_address.address2 is defined and  field.value.shipping_address.address2 is not iterable %}
+			{{field.value.shipping_address.address2}}<br/>
+		{% endif %}
+		{{field.value.shipping_address.zipcode}}
+		{{field.value.shipping_address.city}},
+		{% if field.value.shipping_address.state is defined and  field.value.shipping_address.state is not iterable %}
+			{{field.value.shipping_address.state}},
+		{% endif %}
+		{{field.value.shipping_address.country}}
+
+	</div>
+{% else %}
+	<span class="badge badge-secondary">
+		Data not accessible from Fnac
+	</span>
+{% endif %}

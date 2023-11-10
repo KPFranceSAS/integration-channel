@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<orders_update shop_id="{{fnacDartyClientShopId}}" partner_id="{{fnacDartyClientPartnerId}}" token="{{fnacDartyClientToken}}" xmlns="http://www.fnac.com/schemas/mp-dialog.xsd">
+  <order order_id="{{orderId}}" action="confirm_all_to_send">
+    <order_detail>
+      <action><![CDATA[Shipped]]></action>
+       <tracking_number><![CDATA[{{trackingNumber}}]]></tracking_number>
+      <tracking_company><![CDATA[{{carrierCode}}]]></tracking_company>
+    </order_detail>
+  </order>
+</orders_update>
