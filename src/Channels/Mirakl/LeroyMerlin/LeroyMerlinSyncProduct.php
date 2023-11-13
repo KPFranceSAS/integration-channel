@@ -110,6 +110,9 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     $flatProduct ['ATT_20510'] =  'LOV_000001'; // Food contact ;
                     $flatProduct ['ATT_21148'] =  'LOV_000002'; // Contain woods ;
                     break;
+                case  "201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003": // accessoires
+                    $flatProduct ['ATT_20510'] =  'LOV_000001'; // Food contact ;
+                    break;
             };
 
             if(in_array($flatProduct['product_category'], [
