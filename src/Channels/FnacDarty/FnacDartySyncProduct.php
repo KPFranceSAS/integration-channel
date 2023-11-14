@@ -71,7 +71,7 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
 
 
         $equivalences = [
-            "marketplace_video_projectors_video"=>	"401400009",
+           
             "marketplace_travel_oven"=>	"1700400041",
             "marketplace_pizza_peel"	=>"1100500002",
             "marketplace_pizza_cutter"=>	"1100500002",
@@ -83,6 +83,7 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
             "marketplace_pizza_cooker"	=>"1100500002",
             "marketplace_pizza_table"	=>"2000200113",
             "marketplace_pizza_other"=>	"2000200117",
+            "marketplace_video_projectors_video"=>	"401400009",
             "marketplace_projector_screen"	=>"401400008",
             "marketplace_projector_stand"	=>"401400002",
             "marketplace_projector_adapters"=>	"401400002",
