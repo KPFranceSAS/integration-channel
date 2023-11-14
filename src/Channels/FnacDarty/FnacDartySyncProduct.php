@@ -60,7 +60,7 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
         $flatProduct["GRP_Length/attributeValue"] = $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0);
         $flatProduct["GRP_Length/attributeUnit"] = $codeCm;
         $flatProduct["GRP_Weight/attributeValue"] =$this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 3);
-        $flatProduct["GRP_Length/attributeUnit"] = $this->getCodeMarketplaceInList('lkp_Linear_Size_unit', "kg");
+        $flatProduct["GRP_Weight/attributeUnit"] = $this->getCodeMarketplaceInList('lkp_Linear_Size_unit', "kg");
 
 
         for ($i = 1; $i <= 4;$i++) {
@@ -72,6 +72,26 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
 
         $equivalences = [
             "marketplace_video_projectors_video"=>	"401400009",
+            "marketplace_travel_oven"=>	"1700400041",
+            "marketplace_pizza_peel"	=>"1100500002",
+            "marketplace_pizza_cutter"=>	"1100500002",
+            "marketplace_pizza_brush"	=>"1100500002",
+            "marketplace_pizza_scale"=>	"1100500002",
+            "marketplace_pizza_stone"	=>"1100500002",
+            "marketplace_pizza_roller"=>	"1100500002",
+            "marketplace_pizza_apparel"=>"1100500002",
+            "marketplace_pizza_cooker"	=>"1100500002",
+            "marketplace_pizza_table"	=>"2000200113",
+            "marketplace_pizza_other"=>	"2000200117",
+            "marketplace_projector_screen"	=>"401400008",
+            "marketplace_projector_stand"	=>"401400002",
+            "marketplace_projector_adapters"=>	"401400002",
+            "marketplace_accessories_other"	=>"401400002",
+            "marketplace_garden_spa_home"	=>"2000600112",
+            "marketplace_solar_panel_energy_travel"	=>"800400201",
+            "marketplace_generator_energy_travel"	=>"800400324",
+            "marketplace_smart_lock"	=> "1000300012",
+            "marketplace_smart_lock_accesories"=>	"1000300012"
         ];
 
         foreach($equivalences as $pimCategory => $mmCategory) {
