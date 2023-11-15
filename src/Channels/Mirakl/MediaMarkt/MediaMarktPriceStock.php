@@ -37,18 +37,9 @@ class MediaMarktPriceStock extends MiraklPriceStockParent
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
 
             if ($productMarketplace->getEnabled()) {
-                $offer['price'] = $productMarketplace->getPrice();
-                $priceChannel = [];
-                $priceChannel ['channel_code'] = 'MM'.$saleChannel->getCountryCode();
-                $priceChannel['unit_origin_price']= $productMarketplace->getPrice() ;
                 $promotion = $productMarketplace->getBestPromotionForNow();
-                if ($promotion) {
-                    $priceChannel['unit_discount_price']= $promotion->getPromotionPrice() ;
-                    $offer['unit_discount_price']= $promotion->getPromotionPrice() ;
-                }
-
-
-                $offer["all_prices"][] = $priceChannel;
+                $offer['price'] = $productMarketplace->getPrice();
+                $offer['unit_discount_price']= $promotion->getPromotionPrice() ;
             }
         }
 
