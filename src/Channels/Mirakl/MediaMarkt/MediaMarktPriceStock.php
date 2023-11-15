@@ -32,7 +32,6 @@ class MediaMarktPriceStock extends MiraklPriceStockParent
                 ['code'=>"strike-price-type" , 'value' => "lowest-prior-price-according-to-state-law"],
             ]
         ];
-        $channelsActive = [];
 
         foreach ($saleChannels as $saleChannel) {
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
@@ -45,6 +44,7 @@ class MediaMarktPriceStock extends MiraklPriceStockParent
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 if ($promotion) {
                     $priceChannel['unit_discount_price']= $promotion->getPromotionPrice() ;
+                    $offer['discount-price']= $promotion->getPromotionPrice() ;
                 }
 
 
@@ -83,5 +83,5 @@ class MediaMarktPriceStock extends MiraklPriceStockParent
 
 
             
-           
+
 }
