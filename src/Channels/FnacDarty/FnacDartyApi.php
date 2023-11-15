@@ -83,7 +83,7 @@ abstract class FnacDartyApi extends MiraklApiParent
         $xmlAuthentication  = simplexml_load_string($xmlGenerated);
         $response    = $this->doPostRequest("offers_update", $xmlAuthentication->asXML());
         $xmlResponse = simplexml_load_string(trim($response));
-        if((string)$xmlResponse->attributes()->status=='OK'){
+        if((string)$xmlResponse->attributes()->status=='OK') {
             $this->logger->info('Created batch '.$xmlResponse->batch_id);
             return $xmlResponse->batch_id;
         } else {
@@ -216,8 +216,14 @@ abstract class FnacDartyApi extends MiraklApiParent
             $response    = $this->doPostRequest("orders_query", $xmlAuthentication->asXML());
             $xmlResponse = simplexml_load_string(trim($response), 'SimpleXMLElement', LIBXML_NOCDATA);
             $reponse = json_decode(json_encode((array)$xmlResponse), true);
+
             if(array_key_exists('order', $reponse)) {
-                $orders = array_merge($orders, $reponse['order']);
+                if(array_key_exists('order_id', $reponse['order'])) {
+                    $orders = array_merge($orders, [$reponse['order']]);
+                } else {
+                    $orders = array_merge($orders, $reponse['order']);
+                }
+               
             }
             $maxPage = (int)$xmlResponse->total_paging;
         }
