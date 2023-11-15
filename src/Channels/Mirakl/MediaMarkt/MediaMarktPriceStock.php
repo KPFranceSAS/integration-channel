@@ -40,8 +40,9 @@ class MediaMarktPriceStock extends MiraklPriceStockParent
                 $offer['price'] = $productMarketplace->getPrice();
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 if($promotion) {
-                   
-                    $offer['unit_discount_price']= $promotion->getPromotionPrice() ;
+                    $offer['discount'] = [
+                        'unit_discount_price' => $promotion->getPromotionPrice()
+                    ];
                 }
                 
             }
