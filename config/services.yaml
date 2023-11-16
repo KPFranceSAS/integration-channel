@@ -170,6 +170,13 @@ services:
             $fnacFrClientShopId : '%env(resolve:FNACFR_SHOPID)%'
             $fnacFrClientKey : '%env(resolve:FNACFR_KEY)%'
 
+            $dartyFrMiraklClientUrl :  '%env(resolve:DARTYFRMIRAKL_URL)%'
+            $dartyFrMiraklClientKey : '%env(resolve:DARTYFRMIRAKL_KEY)%'
+            $dartyFrClientUrl : '%env(resolve:DARTYFR_URL)%'
+            $dartyFrClientPartnerId : '%env(resolve:DARTYFR_PARTNERID)%'
+            $dartyFrClientShopId : '%env(resolve:DARTYFR_SHOPID)%'
+            $dartyFrClientKey : '%env(resolve:DARTYFR_KEY)%'
+
             $manoManoClientUrl :  '%env(resolve:MANOMANO_URL)%'
 
             $manoManoFrContractId :  '%env(resolve:MANOMANO_FR_CONTRAT)%'

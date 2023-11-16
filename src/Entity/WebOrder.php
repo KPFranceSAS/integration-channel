@@ -875,11 +875,11 @@ class WebOrder
             ||$this->isAManoManoOrder()
             ||$this->isAMiraklOrder()
             ||$this->isAShopifyOrder()
-            ){
-                return $this->getContent();
-            } else {
-                return json_decode(json_encode($this->getContent()));
-            }
+        ) {
+            return $this->getContent();
+        } else {
+            return json_decode(json_encode($this->getContent()));
+        }
         
     }
 
