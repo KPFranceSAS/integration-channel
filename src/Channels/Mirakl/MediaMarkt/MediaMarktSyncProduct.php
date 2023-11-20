@@ -46,7 +46,7 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
             'marketplace_accessories_other'=>'FET_FRA_1143',
             'marketplace_projector_stand'=>'FET_FRA_1639',
             'marketplace_projector_adapters'=>'FET_FRA_1640',
-            'marketplace_smart_lock'=>'FET_FRA_1175',
+            'marketplace_smart_lock'=>'FET_FRA_1471',
             'marketplace_hair_care_health_personal_care'=>'FET_FRA_1030',
             'marketplace_cutting_machines_art_crafts'=>'FET_FRA_2023',
             'marketplace_accessories_audio' => 'FET_FRA_1224',
@@ -54,7 +54,7 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
             "marketplace_camera_video" =>"FET_FRA_1614",
             "marketplace_generator_energy_travel" =>"FET_FRA_2022",
             "marketplace_solar_panel_energy_travel"	=> "FET_FRA_2013",
-            "marketplace_travel_oven" => "FET_FRA_1009",
+            "marketplace_travel_oven" => "FET_FRA_1349",
             'marketplace_pizza_peel' =>	"FET_FRA_1604",
             "marketplace_pizza_cutter" =>	"FET_FRA_1604",
             "marketplace_pizza_brush"	 =>	"FET_FRA_1604",
@@ -174,6 +174,8 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $flatProduct["PROD_FEAT_11330__ES_ES"] = $this->getAttributeUnit($product, 'output_power', 'WATT', 0).' W';
         $flatProduct["PROD_FEAT_10928"] = $flatProduct["PROD_FEAT_16246"];
 
+        // turntable
+        $flatProduct["PROD_FEAT_15635"] =  "50";
 
 
 

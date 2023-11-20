@@ -15,7 +15,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             ->addFilter('brand', 'NOT EMPTY')
             ->addFilter('ean', 'NOT EMPTY')
             ->addFilter('enabled_channel', '=', true, ['scope' => 'Marketplace'])
-            ->addFilter('marketplaces_assignement', 'IN', ['leroymerlin_fr_kp'])
+            ->addFilter('marketplaces_assignement', 'IN', ['leroymerlin_fr_kp', 'leroymerlin_es_kp', 'leroymerlin_it_kp'])
             ->addFilter('enabled', '=', true);
 
         return $this->akeneoConnector->searchProducts($searchBuilder, 'Marketplace');

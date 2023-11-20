@@ -70,6 +70,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
         $equivalences = [
             "marketplace_generator_energy_travel"=>	"603",
+            "marketplace_solar_panel_mobile" => "31809",
             "marketplace_solar_panel_energy_travel"=>	"31809",
             "marketplace_garden_spa_home"=>	"7205",
             "marketplace_smart_lock" =>"2402",
@@ -120,6 +121,10 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
                     $flatProduct = $this->addInfoPizza($product, $flatProduct);
     
                     break;
+                case "6001":
+                    $flatProduct = $this->addInfoAccesoriesPizza($product, $flatProduct);
+    
+                    break;
             };
             
 
@@ -134,38 +139,65 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
 
 
+   
+
+    public function addInfoAccesoriesPizza(array $product, array $flatProduct): array
+    {
+
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/type_de_produit'] = '';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/compatible_avec' ] ='';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/collection_accessoires'] ='';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/usage'] ='';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/matiere_de_l_accessoire' ] ='';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/compatibilite_de_l_accessoire/modele_1'] ='';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/conseil_de_securite' ] ='Produit non concerné';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/visuel_packaging_integrale_obligatoire_pour_les_produits_dangereux'] ='Non concerné';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/produit_cancerogene'] ='Non';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/produit_comburant_facilite_la_combustion'] ='Non';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/produit_corrosif'] ='Non';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/produit_dangereux_en_milieu_aquatique'] ='Non';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/produit_explosif'] ='Non';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/produit_avec_gaz_sous_pression'] ='Non';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/produit_inflammable'] ='Non';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/produit_toxique'] ='Non';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/produit_toxique_et_irritant'] ='Non';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/contenu_du_carton/notice']= 'Oui';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/services_inclus/fabrique_en']='Chine';
+
+        return $flatProduct;
+    }
+
 
 
     public function addInfoPizza(array $product, array $flatProduct): array
     {
-     
 
-        $flatProduct['CENTRALE_PIZZA_GRILL/contenu_du_carton/notice']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/nombre_de_personnes']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/diametre_de-des_pizza_s']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/energie']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/thermostat_reglable']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/temperature_maximum_de_cuisson']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/rapidite_de_montee_en_temperature']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/contenu_du_carton/notice']= $this->getAttributeSimple($product, 'user_guide_url', "fr_FR");
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/nombre_de_personnes']='24 personnes et +';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/diametre_de-des_pizza_s']='40 cm';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/energie']='Gaz';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/thermostat_reglable']='Oui';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/temperature_maximum_de_cuisson']='500°C';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/rapidite_de_montee_en_temperature']='Moins de 5 minutes';
       
-        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/temps_de_cuisson']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/nombre_de_plaques']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/temps_de_cuisson']='1 min';
+        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/nombre_de_plaques']='1 pierre';
       
-        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/thermometre']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/minuteur']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/signal_sonore_de_fin_de_cuisson']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/thermometre']='Oui';
+        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/minuteur']='Non';
+        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/signal_sonore_de_fin_de_cuisson']='Non';
       
-        $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/de_la_plaque']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/de_la_coque']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/coloris']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/de_la_plaque']='Pierre réfractaire';
+        $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/de_la_coque']='Acier inoxydable';
+        $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/coloris']='Noir';
       
-        $flatProduct['CENTRALE_PIZZA_GRILL/facilite_de_nettoyage/plaque_amovible']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/agencement/mobilite']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/agencement/poignees_de_transport']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/securite/poignee_froide']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/securite/parois_froides']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/services_inclus/fabrique_en']='';
-        $flatProduct['CENTRALE_PIZZA_GRILL/caracteristiques_generales/fonction']='';
+        $flatProduct['CENTRALE_PIZZA_GRILL/facilite_de_nettoyage/plaque_amovible']='Oui';
+        $flatProduct['CENTRALE_PIZZA_GRILL/agencement/mobilite']='Portable';
+        $flatProduct['CENTRALE_PIZZA_GRILL/agencement/poignees_de_transport']='Oui';
+        $flatProduct['CENTRALE_PIZZA_GRILL/securite/poignee_froide']='Non';
+        $flatProduct['CENTRALE_PIZZA_GRILL/securite/parois_froides']='Oui';
+        $flatProduct['CENTRALE_PIZZA_GRILL/services_inclus/fabrique_en']='Chine';
+        $flatProduct['CENTRALE_PIZZA_GRILL/caracteristiques_generales/fonction']='Appareil multifonction';
 
         $flatProduct['CENTRALE_PIZZA_GRILL/dimensions/hauteur_produit']=$this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0);
         $flatProduct['CENTRALE_PIZZA_GRILL/dimensions/profondeur_produit']= $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);

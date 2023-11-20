@@ -100,11 +100,9 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             "marketplace_generator_energy_travel"=>	"30060",
             "marketplace_garden_spa_home"=>"N-1148912",
             "marketplace_video_projectors_video"=>	"10309",
-            "marketplace_camera_video"=> "30041",
+            
             "marketplace_accessories_video"=>"N-300351",
-            "marketplace_camera_battery"=>	"30059",
-            "marketplace_camera_waterproof_accessories"=>"40014",
-            "marketplace_camera_charger"=>"N-300581",
+            "marketplace_camera_video"=> "30041",
             "marketplace_travel_oven"=>"10346",
             'marketplace_pizza_peel' =>	"10346",
             "marketplace_pizza_cutter" =>	"10346",
@@ -117,6 +115,9 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             "marketplace_pizza_table"	 =>	"10346",
             "marketplace_pizza_other"	 =>	"10346",
             "marketplace_camera_accessories" => "N-300351",
+            "marketplace_camera_battery"=>	"30059",
+            "marketplace_camera_waterproof_accessories"=>"40014",
+            "marketplace_camera_charger"=>"N-300581",
             "marketplace_camera_stands" => "N-300351",
             "marketplace_camera_light" => 	"N-300351",
             "marketplace_camera_selfie"	=> "N-300351"
