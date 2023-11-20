@@ -106,12 +106,7 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
 
 
         if(array_key_exists('Typology', $flatProduct)) {
-            switch($flatProduct['Typology']) {
-                case '200264|2231|R03-2003-2008':
-                    break;
-                case  "205634|1024|R1001-1002-1004": // blender
-                    break;
-            };
+            
         } else {
             $this->logger->info('Product not categorized');
         }

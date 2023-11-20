@@ -8,6 +8,9 @@
     <product_state>11</product_state>
     <quantity>{{offer.quantity}}</quantity>
     <description_fr><![CDATA[{{offer.description}}]]></description_fr>
+     {% if offer.logisticId is defined  %}
+    <logistic_type_id>{{offer.logisticId}}</logistic_type_id>
+    {% endif %}
     <is_shipping_free>{{offer.is_shipping_free}}</is_shipping_free>
     {% if offer.promotion is defined  %}
         <promotion type="{{offer.promotion.type}}">
@@ -17,6 +20,7 @@
           <discount_value>{{offer.promotion.discount_value}}</discount_value>
       </promotion>
     {% endif %}
+    <time_to_ship>3</time_to_ship>
     {% if offer.deee_tax %}
     <deee_tax>{{offer.deee_tax}}</deee_tax>
     {% endif %}

@@ -46,16 +46,20 @@ abstract class FnacDartyPriceStock extends PriceStockParent
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "description" => $product->getDescription(),
             "is_shipping_free" => $product->isFreeShipping() ? '1' : '0',
+            
         ];
 
-        
+        $logisticId = $this->defineLogisticClass($product);
+        if($logisticId){
+            $offer['logisticId']=$logisticId; 
+        }
 
         $saleChannel = $saleChannels[0];
         $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
         $offer['price'] = $productMarketplace->getPrice();
         $promotion = $productMarketplace->getBestPromotionForNow();
         if ($promotion) {
-            if($promotion->isFixedType()){
+            if($promotion->isFixedType()) {
                 $valuePromotion = $productMarketplace->getPrice() - $promotion->getFixedAmount();
                 $typePromotion = 'fixed';
             } else {
@@ -67,7 +71,7 @@ abstract class FnacDartyPriceStock extends PriceStockParent
             $beginDate = $promotion->getBeginDate();
             $beginDate->setTimezone(new DateTimeZone('+02:00'));
 
-             /** @var $endDate DateTime */
+            /** @var $endDate DateTime */
             $endDate = $promotion->getEndDate();
             $endDate->setTimezone(new DateTimeZone('+02:00'));
 
@@ -104,6 +108,28 @@ abstract class FnacDartyPriceStock extends PriceStockParent
             
 
         return $offer;
+    }
+
+
+    protected function defineLogisticClass(Product $product){
+        $mappings =$this->getMappingLogisticClass();
+        if($product->getLogisticClass() && array_key_exists($product->getLogisticClass()->getCode(), $mappings)){
+                return $mappings[$product->getLogisticClass()->getCode()];
+        }
+        return null;
+    }
+
+
+    public function getMappingLogisticClass(): array
+    {
+        return [
+            "XS" => "201",
+            "S" => "202",
+            "M" => "203",
+            "L" => "204",
+            "XL" => "205",
+            "XXL" => "205"
+        ];
     }
 
 
