@@ -60,7 +60,7 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
         $flatProduct["GRP_Length/attributeValue"] = $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0);
         $flatProduct["GRP_Length/attributeUnit"] = $codeCm;
         $flatProduct["GRP_Weight/attributeValue"] =$this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 3);
-        $flatProduct["GRP_Weight/attributeUnit"] = $this->getCodeMarketplaceInList('lkp_Linear_Size_unit', "kg");
+        $flatProduct["GRP_Weight/attributeUnit"] = $this->getCodeMarketplaceInList('lkp_MassWeight_unit', "kg");
 
 
         for ($i = 1; $i <= 4;$i++) {
