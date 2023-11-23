@@ -92,8 +92,26 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
             "marketplace_solar_panel_energy_travel"	=>"800400201",
             "marketplace_generator_energy_travel"	=>"800400324",
             "marketplace_smart_lock"	=> "1000300012",
-            "marketplace_smart_lock_accesories"=>	"1000300012"
+            "marketplace_smart_lock_accesories"=>	"1000300012",
+            'marketplace_solar_panel_mobile' =>	"800400201",
+            'marketplace_camera_waterproof_accessories'  => "400300015",
+           'marketplace_camera_battery' => "400300015",
+           'marketplace_camera_selfie'  => "400300015",
+           'marketplace_camera_charger' => "400300015",
+           'marketplace_camera_stands'  => "400300001",
+           'marketplace_camera_light'   => "400300015",
+           'marketplace_camera_tripod'  => "400300001",
+           'marketplace_camera_accessories' => "400300015",
+           'marketplace_camera_video' =>   "400800004",
+            'marketplace_hair_care_health_personal_care' =>	"1700200006",
+            'marketplace_turntable' =>		'402300004'	,
+            'marketplace_video_3D'	 =>	'401300009'	 ,
+            'marketplace_accessories_other'	 =>	 '401400002'
         ];
+
+
+
+        
 
         foreach($equivalences as $pimCategory => $mmCategory) {
             if(in_array($pimCategory, $product['categories'])) {
