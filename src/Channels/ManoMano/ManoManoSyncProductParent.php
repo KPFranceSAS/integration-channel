@@ -126,7 +126,6 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             'sku' => $product['identifier'],
             'ean' => $this->getAttributeSimple($product, 'ean'),
             'sku_manufacturer' => $product['identifier'],
-            'merchant_category' => $this->getFamilyName($product['family'], $this->getLocale()),
             'mm_category_id' => null,
             'product_url' => "",
             'min_quantity' => "",
@@ -135,26 +134,40 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             "unit_count_type" => '',
         ];
 
-        $familyPim = $product['family'];
+        $equivalences = [
+            "marketplace_solar_panel_energy_travel"	=>21255,
+            "marketplace_solar_panel_mobile"	=>21255,
+            "marketplace_generator_energy_travel"	=>22185,
+            "marketplace_garden_spa_home"	=>20008,
+            "markerplace_blender"	=>20597,
+            "marketplace_air_fryer"	=>20562,
+            "marketplace_smart_lock"	=>21503,
+            "marketplace_smart_lock_accesories"=>	21503,
+            "marketplace_travel_oven"	=>19639,
+            "marketplace_pizza_peel"	=>19639,
+            "marketplace_pizza_cutter"=>	19639,
+            "marketplace_pizza_brush"	=>19639,
+            "marketplace_pizza_scale"	=>19639,
+            "marketplace_pizza_roller"=>	19639,
+            "marketplace_pizza_apparel"	=>19639,
+            "marketplace_pizza_stone"	=>19639,
+            "marketplace_pizza_cooker"	=>19639,
+            "marketplace_pizza_table"	=>19639,
+            "marketplace_pizza_other"=>19639
+        ];
 
-        if($familyPim == 'solar_panel') {
-            $flatProduct['mm_category_id'] = 21255;
-        } elseif($familyPim == 'fixed_solar_panel') {
-            $flatProduct['mm_category_id'] = 21255;
-        } elseif($familyPim == 'power_station') {
-            $flatProduct['mm_category_id'] = 22185;
-        } elseif($familyPim == 'robot_piscine') {
-            $flatProduct['mm_category_id'] = 20008;
-        } elseif($familyPim == 'smart_home') {
-            if(in_array('markerplace_blender', $product['categories'])) {
-                $flatProduct ['mm_category_id'] = 20597;
-            } elseif (in_array('marketplace_air_fryer', $product['categories'])) {
-                $flatProduct ['mm_category_id'] = 20562;
+
+
+
+
+
+        foreach($equivalences as $pimCategory => $mmCategory) {
+            if(in_array($pimCategory, $product['categories'])) {
+                $flatProduct['mm_category_id'] = $mmCategory;
+                $flatProduct['merchant_category'] = $this->getCategorieName($pimCategory, $this->getLocale());
+                break;
             }
-        } elseif($familyPim == 'home_security') {
-            $flatProduct ['mm_category_id'] = 21503;
         }
-
         
 
 

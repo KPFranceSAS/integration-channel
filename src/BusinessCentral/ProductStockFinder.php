@@ -181,15 +181,14 @@ class ProductStockFinder
 
         if (!array_key_exists($sku, $this->stockBuffers)) {
             $product = $this->manager->getRepository(Product::class)->findOneBySku($sku);
-            if ($product && $product->getBrand() && $product->getBrand()->getStockBuffer()) {
+            if ($product && $product->getBrand() && $product->getBrand()->getStockBuffer()!==null) {
                 $this->stockBuffers[$sku]=$product->getBrand()->getStockBuffer();
             } else {
                 $this->stockBuffers[$sku]=Brand::DEFAULT_BUFFER;
             }
         }
         return  $this->stockBuffers[$sku];
-
-        
+       
     }
 
 
