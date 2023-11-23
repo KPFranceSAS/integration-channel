@@ -115,6 +115,7 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
 
         // attribtues
         $flatProduct["PROD_FEAT_10134__ES_ES"] = implode(", ", $this->getAttributeMultiChoice($product, 'connectivity_technology', 'es_ES'));
+      
         $colorName = $this->getAttributeChoice($product, "color", "es_ES");
         $flatProduct["PROD_FEAT_10812__ES_ES"] = $colorName ? $colorName : $this->getAttributeChoice($product, "color_generic", "es_ES");
         $flatProduct["PROD_FEAT_00003"] = $this->getCodeMarketplaceInList('LOV_FEAT_Color_basic', $this->getAttributeChoice($product, "color_generic", "en_GB"));
@@ -126,6 +127,10 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $power = $this->getAttributeUnit($product, 'power', 'WATT', 3);
         $flatProduct["PROD_FEAT_16246"] = $power ? $power.' W' : null;
 
+
+        //smart device
+        $flatProduct["PROD_FEAT_16517"] = $this->getCodeMarketplaceInList('LOV_FEAT_SmartHome', $this->getAttributeChoice($product, "smart_home_device", "en_GB"));
+        $flatProduct["PROD_FEAT_16518__ES_ES"] = implode(", ", $this->getAttributeMultiChoice($product, 'connectivity_technology', 'es_ES'));
 
         // audio
         $flatProduct["PROD_FEAT_11437__ES_ES"] = implode(", ", $this->getAttributeMultiChoice($product, 'speaker_type', 'es_ES'));
@@ -160,8 +165,9 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $flatProduct["PROD_FEAT_16614"]= implode('|', $attriburesAreaCoverted);
 
         
-        // barbecue
+        // pizza
         $flatProduct["PROD_FEAT_13500"] = $this->getAttributeSimple($product, "size_grilling");
+        $flatProduct["PROD_FEAT_11514__ES_ES"] = $this->getAttributeSimple($product, "finish_type", 'es_ES');
         
         // video
         $flatProduct["PROD_FEAT_13747__ES_ES"] = $this->getAttributeSimple($product, "image_rate");
@@ -176,6 +182,9 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
 
         // turntable
         $flatProduct["PROD_FEAT_15635"] =  "50";
+        $flatProduct["PROD_FEAT_10061__ES_ES"] = $this->getAttributeSimple($product, "playback_speed_turntable", 'es_ES');
+        
+        
 
 
 
