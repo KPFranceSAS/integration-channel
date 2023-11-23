@@ -167,7 +167,7 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         
         // pizza
         $flatProduct["PROD_FEAT_13500"] = $this->getAttributeSimple($product, "size_grilling");
-        $flatProduct["PROD_FEAT_11514__ES_ES"] = $this->getAttributeSimple($product, "finish_type", 'es_ES');
+        $flatProduct["PROD_FEAT_11514__ES_ES"] = $this->getAttributeSimple($product, "finish_type");
         
         // video
         $flatProduct["PROD_FEAT_13747__ES_ES"] = $this->getAttributeSimple($product, "image_rate");
@@ -182,7 +182,7 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
 
         // turntable
         $flatProduct["PROD_FEAT_15635"] =  "50";
-        $flatProduct["PROD_FEAT_10061__ES_ES"] = $this->getAttributeSimple($product, "playback_speed_turntable", 'es_ES');
+        $flatProduct["PROD_FEAT_10061__ES_ES"] = $this->getAttributeSimple($product, "playback_speed_turntable");
         
         
 
