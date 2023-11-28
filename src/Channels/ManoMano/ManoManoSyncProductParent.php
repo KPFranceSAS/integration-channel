@@ -231,7 +231,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 'round' => 2
             ],
             "weight" => [
-                "field" => 'package_weight',
+                "field" => 'product_weight',
                 "unit" => 'KILOGRAM',
                 "type" => "unit",
                 "convertUnit" => 'kg',
@@ -252,6 +252,10 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             }
         }
 
+
+        if(!$flatProduct['weight']) {
+            $flatProduct['weight']=$flatProduct['DisplayWeight'];
+        }
 
         
         
