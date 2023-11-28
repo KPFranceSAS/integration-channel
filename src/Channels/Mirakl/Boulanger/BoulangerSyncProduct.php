@@ -172,7 +172,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     public function addInfoPizza(array $product, array $flatProduct): array
     {
 
-        $flatProduct['CENTRALE_PIZZA_GRILL/contenu_du_carton/notice']= $this->getAttributeSimple($product, 'user_guide_url', "fr_FR");
+        $flatProduct['CENTRALE_PIZZA_GRILL/contenu_du_carton/notice']= 'Oui';
         $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/nombre_de_personnes']='24 personnes et +';
         $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/diametre_de-des_pizza_s']='40 cm';
         $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/energie']='Gaz';
