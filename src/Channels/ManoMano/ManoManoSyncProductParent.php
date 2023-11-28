@@ -231,7 +231,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 'round' => 2
             ],
             "weight" => [
-                "field" => 'product_weight',
+                "field" => 'package_weight',
                 "unit" => 'KILOGRAM',
                 "type" => "unit",
                 "convertUnit" => 'kg',
