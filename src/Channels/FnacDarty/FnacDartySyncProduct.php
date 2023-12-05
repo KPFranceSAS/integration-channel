@@ -72,7 +72,7 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
 
         $equivalences = [
            
-            "marketplace_travel_oven"=>	"1700400041",
+            "marketplace_travel_oven"=>	"1700400030",
             "marketplace_pizza_peel"	=>"1100500002",
             "marketplace_pizza_cutter"=>	"1100500002",
             "marketplace_pizza_brush"	=>"1100500002",
