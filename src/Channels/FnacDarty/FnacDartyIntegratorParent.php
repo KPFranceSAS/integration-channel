@@ -83,9 +83,11 @@ abstract class FnacDartyIntegratorParent extends IntegratorParent
         $orderBC->customerNumber = $this->getCustomerBC($orderApi);
               
         $orderBC->shipToName = $orderApi['shipping_address']['lastname']." ".$orderApi['shipping_address']['firstname'];
-        if( is_string($orderApi['shipping_address']['company'])){
+        if(is_string($orderApi['shipping_address']['company'])) {
             $orderBC->shipToName = $orderBC->shipToName.' ('.$orderApi['shipping_address']['company'].')';
         }
+
+        $orderBC->phoneNumber =
 
         $orderBC->billToName = $orderApi['billing_address']['lastname']." ".$orderApi['billing_address']['firstname'];
 
@@ -109,15 +111,19 @@ abstract class FnacDartyIntegratorParent extends IntegratorParent
             $orderBC->{$bcVal . "PostalAddress"}->city = substr($orderApi[$fnacVal.'_address']["city"], 0, 100);
             $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi[$fnacVal.'_address']["zipcode"];
             
-            $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = substr($orderApi[$fnacVal.'_address']["country"],0,2);
+            $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = substr($orderApi[$fnacVal.'_address']["country"], 0, 2);
 
-            if (array_key_exists('state',$orderApi[$fnacVal.'_address']) && is_string($orderApi[$fnacVal.'_address']['state'])) {
+            if (array_key_exists('state', $orderApi[$fnacVal.'_address']) && is_string($orderApi[$fnacVal.'_address']['state'])) {
                 $orderBC->{$bcVal . "PostalAddress"}->state = substr($orderApi[$fnacVal.'_address']['state'], 0, 30);
             }
         }
 
 
         $orderBC->phoneNumber = array_key_exists('phone', $orderApi['shipping_address']) &&  is_string($orderApi['shipping_address']['phone']) ? $orderApi['shipping_address']['phone'] : null;
+        if(!$orderBC->phoneNumber) {
+            $orderBC->phoneNumber = array_key_exists('mobile', $orderApi['shipping_address']) &&  is_string($orderApi['shipping_address']['mobile']) ? $orderApi['shipping_address']['mobile'] : null;
+        }
+
 
         $orderBC->externalDocumentNumber = $this->getExternalNumber($orderApi);
         $orderBC->pricesIncludeTax = true;
@@ -136,7 +142,7 @@ abstract class FnacDartyIntegratorParent extends IntegratorParent
             $saleLine->quantity = (int)$line['quantity'];
             $orderBC->salesLines[] = $saleLine;
 
-            if( array_key_exists('shipping_price', $line)){
+            if(array_key_exists('shipping_price', $line)) {
                 $livraisonFees += floatval($line['shipping_price']);
             }
         }
