@@ -6,11 +6,9 @@ use App\Controller\Admin\AdminCrudController;
 use App\Controller\Pricing\ImportPricingCrudController;
 use App\Entity\ProductSaleChannel;
 use App\Entity\Promotion;
-use App\Entity\SaleChannel;
 use App\Filter\ProductFilter;
 use App\Filter\SaleChannelFilter;
 use App\Helper\Utils\DatetimeUtils;
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -27,9 +25,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 
 class PromotionCrudController extends AdminCrudController
 {
@@ -47,38 +42,38 @@ class PromotionCrudController extends AdminCrudController
     }
 
 
-public function configureActions(Actions $actions): Actions
-{
-    $actions = parent::configureActions($actions);
-    $url = $this->adminUrlGenerator->setController(ImportPricingCrudController::class)->setAction('importPromotions')->generateUrl();
-    $actions->add(
-        Crud::PAGE_INDEX,
-        Action::new('addPromotions', 'Import promotions', 'fa fa-upload')
-            ->linkToUrl($url)
-            ->createAsGlobalAction()
-            ->displayAsLink()
-            ->addCssClass('btn btn-primary')
-    );
-    $actions->add(Crud::PAGE_EDIT, Action::DELETE);
-    return $actions;
-}
-
-
-public function createEntity(string $entityFqcn)
-{
-    $promotion = new Promotion();
-    $requestProductMarketplace = $this->getContext()->getRequest()->get('productSaleChannelId', null);
-    if ($requestProductMarketplace) {
-        $productMarketplace = $this->container
-                                    ->get('doctrine')
-                                    ->getManager()
-                                    ->getRepository(ProductSaleChannel::class)
-                                    ->find($requestProductMarketplace);
-        $promotion->setProductSaleChannel($productMarketplace);
+    public function configureActions(Actions $actions): Actions
+    {
+        $actions = parent::configureActions($actions);
+        $url = $this->adminUrlGenerator->setController(ImportPricingCrudController::class)->setAction('importPromotions')->generateUrl();
+        $actions->add(
+            Crud::PAGE_INDEX,
+            Action::new('addPromotions', 'Import promotions', 'fa fa-upload')
+                ->linkToUrl($url)
+                ->createAsGlobalAction()
+                ->displayAsLink()
+                ->addCssClass('btn btn-primary')
+        );
+        $actions->add(Crud::PAGE_EDIT, Action::DELETE);
+        return $actions;
     }
+
+
+    public function createEntity(string $entityFqcn)
+    {
+        $promotion = new Promotion();
+        $requestProductMarketplace = $this->getContext()->getRequest()->get('productSaleChannelId', null);
+        if ($requestProductMarketplace) {
+            $productMarketplace = $this->container
+                                        ->get('doctrine')
+                                        ->getManager()
+                                        ->getRepository(ProductSaleChannel::class)
+                                        ->find($requestProductMarketplace);
+            $promotion->setProductSaleChannel($productMarketplace);
+        }
    
-    return $promotion;
-}
+        return $promotion;
+    }
 
 
     public function configureFields(string $pageName): iterable
@@ -108,6 +103,8 @@ public function createEntity(string $entityFqcn)
                 ->setQueryBuilder(
                     fn (QueryBuilder $queryBuilder) => $queryBuilder->andWhere($queryBuilder->expr()->in('entity.saleChannel', $saleChannelsId))->orderBy('entity.product')
                 )
+                ->setCrudController(ProductSaleChannelCrudController::class)
+                ->autocomplete()
                 ->onlyOnForms(),
             DateTimeField::new('beginDate')
                 ->setColumns(3),
