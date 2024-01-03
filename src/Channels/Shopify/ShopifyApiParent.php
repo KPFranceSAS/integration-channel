@@ -198,7 +198,13 @@ abstract class ShopifyApiParent implements ApiInterface
 
     public function getFulfilmentOrder(string $orderId)
     {
-        return $this->client->get('orders/'.$orderId.'/fulfillment_orders')->getDecodedBody();
+        $fulfilmentOrders = $this->client->get('orders/'.$orderId.'/fulfillment_orders')->getDecodedBody();
+        foreach($fulfilmentOrders['fulfillment_orders'] as $fulfilmentOrder) {
+            if($fulfilmentOrder['status']=='open') {
+                return $fulfilmentOrder;
+            }
+        }
+        return $fulfilmentOrders['fulfillment_orders'][0];
     }
 
 
@@ -234,9 +240,9 @@ abstract class ShopifyApiParent implements ApiInterface
         $fulfilmentOrder = $this->getFulfilmentOrder($orderId);
         $params = [
             'line_items_by_fulfillment_order' => [
-                ['fulfillment_order_id'=>$fulfilmentOrder['fulfillment_orders'][0]['id']]
+                ['fulfillment_order_id'=>$fulfilmentOrder['id']]
             ],
-            //'notify_customer' => true,
+            'notify_customer' => true,
             'tracking_info' => []
         ];
             

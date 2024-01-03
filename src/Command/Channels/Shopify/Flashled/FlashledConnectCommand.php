@@ -28,7 +28,7 @@ class FlashledConnectCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dd($this->flashledApi->getFulfilmentsFulfilmentOrder('5840272654679'));
+        dd($this->flashledApi->markAsFulfilled('5843965149527', 'SENDING', '999966449052', 'https://info.sending.es/fgts/pub/locNumSeguimiento.seam?web=S&localizador=999966449052')->getDecodedBody());
         return 1;
     }
 }
