@@ -138,7 +138,6 @@ class GenerateAmzFbaRemoval
         if ($removalOrder->getShipCountry()=='GB') {
             $emails[] ='kyle@kpsport.com';
         } elseif ($removalOrder->getShipCountry()=='ES') {
-            $emails[] ='sav@kpsport.com';
             $emails[] ='xavi.montes@kpsport.com';
         }
 

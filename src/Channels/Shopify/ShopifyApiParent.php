@@ -2,6 +2,7 @@
 
 namespace App\Channels\Shopify;
 
+use App\Entity\WebOrder;
 use App\Service\Aggregator\ApiInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -201,6 +202,14 @@ abstract class ShopifyApiParent implements ApiInterface
     }
 
 
+    public function getFulfilmentsFulfilmentOrder(string $orderId)
+    {
+        return $this->client->get('orders/'.$orderId.'/fulfillments')->getDecodedBody();
+    }
+
+
+
+
 
     public function setInventoryLevel(int $locationId, int $inventoryItemId, int $avalaible)
     {
@@ -217,6 +226,7 @@ abstract class ShopifyApiParent implements ApiInterface
 
     public function markAsFulfilled(
         int $orderId,
+        string $trackingCompany = null,
         string $trackingNumber = null,
         string $trackingUrl = null
     ) {
@@ -226,9 +236,15 @@ abstract class ShopifyApiParent implements ApiInterface
             'line_items_by_fulfillment_order' => [
                 ['fulfillment_order_id'=>$fulfilmentOrder['fulfillment_orders'][0]['id']]
             ],
+            'notify_customer' => true,
             'tracking_info' => []
         ];
             
+
+        if ($trackingCompany) {
+            $params['tracking_info']['company'] =  $this->getCorrelationCarrier($trackingCompany);
+        }
+
 
         if ($trackingNumber) {
             $params['tracking_info']['number'] = $trackingNumber;
@@ -242,6 +258,13 @@ abstract class ShopifyApiParent implements ApiInterface
             "fulfillments",
             ["fulfillment" => $params]
         );
+    }
+
+
+
+    public function getCorrelationCarrier($carrier)
+    {
+        return 'Other';
     }
 
 

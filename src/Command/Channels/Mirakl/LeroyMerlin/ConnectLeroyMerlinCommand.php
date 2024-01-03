@@ -26,14 +26,8 @@ class ConnectLeroyMerlinCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $messages = $this->leroyMerlinApi->getMessages();
-        $messageJsons = [];
-        foreach($messages as $message){
-            $messageJsons[]=$this->leroyMerlinApi->getMessage($message['id'])->toArray();
-        }
-
-        file_put_contents('messages_leroy.json', json_encode($messageJsons));
-
+        dd($this->leroyMerlinApi->getOffers());
+       
 
         return Command::SUCCESS;
     }

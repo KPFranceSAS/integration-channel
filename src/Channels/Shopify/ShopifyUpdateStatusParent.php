@@ -23,6 +23,7 @@ abstract class ShopifyUpdateStatusParent extends UpdateStatusParent
         $postCode = $invoice['shippingPostalAddress']['postalCode'];
         $result = $this->getShopifyApi()->markAsFulfilled(
             $jsonOrder['id'],
+            $order->getCarrierService(),
             $trackingNumber,
             $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $trackingNumber, $postCode)
         );
