@@ -236,7 +236,7 @@ abstract class ShopifyApiParent implements ApiInterface
             'line_items_by_fulfillment_order' => [
                 ['fulfillment_order_id'=>$fulfilmentOrder['fulfillment_orders'][0]['id']]
             ],
-            'notify_customer' => true,
+            //'notify_customer' => true,
             'tracking_info' => []
         ];
             
