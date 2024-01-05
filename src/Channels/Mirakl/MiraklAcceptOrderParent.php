@@ -62,6 +62,8 @@ abstract class MiraklAcceptOrderParent
                     } else {
                         $refused = $this->apiClient->markOrderAsRefused($orderApi);
                         $this->logger->info('Marked as refused on '.$this->getChannel());
+                        $this->mailer->sendEmail("[".$this->getChannel()."] Refused ", "Refused >>> ".$this->getChannel()." ".$orderApi['id']);
+
                     }
                     
                     
