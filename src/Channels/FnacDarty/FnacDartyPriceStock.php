@@ -23,13 +23,26 @@ abstract class FnacDartyPriceStock extends PriceStockParent
     public function sendStocksPrices(array $products, array $saleChannels)
     {
 
+        $offerFnacs = $this->getFnacDartyApi()->getOffers();
+
+        $publishedOffers = [];
         $offers = [];
+        $deleteds = [];
         foreach ($products as $product) {
+            $publishedOffers[] = $product->getSku();
             $offers[] = $this->addProduct($product, $saleChannels);
         }
-        if(count($offers)>0) {
-            $this->getFnacDartyApi()->sendOffers($offers);
-            
+
+
+        foreach($offerFnacs as $offerFnac) {
+            if(!in_array($offerFnac['offer_seller_id'], $publishedOffers)) {
+                $this->logger->info('Remove offer '.$offerFnac['offer_seller_id']);
+                $deleteds[] =  $offerFnac['offer_seller_id'];
+            }
+        }
+
+        if(count($offers)>0 || count($deleteds)>0) {
+            $this->getFnacDartyApi()->sendOffers($offers, $deleteds);
         } else {
             $this->logger->info('No offers on '.$this->getChannel());
         }
@@ -50,8 +63,8 @@ abstract class FnacDartyPriceStock extends PriceStockParent
         ];
 
         $logisticId = $this->defineLogisticClass($product);
-        if($logisticId){
-            $offer['logisticId']=$logisticId; 
+        if($logisticId) {
+            $offer['logisticId']=$logisticId;
         }
 
         $saleChannel = $saleChannels[0];
@@ -111,10 +124,11 @@ abstract class FnacDartyPriceStock extends PriceStockParent
     }
 
 
-    protected function defineLogisticClass(Product $product){
+    protected function defineLogisticClass(Product $product)
+    {
         $mappings =$this->getMappingLogisticClass();
-        if($product->getLogisticClass() && array_key_exists($product->getLogisticClass()->getCode(), $mappings)){
-                return $mappings[$product->getLogisticClass()->getCode()];
+        if($product->getLogisticClass() && array_key_exists($product->getLogisticClass()->getCode(), $mappings)) {
+            return $mappings[$product->getLogisticClass()->getCode()];
         }
         return null;
     }

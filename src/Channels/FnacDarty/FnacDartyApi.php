@@ -72,13 +72,14 @@ abstract class FnacDartyApi extends MiraklApiParent
 
 
 
-    public function sendOffers($offers)
+    public function sendOffers($offers, $toDeletes = [])
     {
         $xmlGenerated = $this->twig->render('fnac/offers_update.xml.twig', [
             'fnacDartyClientToken'=> $this->getToken(),
             'fnacDartyClientPartnerId'=> $this->fnacDartyClientPartnerId,
             'fnacDartyClientShopId'=> $this->fnacDartyClientShopId,
-            'offers' => $offers
+            'offers' => $offers,
+            'toDeletes' => $toDeletes
         ]);
         $xmlAuthentication  = simplexml_load_string($xmlGenerated);
         $response    = $this->doPostRequest("offers_update", $xmlAuthentication->asXML());
@@ -235,12 +236,46 @@ abstract class FnacDartyApi extends MiraklApiParent
                 $orders[$k]['order_detail']=[$order['order_detail']];
             }
         }
-
-
-
         return $orders;
     }
 
+
+
+
+
+    public function getAllOffers(array $params= [])
+    {
+
+        $offset = 0;
+        $maxPage = 1;
+        $offers = [];
+        while ($offset < $maxPage) {
+            $this->logger->info('Page '.$offset);
+            $offset++;
+            $xmlGenerated = $this->twig->render('fnac/offers_query.xml.twig', [
+                'fnacDartyClientToken'=> $this->getToken(),
+                'fnacDartyClientPartnerId'=> $this->fnacDartyClientPartnerId,
+                'fnacDartyClientShopId'=> $this->fnacDartyClientShopId,
+                'params' => $params,
+                'pagination' => 50,
+                'paging' => $offset
+            ]);
+            $xmlAuthentication  = simplexml_load_string($xmlGenerated);
+            $response    = $this->doPostRequest("offers_query", $xmlAuthentication->asXML());
+            $xmlResponse = simplexml_load_string(trim($response), 'SimpleXMLElement', LIBXML_NOCDATA);
+            $reponse = json_decode(json_encode((array)$xmlResponse), true);
+            if(array_key_exists('offer', $reponse)) {
+                if(array_key_exists('offer_fnac_id', $reponse['offer'])) {
+                    $offers = array_merge($offers, [$reponse['offer']]);
+                } else {
+                    $offers = array_merge($offers, $reponse['offer']);
+                }
+               
+            }
+            $maxPage = (int)$xmlResponse->total_paging;
+        }
+        return $offers;
+    }
 
 
 

@@ -26,4 +26,10 @@
     {% endif %}
   </offer>
 {% endfor %}
+{% for toDelete in toDeletes %}
+  <offer>
+    <offer_reference type="SellerSku"><![CDATA[{{toDelete}}]]></offer_reference>
+    <treatment>delete</treatment>
+  </offer>
+{% endfor %}
 </offers_update>
