@@ -31,9 +31,9 @@ abstract class MiraklPriceStockParent extends PriceStockParent
         }
 
 
-        foreach($offerMirakls as $offerMirakl){
-            if(!in_array($offerMirakl['sku'], $publishedOffers)){
-                $$offers[] = [
+        foreach($offerMirakls as $offerMirakl) {
+            if(!in_array($offerMirakl['sku'], $publishedOffers)) {
+                $offers[] = [
                     "update_delete" => "delete",
                     "shop_sku" => $offerMirakl['sku'],
                     "product_id" => $offerMirakl['sku'],

@@ -355,7 +355,7 @@ abstract class IntegratorParent
             }
         } catch(Exception $e) {
             $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
-            $$this->addError($orderDb, 'Error during reservation creation in BC '.$message);
+            $this->addError($orderDb, 'Error during reservation creation in BC '.$message);
         }
     }
 

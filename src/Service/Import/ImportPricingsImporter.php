@@ -312,7 +312,7 @@ class ImportPricingsImporter
 
         $endDate = strlen($line['endDate']) == 10 ? DateTime::createFromFormat('Y-m-d H:i', $line['endDate'].' 23:59') : DateTime::createFromFormat('Y-m-d H:i', $line['endDate']);
         if (!$endDate) {
-            $this->addError($importPricing, 'End date '.$$line['endDate'].' is incorrect  on line '.$lineNumber);
+            $this->addError($importPricing, 'End date '.$line['endDate'].' is incorrect  on line '.$lineNumber);
             return $promotions;
         } else {
             $this->addLog($importPricing, 'End date '. $endDate->format('d-m-Y H:i'));
