@@ -13,6 +13,7 @@ use Mirakl\MCI\Shop\Request\Product\ProductImportRequest;
 use Mirakl\MMP\Common\Domain\Order\Accept\AcceptOrderLine;
 use Mirakl\MMP\OperatorShop\Request\Message\GetThreadDetailsRequest;
 use Mirakl\MMP\OperatorShop\Request\Message\GetThreadsRequest;
+use Mirakl\MMP\Shop\Request\Offer\GetOffersRequest;
 use Mirakl\MMP\Shop\Request\Offer\UpdateOffersRequest;
 use Mirakl\MMP\Shop\Request\Order\Accept\AcceptOrderRequest;
 use Mirakl\MMP\Shop\Request\Order\Document\UploadOrdersDocumentsRequest;
@@ -157,6 +158,44 @@ abstract class MiraklApiParent implements ApiInterface
 
 
 
+    /**
+     * Summary of GetOrdersRequest
+     * @param array $params
+     * @return array
+     */
+    public function getOffers(array $params = [])
+    {
+        $offset = 0;
+        $max_page = 1;
+        $orders = [];
+        while ($offset  < $max_page) {
+            $req = new GetOffersRequest($this->shopId);
+            foreach ($params as $key => $param) {
+                $req->setData($key, $param);
+            }
+
+            $req->setMax(self::PAGINATION);
+            $req->setOffset($offset);
+            $realOffset =  $offset+1;
+            $this->logger->info('Get offers batch n°' . $realOffset . ' / ' . $max_page . ' >>' . json_encode($params));
+            $reponse = $this->client->getOffers($req);
+            if (count($reponse->getItems()) > 0) {
+                $orders = array_merge($orders, $reponse->getItems());
+            }
+            $offset+=self::PAGINATION;
+            $max_page  = $reponse->getTotalCount();
+        }
+        $ordersSanitized = [];
+        foreach ($orders as $order) {
+            $ordersSanitized[]=$order->toArray();
+        }
+        return $ordersSanitized;
+    }
+
+
+
+
+
     public function getAllOrdersToAccept()
     {
         $params = [
@@ -175,9 +214,6 @@ abstract class MiraklApiParent implements ApiInterface
     public function getOrder(string $orderNumber)
     {
         $this->logger->info('Get Order  ' . $orderNumber);
-        
-
-
         return;
     }
 
@@ -246,12 +282,14 @@ abstract class MiraklApiParent implements ApiInterface
         return true;
     }
 
-    public function markOrderAsAccepted($order): bool
+
+
+    public function markOrderAsAcceptedRefused($order, $accepted): bool
     {
         $ordersId = [];
         foreach ($order['order_lines'] as $orderLine) {
             if ($orderLine["status"]['state']=='WAITING_ACCEPTANCE') {
-                $ordersId[] =  new AcceptOrderLine(['id' => $orderLine['id'], 'accepted' => true]);
+                $ordersId[] =  new AcceptOrderLine(['id' => $orderLine['id'], 'accepted' => $accepted]);
             }
         }
         if (count($ordersId)>0) {
@@ -261,6 +299,18 @@ abstract class MiraklApiParent implements ApiInterface
         } else {
             return false;
         }
+    }
+
+
+    public function markOrderAsAccepted($order): bool
+    {
+        return $this->markOrderAsAcceptedRefused($order, true);
+    }
+
+
+    public function markOrderAsRefused($order): bool
+    {
+        return $this->markOrderAsAcceptedRefused($order, false);
     }
         
 

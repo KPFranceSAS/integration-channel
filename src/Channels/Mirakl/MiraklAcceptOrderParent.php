@@ -2,6 +2,7 @@
 
 namespace App\Channels\Mirakl;
 
+use App\BusinessCentral\ProductStockFinder;
 use App\Channels\Mirakl\MiraklApiParent;
 use App\Entity\WebOrder;
 use App\Helper\MailService;
@@ -20,16 +21,20 @@ abstract class MiraklAcceptOrderParent
 
     protected $mailer;
 
+    protected $productStockFinder;
+
     /** @var App\Channels\Mirakl\MiraklApiParent */
     protected $apiClient;
 
     public function __construct(
         LoggerInterface $logger,
         MailService $mailer,
-        ApiAggregator $apiAggregator
+        ApiAggregator $apiAggregator,
+        ProductStockFinder $productStockFinder
     ) {
         $this->logger= $logger;
         $this->mailer = $mailer;
+        $this->productStockFinder = $productStockFinder;
         $this->apiClient = $apiAggregator->getService($this->getChannel());
     }
 
@@ -51,8 +56,14 @@ abstract class MiraklAcceptOrderParent
             $this->logger->info(count($ordersApi).' orders to accept');
             foreach ($ordersApi as $orderApi) {
                 try {
-                    $accepted = $this->apiClient->markOrderAsAccepted($orderApi);
-                    $this->logger->info('Marked as accepted on '.$this->getChannel());
+                    if($this->checkStock($orderApi)) {
+                        $accepted = $this->apiClient->markOrderAsAccepted($orderApi);
+                        $this->logger->info('Marked as accepted on '.$this->getChannel());
+                    } else {
+                        $refused = $this->apiClient->markOrderAsRefused($orderApi);
+                        $this->logger->info('Marked as refused on '.$this->getChannel());
+                    }
+                    
                     
                 } catch (Exception $exception) {
                     $this->mailer->sendEmail("[".$this->getChannel()."] Acceptation problem ", 'Problem acceptation '.$this->getChannel().' #' . $orderApi['id'] . ' > ' . $exception->getMessage());
@@ -63,5 +74,26 @@ abstract class MiraklAcceptOrderParent
         }
         
     }
+
+
+
+
+
+    public function checkStock($orderApi):bool
+    {
+        $stockGood = true;
+        foreach($orderApi['order_lines'] as $orderLine) {
+            $stockBC = $this->productStockFinder->getFinalStockProductWarehouse($orderLine['offer']['sku']);
+            if($stockBC < $orderLine['quantity']) {
+                $this->logger->info('Miss stock for '.$orderLine['offer']['sku']);
+                $stockGood = false;
+            }
+        }
+        return $stockGood;
+    }
+
+
+
+
 
 }
