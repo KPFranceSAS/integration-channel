@@ -33,6 +33,7 @@ abstract class MiraklPriceStockParent extends PriceStockParent
 
         foreach($offerMirakls as $offerMirakl) {
             if(!in_array($offerMirakl['sku'], $publishedOffers)) {
+                $this->logger->info('Remove offer '.$offerMirakl['sku']);
                 $offers[] = [
                     "update_delete" => "delete",
                     "shop_sku" => $offerMirakl['sku'],
