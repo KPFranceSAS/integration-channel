@@ -25,7 +25,7 @@ class ConnectFnacCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dd($this->manoManoFrApi->getAllOffers());
+        dd($this->manoManoFrApi->getOffers());
         
         return Command::SUCCESS;
     }

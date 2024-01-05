@@ -243,7 +243,7 @@ abstract class FnacDartyApi extends MiraklApiParent
 
 
 
-    public function getAllOffers(array $params= [])
+    public function getOffers(array $params= [])
     {
 
         $offset = 0;
