@@ -120,7 +120,8 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             "marketplace_camera_charger"=>"N-300581",
             "marketplace_camera_stands" => "N-300351",
             "marketplace_camera_light" => 	"N-300351",
-            "marketplace_camera_selfie"	=> "N-300351"
+            "marketplace_camera_selfie"	=> "N-300351",
+            "marketplace_camera_tripod"	=> "N-300351"
         ];
 
         foreach($equivalences as $pimCategory => $mmCategory) {
