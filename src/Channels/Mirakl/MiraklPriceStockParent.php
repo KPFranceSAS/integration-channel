@@ -34,12 +34,7 @@ abstract class MiraklPriceStockParent extends PriceStockParent
         foreach($offerMirakls as $offerMirakl) {
             if(!in_array($offerMirakl['sku'], $publishedOffers)) {
                 $this->logger->info('Remove offer '.$offerMirakl['sku']);
-                $offers[] = [
-                    "update_delete" => "delete",
-                    "shop_sku" => $offerMirakl['sku'],
-                    "product_id" => $offerMirakl['sku'],
-                    "product_id_type" => "SHOP_SKU"
-                ];
+                $offers[] = $this->getDeleteOffer($offerMirakl['sku']);
             }
         }
 
@@ -55,6 +50,20 @@ abstract class MiraklPriceStockParent extends PriceStockParent
 
 
     abstract protected function getFreeLogistic(): string;
+
+
+
+    protected function getDeleteOffer($sku)
+    {
+      
+        return  [
+            "update_delete" => "delete",
+        "shop_sku" => $sku,
+        "product_id" => $sku,
+        "product_id_type" => "SHOP_SKU"
+        ];
+        
+    }
 
 
     protected function defineLogisticClass(Product $product)

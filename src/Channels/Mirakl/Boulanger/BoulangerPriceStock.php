@@ -18,6 +18,18 @@ class BoulangerPriceStock extends MiraklPriceStockParent
         return IntegrationChannel::CHANNEL_BOULANGER;
     }
 
+    protected function getDeleteOffer($sku)
+    {
+        $offer = parent::getDeleteOffer($sku);
+        $offer["offer_additional_fields"] = [
+            [
+                'code'=>"garantie-mois",
+                'value' => "24"
+            ],
+        ];
+        return $offer;
+    }
+
     protected function addProduct(Product $product, array $saleChannels): array
     {
         $offer = [
