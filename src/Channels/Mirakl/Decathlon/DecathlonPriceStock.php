@@ -14,10 +14,6 @@ class DecathlonPriceStock extends MiraklPriceStockParent
     }
 
 
-
-   
-
-
     protected function addProduct(Product $product, array $saleChannels): array
     {
         $offer = [
@@ -27,7 +23,7 @@ class DecathlonPriceStock extends MiraklPriceStockParent
             "product_id" => $product->getSku(),
             "product_id_type" => "SHOP_SKU",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
-            "logistic_class" => "M",
+            "logistic_class" => $this->defineLogisticClass($product),
             "description" => 'Offer '.$product->getDescription(),
             "leadtime_to_ship" => "2",
             "all_prices" => [],
@@ -66,7 +62,7 @@ class DecathlonPriceStock extends MiraklPriceStockParent
 
     protected function getFreeLogistic() : string
     {
-        return "FS";
+        return "free shipping";
 
     }
 
@@ -74,12 +70,12 @@ class DecathlonPriceStock extends MiraklPriceStockParent
     public function getMappingLogisticClass(): array
     {
         return [
-            "XS" => "LSNT",
-            "S" => "LBNT",
-            "M" => "LBT",
-            "L" => "PST",
-            "XL" => "PMT",
-            "XXL" => "PBT"
+            "XS" => "XS",
+            "S" => "S",
+            "M" => "M",
+            "L" => "L",
+            "XL" => "XL",
+            "XXL" => "XXL"
         ];
     }
 }

@@ -27,7 +27,7 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             "product_id" => $product->getSku(),
             "product_id_type" => "SHOP_SKU",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
-            "logistic_class" => "XXS",
+            "logistic_class" => $this->defineLogisticClass($product),
             "description" => $product->getDescription(),
             "leadtime_to_ship" => in_array($product->getSku(), ['ANK-PCK-7', 'ANK-PCK-8', 'ANK-PCK-9','ANK-PCK-10']) ? "10" : "2",
             "all_prices" => [],
@@ -87,7 +87,7 @@ class BoulangerPriceStock extends MiraklPriceStockParent
 
     protected function getFreeLogistic() : string
     {
-        return "FS";
+        return "XXS";
 
     }
 
@@ -95,12 +95,12 @@ class BoulangerPriceStock extends MiraklPriceStockParent
     public function getMappingLogisticClass(): array
     {
         return [
-            "XS" => "LSNT",
-            "S" => "LBNT",
-            "M" => "LBT",
-            "L" => "PST",
-            "XL" => "PMT",
-            "XXL" => "PBT"
+            "XS" => "XS",
+            "S" => "S",
+            "M" => "M",
+            "L" => "L",
+            "XL" => "XL",
+            "XXL" => "XXL"
         ];
     }
 }

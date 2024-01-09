@@ -225,7 +225,7 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             "12009934" =>   BusinessCentralConnector::KP_FRANCE,
             "12010026" =>   BusinessCentralConnector::KP_FRANCE,
             "12044694" =>   BusinessCentralConnector::GADGET_IBERIA,
-            "12047712" => BusinessCentralConnector::KP_FRANCE, // test
+            "12047712" =>   BusinessCentralConnector::KP_FRANCE, // test
         ];
         if (array_key_exists($profileId, $mapCustomer)) {
             return $mapCustomer[$profileId];

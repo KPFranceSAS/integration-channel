@@ -27,7 +27,8 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
             "product_id" => $product->getSku(),
             "product_id_type" => "SHOP_SKU",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
-            "logistic_class" => "FREE",
+            "logistic_class" => $this->defineLogisticClass($product),
+        
             "description" => $product->getDescription(),
             "leadtime_to_ship" => in_array($product->getSku(), ['ANK-PCK-7', 'ANK-PCK-8', 'ANK-PCK-9','ANK-PCK-10']) ? "10" : "2",
             "all_prices" => [],
@@ -68,7 +69,7 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
 
     protected function getFreeLogistic() : string
     {
-        return "FS";
+        return "FREE";
 
     }
 
@@ -76,12 +77,12 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
     public function getMappingLogisticClass(): array
     {
         return [
-            "XS" => "LSNT",
-            "S" => "LBNT",
-            "M" => "LBT",
-            "L" => "PST",
-            "XL" => "PMT",
-            "XXL" => "PBT"
+            "XS" => "XXXS",
+            "S" => "XXXS",
+            "M" => "XXXS",
+            "L" => "XXS",
+            "XL" => "XS",
+            "XXL" => "INIT"
         ];
     }
 }
