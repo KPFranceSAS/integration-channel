@@ -172,12 +172,16 @@ abstract class ShopifyApiParent implements ApiInterface
         $inventoryLevels = [];
         $products = $this->getAllProducts();
         foreach ($products as $product) {
-            foreach ($product['variants'] as $variant) {
-                $inventoryLevels[] = [
-                    'sku' => $variant['sku'],
-                    'inventory_item_id' => $variant['inventory_item_id']
-                ];
+            if($product['status']=='active') {
+                foreach ($product['variants'] as $variant) {
+                    $inventoryLevels[] = [
+                        'sku' => $variant['sku'],
+                        'inventory_item_id' => $variant['inventory_item_id'],
+                        'product_title' => $product['title'],
+                    ];
+                }
             }
+            
         }
         return $inventoryLevels;
     }

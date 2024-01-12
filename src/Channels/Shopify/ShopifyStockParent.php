@@ -59,8 +59,9 @@ abstract class ShopifyStockParent extends StockParent
             if ($this->productStockFinder->isBundle($sku)) {
                 $this->logger->info('Bundle ' . $sku  . ' no check');
             } else {
+                $this->logger->info('Check ' . $sku);
                 if (!$this->isSkuExists($sku)) {
-                    $errors[] = 'Sku '.$sku. ' do not exist in BC and no sku mappings have been done also.';
+                    $errors[] = 'Sku '.$sku. ' for '.$inventoLeveli['product_title'].' do not exist in BC and no sku mappings have been done also.';
                 }
             }
         }
