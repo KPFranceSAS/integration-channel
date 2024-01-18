@@ -8,20 +8,7 @@ use App\Entity\IntegrationChannel;
 
 class MediaMarktSyncProduct extends MiraklSyncProductParent
 {
-    protected function getProductsEnabledOnChannel()
-    {
-        $searchBuilder = new SearchBuilder();
-        $searchBuilder
-            ->addFilter('brand', 'NOT EMPTY')
-            ->addFilter('ean', 'NOT EMPTY')
-            ->addFilter('enabled_channel', '=', true, ['scope' => 'Marketplace'])
-            ->addFilter('marketplaces_assignement', 'IN', ['mediamarkt_es_gi'])
-            ->addFilter('enabled', '=', true);
-
-        return $this->akeneoConnector->searchProducts($searchBuilder, 'Marketplace');
-    }
-
-    
+      
 
    
     protected function flatProduct(array $product):array

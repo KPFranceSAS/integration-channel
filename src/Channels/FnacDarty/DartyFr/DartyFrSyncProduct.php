@@ -7,10 +7,6 @@ use App\Entity\IntegrationChannel;
 
 class DartyFrSyncProduct extends FnacDartySyncProduct
 {
-    protected function getChannelPim(): string
-    {
-        return 'darty_fr_kp';
-    }
 
     protected function getLocalePim(): string
     {

@@ -8,22 +8,7 @@ use App\Entity\IntegrationChannel;
 
 class LeroyMerlinSyncProduct extends MiraklSyncProductParent
 {
-    protected function getProductsEnabledOnChannel()
-    {
-        $searchBuilder = new SearchBuilder();
-        $searchBuilder
-            ->addFilter('brand', 'NOT EMPTY')
-            ->addFilter('ean', 'NOT EMPTY')
-            ->addFilter('enabled_channel', '=', true, ['scope' => 'Marketplace'])
-            ->addFilter('marketplaces_assignement', 'IN', ['leroymerlin_fr_kp', 'leroymerlin_es_kp', 'leroymerlin_it_kp'])
-            ->addFilter('enabled', '=', true);
 
-        return $this->akeneoConnector->searchProducts($searchBuilder, 'Marketplace');
-    }
-
-    
-
-   
     protected function flatProduct(array $product):array
     {
         $this->logger->info('Flat product '.$product['identifier']);

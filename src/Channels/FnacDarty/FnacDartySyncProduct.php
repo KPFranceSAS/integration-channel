@@ -7,23 +7,10 @@ use App\Channels\Mirakl\MiraklSyncProductParent;
 
 abstract class FnacDartySyncProduct extends MiraklSyncProductParent
 {
-    protected function getProductsEnabledOnChannel()
-    {
-        $searchBuilder = new SearchBuilder();
-        $searchBuilder
-            ->addFilter('brand', 'NOT EMPTY')
-            ->addFilter('ean', 'NOT EMPTY')
-            ->addFilter('enabled_channel', '=', true, ['scope' => 'Marketplace'])
-            ->addFilter('marketplaces_assignement', 'IN', [$this->getChannelPim()])
-            ->addFilter('enabled', '=', true);
-
-        return $this->akeneoConnector->searchProducts($searchBuilder, 'Marketplace');
-    }
+   
     
     abstract public function getChannel(): string;
 
-
-    abstract protected function getChannelPim() : string;
     
 
     abstract protected function getLocalePim() : string;

@@ -2,13 +2,16 @@
 
 namespace App\Channels\Mirakl;
 
+use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Channels\Mirakl\MiraklApiParent;
+use App\Entity\IntegrationChannel;
 use App\Helper\MailService;
 use App\Helper\Utils\StringUtils;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\ProductSyncParent;
 use App\Service\Pim\AkeneoConnector;
+use Doctrine\Persistence\ManagerRegistry;
 use League\Csv\Writer;
 use Mirakl\MCI\Shop\Request\Product\ProductImportRequest;
 use Psr\Log\LoggerInterface;
@@ -16,16 +19,18 @@ use Symfony\Component\Filesystem\Filesystem;
 
 abstract class MiraklSyncProductParent extends ProductSyncParent
 {
-    abstract protected function getProductsEnabledOnChannel();
-    
+       
     abstract public function getChannel(): string;
 
     abstract protected function flatProduct(array $product): array;
 
     protected $projectDir;
 
+    protected $manager;
+
 
     public function __construct(
+        ManagerRegistry $manager,
         AkeneoConnector $akeneoConnector,
         LoggerInterface $logger,
         MailService $mailer,
@@ -33,9 +38,39 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
         ApiAggregator $apiAggregator,
         $projectDir
     ) {
+        $this->manager = $manager->getManager();
         $this->projectDir =  $projectDir.'/var/catalogue/'.$this->getLowerChannel().'/';
         parent::__construct($logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
     }
+
+
+
+    protected function getProductsEnabledOnChannel()
+    {
+
+        $integrationChannel = $this->manager->getRepository(IntegrationChannel::class)->findOneByCode($this->getChannel());
+        $saleChannelsCode = [];
+        foreach($integrationChannel->getSaleChannels() as $saleChannel){
+            if($saleChannel->getCodePim()){
+                $saleChannelsCode[] = $saleChannel->getCodePim();
+            }
+        }
+
+
+        $searchBuilder = new SearchBuilder();
+        $searchBuilder
+            ->addFilter('brand', 'NOT EMPTY')
+            ->addFilter('ean', 'NOT EMPTY')
+            ->addFilter('enabled_channel', '=', true, ['scope' => 'Marketplace'])
+            ->addFilter('marketplaces_assignement', 'IN', $saleChannelsCode)
+            ->addFilter('enabled', '=', true);
+
+        return $this->akeneoConnector->searchProducts($searchBuilder, 'Marketplace');
+    }
+
+
+
+
 
     protected function getLowerChannel()
     {
