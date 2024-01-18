@@ -49,6 +49,7 @@ class SaleChannelCrudController extends AdminCrudController
         return [
             TextField::new('code'),
             TextField::new('name'),
+            TextField::new('codePim'),
             ChoiceField::new('countryCode', 'Country')->setChoices([
                 'France' => 'FR',
                 'Germany' => 'DE',

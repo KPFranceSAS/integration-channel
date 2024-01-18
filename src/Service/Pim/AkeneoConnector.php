@@ -4,18 +4,24 @@ namespace App\Service\Pim;
 
 use Akeneo\Pim\ApiClient\AkeneoPimClientBuilder;
 use Akeneo\Pim\ApiClient\Search\SearchBuilder;
+use Psr\Log\LoggerInterface;
 
 class AkeneoConnector
 {
     private $client;
 
+    private $logger;
+
+
     public function __construct(
+        LoggerInterface $logger,
         string $akeneoUrl,
         string $akeneoClientId,
         string $akeneoClientSecret,
         string $akeneoUsername,
         string $akeneoPassword
     ) {
+        $this->logger = $logger;
         $clientBuilder = new AkeneoPimClientBuilder($akeneoUrl);
         $this->client = $clientBuilder->buildAuthenticatedByPassword(
             $akeneoClientId,
@@ -101,5 +107,32 @@ class AkeneoConnector
     public function getClient()
     {
         return $this->client;
+    }
+
+
+    public function getParent($identifier): array
+    {
+        return $this->client->getProductModelApi()->get($identifier);
+    }
+
+    public function updateParent($identifier, $values): int
+    {
+        return $this->client->getProductModelApi()->upsert($identifier, $values);
+    }
+
+
+    public function updateProductParent($identifier, $parent, $updateProductValue)
+    {
+        $this->logger->info('Update child '.$identifier.' '.json_encode($updateProductValue));
+        $this->updateProduct($identifier, ['values' => $updateProductValue]);
+        if ($parent) {
+            $this->logger->info('Update parent '.$parent.' '.json_encode($updateProductValue));
+            $parentPim = $this->getParent($parent);
+            $this->updateParent($parent, ['values' => $updateProductValue]);
+            if($parentPim['parent']) {
+                $this->logger->info('Update grand paren '.$parentPim['parent'].' '.json_encode($updateProductValue));
+                $this->updateParent($parentPim['parent'], ['values' => $updateProductValue]);
+            }
+        }
     }
 }

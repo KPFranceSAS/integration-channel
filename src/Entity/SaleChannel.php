@@ -77,6 +77,11 @@ class SaleChannel
      */
     private $integrationChannel;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $codePim;
+
     
     public function __construct()
     {
@@ -257,6 +262,18 @@ class SaleChannel
     public function setIntegrationChannel(?IntegrationChannel $integrationChannel): self
     {
         $this->integrationChannel = $integrationChannel;
+
+        return $this;
+    }
+
+    public function getCodePim(): ?string
+    {
+        return $this->codePim;
+    }
+
+    public function setCodePim(?string $codePim): self
+    {
+        $this->codePim = $codePim;
 
         return $this;
     }
