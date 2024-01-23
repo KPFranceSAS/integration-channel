@@ -58,9 +58,9 @@ abstract class MiraklPriceStockParent extends PriceStockParent
       
         return  [
             "update_delete" => "delete",
-        "shop_sku" => $sku,
-        "product_id" => $sku,
-        "product_id_type" => "SHOP_SKU"
+            "shop_sku" => $sku,
+            "product_id" => $sku,
+            "product_id_type" => "SHOP_SKU"
         ];
         
     }

@@ -15,6 +15,16 @@ class MediaMarktPriceStock extends MiraklPriceStockParent
 
 
 
+    protected function getDeleteOffer($sku)
+    {
+        $offer = parent::getDeleteOffer($sku);
+        $offer["offer_additional_fields"] = [
+            ['code'=>"strike-price-type" , 'value' => "lowest-prior-price-according-to-state-law"],
+        ];
+        return $offer;
+    }
+
+
     protected function addProduct(Product $product, array $saleChannels): array
     {
         $offer = [
