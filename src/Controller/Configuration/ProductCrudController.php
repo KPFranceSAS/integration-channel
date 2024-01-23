@@ -41,10 +41,7 @@ class ProductCrudController extends AdminCrudController
     {
         $actions = parent::configureActions($actions);
 
-        /*$changeLogisticClassBatch = Action::new('changeLogisticClass', 'Change logistic class')
-            ->addCssClass('btn btn-primary')
-            ->linkToCrudAction('changeLogisticClass');
-            $actions->addBatchAction($changeLogisticClassBatch);*/
+       
 
         $shippingFreeBatch = Action::new('shippingFree', 'Free Shipping')
             ->addCssClass('btn btn-primary')
@@ -56,7 +53,7 @@ class ProductCrudController extends AdminCrudController
             ->linkToCrudAction('shippingNotFreeBatch');
             $actions->addBatchAction($shippingNotFreeBatch);
             
-        return $actions->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE);
+        return $actions->disable(Action::NEW, Action::BATCH_DELETE);
     }
 
 

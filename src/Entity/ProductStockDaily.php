@@ -255,7 +255,7 @@ class ProductStockDaily
     private $businessCentralStock = 0;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Product::class)
+     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="productStockDailys")
      * @ORM\JoinColumn(nullable=false)
      */
     private $product;

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\ProductSaleChannel;
+use App\Entity\ProductStockDaily;
 use App\Helper\Traits\TraitTimeUpdated;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -368,9 +369,14 @@ class Product
     private $gbpPrice;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProductCorrelation::class, mappedBy="product")
+     * @ORM\OneToMany(targetEntity=ProductCorrelation::class, mappedBy="product", orphanRemoval=true, cascade={"persist","remove"})
      */
     private $productCorrelations;
+
+     /**
+     * @ORM\OneToMany(targetEntity=ProductStockDaily::class, mappedBy="product", orphanRemoval=true, cascade={"persist","remove"})
+     */
+    private $productStockDailys;
 
 
     /**
@@ -401,6 +407,7 @@ class Product
         $this->productSaleChannels = new ArrayCollection();
         $this->salePrices = new ArrayCollection();
         $this->productCorrelations = new ArrayCollection();
+        $this->productStockDailys = new ArrayCollection();
     }
 
 
@@ -1234,6 +1241,39 @@ class Product
             // set the owning side to null (unless already changed)
             if ($productSaleChannel->getProduct() === $this) {
                 $productSaleChannel->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+
+
+    /**
+     * @return Collection|ProductStockDaily[]
+     */
+    public function getProductStockDailys(): Collection
+    {
+        return $this->productStockDailys;
+    }
+
+    public function addProductStockDaily(ProductStockDaily $productStockDaily): self
+    {
+        if (!$this->productStockDailys->contains($productStockDaily)) {
+            $this->productStockDailys[] = $productStockDaily;
+            $productStockDaily->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductStockDaily(ProductStockDaily $productStockDaily): self
+    {
+        if ($this->productStockDailys->removeElement($productStockDaily)) {
+            // set the owning side to null (unless already changed)
+            if ($productStockDaily->getProduct() === $this) {
+                $productStockDaily->setProduct(null);
             }
         }
 
