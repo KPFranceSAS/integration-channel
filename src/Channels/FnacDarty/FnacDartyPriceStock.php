@@ -106,11 +106,13 @@ abstract class FnacDartyPriceStock extends PriceStockParent
         $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
 
         $itemBc = $businessCentralConnector->getItemByNumber($product->getSku());
-        $addtitionalTax = $this->productTaxFinder->getEcoTaxForItem(
+
+        
+        $addtitionalTax = $itemBc ? $this->productTaxFinder->getEcoTaxForItem(
             $itemBc,
             BusinessCentralConnector::KP_FRANCE,
             'FR'
-        );
+        ) : 0;
 
         if($addtitionalTax >0) {
             $offer['deee_tax'] =$addtitionalTax;

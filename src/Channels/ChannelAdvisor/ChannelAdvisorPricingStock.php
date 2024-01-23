@@ -102,7 +102,7 @@ class ChannelAdvisorPricingStock extends PriceStockParent
         $productArray['sku'] = $product->getSku();
         $productArray['stock_laroca'] = $this->productStockFinder->getFinalStockProductWarehouse($product->getSku());
 
-        if($product->isFreeShipping()){
+        if($product->isFreeShipping()) {
             $logisticClass= 'FREE';
         } else {
             $logisticClass = $product->getLogisticClass() ? $product->getLogisticClass()->getCode() : '';
@@ -130,11 +130,16 @@ class ChannelAdvisorPricingStock extends PriceStockParent
         $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
 
         $itemBc = $businessCentralConnector->getItemByNumber($product->getSku());
-        $productArray['ecotax'] =  $this->productTaxFinder->getEcoTaxForItem(
-            $itemBc,
-            BusinessCentralConnector::KP_FRANCE,
-            'FR'
-        );
+        if($itemBc) {
+            $productArray['ecotax'] =  $this->productTaxFinder->getEcoTaxForItem(
+                $itemBc,
+                BusinessCentralConnector::KP_FRANCE,
+                'FR'
+            );
+        } else {
+            $productArray['ecotax'] = 0;
+        }
+        
 
 
         return $productArray;
