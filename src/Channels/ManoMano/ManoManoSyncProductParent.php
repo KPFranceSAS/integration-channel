@@ -179,7 +179,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
         for ($i = 1; $i <= 5;$i++) {
             $imageLocale = $this->getAttributeSimple($product, 'image_url_loc_'.$i, $this->getLocale());
-            $flatProduct['image_'.$i] =$imageLocale ? $imageLocale : $this->getAttributeSimple($product, 'image_url_'.$i);
+            $flatProduct['image_'.$i] =$imageLocale ?: $this->getAttributeSimple($product, 'image_url_'.$i);
         }
 
 
@@ -190,7 +190,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         
         $descriptionRich = $this->getAttributeSimple($product, 'description_enrichie', $this->getLocale());
         $descriptionSimple = $this->getAttributeSimple($product, 'description', $this->getLocale());
-        $descriptionFinal = strlen($descriptionRich) > 5  ? $descriptionRich."<p></p>".$descriptionSimple : $descriptionSimple;
+        $descriptionFinal = strlen((string) $descriptionRich) > 5  ? $descriptionRich."<p></p>".$descriptionSimple : $descriptionSimple;
         $flatProduct['description'] = $descriptionFinal ?  $this->removeNewLine($descriptionFinal) : '';
 
         $fieldsToConvert = [

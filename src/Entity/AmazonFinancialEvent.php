@@ -24,105 +24,105 @@ class AmazonFinancialEvent
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
 
     /**
      * @ORM\ManyToOne(targetEntity=AmazonFinancialEventGroup::class, inversedBy="amazonFinancialEvents")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $eventGroup;
+    private ?\App\Entity\AmazonFinancialEventGroup $eventGroup = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"export_order"})
      */
-    private $transactionType;
+    private ?string $transactionType = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $amazonOrderId;
+    private ?string $amazonOrderId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $sellerOrderId;
+    private ?string $sellerOrderId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $adjustmentId;
+    private ?string $adjustmentId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $shipmentId;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
-    private $marketplaceName;
+    private ?string $shipmentId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $amountType;
+    private ?string $marketplaceName = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $amountDescription;
+    private ?string $amountType = null;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"export_order"})
+     */
+    private ?string $amountDescription = null;
 
     /**
      * @ORM\Column(type="float")
      * @Groups({"export_order"})
      */
-    private $amount;
+    private ?float $amount = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $amountCurrency;
+    private ?float $amountCurrency = null;
 
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"export_order"})
      */
-    private $postedDate;
+    private ?\DateTimeInterface $postedDate = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $orderItemCode;
+    private ?string $orderItemCode = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $sku;
+    private ?string $sku = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class)
      */
-    private $product;
+    private ?\App\Entity\Product $product = null;
 
     /**
      *  @Groups({"export_order"})
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $qtyPurchased;
+    private ?int $qtyPurchased = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $promotionId;
+    private ?string $promotionId = null;
 
 
     /**

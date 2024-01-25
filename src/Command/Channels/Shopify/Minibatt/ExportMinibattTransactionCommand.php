@@ -12,13 +12,10 @@ class ExportMinibattTransactionCommand extends Command
     protected static $defaultName = 'app:export-minibatt';
     protected static $defaultDescription = 'Connection to owletcare test';
 
-    public function __construct(MinibattApi $minibattApi)
+    public function __construct(private readonly MinibattApi $minibattApi)
     {
-        $this->minibattApi = $minibattApi;
         parent::__construct();
     }
-
-    private $minibattApi;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

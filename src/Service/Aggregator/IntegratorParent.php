@@ -355,7 +355,7 @@ abstract class IntegratorParent
             }
         } catch(Exception $e) {
             $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
-            $this->addError($orderDb, 'Error during reservation creation in BC '.$message);
+            $this->addError($orderDb);
         }
     }
 
@@ -494,7 +494,7 @@ abstract class IntegratorParent
             $keysTofind[] = "/\b" . $simplificationAddressKey . "\b/";
         }
 
-        $adress = strtoupper($adress);
+        $adress = strtoupper((string) $adress);
         $adress = preg_replace($keysTofind, array_values($simplificationAddress), $adress);
 
         return ucwords(strtolower($adress));

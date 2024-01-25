@@ -50,7 +50,7 @@ trait TraitServiceLog
 
     protected function logLine($message)
     {
-        $separator = str_repeat("-", strlen($message));
+        $separator = str_repeat("-", strlen((string) $message));
         $this->logger->info('');
         $this->logger->info($separator);
         $this->logger->info($message);

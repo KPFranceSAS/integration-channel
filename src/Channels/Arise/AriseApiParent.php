@@ -177,7 +177,7 @@ abstract class AriseApiParent implements ApiInterface
 
 
 
-    public const PAGINATION = 50;
+    final public const PAGINATION = 50;
 
     
     
@@ -299,7 +299,7 @@ abstract class AriseApiParent implements ApiInterface
         $this->logger->info('Create pack for order Id >> '.$order->order_id);
         $orderItemIds = [];
         foreach ($order->lines as $line) {
-            if (property_exists($line, "package_id") && strlen($line->package_id)) {
+            if (property_exists($line, "package_id") && strlen((string) $line->package_id)) {
                 $this->logger->info('Pack already created '.$line->package_id.' for order Id >> '.$order->order_id);
                 return $line->package_id;
             }

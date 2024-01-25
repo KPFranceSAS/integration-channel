@@ -10,18 +10,12 @@ use Psr\Log\LoggerInterface;
  */
 class ExchangeRateCalculator
 {
-    const BASE_EURO = 'EUR';
+    final public const BASE_EURO = 'EUR';
 
     private $changes;
 
-    private $accessKeyExchangeRate;
-
-    private $logger;
-
-    public function __construct(LoggerInterface $logger, $accessKeyExchangeRate)
+    public function __construct(private readonly LoggerInterface $logger, private $accessKeyExchangeRate)
     {
-        $this->accessKeyExchangeRate =$accessKeyExchangeRate;
-        $this->logger =$logger;
     }
 
 

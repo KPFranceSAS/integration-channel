@@ -16,16 +16,10 @@ class ExportFlashledTransactionCommand extends Command
     protected static $defaultName = 'app:export-flashled';
     protected static $defaultDescription = 'Connection to owletcare test';
 
-    public function __construct(FlashledApi $flashledApi, KitPersonalizacionSportConnector $kitPerzonalisationSport)
+    public function __construct(private readonly FlashledApi $flashledApi, private readonly KitPersonalizacionSportConnector $kitPerzonalisationSport)
     {
-        $this->flashledApi = $flashledApi;
-        $this->kitPerzonalisationSport = $kitPerzonalisationSport;
         parent::__construct();
     }
-
-    private $flashledApi;
-
-    private $kitPerzonalisationSport;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

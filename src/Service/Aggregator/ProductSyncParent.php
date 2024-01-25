@@ -52,7 +52,7 @@ abstract class ProductSyncParent
             $this->syncProducts();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmailChannel($this->getChannel(), 'Sync products Error class '. get_class($this), $e->getMessage());
+            $this->mailer->sendEmailChannel($this->getChannel(), 'Sync products Error class '. static::class, $e->getMessage());
         }
     }
 
@@ -287,7 +287,7 @@ abstract class ProductSyncParent
             "SQUARE_METER" =>1,
             "SQUARE_CENTIMETER" =>0.0001,
             "SQUARE_MILLIMETER" =>0.000001,
-            "SQUARE_KILOMETER" =>1000000,
+            "SQUARE_KILOMETER" =>1_000_000,
 
             "KILOMETER" => 1000.0,
             "METER" => 1.0,
@@ -325,7 +325,7 @@ abstract class ProductSyncParent
 
             "WATT" => 1,
             "KILOWATT" => 1000,
-            "MEGAWATT" => 1000000,
+            "MEGAWATT" => 1_000_000,
 
 
         ];

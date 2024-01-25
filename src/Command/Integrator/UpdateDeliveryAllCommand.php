@@ -18,22 +18,13 @@ class UpdateDeliveryAllCommand extends Command
     protected static $defaultName = 'app:update-delivery-orders-all';
     protected static $defaultDescription = 'Update all status of deliveries from all sale channels';
 
-    public function __construct(UpdateDeliveryAggregator $deliveryAggregator, ManagerRegistry $managerRegistry, LoggerInterface $logger, MailService $mailService)
+    public function __construct(private readonly UpdateDeliveryAggregator $deliveryAggregator, ManagerRegistry $managerRegistry, private readonly LoggerInterface $logger, private readonly MailService $mailService)
     {
-        $this->deliveryAggregator = $deliveryAggregator;
-        $this->logger = $logger;
-        $this->mailService = $mailService;
         $this->managerRegistry = $managerRegistry->getManager();
         parent::__construct();
     }
 
-    private $deliveryAggregator;
-
     private $managerRegistry;
-
-    private $logger;
-
-    private $mailService;
 
 
     protected function configure(): void

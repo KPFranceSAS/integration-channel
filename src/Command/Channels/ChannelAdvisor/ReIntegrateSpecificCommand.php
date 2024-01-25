@@ -18,21 +18,13 @@ class ReIntegrateSpecificCommand extends Command
     protected static $defaultName = 'app:channel-reintegrate-command';
     protected static $defaultDescription = 'Reintegrate command from ChannelAdvisor';
 
-    public function __construct(ManagerRegistry $managerRegistry, ChannelAdvisorApi $channelAdvisorApi, ChannelAdvisorIntegrateOrder $channelAdvisorIntegrateOrder, CsvExtracter $csvExtracter)
+    public function __construct(ManagerRegistry $managerRegistry, private readonly ChannelAdvisorApi $channelAdvisorApi, private readonly ChannelAdvisorIntegrateOrder $channelAdvisorIntegrateOrder, private readonly CsvExtracter $csvExtracter)
     {
-        $this->channelAdvisorApi = $channelAdvisorApi;
-        $this->channelAdvisorIntegrateOrder= $channelAdvisorIntegrateOrder;
-        $this->csvExtracter= $csvExtracter;
         $this->managerRegistry= $managerRegistry->getManager();
         parent::__construct();
     }
 
     private $managerRegistry;
-    private $channelAdvisorApi;
-
-    private $csvExtracter;
-
-    private $channelAdvisorIntegrateOrder;
    
     protected function configure(): void
     {

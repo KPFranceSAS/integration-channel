@@ -20,22 +20,14 @@ class ExportProductsStockPriceCommand extends Command
     protected static $defaultName = 'app:export-product-stock-prices';
     protected static $defaultDescription = 'Export product from Stock and prices';
 
-    public function __construct(LoggerInterface $logger, ManagerRegistry $managerRegistry, FilesystemOperator $productStorage, ProductStockFinder $productStockFinder)
+    public function __construct(private readonly LoggerInterface $logger, ManagerRegistry $managerRegistry, private readonly FilesystemOperator $productStorage, private readonly ProductStockFinder $productStockFinder)
     {
         $this->manager = $managerRegistry->getManager();
-        $this->productStorage = $productStorage;
-        $this->productStockFinder = $productStockFinder;
-        $this->logger = $logger;
         
         parent::__construct();
     }
 
     private $manager;
-
-    private $logger;
-    private $productStockFinder;
-
-    private $productStorage;
 
    
     protected function configure(): void

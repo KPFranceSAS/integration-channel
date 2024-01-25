@@ -19,33 +19,21 @@ use Psr\Log\LoggerInterface;
 
 class AmzApiImportProduct
 {
-    private $logger;
-
-    private $amzApi;
-
     private $manager;
-
-    private $mailer;
 
     protected $errorProducts;
 
-    private $businessCentralAggregator;
-
     public function __construct(
-        LoggerInterface $logger,
-        AmzApi $amzApi,
+        private readonly LoggerInterface $logger,
+        private readonly AmzApi $amzApi,
         ManagerRegistry $manager,
-        MailService $mailer,
-        BusinessCentralAggregator $businessCentralAggregator
+        private readonly MailService $mailer,
+        private readonly BusinessCentralAggregator $businessCentralAggregator
     ) {
-        $this->logger = $logger;
-        $this->amzApi = $amzApi;
         $this->manager = $manager->getManager();
-        $this->mailer = $mailer;
-        $this->businessCentralAggregator = $businessCentralAggregator;
     }
 
-    public const WAITING_TIME = 20;
+    final public const WAITING_TIME = 20;
 
 
     public function updateProducts()

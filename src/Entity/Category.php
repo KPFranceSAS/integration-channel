@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class Category
+class Category implements \Stringable
 {
     use TraitTimeUpdated;
 
@@ -20,22 +20,23 @@ class Category
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $active = true;
+    private ?bool $active = true;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="category")
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Product>
      */
-    private $products;
+    private \Doctrine\Common\Collections\Collection $products;
 
     public function __construct()
     {
@@ -43,9 +44,9 @@ class Category
     }
 
    
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->name;
+        return (string) $this->name;
     }
 
     public function getId(): ?int
@@ -79,10 +80,8 @@ class Category
         return $this;
     }
 
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
+
+    public function getProducts(): \Doctrine\Common\Collections\Collection
     {
         return $this->products;
     }

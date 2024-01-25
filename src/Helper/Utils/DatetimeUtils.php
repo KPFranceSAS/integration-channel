@@ -78,7 +78,7 @@ class DatetimeUtils
         if ($date instanceof DateTimeImmutable) {
             $date = DateTime::createFromImmutable($date);
         }
-        $toverify =  $toverify !== null ? $toverify :  new DateTime();
+        $toverify ??= new DateTime();
         if ($toverify instanceof DateTimeImmutable) {
             $toverify = DateTime::createFromImmutable($toverify);
         }
@@ -146,7 +146,7 @@ class DatetimeUtils
 
     public static function getDateOutOfDelayBusinessDaysFrom(int $nbHours, ?DateTimeInterface $toverify = null, $withBusineesDays = true): DateTimeInterface
     {
-        $date =  $toverify !== null ? $toverify :  new DateTime();
+        $date =  $toverify ?? new DateTime();
         if ($date instanceof DateTimeImmutable) {
             $date = DateTime::createFromImmutable($date);
         }

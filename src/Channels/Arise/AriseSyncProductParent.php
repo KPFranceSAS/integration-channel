@@ -91,7 +91,7 @@ abstract class AriseSyncProductParent extends ProductSyncParent
     {
         if (!$this->productsApi) {
             $productsApi =  $this->getAriseApi()->getAllProducts();
-            $this->productsApi = $productsApi ? $productsApi : [];
+            $this->productsApi = $productsApi ?: [];
         }
 
         foreach ($this->productsApi as $productApi) {
@@ -156,7 +156,7 @@ abstract class AriseSyncProductParent extends ProductSyncParent
     {
         $parent = $product['parent'];
         $this->logger->info('Update product variant '.$parent['code']);
-        
+
 
         /* $parent = $product['parent'];
          $productModel = $product['variants'][0];
@@ -209,8 +209,8 @@ abstract class AriseSyncProductParent extends ProductSyncParent
             $imageUrl = $this->getAttributeSimple($product, 'image_url_'.$i);
             if ($imageUrl) {
                 $headers = @get_headers($imageUrl);
-                if (strpos($headers[0], '404') === false) {
-                    list($iwidth, $iheight) = getimagesize($imageUrl);
+                if (!str_contains((string) $headers[0], '404')) {
+                    [$iwidth, $iheight] = getimagesize($imageUrl);
                     if ($iwidth > self::MAX_SIZE || $iheight > self::MAX_SIZE) {
                         $content = $this->resize($imageUrl);
                         $imageUploaded = $this->getAriseApi()->uploadImage($content);
@@ -238,7 +238,7 @@ abstract class AriseSyncProductParent extends ProductSyncParent
 
     public function resize(string $filename): string
     {
-        list($iwidth, $iheight) = getimagesize($filename);
+        [$iwidth, $iheight] = getimagesize($filename);
         $ratio = $iwidth / $iheight;
         $width = self::MAX_SIZE;
         $height = self::MAX_SIZE;

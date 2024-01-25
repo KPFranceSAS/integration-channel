@@ -18,7 +18,7 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
      *
      * @return void
      */
-    public function integrateAllOrders()
+    public function integrateAllOrders(): void
     {
         $counter = 0;
         $ordersApi = $this->getApi()->getAllOrdersToSend();
@@ -76,17 +76,17 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
 
         foreach ($valuesAddress as $bcVal => $miraklVal) {
             $adress =  $orderApi['addresses'][$miraklVal]["address_line1"];
-            if (array_key_exists('address_line2', $orderApi['addresses'][$miraklVal]) && strlen($orderApi['addresses'][$miraklVal]["address_line2"]) > 0) {
+            if (array_key_exists('address_line2', $orderApi['addresses'][$miraklVal]) && strlen((string) $orderApi['addresses'][$miraklVal]["address_line2"]) > 0) {
                 $adress .= ', ' . $orderApi['addresses'][$miraklVal]["address_line2"];
             }
             $adress = $this->simplifyAddress($adress);
 
-            if (strlen($adress) < 100) {
+            if (strlen((string) $adress) < 100) {
                 $orderBC->{$bcVal . "PostalAddress"}->street = $adress;
             } else {
-                $orderBC->{$bcVal . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
+                $orderBC->{$bcVal . "PostalAddress"}->street = substr((string) $adress, 0, 100) . "\r\n" . substr((string) $adress, 99);
             }
-            $orderBC->{$bcVal . "PostalAddress"}->city = substr($orderApi['addresses'][$miraklVal]["city"], 0, 100);
+            $orderBC->{$bcVal . "PostalAddress"}->city = substr((string) $orderApi['addresses'][$miraklVal]["city"], 0, 100);
             $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi['addresses'][$miraklVal]["zipcode"];
             
             $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = $orderApi['addresses'][$miraklVal]["country_iso"];

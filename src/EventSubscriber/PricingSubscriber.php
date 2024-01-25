@@ -15,16 +15,13 @@ use Symfony\UX\Chartjs\Model\Chart;
 
 class PricingSubscriber implements EventSubscriberInterface
 {
-    private $chartBuilder;
-
     private $managerRegistry;
 
 
     public function __construct(
-        ChartBuilderInterface $chartBuilder,
+        private readonly ChartBuilderInterface $chartBuilder,
         ManagerRegistry $managerRegistry
     ) {
-        $this->chartBuilder = $chartBuilder;
         $this->managerRegistry = $managerRegistry->getManager();
     }
 

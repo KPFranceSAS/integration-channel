@@ -73,7 +73,7 @@ abstract class UpdateStatusParent
      *
      * @return void
      */
-    public function updateStatusSales($reprocess = false)
+    public function updateStatusSales($reprocess = false): void
     {
         try {
             $this->errors = [];
@@ -152,7 +152,7 @@ abstract class UpdateStatusParent
             return;
         }
 
-        if (in_array($statusSaleOrder['statusCode'], ["3", "4"]) && strlen($statusSaleOrder['InvoiceNo'])) {
+        if (in_array($statusSaleOrder['statusCode'], ["3", "4"]) && strlen((string) $statusSaleOrder['InvoiceNo'])) {
             $this->addOnlyLogToOrderIfNotExists($order, 'Warehouse shipment posted in the ERP with number ' . $statusSaleOrder['ShipmentNo']);
             $this->addOnlyLogToOrderIfNotExists($order, 'Invoice created in the ERP with number ' . $statusSaleOrder['InvoiceNo']);
             $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
@@ -165,7 +165,7 @@ abstract class UpdateStatusParent
                 
                 if ($order->getCarrierService() == WebOrder::CARRIER_DHL) {
                     $tracking = $statusSaleOrder['trackingNumber'];
-                    if(substr($tracking, 0, 1)=='J') {
+                    if(str_starts_with((string) $tracking, 'J')) {
                         $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DHL with tracking number ' . $tracking);
                         $order->setTrackingUrl(DhlGetTracking::getTrackingUrlBase($tracking));
                         $order->setTrackingCode($tracking);
@@ -189,7 +189,7 @@ abstract class UpdateStatusParent
                     $tracking = $statusSaleOrder['trackingNumber'];
                     $zipCode =$invoice ? $invoice['shippingPostalAddress']['postalCode'] :  null;
                     $trackingUrl = $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $tracking, $zipCode);
-                    if(strlen($tracking) &&  $trackingUrl) {
+                    if(strlen((string) $tracking) &&  $trackingUrl) {
                         $order->setTrackingUrl($trackingUrl);
                         $order->setTrackingCode($tracking);
                         $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
@@ -221,7 +221,7 @@ abstract class UpdateStatusParent
     {
         $this->logger->info('Update status order fulfiled by External');
         $statusSaleOrder = $this->getSaleOrderStatus($order);
-        $isOrderHasBeenInvoiced = $statusSaleOrder && strlen($statusSaleOrder['InvoiceNo']) > 0;
+        $isOrderHasBeenInvoiced = $statusSaleOrder && strlen((string) $statusSaleOrder['InvoiceNo']) > 0;
         if ($isOrderHasBeenInvoiced) {
             $this->addOnlyLogToOrderIfNotExists($order, 'Invoice created in the ERP with number ' . $statusSaleOrder['InvoiceNo']);
                 
@@ -329,7 +329,7 @@ abstract class UpdateStatusParent
      *
      * @return void
      */
-    protected function updateStatusSaleOrders()
+    protected function updateStatusSaleOrders(): void
     {
         /** @var array[\App\Entity\WebOrder] */
         $ordersToSend = $this->manager->getRepository(WebOrder::class)->findBy(
@@ -351,7 +351,7 @@ abstract class UpdateStatusParent
      *
      * @return void
      */
-    protected function reUpdateStatusSaleOrders()
+    protected function reUpdateStatusSaleOrders(): void
     {
         /** @var array[\App\Entity\WebOrder] */
         $ordersToSend = $this->manager->getRepository(WebOrder::class)->findBy(

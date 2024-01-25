@@ -13,20 +13,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AmazonEventSubscriber implements EventSubscriberInterface
 {
-    private $businessCentralAggregator;
-
-    private $amzHistoryAggregator;
-
-    private $trackingAggregator;
-
-    public function __construct(
-        BusinessCentralAggregator $businessCentralAggregator,
-        AmzHistoryAggregator $amzHistoryAggregator,
-        TrackingAggregator $trackingAggregator
-    ) {
-        $this->businessCentralAggregator = $businessCentralAggregator;
-        $this->amzHistoryAggregator = $amzHistoryAggregator;
-        $this->trackingAggregator = $trackingAggregator;
+    public function __construct(private readonly BusinessCentralAggregator $businessCentralAggregator, private readonly AmzHistoryAggregator $amzHistoryAggregator, private readonly TrackingAggregator $trackingAggregator)
+    {
     }
 
     public static function getSubscribedEvents(): array
@@ -63,7 +51,7 @@ class AmazonEventSubscriber implements EventSubscriberInterface
                 } elseif (in_array($entity->getStatus(), [WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])) {
                     $entity->orderBCContent = $bcConnector->getFullSaleInvoiceByNumber($entity->getInvoiceErp());
                 }
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
         }
 
@@ -76,7 +64,7 @@ class AmazonEventSubscriber implements EventSubscriberInterface
                     $zipCode = null;
                 }
                  $entity->deliverySteps = $this->trackingAggregator->getFormattedSteps($entity->getCarrierService(),$entity->getTrackingCode(), $zipCode );
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
         }
 

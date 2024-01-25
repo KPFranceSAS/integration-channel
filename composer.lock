@@ -4,40 +4,43 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8bdfc454525f973f0490498242fd38d3",
+    "content-hash": "5971da33d7492aa53c6e97d99fefb826",
     "packages": [
         {
             "name": "akeneo/api-php-client",
-            "version": "v6.0.1",
+            "version": "v11.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/akeneo/api-php-client.git",
-                "reference": "df372b6d24059546d3bfbac448d51d1615ea29c4"
+                "reference": "e387f3ec4c0b322e61ed2ef9ce7889ed9c7fd1cb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/akeneo/api-php-client/zipball/df372b6d24059546d3bfbac448d51d1615ea29c4",
-                "reference": "df372b6d24059546d3bfbac448d51d1615ea29c4",
+                "url": "https://api.github.com/repos/akeneo/api-php-client/zipball/e387f3ec4c0b322e61ed2ef9ce7889ed9c7fd1cb",
+                "reference": "e387f3ec4c0b322e61ed2ef9ce7889ed9c7fd1cb",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1",
+                "php": ">=8.0",
                 "php-http/discovery": "^1.6",
                 "php-http/httplug": "^2.0",
                 "php-http/multipart-stream-builder": "^1.0",
                 "psr/http-client": "^1.0",
                 "psr/http-factory": "^1.0",
                 "psr/http-message": "^1.0",
-                "psr/http-message-implementation": "^1.0"
+                "psr/http-message-implementation": "^1.0",
+                "symfony/options-resolver": "^5.4|^6.0"
             },
             "require-dev": {
                 "donatj/mock-webserver": "^2.0",
-                "friendsofphp/php-cs-fixer": "^2.14",
+                "friendsofphp/php-cs-fixer": "^3.5",
                 "http-interop/http-factory-guzzle": "^1.0",
                 "php-http/guzzle6-adapter": "^2.0",
-                "phpspec/phpspec": "^5.0",
-                "phpunit/phpunit": "^7.0",
-                "symfony/yaml": "^4.2"
+                "phpspec/phpspec": "^7.1",
+                "phpunit/phpunit": "^8.0",
+                "rector/rector": "^0.14.6",
+                "symfony/yaml": "^4.2",
+                "symplify/easy-coding-standard": "^11.1"
             },
             "suggest": {
                 "php-http/guzzle6-adapter": "In order to use Guzzle v6 as the HTTP client"
@@ -61,9 +64,9 @@
             "description": "Akeneo PIM client for the API",
             "support": {
                 "issues": "https://github.com/akeneo/api-php-client/issues",
-                "source": "https://github.com/akeneo/api-php-client/tree/v6.0.1"
+                "source": "https://github.com/akeneo/api-php-client/tree/v11.3.0"
             },
-            "time": "2021-10-11T07:20:45+00:00"
+            "time": "2023-06-29T15:29:21+00:00"
         },
         {
             "name": "amazon-php/sp-api-sdk",
@@ -202,16 +205,16 @@
         },
         {
             "name": "async-aws/s3",
-            "version": "1.14.0",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/async-aws/s3.git",
-                "reference": "27ce65242cde50ba09323d54708b45cf64a51aa5"
+                "reference": "374f388c578800b50d4c758301fba62bddfce1c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/async-aws/s3/zipball/27ce65242cde50ba09323d54708b45cf64a51aa5",
-                "reference": "27ce65242cde50ba09323d54708b45cf64a51aa5",
+                "url": "https://api.github.com/repos/async-aws/s3/zipball/374f388c578800b50d4c758301fba62bddfce1c9",
+                "reference": "374f388c578800b50d4c758301fba62bddfce1c9",
                 "shasum": ""
             },
             "require": {
@@ -225,7 +228,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.14-dev"
+                    "dev-master": "2.2-dev"
                 }
             },
             "autoload": {
@@ -246,7 +249,7 @@
                 "sdk"
             ],
             "support": {
-                "source": "https://github.com/async-aws/s3/tree/1.14.0"
+                "source": "https://github.com/async-aws/s3/tree/2.2.0"
             },
             "funding": [
                 {
@@ -258,7 +261,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-06-20T19:17:40+00:00"
+            "time": "2024-01-09T08:38:58+00:00"
         },
         {
             "name": "aws/aws-crt-php",
@@ -3383,39 +3386,47 @@
         },
         {
             "name": "league/flysystem",
-            "version": "2.5.0",
+            "version": "3.23.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "8aaffb653c5777781b0f7f69a5d937baf7ab6cdb"
+                "reference": "d4ad81e2b67396e33dc9d7e54ec74ccf73151dcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8aaffb653c5777781b0f7f69a5d937baf7ab6cdb",
-                "reference": "8aaffb653c5777781b0f7f69a5d937baf7ab6cdb",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/d4ad81e2b67396e33dc9d7e54ec74ccf73151dcc",
+                "reference": "d4ad81e2b67396e33dc9d7e54ec74ccf73151dcc",
                 "shasum": ""
             },
             "require": {
-                "ext-json": "*",
+                "league/flysystem-local": "^3.0.0",
                 "league/mime-type-detection": "^1.0.0",
-                "php": "^7.2 || ^8.0"
+                "php": "^8.0.2"
             },
             "conflict": {
-                "guzzlehttp/ringphp": "<1.1.1"
+                "async-aws/core": "<1.19.0",
+                "async-aws/s3": "<1.14.0",
+                "aws/aws-sdk-php": "3.209.31 || 3.210.0",
+                "guzzlehttp/guzzle": "<7.0",
+                "guzzlehttp/ringphp": "<1.1.1",
+                "phpseclib/phpseclib": "3.0.15",
+                "symfony/http-client": "<5.2"
             },
             "require-dev": {
-                "async-aws/s3": "^1.5",
-                "async-aws/simple-s3": "^1.0",
-                "aws/aws-sdk-php": "^3.132.4",
+                "async-aws/s3": "^1.5 || ^2.0",
+                "async-aws/simple-s3": "^1.1 || ^2.0",
+                "aws/aws-sdk-php": "^3.220.0",
                 "composer/semver": "^3.0",
                 "ext-fileinfo": "*",
                 "ext-ftp": "*",
-                "friendsofphp/php-cs-fixer": "^3.2",
+                "ext-zip": "*",
+                "friendsofphp/php-cs-fixer": "^3.5",
                 "google/cloud-storage": "^1.23",
-                "phpseclib/phpseclib": "^2.0",
-                "phpstan/phpstan": "^0.12.26",
-                "phpunit/phpunit": "^8.5 || ^9.4",
-                "sabre/dav": "^4.1"
+                "microsoft/azure-storage-blob": "^1.1",
+                "phpseclib/phpseclib": "^3.0.34",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^9.5.11|^10.0",
+                "sabre/dav": "^4.3.1"
             },
             "type": "library",
             "autoload": {
@@ -3449,7 +3460,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/2.5.0"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.23.0"
             },
             "funding": [
                 {
@@ -3459,36 +3470,36 @@
                 {
                     "url": "https://github.com/frankdejonge",
                     "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/league/flysystem",
-                    "type": "tidelift"
                 }
             ],
-            "time": "2022-09-17T21:02:32+00:00"
+            "time": "2023-12-04T10:16:17+00:00"
         },
         {
             "name": "league/flysystem-async-aws-s3",
-            "version": "2.5.0",
+            "version": "3.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-async-aws-s3.git",
-                "reference": "4d299d116e48a23ab2ab045a0f62a6901224dbf7"
+                "reference": "b068e81a17e55c0f1864257958b4cfbf7dfc7604"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-async-aws-s3/zipball/4d299d116e48a23ab2ab045a0f62a6901224dbf7",
-                "reference": "4d299d116e48a23ab2ab045a0f62a6901224dbf7",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-async-aws-s3/zipball/b068e81a17e55c0f1864257958b4cfbf7dfc7604",
+                "reference": "b068e81a17e55c0f1864257958b4cfbf7dfc7604",
                 "shasum": ""
             },
             "require": {
-                "async-aws/s3": "^1.5",
-                "league/flysystem": "^2.0.0",
+                "async-aws/s3": "^1.5 || ^2.0",
+                "league/flysystem": "^3.10.0",
                 "league/mime-type-detection": "^1.0.0",
-                "php": "^7.2 || ^8.0"
+                "php": "^8.0.2"
+            },
+            "conflict": {
+                "async-aws/simple-s3": "<1.1",
+                "symfony/http-client": "<5.2"
             },
             "require-dev": {
-                "async-aws/simple-s3": "^1.0"
+                "async-aws/simple-s3": "^1.1 || ^2.0"
             },
             "type": "library",
             "autoload": {
@@ -3519,7 +3530,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem-async-aws-s3/issues",
-                "source": "https://github.com/thephpleague/flysystem-async-aws-s3/tree/2.5.0"
+                "source": "https://github.com/thephpleague/flysystem-async-aws-s3/tree/3.22.0"
             },
             "funding": [
                 {
@@ -3529,35 +3540,32 @@
                 {
                     "url": "https://github.com/frankdejonge",
                     "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/league/flysystem",
-                    "type": "tidelift"
                 }
             ],
-            "time": "2022-09-09T19:33:51+00:00"
+            "time": "2023-11-18T14:03:37+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
-            "version": "2.5.0",
+            "version": "3.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-aws-s3-v3.git",
-                "reference": "2ae435f7177fd5d3afc0090bc7f849093d8361e8"
+                "reference": "9808919ee5d819730d9582d4e1673e8d195c38d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-aws-s3-v3/zipball/2ae435f7177fd5d3afc0090bc7f849093d8361e8",
-                "reference": "2ae435f7177fd5d3afc0090bc7f849093d8361e8",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-aws-s3-v3/zipball/9808919ee5d819730d9582d4e1673e8d195c38d8",
+                "reference": "9808919ee5d819730d9582d4e1673e8d195c38d8",
                 "shasum": ""
             },
             "require": {
-                "aws/aws-sdk-php": "^3.132.4",
-                "league/flysystem": "^2.0.0",
+                "aws/aws-sdk-php": "^3.220.0",
+                "league/flysystem": "^3.10.0",
                 "league/mime-type-detection": "^1.0.0",
-                "php": "^7.2 || ^8.0"
+                "php": "^8.0.2"
             },
             "conflict": {
+                "guzzlehttp/guzzle": "<7.0",
                 "guzzlehttp/ringphp": "<1.1.1"
             },
             "type": "library",
@@ -3588,7 +3596,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem-aws-s3-v3/issues",
-                "source": "https://github.com/thephpleague/flysystem-aws-s3-v3/tree/2.5.0"
+                "source": "https://github.com/thephpleague/flysystem-aws-s3-v3/tree/3.22.0"
             },
             "funding": [
                 {
@@ -3598,52 +3606,47 @@
                 {
                     "url": "https://github.com/frankdejonge",
                     "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/league/flysystem",
-                    "type": "tidelift"
                 }
             ],
-            "time": "2022-09-09T19:33:51+00:00"
+            "time": "2023-11-18T14:03:37+00:00"
         },
         {
             "name": "league/flysystem-bundle",
-            "version": "2.4.0",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-bundle.git",
-                "reference": "52fa43da7901a1d8098082e5c182aae0fe6f02f0"
+                "reference": "ad6ef9c0a8d918269ae5cf47da2f0a4a995bfbd8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-bundle/zipball/52fa43da7901a1d8098082e5c182aae0fe6f02f0",
-                "reference": "52fa43da7901a1d8098082e5c182aae0fe6f02f0",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-bundle/zipball/ad6ef9c0a8d918269ae5cf47da2f0a4a995bfbd8",
+                "reference": "ad6ef9c0a8d918269ae5cf47da2f0a4a995bfbd8",
                 "shasum": ""
             },
             "require": {
-                "league/flysystem": "^2.1|^3.0",
-                "php": ">=7.2",
-                "symfony/config": "^4.2|^5.0|^6.0",
-                "symfony/dependency-injection": "^4.2|^5.0|^6.0",
-                "symfony/deprecation-contracts": "^2.1|^3",
-                "symfony/http-kernel": "^4.2|^5.0|^6.0",
-                "symfony/options-resolver": "^4.2|^5.0|^6.0"
-            },
-            "conflict": {
-                "league/flysystem-cached-adapter": "<1.0.9"
+                "league/flysystem": "^3.0",
+                "php": ">=8.0",
+                "symfony/config": "^5.4 || ^6.0 || ^7.0",
+                "symfony/dependency-injection": "^5.4 || ^6.0 || ^7.0",
+                "symfony/deprecation-contracts": "^2.1 || ^3",
+                "symfony/http-kernel": "^5.4 || ^6.0 || ^7.0",
+                "symfony/options-resolver": "^5.4 || ^6.0 || ^7.0"
             },
             "require-dev": {
-                "league/flysystem-async-aws-s3": "^2.0|^3.0",
-                "league/flysystem-aws-s3-v3": "^2.0|^3.0",
-                "league/flysystem-ftp": "^2.0|^3.0",
-                "league/flysystem-google-cloud-storage": "^2.0|^3.0",
-                "league/flysystem-memory": "^2.0|^3.0",
-                "league/flysystem-sftp-v3": "^2.0|^3.0",
-                "symfony/dotenv": "^4.2|^5.0|^6.0",
-                "symfony/framework-bundle": "^4.2|^5.0|^6.0",
-                "symfony/phpunit-bridge": "^5.2",
-                "symfony/var-dumper": "^4.1|^5.0|^6.0",
-                "symfony/yaml": "^4.2|^5.0|^6.0"
+                "league/flysystem-async-aws-s3": "^3.1",
+                "league/flysystem-aws-s3-v3": "^3.1",
+                "league/flysystem-azure-blob-storage": "^3.1",
+                "league/flysystem-ftp": "^3.1",
+                "league/flysystem-google-cloud-storage": "^3.1",
+                "league/flysystem-memory": "^3.1",
+                "league/flysystem-read-only": "^3.15",
+                "league/flysystem-sftp-v3": "^3.1",
+                "symfony/dotenv": "^5.4 || ^6.0 || ^7.0",
+                "symfony/framework-bundle": "^5.4 || ^6.0 || ^7.0",
+                "symfony/phpunit-bridge": "^5.4 || ^6.0 || ^7.0",
+                "symfony/var-dumper": "^5.4 || ^6.0 || ^7.0",
+                "symfony/yaml": "^5.4 || ^6.0 || ^7.0"
             },
             "type": "symfony-bundle",
             "autoload": {
@@ -3661,32 +3664,32 @@
                     "email": "galopintitouan@gmail.com"
                 }
             ],
-            "description": "Symfony bundle integrating Flysystem into Symfony 4.2+ applications",
+            "description": "Symfony bundle integrating Flysystem into Symfony 5.4+ applications",
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem-bundle/issues",
-                "source": "https://github.com/thephpleague/flysystem-bundle/tree/2.4.0"
+                "source": "https://github.com/thephpleague/flysystem-bundle/tree/3.3.2"
             },
-            "time": "2022-09-12T07:31:10+00:00"
+            "time": "2023-12-02T17:27:51+00:00"
         },
         {
             "name": "league/flysystem-ftp",
-            "version": "2.4.2",
+            "version": "3.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem-ftp.git",
-                "reference": "a49dd4c4f0b7af88fe118218a6995609d1570f93"
+                "reference": "bde7827b7f8c28c95f337189e359f631d74a80cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-ftp/zipball/a49dd4c4f0b7af88fe118218a6995609d1570f93",
-                "reference": "a49dd4c4f0b7af88fe118218a6995609d1570f93",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-ftp/zipball/bde7827b7f8c28c95f337189e359f631d74a80cf",
+                "reference": "bde7827b7f8c28c95f337189e359f631d74a80cf",
                 "shasum": ""
             },
             "require": {
                 "ext-ftp": "*",
-                "league/flysystem": "^2.0.0",
+                "league/flysystem": "^3.0.0",
                 "league/mime-type-detection": "^1.0.0",
-                "php": "^7.2 || ^8.0"
+                "php": "^8.0.2"
             },
             "type": "library",
             "autoload": {
@@ -3714,42 +3717,98 @@
                 "ftpd"
             ],
             "support": {
-                "source": "https://github.com/thephpleague/flysystem-ftp/tree/2.4.2"
+                "source": "https://github.com/thephpleague/flysystem-ftp/tree/3.22.0"
             },
             "funding": [
                 {
-                    "url": "https://offset.earth/frankdejonge",
+                    "url": "https://ecologi.com/frankdejonge",
                     "type": "custom"
                 },
                 {
                     "url": "https://github.com/frankdejonge",
                     "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/league/flysystem",
-                    "type": "tidelift"
                 }
             ],
-            "time": "2022-01-31T19:07:20+00:00"
+            "time": "2023-11-18T14:03:37+00:00"
         },
         {
-            "name": "league/flysystem-sftp",
-            "version": "2.5.0",
+            "name": "league/flysystem-local",
+            "version": "3.23.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/thephpleague/flysystem-sftp.git",
-                "reference": "e30acbc9be024bb7df6ee4b159f2c8db3efcb6a7"
+                "url": "https://github.com/thephpleague/flysystem-local.git",
+                "reference": "5cf046ba5f059460e86a997c504dd781a39a109b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem-sftp/zipball/e30acbc9be024bb7df6ee4b159f2c8db3efcb6a7",
-                "reference": "e30acbc9be024bb7df6ee4b159f2c8db3efcb6a7",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-local/zipball/5cf046ba5f059460e86a997c504dd781a39a109b",
+                "reference": "5cf046ba5f059460e86a997c504dd781a39a109b",
                 "shasum": ""
             },
             "require": {
-                "league/flysystem": "^2.0.0",
+                "ext-fileinfo": "*",
+                "league/flysystem": "^3.0.0",
                 "league/mime-type-detection": "^1.0.0",
-                "php": "^7.2 || ^8.0",
+                "php": "^8.0.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\Flysystem\\Local\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Frank de Jonge",
+                    "email": "info@frankdejonge.nl"
+                }
+            ],
+            "description": "Local filesystem adapter for Flysystem.",
+            "keywords": [
+                "Flysystem",
+                "file",
+                "files",
+                "filesystem",
+                "local"
+            ],
+            "support": {
+                "issues": "https://github.com/thephpleague/flysystem-local/issues",
+                "source": "https://github.com/thephpleague/flysystem-local/tree/3.23.0"
+            },
+            "funding": [
+                {
+                    "url": "https://ecologi.com/frankdejonge",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/frankdejonge",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-12-04T10:14:46+00:00"
+        },
+        {
+            "name": "league/flysystem-sftp",
+            "version": "3.22.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/flysystem-sftp.git",
+                "reference": "c1e479db9a92d91c41720875003f86fc8d341c91"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-sftp/zipball/c1e479db9a92d91c41720875003f86fc8d341c91",
+                "reference": "c1e479db9a92d91c41720875003f86fc8d341c91",
+                "shasum": ""
+            },
+            "require": {
+                "league/flysystem": "^3.0.0",
+                "league/mime-type-detection": "^1.0.0",
+                "php": "^8.0.2",
                 "phpseclib/phpseclib": "^2.0"
             },
             "type": "library",
@@ -3778,7 +3837,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem-sftp/issues",
-                "source": "https://github.com/thephpleague/flysystem-sftp/tree/2.5.0"
+                "source": "https://github.com/thephpleague/flysystem-sftp/tree/3.22.0"
             },
             "funding": [
                 {
@@ -3788,14 +3847,10 @@
                 {
                     "url": "https://github.com/frankdejonge",
                     "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/league/flysystem",
-                    "type": "tidelift"
                 }
             ],
             "abandoned": "league/flysystem-sftp-v3",
-            "time": "2022-04-27T17:27:27+00:00"
+            "time": "2023-11-18T14:03:37+00:00"
         },
         {
             "name": "league/html-to-markdown",
@@ -5753,84 +5808,6 @@
                 }
             ],
             "time": "2023-11-08T05:53:05+00:00"
-        },
-        {
-            "name": "sensio/framework-extra-bundle",
-            "version": "v6.2.10",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/sensiolabs/SensioFrameworkExtraBundle.git",
-                "reference": "2f886f4b31f23c76496901acaedfedb6936ba61f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/sensiolabs/SensioFrameworkExtraBundle/zipball/2f886f4b31f23c76496901acaedfedb6936ba61f",
-                "reference": "2f886f4b31f23c76496901acaedfedb6936ba61f",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/annotations": "^1.0|^2.0",
-                "php": ">=7.2.5",
-                "symfony/config": "^4.4|^5.0|^6.0",
-                "symfony/dependency-injection": "^4.4|^5.0|^6.0",
-                "symfony/framework-bundle": "^4.4|^5.0|^6.0",
-                "symfony/http-kernel": "^4.4|^5.0|^6.0"
-            },
-            "conflict": {
-                "doctrine/doctrine-cache-bundle": "<1.3.1",
-                "doctrine/persistence": "<1.3"
-            },
-            "require-dev": {
-                "doctrine/dbal": "^2.10|^3.0",
-                "doctrine/doctrine-bundle": "^1.11|^2.0",
-                "doctrine/orm": "^2.5",
-                "symfony/browser-kit": "^4.4|^5.0|^6.0",
-                "symfony/doctrine-bridge": "^4.4|^5.0|^6.0",
-                "symfony/dom-crawler": "^4.4|^5.0|^6.0",
-                "symfony/expression-language": "^4.4|^5.0|^6.0",
-                "symfony/finder": "^4.4|^5.0|^6.0",
-                "symfony/monolog-bridge": "^4.0|^5.0|^6.0",
-                "symfony/monolog-bundle": "^3.2",
-                "symfony/phpunit-bridge": "^4.4.9|^5.0.9|^6.0",
-                "symfony/security-bundle": "^4.4|^5.0|^6.0",
-                "symfony/twig-bundle": "^4.4|^5.0|^6.0",
-                "symfony/yaml": "^4.4|^5.0|^6.0",
-                "twig/twig": "^1.34|^2.4|^3.0"
-            },
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "6.1.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Sensio\\Bundle\\FrameworkExtraBundle\\": "src/"
-                },
-                "exclude-from-classmap": [
-                    "/tests/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com"
-                }
-            ],
-            "description": "This bundle provides a way to configure your controllers with annotations",
-            "keywords": [
-                "annotations",
-                "controllers"
-            ],
-            "support": {
-                "source": "https://github.com/sensiolabs/SensioFrameworkExtraBundle/tree/v6.2.10"
-            },
-            "abandoned": "Symfony",
-            "time": "2023-02-24T14:57:12+00:00"
         },
         {
             "name": "shopify/shopify-api",
@@ -13001,42 +12978,32 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.13.10",
+            "version": "0.19.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "d1e069db8ad3b4aea2b968248370c21415e4c180"
+                "reference": "bc96a99895bf47c6bfe70ea1b799f0081ed5a903"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/d1e069db8ad3b4aea2b968248370c21415e4c180",
-                "reference": "d1e069db8ad3b4aea2b968248370c21415e4c180",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/bc96a99895bf47c6bfe70ea1b799f0081ed5a903",
+                "reference": "bc96a99895bf47c6bfe70ea1b799f0081ed5a903",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2|^8.0",
-                "phpstan/phpstan": "^1.8.2"
+                "phpstan/phpstan": "^1.10.56"
             },
             "conflict": {
-                "phpstan/phpdoc-parser": "<1.6.2",
-                "rector/rector-cakephp": "*",
                 "rector/rector-doctrine": "*",
-                "rector/rector-laravel": "*",
-                "rector/rector-nette": "*",
-                "rector/rector-phpoffice": "*",
+                "rector/rector-downgrade-php": "*",
                 "rector/rector-phpunit": "*",
-                "rector/rector-prefixed": "*",
                 "rector/rector-symfony": "*"
             },
             "bin": [
                 "bin/rector"
             ],
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "0.13-dev"
-                }
-            },
             "autoload": {
                 "files": [
                     "bootstrap.php"
@@ -13047,9 +13014,15 @@
                 "MIT"
             ],
             "description": "Instant Upgrade and Automated Refactoring of any PHP code",
+            "keywords": [
+                "automation",
+                "dev",
+                "migration",
+                "refactoring"
+            ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.13.10"
+                "source": "https://github.com/rectorphp/rector/tree/0.19.2"
             },
             "funding": [
                 {
@@ -13057,7 +13030,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-08-03T12:48:10+00:00"
+            "time": "2024-01-19T10:58:30+00:00"
         },
         {
             "name": "sebastian/cli-parser",

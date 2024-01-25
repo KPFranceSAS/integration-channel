@@ -20,41 +20,41 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * @ORM\HasLifecycleCallbacks()
  * @Gedmo\Loggable(logEntryClass=ProductLogEntry::class)
  */
-class Promotion
+class Promotion implements \Stringable
 {
     use TraitTimeUpdated;
 
-    public const TYPE_PERCENT = 'percent';
-    public const TYPE_FIXED = 'fixed';
+    final public const TYPE_PERCENT = 'percent';
+    final public const TYPE_FIXED = 'fixed';
 
 
-    public const FREQUENCY_CONTINUE = 'continuous';
-    public const FREQUENCY_WEEKEND = 'weekend';
-    public const FREQUENCY_TIMETOTIME = 'time';
+    final public const FREQUENCY_CONTINUE = 'continuous';
+    final public const FREQUENCY_WEEKEND = 'weekend';
+    final public const FREQUENCY_TIMETOTIME = 'time';
 
-    public const TYPES = [self::TYPE_FIXED, self::TYPE_PERCENT];
+    final public const TYPES = [self::TYPE_FIXED, self::TYPE_PERCENT];
 
-    public const FREQUENCIES = [self::FREQUENCY_CONTINUE, self::FREQUENCY_WEEKEND, self::FREQUENCY_TIMETOTIME];
+    final public const FREQUENCIES = [self::FREQUENCY_CONTINUE, self::FREQUENCY_WEEKEND, self::FREQUENCY_TIMETOTIME];
 
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @Gedmo\Versioned
      * @ORM\Column(type="datetime")
      */
-    private $beginDate;
+    private ?\DateTimeInterface $beginDate = null;
 
     /**
      * @Gedmo\Versioned
      * @Assert\GreaterThan(propertyPath="beginDate")
      * @ORM\Column(type="datetime")
      */
-    private $endDate;
+    private ?\DateTimeInterface $endDate = null;
  
 
     /**
@@ -62,14 +62,14 @@ class Promotion
      * @ORM\ManyToOne(targetEntity=ProductSaleChannel::class, inversedBy="promotions")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $productSaleChannel;
+    private ?\App\Entity\ProductSaleChannel $productSaleChannel = null;
 
     /**
      * @Gedmo\Versioned
      * @ORM\Column(type="string", length=255)
      * @Assert\Choice(choices=Promotion::TYPES, message="Choose a valid type.")
      */
-    private $discountType=self::TYPE_PERCENT;
+    private ?string $discountType=self::TYPE_PERCENT;
 
     /**
      * @Gedmo\Versioned
@@ -77,41 +77,41 @@ class Promotion
      * @Assert\GreaterThan(0)
      * @Assert\LessThan(50)
      */
-    private $percentageAmount;
+    private ?float $percentageAmount = null;
 
     /**
      * @Gedmo\Versioned
      * @ORM\Column(type="float", nullable=true)
      * @Assert\GreaterThan(0)
      */
-    private $fixedAmount;
+    private ?float $fixedAmount = null;
 
     /**
      * @Gedmo\Versioned
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\Length(max = 255)
      */
-    private $comment;
+    private ?string $comment = null;
 
     /**
      * @Gedmo\Versioned
      * @ORM\Column(type="boolean")
      */
-    private $active=true;
+    private ?bool $active=true;
 
     /**
      * @Gedmo\Versioned
      * @ORM\Column(type="integer")
      * @Assert\Range( min = 0,max = 10)
      */
-    private $priority=0;
+    private ?int $priority=0;
 
     /**
      * @Gedmo\Versioned
      * @ORM\Column(type="string", length=255)
      * @Assert\Choice(choices=Promotion::FREQUENCIES, message="Choose a valid type.")
      */
-    private $frequency = self::FREQUENCY_CONTINUE;
+    private ?string $frequency = self::FREQUENCY_CONTINUE;
 
     /**
      * @Gedmo\Versioned
@@ -122,25 +122,25 @@ class Promotion
     /**
      * @ORM\Column(type="text", nullable=true)
      */
-    private $searchableDescription;
+    private ?string $searchableDescription = null;
 
     /**
      * @Gedmo\Versioned
      * @ORM\Column(type="time", nullable=true)
      */
-    private $beginHour;
+    private ?\DateTimeInterface $beginHour = null;
 
     /**
      * @Gedmo\Versioned
      * @ORM\Column(type="time", nullable=true)
      */
-    private $endHour;
+    private ?\DateTimeInterface $endHour = null;
 
     /**
      * @Gedmo\Versioned
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $overrided=false;
+    private ?bool $overrided=false;
 
 
        
@@ -298,7 +298,7 @@ class Promotion
     }
 
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->id ? 'from '.$this->beginDate->format('d/m/Y H:i').' to '.$this->endDate->format('d/m/Y H:i').' > ' .$this->getPromotionPrice().$this->getCurrency() : '...';
     }

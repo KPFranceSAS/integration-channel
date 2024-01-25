@@ -18,23 +18,17 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class PublishPowerBi
 {
-    const BATCH_SIZE = 500;
-    public function __construct(LoggerInterface $logger, ManagerRegistry $manager, SerializerInterface $serializer, $projectDir)
+    final public const BATCH_SIZE = 500;
+    public function __construct(private readonly LoggerInterface $logger, ManagerRegistry $manager, private readonly SerializerInterface $serializer, $projectDir)
     {
         /** @var \Doctrine\ORM\EntityManagerInterface */
         $this->manager = $manager->getManager();
-        $this->serializer = $serializer;
-        $this->logger = $logger;
         $this->projectDir =  $projectDir.'/public/report/';
     }
 
     private $manager;
 
-    private $logger;
-
     private $projectDir;
-
-    private $serializer;
 
 
     public function exportAll()

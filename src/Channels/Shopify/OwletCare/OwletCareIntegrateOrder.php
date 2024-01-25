@@ -8,7 +8,7 @@ use App\Entity\IntegrationChannel;
 
 class OwletCareIntegrateOrder extends ShopifyIntegrateOrder
 {
-    public const OWLETCARE_CUSTOMER_NUMBER = "130803";
+    final public const OWLETCARE_CUSTOMER_NUMBER = "130803";
 
     public function getChannel()
     {

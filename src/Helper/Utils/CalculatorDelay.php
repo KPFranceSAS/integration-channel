@@ -11,29 +11,29 @@ use DateTimeInterface;
  */
 class CalculatorDelay
 {
-    const MONDAY    = 1;
-    const TUESDAY   = 2;
-    const WEDNESDAY = 3;
-    const THURSDAY  = 4;
-    const FRIDAY    = 5;
-    const SATURDAY  = 6;
-    const SUNDAY    = 7;
+    final public const MONDAY    = 1;
+    final public const TUESDAY   = 2;
+    final public const WEDNESDAY = 3;
+    final public const THURSDAY  = 4;
+    final public const FRIDAY    = 5;
+    final public const SATURDAY  = 6;
+    final public const SUNDAY    = 7;
 
-    const WEEK_DAY_FORMAT = 'N';
-    const HOLIDAY_FORMAT  = 'm-d';
-    const FREE_DAY_FORMAT = 'Y-m-d';
+    final public const WEEK_DAY_FORMAT = 'N';
+    final public const HOLIDAY_FORMAT  = 'm-d';
+    final public const FREE_DAY_FORMAT = 'Y-m-d';
 
-    /** @var DateTime */
+    /** @var \DateTimeInterface */
     private $date;
 
     /** @var DateTime[] */
-    private $holidays = array();
+    private $holidays = [];
 
     /** @var DateTime[] */
-    private $freeDays = array();
+    private $freeDays = [];
 
     /** @var int[] */
-    private $freeWeekDays = array();
+    private $freeWeekDays = [];
 
     /**
      * @param DateTime $startDate Date to start calculations from

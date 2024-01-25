@@ -19,15 +19,12 @@ class BuildHistoricCommand extends Command
     protected static $defaultName = 'app:channel-build-historic';
     protected static $defaultDescription = 'Build historical orders';
 
-    public function __construct(KpFranceConnector $saleOrderConnector, ManagerRegistry $manager)
+    public function __construct(private readonly KpFranceConnector $bcConnector, ManagerRegistry $manager)
     {
         /** @var \Doctrine\ORM\EntityManagerInterface */
         $this->manager = $manager->getManager();
-        $this->bcConnector = $saleOrderConnector;
         parent::__construct();
     }
-
-    private $bcConnector;
 
     private $manager;
 
@@ -123,7 +120,7 @@ class BuildHistoricCommand extends Command
                 $output->writeln('<error>Data not accesible data business central ' . $amzOrderId . '</error>');
                 return false;
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $output->writeln('<error>Data not accesible data business central ' . $amzOrderId . '</error>');
             return false;
         }
@@ -150,7 +147,7 @@ class BuildHistoricCommand extends Command
      * @param string $siteId
      * @return string
      */
-    private function matchSubChannel(string $subAmazon)
+    private function matchSubChannel(string $subAmazon): string
     {
         $mapCustomer = [
             "Amazon.co.uk" => "Amazon UK", // Customer Amazon UK

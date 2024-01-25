@@ -12,13 +12,10 @@ class CheckProductStockCommand extends Command
     protected static $defaultName = 'app:check-product-stocks';
     protected static $defaultDescription = 'Check all products stocks';
 
-    public function __construct(ProductStockFinder $productStockFinder)
+    public function __construct(private readonly ProductStockFinder $productStockFinder)
     {
-        $this->productStockFinder = $productStockFinder;
         parent::__construct();
     }
-
-    private $productStockFinder;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

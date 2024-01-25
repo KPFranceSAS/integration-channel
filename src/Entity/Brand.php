@@ -12,9 +12,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class Brand
+class Brand implements \Stringable
 {
-    public const DEFAULT_BUFFER = 10;
+    final public const DEFAULT_BUFFER = 10;
 
 
     use TraitTimeUpdated;
@@ -24,28 +24,29 @@ class Brand
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $active = true;
+    private ?bool $active = true;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="brand")
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Product>
      */
-    private $products;
+    private \Doctrine\Common\Collections\Collection $products;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Assert\GreaterThanOrEqual(0)
      */
-    private $stockBuffer=self::DEFAULT_BUFFER;
+    private ?int $stockBuffer=self::DEFAULT_BUFFER;
 
     public function __construct()
     {
@@ -53,9 +54,9 @@ class Brand
     }
 
   
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->name;
+        return (string) $this->name;
     }
 
     public function getId(): ?int
@@ -89,9 +90,7 @@ class Brand
         return $this;
     }
 
-    /**
-     * @return Collection|Product[]
-     */
+
     public function getProducts(): Collection
     {
         return $this->products;

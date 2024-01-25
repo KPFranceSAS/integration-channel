@@ -13,13 +13,10 @@ class StockCheckCommand extends Command
     protected static $defaultName = 'app:check-stocks-to';
     protected static $defaultDescription = 'Check items with the given sale channel';
 
-    public function __construct(StockAggregator $stockAggregator)
+    public function __construct(private readonly StockAggregator $stockAggregator)
     {
-        $this->stockAggregator = $stockAggregator;
         parent::__construct();
     }
-
-    private $stockAggregator;
 
 
     protected function configure(): void
@@ -31,7 +28,7 @@ class StockCheckCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
+        $channelIntegration = strtoupper((string) $input->getArgument('channelIntegration'));
         $stockUtil = $this->stockAggregator->getStock($channelIntegration);
         if($stockUtil){
             $stockUtil->check();

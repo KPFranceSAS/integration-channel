@@ -8,74 +8,74 @@ use Psr\Log\LoggerInterface;
 
 abstract class BusinessCentralConnector
 {
-    public const KP_FRANCE = "KP FRANCE";
+    final public const KP_FRANCE = "KP FRANCE";
 
-    public const GADGET_IBERIA = "GADGET IBERIA SL";
+    final public const GADGET_IBERIA = "GADGET IBERIA SL";
 
-    public const KIT_PERSONALIZACION_SPORT = "KIT PERSONALIZACION SPORT SL";
+    final public const KIT_PERSONALIZACION_SPORT = "KIT PERSONALIZACION SPORT SL";
 
-    public const INIA = "INIA SLU";
+    final public const INIA = "INIA SLU";
 
-    public const KP_UK = "KP UK";
+    final public const KP_UK = "KP UK";
 
 
-    public const EP_ACCOUNT = "accounts";
+    final public const EP_ACCOUNT = "accounts";
 
-    public const EP_COMPANIES = "companies";
+    final public const EP_COMPANIES = "companies";
 
-    public const EP_SHIPMENT_METHODS = "shipmentMethods";
+    final public const EP_SHIPMENT_METHODS = "shipmentMethods";
 
-    public const EP_PAYMENT_METHODS = "paymentMethods";
+    final public const EP_PAYMENT_METHODS = "paymentMethods";
 
-    public const EP_PAYMENT_TERMS = "paymentTerms";
+    final public const EP_PAYMENT_TERMS = "paymentTerms";
 
-    public const EP_CUSTOMERS = "customers";
+    final public const EP_CUSTOMERS = "customers";
 
-    public const EP_CUSTOMER_PAYMENT_JOURNALS = "customerPaymentJournals";
+    final public const EP_CUSTOMER_PAYMENT_JOURNALS = "customerPaymentJournals";
 
-    public const EP_CUSTOMER_PAYMENTS = "customerPayments";
+    final public const EP_CUSTOMER_PAYMENTS = "customerPayments";
 
-    public const EP_ITEMS = "items";
+    final public const EP_ITEMS = "items";
 
-    public const EP_ITEM_UNITOFMEASURE = "itemUnitOfMeasure";
+    final public const EP_ITEM_UNITOFMEASURE = "itemUnitOfMeasure";
 
-    public const EP_STOCK_PRODUCTS = "itemAvailabilities";
+    final public const EP_STOCK_PRODUCTS = "itemAvailabilities";
 
-    public const EP_SALES_ORDERS = "salesOrders";
+    final public const EP_SALES_ORDERS = "salesOrders";
 
-    public const EP_SALES_ORDERS_LINE = "salesOrderLines";
+    final public const EP_SALES_ORDERS_LINE = "salesOrderLines";
 
-    public const EP_STATUS_ORDERS = "statusOrders";
+    final public const EP_STATUS_ORDERS = "statusOrders";
 
-    public const EP_SALES_INVOICES = "salesInvoices";
+    final public const EP_SALES_INVOICES = "salesInvoices";
 
-    public const EP_SALES_INVOICES_LINES = "salesInvoiceLines";
+    final public const EP_SALES_INVOICES_LINES = "salesInvoiceLines";
 
-    public const EP_SALES_CREDITS_LINE = "salesCreditMemoLines";
+    final public const EP_SALES_CREDITS_LINE = "salesCreditMemoLines";
 
-    public const EP_SALES_CREDITS = "salesCreditMemos";
+    final public const EP_SALES_CREDITS = "salesCreditMemos";
 
-    public const EP_SALES_RETURNS_LINE = "SalesReturnLine";
+    final public const EP_SALES_RETURNS_LINE = "SalesReturnLine";
 
-    public const EP_SALES_RETURNS = "SalesReturnHeader";
+    final public const EP_SALES_RETURNS = "SalesReturnHeader";
 
-    public const EP_PURCHASES_INVOICES_LINE = "purchaseInvoiceLines";
+    final public const EP_PURCHASES_INVOICES_LINE = "purchaseInvoiceLines";
 
-    public const EP_PURCHASES_INVOICES = "purchaseInvoices";
+    final public const EP_PURCHASES_INVOICES = "purchaseInvoices";
 
-    public const EP_PURCHASES_ORDERS = "purchaseOrders";
+    final public const EP_PURCHASES_ORDERS = "purchaseOrders";
 
-    public const EP_TRANSFER_ORDERS = "transferOrders";
+    final public const EP_TRANSFER_ORDERS = "transferOrders";
 
-    public const EP_BUNDLE_CONTENT = "billOfMaterials";
+    final public const EP_BUNDLE_CONTENT = "billOfMaterials";
     
-    public const EP_FEES_TAXES = "FeesAndTaxes";
+    final public const EP_FEES_TAXES = "FeesAndTaxes";
     
 
 
     protected $logger;
 
-    protected $debugger;
+    protected $debugger = false;
 
     protected $client;
 
@@ -83,8 +83,6 @@ abstract class BusinessCentralConnector
 
     /**
      * Constructor
-     *
-     * @param LoggerInterface $logger
      */
     public function __construct(
         LoggerInterface $logger,
@@ -101,7 +99,6 @@ abstract class BusinessCentralConnector
                 'Authorization' => "Basic " . base64_encode("$loginBC:$passwordBC"),
             ],
         ]);
-        $this->debugger = false;
     }
 
 
@@ -143,7 +140,7 @@ abstract class BusinessCentralConnector
             ]
         );
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode((string) $response->getBody()->getContents(), true);
     }
 
 
@@ -168,7 +165,7 @@ abstract class BusinessCentralConnector
             ]
         );
 
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode((string) $response->getBody()->getContents(), true);
     }
 
 
@@ -187,7 +184,7 @@ abstract class BusinessCentralConnector
                 'debug' => $this->debugger
             ]
         );
-        return json_decode($response->getBody()->getContents(), true);
+        return json_decode((string) $response->getBody()->getContents(), true);
     }
 
 
@@ -261,7 +258,7 @@ abstract class BusinessCentralConnector
         try {
             $item =  $this->doGetRequest($type . '(' . $id . ')', $paramSupps);
             return $item;
-        } catch (Exception $e) {
+        } catch (Exception) {
             throw new Exception("No $type in the database with id equal to $id. You need to add a corelation");
         }
     }
@@ -289,7 +286,7 @@ abstract class BusinessCentralConnector
     {
         $companies = $this->getCompanies();
         foreach ($companies as $company) {
-            if (strtoupper($company['name']) == $name) {
+            if (strtoupper((string) $company['name']) == $name) {
                 $this->companyId = $company['id'];
                 return $company['id'];
             }

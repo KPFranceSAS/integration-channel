@@ -23,7 +23,7 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
      *
      * @return void
      */
-    public function integrateAllOrders()
+    public function integrateAllOrders(): void
     {
         $counter = 0;
         $ordersApi = $this->getApi()->getAllOrdersToSend();
@@ -88,7 +88,7 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
     {
         $orderBC = new SaleOrder();
         $orderBC->customerNumber = $this->getClientNumber();
-        $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->gmt_pay_success, 0, 10));
+        $datePayment = DateTime::createFromFormat('Y-m-d', substr((string) $orderApi->gmt_pay_success, 0, 10));
         $datePayment->add(new DateInterval('P3D'));
         $orderBC->billToName = $orderApi->receipt_address->contact_person;
         $orderBC->shipToName = $orderApi->receipt_address->contact_person;
@@ -97,22 +97,22 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
 
         foreach ($valuesAddress as $val) {
             $adress =  $orderApi->receipt_address->detail_address;
-            if (property_exists($orderApi->receipt_address, 'address2') && strlen($orderApi->receipt_address->address2) > 0) {
+            if (property_exists($orderApi->receipt_address, 'address2') && strlen((string) $orderApi->receipt_address->address2) > 0) {
                 $adress .= ', ' . $orderApi->receipt_address->address2;
             }
 
             $adress = $this->simplifyAddress($adress);
 
-            if (strlen($adress) < 100) {
+            if (strlen((string) $adress) < 100) {
                 $orderBC->{$val . "PostalAddress"}->street = $adress;
             } else {
-                $orderBC->{$val . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
+                $orderBC->{$val . "PostalAddress"}->street = substr((string) $adress, 0, 100) . "\r\n" . substr((string) $adress, 99);
             }
-            $orderBC->{$val . "PostalAddress"}->city = substr($orderApi->receipt_address->city, 0, 100);
+            $orderBC->{$val . "PostalAddress"}->city = substr((string) $orderApi->receipt_address->city, 0, 100);
             $orderBC->{$val . "PostalAddress"}->postalCode = $orderApi->receipt_address->zip;
             $orderBC->{$val . "PostalAddress"}->countryLetterCode = $orderApi->receipt_address->country;
-            if (strlen($orderApi->receipt_address->province) > 0) {
-                $orderBC->{$val . "PostalAddress"}->state = substr($orderApi->receipt_address->province, 0, 30);
+            if (strlen((string) $orderApi->receipt_address->province) > 0) {
+                $orderBC->{$val . "PostalAddress"}->state = substr((string) $orderApi->receipt_address->province, 0, 30);
             }
         }
 
@@ -185,7 +185,7 @@ abstract class AliExpressIntegratorParent extends IntegratorParent
 
     public function checkAdressPostal(PostalAddress $postalAddress)
     {
-        $street = str_replace(" ", "", strtoupper($postalAddress->street));
+        $street = str_replace(" ", "", strtoupper((string) $postalAddress->street));
         $forbiddenDestinations = ['CITYBOX', 'CITIBOX', 'CITYPAQ', 'CORREOPOSTAL', 'APARTADOPOSTAL', 'SMARTPOINT'];
         if (u($street)->containsAny($forbiddenDestinations)) {
             throw new Exception("Address " . $postalAddress->street . " contains one of the forbidden word. We let you cancel the order online");

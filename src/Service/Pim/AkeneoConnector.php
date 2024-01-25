@@ -10,18 +10,15 @@ class AkeneoConnector
 {
     private $client;
 
-    private $logger;
-
 
     public function __construct(
-        LoggerInterface $logger,
+        private readonly LoggerInterface $logger,
         string $akeneoUrl,
         string $akeneoClientId,
         string $akeneoClientSecret,
         string $akeneoUsername,
         string $akeneoPassword
     ) {
-        $this->logger = $logger;
         $clientBuilder = new AkeneoPimClientBuilder($akeneoUrl);
         $this->client = $clientBuilder->buildAuthenticatedByPassword(
             $akeneoClientId,

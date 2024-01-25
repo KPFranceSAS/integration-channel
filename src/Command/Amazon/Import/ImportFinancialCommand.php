@@ -15,9 +15,8 @@ class ImportFinancialCommand extends Command
     protected static $defaultName = 'app:amz-import-financial';
     protected static $defaultDescription = 'Import financial events';
 
-    public function __construct(AmzApiFinancial $amzApiFinancial)
+    public function __construct(private readonly AmzApiFinancial $amzApiFinancial)
     {
-        $this->amzApiFinancial = $amzApiFinancial;
         parent::__construct();
     }
 
@@ -28,9 +27,6 @@ class ImportFinancialCommand extends Command
             ->addArgument('startDate', InputArgument::OPTIONAL, 'Start date Ymd')
             ->addArgument('endDate', InputArgument::OPTIONAL, 'End date Ymd');
     }
-
-
-    private $amzApiFinancial;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

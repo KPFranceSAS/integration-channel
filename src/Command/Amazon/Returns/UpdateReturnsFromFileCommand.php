@@ -15,16 +15,13 @@ class UpdateReturnsFromFileCommand extends Command
     protected static $defaultName = 'app:update-returns-from-file';
     protected static $defaultDescription = 'Update return from files';
 
-    public function __construct(ManagerRegistry $manager, CsvExtracter $csvExtracter)
+    public function __construct(ManagerRegistry $manager, private readonly CsvExtracter $csvExtracter)
     {
         $this->manager = $manager->getManager();
-        $this->csvExtracter = $csvExtracter;
         parent::__construct();
     }
 
     private $manager;
-
-    private $csvExtracter;
 
 
     protected function configure(): void

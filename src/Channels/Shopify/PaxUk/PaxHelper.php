@@ -15,7 +15,7 @@ class PaxHelper
 
     public static function getShopifySku($sku)
     {
-        return str_replace(['PX-', 'PAX-'], '', $sku);
+        return str_replace(['PX-', 'PAX-'], '', (string) $sku);
     }
     
 

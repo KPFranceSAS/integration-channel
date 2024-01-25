@@ -119,11 +119,11 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         foreach ($locales as $locale) {
             $localePim = $locale.'_'.strtoupper($locale);
             $localeMirakl = $locale.'-'.strtoupper($locale);
-            $flatProduct['i18n_'.$locale.'_12963_title'] = substr($this->getAttributeSimple($product, "article_name", $localePim), 0, 150);
+            $flatProduct['i18n_'.$locale.'_12963_title'] = substr((string) $this->getAttributeSimple($product, "article_name", $localePim), 0, 150);
 
             $description = $this->getAttributeSimple($product, "description", $localePim);
             if($description) {
-                $descriptionFormate = str_replace('</p>', '</p><p>&nbsp;</p>', $description);
+                $descriptionFormate = str_replace('</p>', '</p><p>&nbsp;</p>', (string) $description);
                 $descriptionFormate = str_replace(['<strong>', '</strong>'], ['<b>', '</b>'], $descriptionFormate);
                 $flatProduct['i18n_'.$locale.'_01022_longdescription'] = substr($descriptionFormate, 0, 5000);
             }
@@ -131,7 +131,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             for ($i = 1; $i <= 5;$i++) {
                 $attributeImageLoc = $this->getAttributeSimple($product, 'image_url_loc_'.$i, $localePim);
                 $keyArray = $locale == 'fr' ? 'media_'.$i : 'media_'.$i.'_'.$localeMirakl;
-                $flatProduct[$keyArray] = $attributeImageLoc ? $attributeImageLoc : $this->getAttributeSimple($product, 'image_url_'.$i);
+                $flatProduct[$keyArray] = $attributeImageLoc ?: $this->getAttributeSimple($product, 'image_url_'.$i);
             }
 
             $keyArrayMedia = $locale == 'fr' ? 'media_instruction' : 'media_instruction_'.$localeMirakl;

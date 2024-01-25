@@ -19,22 +19,13 @@ class UpdateStatusAllCommand extends Command
     protected static $defaultName = 'app:update-status-orders-all';
     protected static $defaultDescription = 'Update all status of orders from all sale channels';
 
-    public function __construct(UpdateStatusAggregator $invoiceAggregator, ManagerRegistry $managerRegistry, LoggerInterface $logger, MailService $mailService)
+    public function __construct(private readonly UpdateStatusAggregator $invoiceAggregator, ManagerRegistry $managerRegistry, private readonly LoggerInterface $logger, private readonly MailService $mailService)
     {
-        $this->invoiceAggregator = $invoiceAggregator;
-        $this->logger = $logger;
-        $this->mailService = $mailService;
         $this->managerRegistry = $managerRegistry->getManager();
         parent::__construct();
     }
 
-    private $invoiceAggregator;
-
     private $managerRegistry;
-
-    private $logger;
-
-    private $mailService;
 
 
     protected function configure(): void

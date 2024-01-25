@@ -70,8 +70,8 @@ class AssociateAmzFbaReimbursementReturns
         foreach ($events as $key => $event) {
             try {
                 $i++;
-                $this->logger->info(get_class($event)." #".$event->getId() .' ['.$key.'] '.$i.'/'.$nbEvents);
-                if (get_class($event)==AmazonReimbursement::class) {
+                $this->logger->info($event::class." #".$event->getId() .' ['.$key.'] '.$i.'/'.$nbEvents);
+                if ($event::class==AmazonReimbursement::class) {
                     $this->associateAmazonReimbursement($event);
                 } else {
                     $this->associateAmazonReturn($event);
@@ -288,12 +288,12 @@ class AssociateAmzFbaReimbursementReturns
         $qb = $this->manager->createQueryBuilder();
         $expr = $this->manager->getExpressionBuilder();
         $qb->select('amz')
-                ->from('App\Entity\AmazonReturn', 'amz')
+                ->from(\App\Entity\AmazonReturn::class, 'amz')
                 ->andWhere($expr->notIn(
                     'amz.id',
                     $this->manager->createQueryBuilder()
                         ->select('amazonReturn.id')
-                        ->from('App\Entity\FbaReturn', 'fba')
+                        ->from(\App\Entity\FbaReturn::class, 'fba')
                         ->leftJoin('fba.amazonReturn', 'amazonReturn')
                         ->where('fba.amazonReturn IS NOT NULL')
                         ->getDQL()
@@ -307,13 +307,13 @@ class AssociateAmzFbaReimbursementReturns
         $qb = $this->manager->createQueryBuilder();
         $expr = $this->manager->getExpressionBuilder();
         $qb->select('amz')
-                ->from('App\Entity\AmazonReimbursement', 'amz')
+                ->from(\App\Entity\AmazonReimbursement::class, 'amz')
                 ->where('amz.reason = :reason')
                 ->andWhere($expr->notIn(
                     'amz.id',
                     $this->manager->createQueryBuilder()
                         ->select('amazonReimbursement.id')
-                        ->from('App\Entity\FbaReturn', 'fba')
+                        ->from(\App\Entity\FbaReturn::class, 'fba')
                         ->leftJoin('fba.amazonReimbursement', 'amazonReimbursement')
                         ->where('fba.amazonReimbursement IS NOT NULL')
                         ->getDQL()

@@ -20,7 +20,7 @@ use Psr\Log\LoggerInterface;
 
 abstract class AriseIntegratorParent extends IntegratorParent
 {
-    public const ARISE_CUSTOMER_NUMBER = "003307";
+    final public const ARISE_CUSTOMER_NUMBER = "003307";
 
 
     public function __construct(
@@ -45,7 +45,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
      *
      * @return void
      */
-    public function integrateAllOrders()
+    public function integrateAllOrders(): void
     {
         $counter = 0;
         $ordersApi = $this->getApi()->getAllOrdersToSend();
@@ -95,10 +95,10 @@ abstract class AriseIntegratorParent extends IntegratorParent
     {
         $orderBC = new SaleOrder();
         $orderBC->customerNumber = $this->getCustomerBC($orderApi);
-        $datePayment = DateTime::createFromFormat('Y-m-d', substr($orderApi->created_at, 0, 10));
+        $datePayment = DateTime::createFromFormat('Y-m-d', substr((string) $orderApi->created_at, 0, 10));
         $datePayment->add(new \DateInterval('P3D'));
 
-        $bilingIndex= (strlen($orderApi->address_billing->city)==0) ? 'shipping' : 'billing';
+        $bilingIndex= (strlen((string) $orderApi->address_billing->city)==0) ? 'shipping' : 'billing';
         $orderBC->shipToName = $orderApi->address_shipping->last_name." ".$orderApi->address_shipping->first_name;
         if ($bilingIndex == 'billing') {
             $orderBC->billToName = $orderApi->{"address_".$bilingIndex}->last_name." ".$orderApi->{"address_".$bilingIndex}->first_name;
@@ -110,25 +110,25 @@ abstract class AriseIntegratorParent extends IntegratorParent
 
         foreach ($valuesAddress as $bcVal => $ariseVal) {
             $adress =  $orderApi->{'address_'.$ariseVal}->address1;
-            if (strlen($orderApi->{'address_'.$ariseVal}->address2) > 0) {
+            if (strlen((string) $orderApi->{'address_'.$ariseVal}->address2) > 0) {
                 $adress .= ', ' . $orderApi->{'address_'.$ariseVal}->address2;
             }
             
 
             $adress = $this->simplifyAddress($adress);
 
-            if (strlen($adress) < 100) {
+            if (strlen((string) $adress) < 100) {
                 $orderBC->{$bcVal . "PostalAddress"}->street = $adress;
             } else {
-                $orderBC->{$bcVal . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
+                $orderBC->{$bcVal . "PostalAddress"}->street = substr((string) $adress, 0, 100) . "\r\n" . substr((string) $adress, 99);
             }
-            $orderBC->{$bcVal . "PostalAddress"}->city = substr($orderApi->{'address_'.$ariseVal}->city, 0, 100);
+            $orderBC->{$bcVal . "PostalAddress"}->city = substr((string) $orderApi->{'address_'.$ariseVal}->city, 0, 100);
             $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi->{'address_'.$ariseVal}->post_code;
             
             $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = 'ES';
 
-            if (strlen($orderApi->{'address_'.$ariseVal}->address3) > 0) {
-                $orderBC->{$bcVal . "PostalAddress"}->state = substr($orderApi->{'address_'.$ariseVal}->address3, 0, 30);
+            if (strlen((string) $orderApi->{'address_'.$ariseVal}->address3) > 0) {
+                $orderBC->{$bcVal . "PostalAddress"}->state = substr((string) $orderApi->{'address_'.$ariseVal}->address3, 0, 30);
             }
         }
 
@@ -223,7 +223,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
     public function getEmailAddress($orderApi)
     {
         foreach ($orderApi->lines as $line) {
-            if (strlen($line->digital_delivery_info)>0) {
+            if (strlen((string) $line->digital_delivery_info)>0) {
                 return $line->digital_delivery_info;
             }
         }

@@ -99,7 +99,7 @@ abstract class SaveCancelCommand extends Command
                 $result = $bcConnector->deleteSaleOrder($saleOrder['id']);
                 $this->addLog($webOrder, 'Sale order ' . $webOrder->getOrderErp() . ' have been deleted');
                 $this->errors[] = 'Sale order ' . $webOrder->getOrderErp() . ' have been deleted';
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $this->errors[] = 'Deleting the sale order ' . $webOrder->getOrderErp() . ' did not succeeded because a shipment should be processing.';
                 $this->errors[] = 'You need to advise warehouse to stop shipment.';
             }

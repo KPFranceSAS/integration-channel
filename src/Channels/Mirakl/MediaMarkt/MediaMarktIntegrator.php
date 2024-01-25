@@ -11,7 +11,7 @@ use Exception;
 class MediaMarktIntegrator extends MiraklIntegratorParent
 {
     
-    public const MEDIAMARKT_ES = 'GI003333';
+    final public const MEDIAMARKT_ES = 'GI003333';
     
        
 

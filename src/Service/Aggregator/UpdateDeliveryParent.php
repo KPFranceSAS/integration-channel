@@ -67,7 +67,7 @@ abstract class UpdateDeliveryParent
      *
      * @return void
      */
-    public function updateStatusDeliveries()
+    public function updateStatusDeliveries(): void
     {
         try {
             $this->errors = [];

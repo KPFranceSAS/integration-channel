@@ -9,17 +9,11 @@ use Psr\Log\LoggerInterface;
 
 class ShippyProTracking
 {
-    private $shippyProKey;
-
-    private $logger;
-
     private $clientUrl='https://www.shippypro.com/api/v1';
 
 
-    public function __construct(LoggerInterface $logger, $shippyProKey)
+    public function __construct(private readonly LoggerInterface $logger, private $shippyProKey)
     {
-        $this->logger = $logger;
-        $this->shippyProKey = $shippyProKey;
     }
 
 

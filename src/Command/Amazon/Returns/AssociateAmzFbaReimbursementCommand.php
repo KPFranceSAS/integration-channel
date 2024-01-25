@@ -13,13 +13,10 @@ class AssociateAmzFbaReimbursementCommand extends Command
     protected static $defaultName = 'app:amz-associates-returns';
     protected static $defaultDescription = 'Associate FBA Returns';
 
-    public function __construct(AssociateAmzFbaReimbursementReturns $amzFbaReturn)
+    public function __construct(private readonly AssociateAmzFbaReimbursementReturns $amzFbaReturn)
     {
-        $this->amzFbaReturn = $amzFbaReturn;
         parent::__construct();
     }
-
-    private $amzFbaReturn;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

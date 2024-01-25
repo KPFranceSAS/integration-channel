@@ -48,7 +48,7 @@ class AmazonFinancialEventCrudController extends AdminCrudController
 
         $url = $this->container->get(AdminUrlGenerator::class)
                 ->setDashboard(DashboardController::class)
-                ->setController(get_class($this))
+                ->setController(static::class)
                 ->set('filters', [
                     "transactionType" => [
                             "comparison" => "=",

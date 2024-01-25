@@ -18,8 +18,8 @@ trait TraitLoggable
         $logs  = $level ? $this->getLogsByLevel($level) : $this->logs;
         $log = end($logs);
         if ($log) {
-            return strlen($log['content']) >  $limitation
-                ?  substr($log['content'], 0, $limitation) . '...'
+            return strlen((string) $log['content']) >  $limitation
+                ?  substr((string) $log['content'], 0, $limitation) . '...'
                 : $log['content'];
         } else {
             return '';

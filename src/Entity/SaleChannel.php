@@ -15,7 +15,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity("code")
  */
-class SaleChannel
+class SaleChannel implements \Stringable
 {
     use TraitTimeUpdated;
 
@@ -24,63 +24,65 @@ class SaleChannel
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * 
      * @ORM\Column(type="string", length=255, unique=true)
      */
-    private $code;
+    private ?string $code = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * @ORM\OneToMany(targetEntity=ProductSaleChannel::class, mappedBy="saleChannel", orphanRemoval=true, cascade={"persist","remove"})
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\ProductSaleChannel>
      */
-    private $productSaleChannels;
+    private \Doctrine\Common\Collections\Collection $productSaleChannels;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $currencyCode;
+    private ?string $currencyCode = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $countryCode;
+    private ?string $countryCode = null;
 
     /**
     * @ORM\Column(type="string", length=255)
     */
-    private $company;
+    private ?string $company = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $channel;
+    private ?string $channel = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $color;
+    private ?string $color = null;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, mappedBy="saleChannels")
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\User>
      */
-    private $users;
+    private \Doctrine\Common\Collections\Collection $users;
 
     /**
      * @ORM\ManyToOne(targetEntity=IntegrationChannel::class, inversedBy="saleChannels")
      */
-    private $integrationChannel;
+    private ?\App\Entity\IntegrationChannel $integrationChannel = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $codePim;
+    private ?string $codePim = null;
 
     
     public function __construct()
@@ -91,19 +93,16 @@ class SaleChannel
 
 
     public function getCurrencySymbol(){
-        switch ($this->currencyCode){
-            case 'EUR':
-                return '€';
-            case 'GBP' :
-                return '£';    
-            default :
-                return '';
-        }
+        return match ($this->currencyCode) {
+            'EUR' => '€',
+            'GBP' => '£',
+            default => '',
+        };
     }
 
 
-    public function __toString(){
-        return $this->name;
+    public function __toString(): string{
+        return (string) $this->name;
     }   
     
     
@@ -139,7 +138,7 @@ class SaleChannel
     /**
      * @return Collection|ProductSaleChannel[]
      */
-    public function getProductSaleChannels(): Collection
+    public function getProductSaleChannels(): Collection|\Doctrine\Common\Collections\Collection
     {
         return $this->productSaleChannels;
     }

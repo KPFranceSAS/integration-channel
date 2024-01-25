@@ -9,7 +9,7 @@ use Exception;
 
 class ManoManoDeIntegrator extends ManoManoIntegratorParent
 {
-    public const MANOMANO_DE = '000782';
+    final public const MANOMANO_DE = '000782';
 
 
     public function getChannel()

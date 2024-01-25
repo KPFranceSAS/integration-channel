@@ -11,62 +11,55 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class FbaReturn
+class FbaReturn implements \Stringable
 {
     use TraitTimeUpdated;
 
     use TraitLoggable;
     
-    public const LOCALIZATION_FBA = 'FBA';
+    final public const LOCALIZATION_FBA = 'FBA';
 
-    public const LOCALIZATION_CLIENT = 'CLIENT';
+    final public const LOCALIZATION_CLIENT = 'CLIENT';
 
-    public const LOCALIZATION_FBA_REFURBISHED = 'FBA REFURBISHED';
+    final public const LOCALIZATION_FBA_REFURBISHED = 'FBA REFURBISHED';
 
-    public const LOCALIZATION_FBA_REIMBURSED = 'FBA REIMBURSED';
+    final public const LOCALIZATION_FBA_REIMBURSED = 'FBA REIMBURSED';
 
 
-    public const LOCALIZATION_BIARRITZ = 'BIARRITZ';
+    final public const LOCALIZATION_BIARRITZ = 'BIARRITZ';
 
-    public const LOCALIZATION_LAROCA = 'LAROCA';
+    final public const LOCALIZATION_LAROCA = 'LAROCA';
 
-    public const STATUS_WAITING_CUSTOMER = 0;
+    final public const STATUS_WAITING_CUSTOMER = 0;
 
-    public const STATUS_RETURN_TO_FBA_NOTSELLABLE = 1;
+    final public const STATUS_RETURN_TO_FBA_NOTSELLABLE = 1;
 
-    public const STATUS_RETURN_TO_SALE = 2;
+    final public const STATUS_RETURN_TO_SALE = 2;
 
-    public const STATUS_RETURN_TO_BIARRITZ = 3;
+    final public const STATUS_RETURN_TO_BIARRITZ = 3;
 
-    public const STATUS_RETURN_TO_LAROCA = 4;
+    final public const STATUS_RETURN_TO_LAROCA = 4;
 
-    public const STATUS_SENT_TO_LAROCA = 5;
+    final public const STATUS_SENT_TO_LAROCA = 5;
 
-    public const STATUS_WAITING_REIMBURSED_BY_FBA = 6;
+    final public const STATUS_WAITING_REIMBURSED_BY_FBA = 6;
 
-    public const STATUS_REIMBURSED_BY_FBA = 7;
+    final public const STATUS_REIMBURSED_BY_FBA = 7;
 
     /**
     * @Groups({"export_order"})
     */
     public function getLocalizationLitteral()
     {
-        switch ($this->localization) {
-            case self::LOCALIZATION_FBA:
-                return 'FBA Sellable';
-            case self::LOCALIZATION_FBA_REFURBISHED:
-                return 'FBA Unsellable';
-            case self::LOCALIZATION_FBA_REIMBURSED:
-                return 'FBA Reimbursed';
-            case self::LOCALIZATION_BIARRITZ:
-                return 'Biarritz';
-            case self::LOCALIZATION_LAROCA:
-                return 'La Roca';
-            case self::LOCALIZATION_CLIENT:
-                return 'Buyer';
-            default:
-                return 'Unknow #'.$this->localization;
-        }
+        return match ($this->localization) {
+            self::LOCALIZATION_FBA => 'FBA Sellable',
+            self::LOCALIZATION_FBA_REFURBISHED => 'FBA Unsellable',
+            self::LOCALIZATION_FBA_REIMBURSED => 'FBA Reimbursed',
+            self::LOCALIZATION_BIARRITZ => 'Biarritz',
+            self::LOCALIZATION_LAROCA => 'La Roca',
+            self::LOCALIZATION_CLIENT => 'Buyer',
+            default => 'Unknow #'.$this->localization,
+        };
     }
 
     /**
@@ -74,26 +67,17 @@ class FbaReturn
      */
     public function getStatusLitteral()
     {
-        switch ($this->status) {
-            case self::STATUS_WAITING_CUSTOMER:
-                return 'Waiting for return';
-            case self::STATUS_RETURN_TO_FBA_NOTSELLABLE:
-                return 'Returned to FBA Unsellable';
-            case self::STATUS_RETURN_TO_SALE:
-                return 'Reintegrated to sale';
-            case self::STATUS_REIMBURSED_BY_FBA:
-                return 'Reimbursed by fba';
-            case self::STATUS_RETURN_TO_BIARRITZ:
-                return 'Return in Biarritz';
-            case self::STATUS_WAITING_REIMBURSED_BY_FBA:
-                return 'Waiting for reimbursed by FBA';
-            case self::STATUS_RETURN_TO_LAROCA:
-                return 'Receipted in La Roca';
-            case self::STATUS_SENT_TO_LAROCA:
-                return 'Sent to La Roca';
-            default:
-                return 'UNknow #'.$this->status;
-        }
+        return match ($this->status) {
+            self::STATUS_WAITING_CUSTOMER => 'Waiting for return',
+            self::STATUS_RETURN_TO_FBA_NOTSELLABLE => 'Returned to FBA Unsellable',
+            self::STATUS_RETURN_TO_SALE => 'Reintegrated to sale',
+            self::STATUS_REIMBURSED_BY_FBA => 'Reimbursed by fba',
+            self::STATUS_RETURN_TO_BIARRITZ => 'Return in Biarritz',
+            self::STATUS_WAITING_REIMBURSED_BY_FBA => 'Waiting for reimbursed by FBA',
+            self::STATUS_RETURN_TO_LAROCA => 'Receipted in La Roca',
+            self::STATUS_SENT_TO_LAROCA => 'Sent to La Roca',
+            default => 'UNknow #'.$this->status,
+        };
     }
 
     /**
@@ -101,36 +85,36 @@ class FbaReturn
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $status;
+    private ?int $status = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $amazonOrderId;
+    private ?string $amazonOrderId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $sellerOrderId;
+    private ?string $sellerOrderId = null;
 
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $adjustmentId;
+    private ?string $adjustmentId = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"export_order"})
      */
-    private $sku;
+    private ?string $sku = null;
 
     /**
      * @ORM\Column(type="date_immutable")
@@ -142,76 +126,76 @@ class FbaReturn
     /**
      * @ORM\ManyToOne(targetEntity=AmazonRemovalOrder::class, inversedBy="fbaReturns")
      */
-    private $amazonRemoval;
+    private ?\App\Entity\AmazonRemovalOrder $amazonRemoval = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $lpn;
+    private ?string $lpn = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class)
      */
-    private $product;
+    private ?\App\Entity\Product $product = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $marketplaceName;
+    private ?string $marketplaceName = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $localization;
+    private ?string $localization = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $amzProductStatus;
+    private ?string $amzProductStatus = null;
 
     /**
      * @ORM\OneToOne(targetEntity=AmazonReturn::class, cascade={"persist", "remove"})
      */
-    private $amazonReturn;
+    private ?\App\Entity\AmazonReturn $amazonReturn = null;
 
     /**
      * @ORM\OneToOne(targetEntity=AmazonReimbursement::class, cascade={"persist", "remove"})
      */
-    private $amazonReimbursement;
+    private ?\App\Entity\AmazonReimbursement $amazonReimbursement = null;
 
     /**
      * @ORM\Column(type="boolean")
      *  @Groups({"export_order"})
      */
-    private $close;
+    private ?bool $close = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $businessCentralDocument;
+    private ?string $businessCentralDocument = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $refundPrincipal;
+    private ?float $refundPrincipal = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $refundCommission;
+    private ?float $refundCommission = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $commissionOnRefund;
+    private ?float $commissionOnRefund = null;
 
 
     /**
@@ -266,7 +250,7 @@ class FbaReturn
 
    
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->amazonOrderId.' '.$this->sku;
     }

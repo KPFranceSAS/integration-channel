@@ -29,7 +29,7 @@ abstract class ManoManoUpdateStatusParent extends UpdateStatusParent
             $codeCarrier,
             $codeCarrier,
             $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $trackingNumber),
-            str_replace("/", "-", $trackingNumber)
+            str_replace("/", "-", (string) $trackingNumber)
         );
         if ($result) {
             $this->addLogToOrder($order, 'Mark as fulfilled on '.$this->getChannel());

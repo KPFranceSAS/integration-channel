@@ -8,10 +8,10 @@ use App\Service\Carriers\UpsGetTracking;
 
 class SaleOrder
 {
-    public const STATUS_OPEN = "Open";
-    public const STATUS_RELEASED = "Released";
-    public const STATUS_PENDING_APPROVAL = "Pending_Approval";
-    public const STATUS_PENDING_PREPAYMENT = "Pending_Prepayment";
+    final public const STATUS_OPEN = "Open";
+    final public const STATUS_RELEASED = "Released";
+    final public const STATUS_PENDING_APPROVAL = "Pending_Approval";
+    final public const STATUS_PENDING_PREPAYMENT = "Pending_Prepayment";
 
     public $shippingPostalAddress;
 
@@ -74,7 +74,6 @@ class SaleOrder
     {
         $this->shippingPostalAddress = new PostalAddress();
         $this->sellingPostalAddress = new PostalAddress();
-        $this->salesLines = [];
     }
 
     public $salesLines = [];

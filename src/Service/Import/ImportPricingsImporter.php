@@ -20,28 +20,18 @@ use Twig\Environment;
 
 class ImportPricingsImporter
 {
-    private $mailService;
     private $manager;
-    private $validator;
-    private $logger;
-    private $twig;
-    private $tokenStorage;
 
 
     public function __construct(
-        MailService $mailService,
+        private readonly MailService $mailService,
         ManagerRegistry $manager,
-        ValidatorInterface $validator,
-        LoggerInterface $logger,
-        Environment $twig,
-        TokenStorageInterface $tokenStorage
+        private readonly ValidatorInterface $validator,
+        private readonly LoggerInterface $logger,
+        private readonly Environment $twig,
+        private readonly TokenStorageInterface $tokenStorage
     ) {
         $this->manager = $manager->getManager();
-        $this->mailService = $mailService;
-        $this->tokenStorage = $tokenStorage;
-        $this->validator = $validator;
-        $this->logger = $logger;
-        $this->twig = $twig;
     }
 
 
@@ -123,7 +113,7 @@ class ImportPricingsImporter
         $attributes= ['enabled', 'price'];
         foreach ($line as $column=> $value) {
             foreach ($attributes as $attribute) {
-                if (u($column)->endsWith('-'.$attribute) && strlen($value)> 0) {
+                if (u($column)->endsWith('-'.$attribute) && strlen((string) $value)> 0) {
                     $channelCode = str_replace('-'.$attribute, '', $column);
 
                     if (!array_key_exists($channelCode, $saleChannelDbs)) {
@@ -142,12 +132,12 @@ class ImportPricingsImporter
 
         foreach ($line as $column=> $value) {
             foreach ($attributes as $attribute) {
-                if (u($column)->endsWith('-'.$attribute) && strlen($value)> 0) {
+                if (u($column)->endsWith('-'.$attribute) && strlen((string) $value)> 0) {
                     $channelCode = str_replace('-'.$attribute, '', $column);
 
                     $productSaleChannel =  $productDb->getProductSaleChannelByCode($channelCode);
                     if ($productSaleChannel) {
-                        $valueFormatted = $attribute == 'enabled' ? (bool)$value : floatval(str_replace(',', '.', $value));
+                        $valueFormatted = $attribute == 'enabled' ? (bool)$value : floatval(str_replace(',', '.', (string) $value));
                         $productSaleChannel->{'set'.ucfirst($attribute)}($valueFormatted);
                         $this->addLog($importPricing, 'Put on channel '.$channelCode." ".$column." to value ".$value);
                     } else {
@@ -295,7 +285,7 @@ class ImportPricingsImporter
             $this->addLog($importPricing, 'Found '.count($marketplaces).' sale channels');
         }
 
-        $beginDate = strlen($line['beginDate']) == 10 ? DateTime::createFromFormat('Y-m-d H:i', $line['beginDate'].' 00:00') : DateTime::createFromFormat('Y-m-d H:i', $line['beginDate']);
+        $beginDate = strlen((string) $line['beginDate']) == 10 ? DateTime::createFromFormat('Y-m-d H:i', $line['beginDate'].' 00:00') : DateTime::createFromFormat('Y-m-d H:i', $line['beginDate']);
         if (!$beginDate) {
             $this->addError($importPricing, 'Begin date '.$line['beginDate'].' is incorrect  on line '.$lineNumber);
             return $promotions;
@@ -310,7 +300,7 @@ class ImportPricingsImporter
             $this->addLog($importPricing, 'Promotion Type '.$line['type']);
         }
 
-        $endDate = strlen($line['endDate']) == 10 ? DateTime::createFromFormat('Y-m-d H:i', $line['endDate'].' 23:59') : DateTime::createFromFormat('Y-m-d H:i', $line['endDate']);
+        $endDate = strlen((string) $line['endDate']) == 10 ? DateTime::createFromFormat('Y-m-d H:i', $line['endDate'].' 23:59') : DateTime::createFromFormat('Y-m-d H:i', $line['endDate']);
         if (!$endDate) {
             $this->addError($importPricing, 'End date '.$line['endDate'].' is incorrect  on line '.$lineNumber);
             return $promotions;
@@ -352,10 +342,10 @@ class ImportPricingsImporter
                 }
             }
 
-            if (!array_key_exists('weekDays', $line) || strlen($line['weekDays']) == 0) {
+            if (!array_key_exists('weekDays', $line) || strlen((string) $line['weekDays']) == 0) {
                 $this->addError($importPricing, 'Column weekDays  is missing  on line '.$lineNumber);
             } else {
-                $weekDaysValue = explode(',', $line['weekDays']);
+                $weekDaysValue = explode(',', (string) $line['weekDays']);
                 $weekDays = [];
                 foreach ($weekDaysValue as $weekDayValue) {
                     if (in_array((int)$weekDayValue, range(1, 7))) {
@@ -440,7 +430,7 @@ class ImportPricingsImporter
                 $this->addError($importPricing, 'Missing required column '.$req.' on line '.$lineNumber);
                 $lineOk=false;
             } else {
-                if (strlen($line[$req])==0) {
+                if (strlen((string) $line[$req])==0) {
                     $this->addError($importPricing, 'Missing required column '.$req.' on line '.$lineNumber);
                     $lineOk=false;
                 }
@@ -453,7 +443,7 @@ class ImportPricingsImporter
 
     private function getSaleChannelsPromotions(ImportPricing $importPricing, array $line, int $lineNumber): array
     {
-        $saleChannels = explode(",", $line['saleChannels']);
+        $saleChannels = explode(",", (string) $line['saleChannels']);
         $saleChannelsDb = [];
         foreach ($saleChannels as $saleChannel) {
             /** @var \App\Entity\SaleChannel */
@@ -478,7 +468,7 @@ class ImportPricingsImporter
 
     private function getProductsPromotions(ImportPricing $importPricing, array $line, int $lineNumber): array
     {
-        $skus = explode(",", $line['skus']);
+        $skus = explode(",", (string) $line['skus']);
         $productsDb = [];
         foreach ($skus as $sku) {
             $productDb = $this->manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);

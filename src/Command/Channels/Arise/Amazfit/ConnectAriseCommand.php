@@ -16,16 +16,10 @@ class ConnectAriseCommand extends Command
     protected static $defaultName = 'app:amazfit-test';
     protected static $defaultDescription = 'Connection to Arise amazfit';
 
-    public function __construct(AmazfitApi $ariseApi, AmazfitIntegrator $amazfitIntegrator)
+    public function __construct(private readonly AmazfitApi $ariseApi, private readonly AmazfitIntegrator $amazfitIntegrator)
     {
-        $this->ariseApi = $ariseApi;
-        $this->amazfitIntegrator = $amazfitIntegrator;
         parent::__construct();
     }
-
-    private $ariseApi;
-
-    private $amazfitIntegrator;
 
   
 
@@ -60,7 +54,7 @@ class ConnectAriseCommand extends Command
 
     private function getBrandProduct()
     {
-        $result = $this->ariseApi->getBrandProduct(1355781352423031);
+        $result = $this->ariseApi->getBrandProduct(1_355_781_352_423_031);
         var_dump($result);
     }
 
@@ -87,21 +81,21 @@ class ConnectAriseCommand extends Command
 
     private function updatePrice()
     {
-        $result = $this->ariseApi->updatePrice(1355781352423031, 2068484754234999, "AMF-W2170OV6N", 239.9);
+        $result = $this->ariseApi->updatePrice(1_355_781_352_423_031, 2_068_484_754_234_999, "AMF-W2170OV6N", 239.9);
         var_dump($result);
     }
 
 
     private function updateStockLevel()
     {
-        $this->ariseApi->updateStockLevel(1355781352423031, 2068484754234999, "AMF-W2170OV6N", 2500);
+        $this->ariseApi->updateStockLevel(1_355_781_352_423_031, 2_068_484_754_234_999, "AMF-W2170OV6N", 2500);
     }
 
 
 
     private function markOrderAsFulfill()
     {
-        $result = $this->ariseApi->markOrderAsFulfill(62109016890, "DHL", "0837729070");
+        $result = $this->ariseApi->markOrderAsFulfill(62_109_016_890, "DHL", "0837729070");
         
 
         //$result = $this->ariseApi->markOrderAsFulfill(62102524945, "DHL", "0837729060");

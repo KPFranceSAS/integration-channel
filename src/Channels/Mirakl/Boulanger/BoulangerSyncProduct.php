@@ -21,8 +21,8 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         ];
 
         $flatProduct["SKU_MARCHAND"] = $product['identifier'];
-        $flatProduct["REF_COM"]  = substr($this->getAttributeSimple($product, 'short_article_name', 'fr_FR'), 0, 40);
-        $flatProduct["ACCROCHE"] = substr($this->getAttributeSimple($product, 'article_name', 'fr_FR'), 0, 95);
+        $flatProduct["REF_COM"]  = substr((string) $this->getAttributeSimple($product, 'short_article_name', 'fr_FR'), 0, 40);
+        $flatProduct["ACCROCHE"] = substr((string) $this->getAttributeSimple($product, 'article_name', 'fr_FR'), 0, 95);
         $flatProduct["PARTNUMBER"]  = $this->getAttributeSimple($product, 'ean');
         
         $flatProduct["MARQUE"] = $this->getCodeMarketplaceInList('LISTE_MARQUE', $this->getAttributeChoice($product, "brand", "en_GB"));
@@ -30,19 +30,19 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
         $descriptionRich = $this->getAttributeSimple($product, 'description_enrichie', 'fr_FR');
         $descriptionSimple = $this->getAttributeSimple($product, 'description', 'fr_FR');
-        $descriptionSimple = preg_replace('/<(ul|ol|li|p|hr)[^>]*>/', '<br>', $descriptionSimple);
+        $descriptionSimple = preg_replace('/<(ul|ol|li|p|hr)[^>]*>/', '<br>', (string) $descriptionSimple);
         $descriptionSimple = strip_tags($descriptionSimple, '<br>');
 
-        $descriptionFinal = strlen($descriptionRich) > 5  ? $descriptionRich."<p></p>".$descriptionSimple : $descriptionSimple;
+        $descriptionFinal = strlen((string) $descriptionRich) > 5  ? $descriptionRich."<p></p>".$descriptionSimple : $descriptionSimple;
         $flatProduct['DESCRIPTIF'] = substr($descriptionFinal, 0, 5000);
 
         $attributeImageMain = $this->getAttributeSimple($product, 'image_url_loc_1', "fr_FR");
-        $flatProduct["VISUEL_PRINC"] = $attributeImageMain ? $attributeImageMain : $this->getAttributeSimple($product, 'image_url_1');
+        $flatProduct["VISUEL_PRINC"] = $attributeImageMain ?: $this->getAttributeSimple($product, 'image_url_1');
 
         for ($i = 2; $i <= 9;$i++) {
             $j=$i-1;
             $attributeImageLoc = $this->getAttributeSimple($product, 'image_url_loc_'.$i, "fr_FR");
-            $flatProduct["VISUEL_SEC_".$j] = $attributeImageLoc ? $attributeImageLoc : $this->getAttributeSimple($product, 'image_url_'.$i);
+            $flatProduct["VISUEL_SEC_".$j] = $attributeImageLoc ?: $this->getAttributeSimple($product, 'image_url_'.$i);
         }
 
         $flatProduct["FICHE_TECHNIQUE"]  = $this->getAttributeSimple($product, 'user_guide_url', "fr_FR");

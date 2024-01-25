@@ -45,7 +45,7 @@ abstract class AmzApiImport
         $this->businessCentralAggregator = $businessCentralAggregator;
     }
 
-    public const WAITING_TIME = 20;
+    final public const WAITING_TIME = 20;
 
     public function createReportAndImport(?DateTime $dateTimeStart = null)
     {
@@ -93,7 +93,7 @@ abstract class AmzApiImport
 
     protected function getName()
     {
-        return strtoupper(str_replace("App\Service\Amazon\Report\AmzApiImport", "", get_class($this)));
+        return strtoupper(str_replace(\App\Service\Amazon\Report\AmzApiImport::class, "", static::class));
     }
 
     public function treatLastReport()

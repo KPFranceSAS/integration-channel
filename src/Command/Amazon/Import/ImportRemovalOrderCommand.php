@@ -13,13 +13,10 @@ class ImportRemovalOrderCommand extends Command
     protected static $defaultName = 'app:amz-import-removal-orders';
     protected static $defaultDescription = 'Import Removal Orders from AMZ';
 
-    public function __construct(AmzApiImportRemovalOrder $amzApiImportRemovalOrder)
+    public function __construct(private readonly AmzApiImportRemovalOrder $amzApiImportRemovalOrder)
     {
-        $this->amzApiImportRemovalOrder = $amzApiImportRemovalOrder;
         parent::__construct();
     }
-
-    private $amzApiImportRemovalOrder;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

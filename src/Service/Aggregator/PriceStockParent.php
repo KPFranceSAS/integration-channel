@@ -74,7 +74,7 @@ abstract class PriceStockParent
             
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmailChannel($this->getChannel(), 'Update prices and stock Error class '. get_class($this), $e->getMessage());
+            $this->mailer->sendEmailChannel($this->getChannel(), 'Update prices and stock Error class '. static::class, $e->getMessage());
         }
     }
 

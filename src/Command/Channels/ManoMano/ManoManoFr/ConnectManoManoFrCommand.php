@@ -12,13 +12,10 @@ class ConnectManoManoFrCommand extends Command
     protected static $defaultName = 'app:manomano-fr';
     protected static $defaultDescription = 'Connection to ManoMano FR';
 
-    public function __construct(ManoManoFrApi $manoManoFrApi)
+    public function __construct(private readonly ManoManoFrApi $manoManoFrApi)
     {
-        $this->manoManoFrApi = $manoManoFrApi;
         parent::__construct();
     }
-
-    private $manoManoFrApi;
 
 
   

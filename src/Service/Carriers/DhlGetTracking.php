@@ -16,7 +16,7 @@ class DhlGetTracking
             for ($i = 1; $i < 10; $i++) {
                 $toReplace[]=" ".$i."0";
             }
-            return str_replace($toReplace, "", $body['NumeroExpedicionTLG']);
+            return str_replace($toReplace, "", (string) $body['NumeroExpedicionTLG']);
         }
         return null;
     }

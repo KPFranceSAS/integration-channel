@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class AmazonReturn
+class AmazonReturn implements \Stringable
 {
     use TraitTimeUpdated;
 
@@ -22,90 +22,90 @@ class AmazonReturn
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"export_order"})
      */
-    private $returnDate;
+    private ?\DateTimeInterface $returnDate = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"export_order"})
      */
-    private $orderId;
+    private ?string $orderId = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"export_order"})
      */
-    private $sku;
+    private ?string $sku = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"export_order"})
      */
-    private $asin;
+    private ?string $asin = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"export_order"})
      */
-    private $fnsku;
+    private ?string $fnsku = null;
 
     /**
      * @ORM\Column(type="integer")
      * @Groups({"export_order"})
      */
-    private $quantity;
+    private ?int $quantity = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $fulfillmentCenterId;
+    private ?string $fulfillmentCenterId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $detailedDisposition;
+    private ?string $detailedDisposition = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $reason;
+    private ?string $reason = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $status;
+    private ?string $status = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $licensePlateNumber;
+    private ?string $licensePlateNumber = null;
 
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class)
      */
-    private $product;
+    private ?\App\Entity\Product $product = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=AmazonRemovalOrder::class, inversedBy="returns")
      */
-    private $amazonRemovalOrder;
+    private ?\App\Entity\AmazonRemovalOrder $amazonRemovalOrder = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $marketplaceName;
+    private ?string $marketplaceName = null;
 
     /**
      *  @Groups({"export_order"})
@@ -116,7 +116,7 @@ class AmazonReturn
     }
 
 
-    public function __toString()
+    public function __toString(): string
     {
         return "#".$this->orderId.' Sku>'.$this->sku.' LPN> '.$this->licensePlateNumber;
     }
@@ -156,7 +156,7 @@ class AmazonReturn
                 if (in_array($key, ["return-date"])) {
                     $this->{$attribute} = DatetimeUtils::transformFromIso8601($value);
                 } else {
-                    $this->{$attribute} = strlen($value) > 0 ? $value : null;
+                    $this->{$attribute} = strlen((string) $value) > 0 ? $value : null;
                 }
             }
         }
@@ -172,7 +172,7 @@ class AmazonReturn
 
     private function camelize($input, $separator = '-')
     {
-        return lcfirst(str_replace($separator, '', ucwords($input, $separator)));
+        return lcfirst(str_replace($separator, '', ucwords((string) $input, $separator)));
     }
 
 

@@ -12,17 +12,17 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ImportPricing
 {
-    public const Status_Created = 0;
-    public const Status_ToConfirm = 1;
-    public const Status_ToImport = 2;
-    public const Status_Imported = 3;
-    public const Status_Importing = 4;
-    public const Status_Cancelled = 5;
+    final public const Status_Created = 0;
+    final public const Status_ToConfirm = 1;
+    final public const Status_ToImport = 2;
+    final public const Status_Imported = 3;
+    final public const Status_Importing = 4;
+    final public const Status_Cancelled = 5;
 
 
-    public const Type_Import_Pricing = 'Import Pricing';
+    final public const Type_Import_Pricing = 'Import Pricing';
 
-    public const Type_Import_Promotion = 'Import promotions';
+    final public const Type_Import_Promotion = 'Import promotions';
 
     use TraitLoggable;
 
@@ -33,13 +33,13 @@ class ImportPricing
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $importType;
+    private ?string $importType = null;
 
     /**
      * @ORM\Column(type="json", nullable=true)
@@ -50,19 +50,19 @@ class ImportPricing
      * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    private $user;
+    private ?\App\Entity\User $user = null;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $status;
+    private ?int $status = null;
 
     public $uploadedFile;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $comments;
+    private ?string $comments = null;
 
 
 

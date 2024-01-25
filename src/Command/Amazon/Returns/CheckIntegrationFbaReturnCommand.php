@@ -12,13 +12,10 @@ class CheckIntegrationFbaReturnCommand extends Command
     protected static $defaultName = 'app:amz-check-integration-returns';
     protected static $defaultDescription = 'Check integration FBA Returns';
 
-    public function __construct(CheckIntegrationFbaReturn $amzFbaReturn)
+    public function __construct(private readonly CheckIntegrationFbaReturn $amzFbaReturn)
     {
-        $this->amzFbaReturn = $amzFbaReturn;
         parent::__construct();
     }
-
-    private $amzFbaReturn;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

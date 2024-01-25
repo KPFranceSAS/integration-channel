@@ -12,14 +12,10 @@ class CheckAmazonRemovalCommand extends Command
     protected static $defaultName = 'app:amz-check-removal';
     protected static $defaultDescription = 'Build and change status amz';
 
-    public function __construct(GenerateAmzFbaRemoval $generateAmzFbaRemoval)
+    public function __construct(private readonly GenerateAmzFbaRemoval $generateAmzFbaRemoval)
     {
-        $this->generateAmzFbaRemoval = $generateAmzFbaRemoval;
         parent::__construct();
     }
-
-
-    private $generateAmzFbaRemoval;
 
 
 

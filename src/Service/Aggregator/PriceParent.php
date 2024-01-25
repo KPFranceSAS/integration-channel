@@ -54,7 +54,7 @@ abstract class PriceParent
             $this->sendPrices($saleChannels);
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
-            $this->mailer->sendEmailChannel($this->getChannel(), 'Update prices Error class '. get_class($this), $e->getMessage());
+            $this->mailer->sendEmailChannel($this->getChannel(), 'Update prices Error class '. static::class, $e->getMessage());
         }
     }
 

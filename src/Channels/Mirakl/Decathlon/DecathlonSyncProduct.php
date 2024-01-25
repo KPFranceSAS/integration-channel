@@ -63,7 +63,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 if ($value) {
                     if ($localizableMirakl=='longDescription') {
                         $converter = new HtmlConverter();
-                        $valueFormate = str_replace(['~', '<hr>', '<hr/>'], ['-', '<hr><p></p>', '<hr><p></p>'], $value);
+                        $valueFormate = str_replace(['~', '<hr>', '<hr/>'], ['-', '<hr><p></p>', '<hr><p></p>'], (string) $value);
                         $description = $converter->convert($valueFormate);
                         
                         if (strlen($description)>5000) {

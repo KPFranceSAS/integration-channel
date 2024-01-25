@@ -19,85 +19,86 @@ class AmazonRemoval
 
     use TraitLoggable;
 
-    public const CREATED ='Created';
+    final public const CREATED ='Created';
 
-    public const COMPLETED ='Completed';
+    final public const COMPLETED ='Completed';
 
-    public const PENDING ='Pending';
+    final public const PENDING ='Pending';
 
-    public const CANCELLED ='Cancelled';
+    final public const CANCELLED ='Cancelled';
 
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $orderId;
+    private ?string $orderId = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $status;
+    private ?string $status = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $orderType;
+    private ?string $orderType = null;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $requestDate;
+    private ?\DateTimeInterface $requestDate = null;
 
     /**
      * @ORM\OneToMany(targetEntity=AmazonRemovalOrder::class, mappedBy="amazonRemoval")
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\AmazonRemovalOrder>
      */
-    private $amazonRemovalOrders;
+    private \Doctrine\Common\Collections\Collection $amazonRemovalOrders;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $shipCity;
+    private ?string $shipCity = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $shipPostalCode;
+    private ?string $shipPostalCode = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $shipState;
+    private ?string $shipState = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $shipCountry;
+    private ?string $shipCountry = null;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $notifyedCreation;
+    private ?bool $notifyedCreation = null;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $notifyedEnd;
+    private ?bool $notifyedEnd = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $amazonOrderId;
+    private ?string $amazonOrderId = null;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $lastUpdateDate;
+    private ?\DateTimeInterface $lastUpdateDate = null;
 
     public function __construct()
     {

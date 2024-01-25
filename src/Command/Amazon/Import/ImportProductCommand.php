@@ -14,13 +14,10 @@ class ImportProductCommand extends Command
     protected static $defaultName = 'app:amz-import-products-from-inventory';
     protected static $defaultDescription = 'Import products inventory';
 
-    public function __construct(AmzApiImportProduct $amzApiImportProduct)
+    public function __construct(private readonly AmzApiImportProduct $amzApiImportProduct)
     {
-        $this->amzApiImportProduct = $amzApiImportProduct;
         parent::__construct();
     }
-
-    private $amzApiImportProduct;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

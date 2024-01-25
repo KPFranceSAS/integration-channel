@@ -14,9 +14,8 @@ class SendMailCommand extends Command
     protected static $defaultDescription = 'Send email';
 
     public function __construct(
-        MailService $mailService
+        private readonly MailService $mailService
     ) {
-        $this->mailService = $mailService;
         parent::__construct();
     }
 
@@ -29,8 +28,6 @@ class SendMailCommand extends Command
             ->addArgument('content', InputArgument::REQUIRED, 'Content of email')
             ->addArgument('emailAddress', InputArgument::REQUIRED, 'email Address');
     }
-
-    private $mailService;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

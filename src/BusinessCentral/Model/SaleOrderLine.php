@@ -4,12 +4,12 @@ namespace App\BusinessCentral\Model;
 
 class SaleOrderLine
 {
-    const TYPE_COMMENT = "Comment";
-    const TYPE_GLACCOUNT = "Account";
-    const TYPE_ITEM = "Item";
-    const TYPE_RESOURCE = "Resource";
-    const TYPE_FIXED_ASSET = "Fixed Asset";
-    const TYPE_CHARGE_ITEM = "Charge";
+    final public const TYPE_COMMENT = "Comment";
+    final public const TYPE_GLACCOUNT = "Account";
+    final public const TYPE_ITEM = "Item";
+    final public const TYPE_RESOURCE = "Resource";
+    final public const TYPE_FIXED_ASSET = "Fixed Asset";
+    final public const TYPE_CHARGE_ITEM = "Charge";
 
     public $documentId;
 

@@ -17,14 +17,11 @@ class CheckProductLogisticClassCommand extends Command
 
     public function __construct(
         ManagerRegistry $managerRegistry,
-        LogisticClassFinder $logisticClassFinder)
+        private readonly LogisticClassFinder $logisticClassFinder)
     {
-        $this->logisticClassFinder = $logisticClassFinder;
         $this->manager = $managerRegistry->getManager();
         parent::__construct();
     }
-
-    private $logisticClassFinder;
 
     private $manager;
 

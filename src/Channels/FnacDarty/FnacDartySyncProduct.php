@@ -25,11 +25,11 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
             'EANs/EAN' => $this->getAttributeSimple($product, 'ean'),
         ];
 
-        $flatProduct["DisplayName"] = substr($this->getAttributeSimple($product, "article_name", $this->getLocalePim()), 0, 255);
+        $flatProduct["DisplayName"] = substr((string) $this->getAttributeSimple($product, "article_name", $this->getLocalePim()), 0, 255);
 
         $flatProduct["Constructeur Vendeur"] = $this->getAttributeChoice($product, "brand", $this->getLocalePim());
         $descriptionFinal = $this->getAttributeSimple($product, 'description', $this->getLocalePim());
-        $flatProduct['AdditionalDescription'] =$descriptionFinal ? substr($descriptionFinal, 0, 4000) : null;
+        $flatProduct['AdditionalDescription'] =$descriptionFinal ? substr((string) $descriptionFinal, 0, 4000) : null;
 
         $flatProduct["IMAGE|1505-1"] = $this->getAttributeSimple($product, 'image_url_1');
 

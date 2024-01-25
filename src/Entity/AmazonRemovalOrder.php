@@ -24,129 +24,131 @@ class AmazonRemovalOrder
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="datetime")
      *  @Groups({"export_order"})
      */
-    private $requestDate;
+    private ?\DateTimeInterface $requestDate = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      *  @Groups({"export_order"})
      */
-    private $orderId;
+    private ?string $orderId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $orderType;
+    private ?string $orderType = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $serviceSpeed;
+    private ?string $serviceSpeed = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $orderStatus;
+    private ?string $orderStatus = null;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $lastUpdatedDate;
+    private ?\DateTimeInterface $lastUpdatedDate = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $sku;
+    private ?string $sku = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $fnsku;
+    private ?string $fnsku = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $disposition;
+    private ?string $disposition = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $requestedQuantity;
+    private ?int $requestedQuantity = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $cancelledQuantity;
+    private ?int $cancelledQuantity = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $disposedQuantity;
+    private ?int $disposedQuantity = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $shippedQuantity;
+    private ?int $shippedQuantity = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $inProcessQuantity;
+    private ?int $inProcessQuantity = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $removalFee;
+    private ?float $removalFee = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $removalFeeCurrency;
+    private ?float $removalFeeCurrency = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
     *  @Groups({"export_order"})
      */
-    private $currency;
+    private ?string $currency = null;
 
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class)
      */
-    private $product;
+    private ?\App\Entity\Product $product = null;
 
     /**
      * @ORM\OneToMany(targetEntity=AmazonReturn::class, mappedBy="amazonRemovalOrder")
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\AmazonReturn>
      */
-    private $returns;
+    private \Doctrine\Common\Collections\Collection $returns;
 
     /**
      * @ORM\OneToMany(targetEntity=FbaReturn::class, mappedBy="amazonRemoval")
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\FbaReturn>
      */
-    private $fbaReturns;
+    private \Doctrine\Common\Collections\Collection $fbaReturns;
 
     /**
      * @ORM\ManyToOne(targetEntity=AmazonRemoval::class, inversedBy="amazonRemovalOrders")
      */
-    private $amazonRemoval;
+    private ?\App\Entity\AmazonRemoval $amazonRemoval = null;
 
 
     /**
@@ -204,7 +206,7 @@ class AmazonRemovalOrder
                     $this->{$attribute . 'Currency'} = $valueFormate > 0 ? $valueFormate : null;
                     $this->{$attribute} =  $valueFormate > 0 ? round($calculator->getConvertedAmountDate($valueFormate, $orderAmz['currency'], $this->requestDate), 2) : null;
                 } else {
-                    $this->{$attribute} =  strlen($value) > 0 ? $value : null;
+                    $this->{$attribute} =  strlen((string) $value) > 0 ? $value : null;
                 }
             }
         }
@@ -228,7 +230,7 @@ class AmazonRemovalOrder
 
     private function camelize($input, $separator = '-')
     {
-        return lcfirst(str_replace($separator, '', ucwords($input, $separator)));
+        return lcfirst(str_replace($separator, '', ucwords((string) $input, $separator)));
     }
 
     
@@ -463,9 +465,7 @@ class AmazonRemovalOrder
         return $this;
     }
 
-    /**
-     * @return Collection|AmazonReturn[]
-     */
+
     public function getReturns(): Collection
     {
         return $this->returns;
@@ -493,10 +493,8 @@ class AmazonRemovalOrder
         return $this;
     }
 
-    /**
-     * @return Collection|FbaReturn[]
-     */
-    public function getFbaReturns(): Collection
+
+    public function getFbaReturns(): \Doctrine\Common\Collections\Collection
     {
         return $this->fbaReturns;
     }

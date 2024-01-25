@@ -9,12 +9,12 @@ use Exception;
 
 class DecathlonIntegrator extends MiraklIntegratorParent
 {
-    public const DECATHLON_FR = '000774';
-    public const DECATHLON_DE = '000777';
-    public const DECATHLON_IT = '000778';
-    public const DECATHLON_PT = '000779';
-    public const DECATHLON_BE = '000780';
-    public const DECATHLON_ES = '000786';
+    final public const DECATHLON_FR = '000774';
+    final public const DECATHLON_DE = '000777';
+    final public const DECATHLON_IT = '000778';
+    final public const DECATHLON_PT = '000779';
+    final public const DECATHLON_BE = '000780';
+    final public const DECATHLON_ES = '000786';
 
        
 

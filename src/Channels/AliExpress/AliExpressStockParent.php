@@ -19,7 +19,7 @@ abstract class AliExpressStockParent extends StockParent
      *
      * @return void
      */
-    public function sendStocks()
+    public function sendStocks(): void
     {
         $products = $this->getAliExpressApi()->getAllActiveProducts();
         foreach ($products as $product) {
@@ -55,10 +55,7 @@ abstract class AliExpressStockParent extends StockParent
     }
 
 
-    /**
-     *
-     * @return void
-     */
+
     public function checkStocks(): array
     {
         $errors=[];

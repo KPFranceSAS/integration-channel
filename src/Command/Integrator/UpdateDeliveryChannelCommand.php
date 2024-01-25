@@ -14,13 +14,10 @@ class UpdateDeliveryChannelCommand extends Command
     protected static $defaultName = 'app:update-delivery-from';
     protected static $defaultDescription = 'Update all delivery sale orders for the given sale channel';
 
-    public function __construct(UpdateDeliveryAggregator  $updateStatusAggregator)
+    public function __construct(private readonly UpdateDeliveryAggregator  $updateStatusAggregator)
     {
-        $this->updateStatusAggregator = $updateStatusAggregator;
         parent::__construct();
     }
-
-    private $updateStatusAggregator;
 
 
     protected function configure(): void
@@ -32,7 +29,7 @@ class UpdateDeliveryChannelCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
+        $channelIntegration = strtoupper((string) $input->getArgument('channelIntegration'));
 
         $integrator = $this->updateStatusAggregator->getDelivery($channelIntegration);
         $integrator->updateStatusDeliveries();

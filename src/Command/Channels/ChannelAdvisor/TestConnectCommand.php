@@ -12,13 +12,10 @@ class TestConnectCommand extends Command
     protected static $defaultName = 'app:channel-test-connect';
     protected static $defaultDescription = 'Test connect';
 
-    public function __construct(ChannelAdvisorApi $channelAdvisorApi)
+    public function __construct(private readonly ChannelAdvisorApi $channelAdvisorApi)
     {
-        $this->channelAdvisorApi = $channelAdvisorApi;
         parent::__construct();
     }
-
-    private $channelAdvisorApi;
 
 
    

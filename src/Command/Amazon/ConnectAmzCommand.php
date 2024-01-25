@@ -17,22 +17,10 @@ class ConnectAmzCommand extends Command
     protected static $defaultName = 'app:amz-test';
     protected static $defaultDescription = 'Add a short description for your command';
 
-    public function __construct(AmzApi $api, ExchangeRateCalculator $caluclator, AmzApiInbound $amzApiInbound, AmzApiFinancial $financial)
+    public function __construct(private readonly AmzApi $api, private readonly ExchangeRateCalculator $caluclator, private readonly AmzApiInbound $amzApiInbound, private readonly AmzApiFinancial $fincancial)
     {
-        $this->api = $api;
-        $this->amzApiInbound = $amzApiInbound;
-        $this->caluclator = $caluclator;
-        $this->fincancial = $financial;
         parent::__construct();
     }
-
-    private $api;
-
-    private $fincancial;
-
-    private $amzApiInbound;
-
-    private $caluclator;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

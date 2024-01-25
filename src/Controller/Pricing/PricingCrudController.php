@@ -159,7 +159,7 @@ class PricingCrudController extends AdminCrudController
             $productArray['unitCost'] = $result->getUnitCost();
             foreach ($result->getProductSaleChannels() as $productSaleChannel) {
                 $productArray[$productSaleChannel->getSaleChannel()->getCode().'-enabled']=(int)$productSaleChannel->getEnabled();
-                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-price']= $productSaleChannel->getPrice() ? $productSaleChannel->getPrice()  :'';
+                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-price']= $productSaleChannel->getPrice() ?: '';
                 $promotion = $productSaleChannel->getBestPromotionForNow();
                 if ($promotion) {
                     $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promoprice'] =  $promotion->getPromotionPrice();

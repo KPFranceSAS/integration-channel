@@ -12,13 +12,10 @@ class ConnectFitbitCommand extends Command
     protected static $defaultName = 'app:fitbitexpress-test';
     protected static $defaultDescription = 'Connection to fitbitexpress express';
 
-    public function __construct(FitbitExpressApi $fitbitExpressApi)
+    public function __construct(private readonly FitbitExpressApi $fitbitExpressApi)
     {
-        $this->fitbitExpressApi = $fitbitExpressApi;
         parent::__construct();
     }
-
-    private $fitbitExpressApi;
 
 
 

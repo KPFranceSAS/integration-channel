@@ -14,13 +14,10 @@ class ImportReturnsCommand extends Command
     protected static $defaultName = 'app:amz-import-returns';
     protected static $defaultDescription = 'Import returns from AMZ';
 
-    public function __construct(AmzApiImportReturn $amzApiImportReturn)
+    public function __construct(private readonly AmzApiImportReturn $amzApiImportReturn)
     {
-        $this->amzApiImportReturn = $amzApiImportReturn;
         parent::__construct();
     }
-
-    private $amzApiImportReturn;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

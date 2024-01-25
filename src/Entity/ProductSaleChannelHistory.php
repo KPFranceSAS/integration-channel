@@ -11,18 +11,18 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ProductSaleChannelHistory
 {
-    public const TYPE_CREATION = 0;
-    public const TYPE_ACTIVATION = 1;
+    final public const TYPE_CREATION = 0;
+    final public const TYPE_ACTIVATION = 1;
 
-    public const TYPE_DESACTIVATION = 2;
+    final public const TYPE_DESACTIVATION = 2;
 
-    public const TYPE_MODIFICATION_REGULAR_PRICE = 3;
+    final public const TYPE_MODIFICATION_REGULAR_PRICE = 3;
     
-    public const TYPE_MODIFICATION_SALE_PRICE = 4;
+    final public const TYPE_MODIFICATION_SALE_PRICE = 4;
 
-    public const TYPE_ACTIVATION_PROMOTION = 5;
+    final public const TYPE_ACTIVATION_PROMOTION = 5;
 
-    public const TYPE_DESACTIVATION_PROMOTION = 6;
+    final public const TYPE_DESACTIVATION_PROMOTION = 6;
 
     use TraitTimeUpdated;
 
@@ -35,43 +35,43 @@ class ProductSaleChannelHistory
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $enabled;
+    private ?bool $enabled = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $price;
+    private ?float $price = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $description;
+    private ?string $description = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $typeModification;
+    private ?int $typeModification = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=ProductSaleChannel::class, inversedBy="productSaleChannelHistories")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $productSaleChannel;
+    private ?\App\Entity\ProductSaleChannel $productSaleChannel = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $regularPrice;
+    private ?float $regularPrice = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $promotionPrice;
+    private ?float $promotionPrice = null;
 
 
     public function getFullDescription()
@@ -86,24 +86,16 @@ class ProductSaleChannelHistory
 
     public function getTypeModificationLitteral()
     {
-        switch($this->typeModification) {
-            case self::TYPE_CREATION:
-                return 'Creation';
-            case self::TYPE_ACTIVATION:
-                return 'Activation';
-            case self::TYPE_DESACTIVATION:
-                return 'Desactiviation';
-            case self::TYPE_MODIFICATION_REGULAR_PRICE:
-                return 'Regular price modification';
-            case self::TYPE_MODIFICATION_SALE_PRICE:
-                return 'Sale price modification';
-            case self::TYPE_ACTIVATION_PROMOTION:
-                return 'Promotion activation';
-            case self::TYPE_DESACTIVATION_PROMOTION:
-                return 'Promotion desactivation';
-            default:
-                return 'Other';    
-        }
+        return match ($this->typeModification) {
+            self::TYPE_CREATION => 'Creation',
+            self::TYPE_ACTIVATION => 'Activation',
+            self::TYPE_DESACTIVATION => 'Desactiviation',
+            self::TYPE_MODIFICATION_REGULAR_PRICE => 'Regular price modification',
+            self::TYPE_MODIFICATION_SALE_PRICE => 'Sale price modification',
+            self::TYPE_ACTIVATION_PROMOTION => 'Promotion activation',
+            self::TYPE_DESACTIVATION_PROMOTION => 'Promotion desactivation',
+            default => 'Other',
+        };
     }
     public function getId(): ?int
     {

@@ -100,7 +100,7 @@ class AmzApiImportStock
         $this->manager->flush();
     }
 
-    public const WAITING_TIME = 10;
+    final public const WAITING_TIME = 10;
 
     protected function getContentFromReports()
     {
@@ -155,7 +155,7 @@ class AmzApiImportStock
     {
         $qty = $this->manager->createQueryBuilder()
             ->select('SUM(amz.quantity) as qtyShipped')
-            ->from('App\Entity\AmazonOrder', 'amz')
+            ->from(\App\Entity\AmazonOrder::class, 'amz')
             ->where('amz.product = :product')
             ->andWhere('amz.itemStatus = :itemStatus')
             ->andWhere('amz.integrated = 0')
@@ -176,7 +176,7 @@ class AmzApiImportStock
     protected function setZeroToStockLevel()
     {
         $queryBuilder = $this->manager->createQueryBuilder();
-        $query = $queryBuilder->update('App\Entity\Product', 'p')
+        $query = $queryBuilder->update(\App\Entity\Product::class, 'p')
             ->set('p.fbaSellableStock', 0)
             ->set('p.fbaUnsellableStock', 0)
             ->set('p.fbaUnsellableStock', 0)

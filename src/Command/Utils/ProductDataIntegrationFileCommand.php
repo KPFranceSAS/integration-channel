@@ -22,21 +22,15 @@ class ProductDataIntegrationFileCommand extends Command
 
     public function __construct(
         ManagerRegistry $manager,
-        KpFranceConnector $kpFranceConnector,
-        CsvExtracter $csvExtracter
+        private readonly KpFranceConnector $kpFranceConnector,
+        private readonly CsvExtracter $csvExtracter
     )
     {
         $this->manager = $manager->getManager();
-        $this->kpFranceConnector = $kpFranceConnector;
-        $this->csvExtracter = $csvExtracter;
         parent::__construct();
     }
 
-    private $kpFranceConnector;
-
     private $manager;
-
-    private $csvExtracter;
 
 
     protected function configure(): void

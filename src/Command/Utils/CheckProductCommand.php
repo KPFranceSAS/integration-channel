@@ -18,16 +18,13 @@ class CheckProductCommand extends Command
     protected static $defaultName = 'app:check-product';
     protected static $defaultDescription = 'Check all products';
 
-    public function __construct(ManagerRegistry $manager, ValidatorInterface $validator)
+    public function __construct(ManagerRegistry $manager, private readonly ValidatorInterface $validator)
     {
         $this->manager = $manager->getManager();
-        $this->validator = $validator;
         parent::__construct();
     }
 
     private $manager;
-
-    private $validator;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

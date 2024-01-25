@@ -18,23 +18,23 @@ class SalePrice
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $price;
+    private ?float $price = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $countryCode;
+    private ?string $countryCode = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="salePrices")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $product;
+    private ?\App\Entity\Product $product = null;
 
 
 

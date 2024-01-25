@@ -29,7 +29,7 @@ abstract class Aggregator
         if (array_key_exists($channel, $this->services)) {
             return $this->services[$channel];
         } else {
-           $this->logger->info("Channel $channel is not related to any " . get_class($this));
+           $this->logger->info("Channel $channel is not related to any " . static::class);
            return null;
         }
     }

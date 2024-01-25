@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class AmazonReimbursement
+class AmazonReimbursement implements \Stringable
 {
     use TraitTimeUpdated;
 
@@ -22,126 +22,126 @@ class AmazonReimbursement
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="datetime")
      *  @Groups({"export_order"})
      */
-    private $approvalDate;
+    private ?\DateTimeInterface $approvalDate = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      *  @Groups({"export_order"})
      */
-    private $reimbursementId;
+    private ?string $reimbursementId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $caseId;
+    private ?string $caseId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $amazonOrderId;
+    private ?string $amazonOrderId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $reason;
+    private ?string $reason = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $sku;
+    private ?string $sku = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $fnsku;
+    private ?string $fnsku = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $asin;
+    private ?string $asin = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $conditionItem;
+    private ?string $conditionItem = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      *  @Groups({"export_order"})
      */
-    private $currencyUnit;
+    private ?string $currencyUnit = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $amountPerUnit;
+    private ?float $amountPerUnit = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $amountTotal;
+    private ?float $amountTotal = null;
 
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $amountPerUnitCurrency;
+    private ?float $amountPerUnitCurrency = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $amountTotalCurrency;
+    private ?float $amountTotalCurrency = null;
 
     /**
      * @ORM\Column(type="integer")
      *  @Groups({"export_order"})
      */
-    private $quantityReimbursedCash;
+    private ?int $quantityReimbursedCash = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $quantityReimbursedInventory;
+    private ?int $quantityReimbursedInventory = null;
 
     /**
      * @ORM\Column(type="integer")
      * @Groups({"export_order"})
      */
-    private $quantityReimbursedTotal;
+    private ?int $quantityReimbursedTotal = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=AmazonReimbursement::class)
      */
-    private $originalReimbursement;
+    private ?\App\Entity\AmazonReimbursement $originalReimbursement = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class)
      */
-    private $product;
+    private ?\App\Entity\Product $product = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
     *  @Groups({"export_order"})
      */
-    private $marketplaceName;
+    private ?string $marketplaceName = null;
 
 
 
@@ -154,9 +154,9 @@ class AmazonReimbursement
     }
 
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->product ? $this->amazonOrderId . ' ' . $this->product->getSku() :  $this->amazonOrderId;
+        return (string) ($this->product ? $this->amazonOrderId . ' ' . $this->product->getSku() :  $this->amazonOrderId);
     }
 
     /**
@@ -205,7 +205,7 @@ class AmazonReimbursement
                 ])) {
                     $this->{$attribute} = intval($value);
                 } else {
-                    $this->{$attribute} = strlen($value) > 0 ? $value : null;
+                    $this->{$attribute} = strlen((string) $value) > 0 ? $value : null;
                 }
             }
         }
@@ -244,7 +244,7 @@ class AmazonReimbursement
 
     private function camelize($input, $separator = '-')
     {
-        return lcfirst(str_replace($separator, '', ucwords($input, $separator)));
+        return lcfirst(str_replace($separator, '', ucwords((string) $input, $separator)));
     }
 
  

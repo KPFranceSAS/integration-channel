@@ -37,7 +37,7 @@ abstract class FnacDartyIntegratorParent extends IntegratorParent
      *
      * @return void
      */
-    public function integrateAllOrders()
+    public function integrateAllOrders(): void
     {
         $counter = 0;
         $ordersApi = $this->getApi()->getAllOrdersToSend();
@@ -103,15 +103,15 @@ abstract class FnacDartyIntegratorParent extends IntegratorParent
             }
             $adress = $this->simplifyAddress($adress);
 
-            if (strlen($adress) < 100) {
+            if (strlen((string) $adress) < 100) {
                 $orderBC->{$bcVal . "PostalAddress"}->street = $adress;
             } else {
-                $orderBC->{$bcVal . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
+                $orderBC->{$bcVal . "PostalAddress"}->street = substr((string) $adress, 0, 100) . "\r\n" . substr((string) $adress, 99);
             }
-            $orderBC->{$bcVal . "PostalAddress"}->city = substr($orderApi[$fnacVal.'_address']["city"], 0, 100);
+            $orderBC->{$bcVal . "PostalAddress"}->city = substr((string) $orderApi[$fnacVal.'_address']["city"], 0, 100);
             $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi[$fnacVal.'_address']["zipcode"];
             
-            $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = substr($orderApi[$fnacVal.'_address']["country"], 0, 2);
+            $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = substr((string) $orderApi[$fnacVal.'_address']["country"], 0, 2);
 
             if (array_key_exists('state', $orderApi[$fnacVal.'_address']) && is_string($orderApi[$fnacVal.'_address']['state'])) {
                 $orderBC->{$bcVal . "PostalAddress"}->state = substr($orderApi[$fnacVal.'_address']['state'], 0, 30);

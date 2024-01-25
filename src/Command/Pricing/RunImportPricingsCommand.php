@@ -13,11 +13,8 @@ class RunImportPricingsCommand extends Command
     protected static $defaultName = 'app:run-import-pricings';
     protected static $defaultDescription = 'Import pricings';
 
-    private $productImporter;
-
-    public function __construct(ImportPricingsImporter $productImporter)
+    public function __construct(private readonly ImportPricingsImporter $productImporter)
     {
-        $this->productImporter = $productImporter;
         parent::__construct();
     }
 

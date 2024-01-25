@@ -18,10 +18,9 @@ class SendFbaAlertStockCommand extends Command
 
     protected $twig;
 
-    public function __construct(ManagerRegistry $manager, MailService $mailService, Environment $twig)
+    public function __construct(ManagerRegistry $manager, private readonly MailService $mailService, Environment $twig)
     {
         $this->manager = $manager->getManager();
-        $this->mailService = $mailService;
         $this->twig = $twig;
         parent::__construct();
     }
@@ -29,8 +28,6 @@ class SendFbaAlertStockCommand extends Command
     private $manager;
 
     private $exports = [];
-
-    private $mailService;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

@@ -26,32 +26,32 @@ class AmazonFinancialEventGroup
      * @ORM\Column(type="integer")
      * @Groups({"export_order"})
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      *  @Groups({"export_order"})
      */
-    private $financialEventId;
+    private ?string $financialEventId = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      *  @Groups({"export_order"})
      */
-    private $processingStatus;
+    private ?string $processingStatus = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $fundTransfertStatus;
+    private ?string $fundTransfertStatus = null;
 
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $fundTransferDate;
+    private ?\DateTimeInterface $fundTransferDate = null;
 
 
 
@@ -60,7 +60,7 @@ class AmazonFinancialEventGroup
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $traceIdentfier;
+    private ?string $traceIdentfier = null;
 
 
 
@@ -68,13 +68,13 @@ class AmazonFinancialEventGroup
      * @ORM\Column(type="datetime", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $startDate;
+    private ?\DateTimeInterface $startDate = null;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $endDate;
+    private ?\DateTimeInterface $endDate = null;
 
 
 
@@ -82,55 +82,56 @@ class AmazonFinancialEventGroup
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $originalTotal;
+    private ?float $originalTotal = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $convertedTotal;
+    private ?float $convertedTotal = null;
 
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $originalTotalCurrency;
+    private ?float $originalTotalCurrency = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $convertedTotalCurrency;
+    private ?float $convertedTotalCurrency = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $beginningBalance;
+    private ?float $beginningBalance = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      *  @Groups({"export_order"})
      */
-    private $beginningBalanceCurrency;
+    private ?float $beginningBalanceCurrency = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $currencyCode;
+    private ?string $currencyCode = null;
 
     /**
      * @ORM\OneToMany(targetEntity=AmazonFinancialEvent::class, mappedBy="eventGroup", orphanRemoval=true)
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\AmazonFinancialEvent>
      */
-    private $amazonFinancialEvents;
+    private \Doctrine\Common\Collections\Collection $amazonFinancialEvents;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *  @Groups({"export_order"})
      */
-    private $marketplace;
+    private ?string $marketplace = null;
 
 
 
@@ -351,10 +352,7 @@ class AmazonFinancialEventGroup
         return $this;
     }
 
-    /**
-     * @return Collection|AmazonFinancialEvent[]
-     */
-    public function getAmazonFinancialEvents(): Collection
+    public function getAmazonFinancialEvents(): \Doctrine\Common\Collections\Collection
     {
         return $this->amazonFinancialEvents;
     }

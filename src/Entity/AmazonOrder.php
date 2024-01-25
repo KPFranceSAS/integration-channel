@@ -21,83 +21,83 @@ class AmazonOrder
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"export_order"})
      */
-    private $amazonOrderId;
+    private ?string $amazonOrderId = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"export_order"})
      */
-    private $merchantOrderId;
+    private ?string $merchantOrderId = null;
 
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"export_order"})
      */
-    private $purchaseDate;
+    private ?\DateTimeInterface $purchaseDate = null;
 
     /**
      * @ORM\Column(type="datetime")
      * @Groups({"export_order"})
      */
-    private $lastUpdatedDate;
+    private ?\DateTimeInterface $lastUpdatedDate = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"export_order"})
      */
-    private $orderStatus;
+    private ?string $orderStatus = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $fulfillmentChannel;
+    private ?string $fulfillmentChannel = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"export_order"})
      */
-    private $salesChannel;
+    private ?string $salesChannel = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $shipServiceLevel;
+    private ?string $shipServiceLevel = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $sku;
+    private ?string $sku = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $asin;
+    private ?string $asin = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $itemStatus;
+    private ?string $itemStatus = null;
 
     /**
      * @ORM\Column(type="integer")
      * @Groups({"export_order"})
      */
-    private $quantity;
+    private ?int $quantity = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $currency;
+    private ?string $currency = null;
 
 
 
@@ -105,193 +105,193 @@ class AmazonOrder
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $shipCity;
+    private ?string $shipCity = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $shipPostalCode;
+    private ?string $shipPostalCode = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $shipState;
+    private ?string $shipState = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $shipCountry;
+    private ?string $shipCountry = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $promotionIds;
+    private ?string $promotionIds = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $fulfilledBy;
+    private ?string $fulfilledBy = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $itemPrice;
+    private ?float $itemPrice = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $itemTax;
+    private ?float $itemTax = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $shippingPrice;
+    private ?float $shippingPrice = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $shippingTax;
+    private ?float $shippingTax = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $giftWrapPrice;
+    private ?float $giftWrapPrice = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $giftWrapTax;
+    private ?float $giftWrapTax = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $itemPromotionDiscount;
+    private ?float $itemPromotionDiscount = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $shipPromotionDiscount;
-
-
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     * @Groups({"export_order"})
-     */
-    private $vatExclusiveItemPrice;
-
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     * @Groups({"export_order"})
-     */
-    private $vatExclusiveShippingPrice;
-
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     * @Groups({"export_order"})
-     */
-    private $vatExclusiveGiftwrapPrice;
+    private ?float $shipPromotionDiscount = null;
 
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $itemPriceCurrency;
+    private ?float $vatExclusiveItemPrice = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $itemTaxCurrency;
+    private ?float $vatExclusiveShippingPrice = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $shippingPriceCurrency;
+    private ?float $vatExclusiveGiftwrapPrice = null;
+
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $shippingTaxCurrency;
+    private ?float $itemPriceCurrency = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups({"export_order"})
      */
-    private $giftWrapPriceCurrency;
+    private ?float $itemTaxCurrency = null;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups({"export_order"})
+     */
+    private ?float $shippingPriceCurrency = null;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups({"export_order"})
+     */
+    private ?float $shippingTaxCurrency = null;
+
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups({"export_order"})
+     */
+    private ?float $giftWrapPriceCurrency = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $giftWrapTaxCurrency;
+    private ?float $giftWrapTaxCurrency = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $itemPromotionDiscountCurrency;
+    private ?float $itemPromotionDiscountCurrency = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $shipPromotionDiscountCurrency;
+    private ?float $shipPromotionDiscountCurrency = null;
 
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $vatExclusiveItemPriceCurrency;
+    private ?float $vatExclusiveItemPriceCurrency = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $vatExclusiveShippingPriceCurrency;
+    private ?float $vatExclusiveShippingPriceCurrency = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $vatExclusiveGiftwrapPriceCurrency;
+    private ?float $vatExclusiveGiftwrapPriceCurrency = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class)
      */
-    private $product;
+    private ?\App\Entity\Product $product = null;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"export_order"})
      */
-    private $integrated = false;
+    private ?bool $integrated = false;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"export_order"})
      */
-    private $integrationNumber;
+    private ?string $integrationNumber = null;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isMultiline = false;
+    private ?bool $isMultiline = false;
 
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isReturn = false;
+    private ?bool $isReturn = false;
 
 
 
@@ -319,7 +319,7 @@ class AmazonOrder
                     $this->{$attribute . 'Currency'} = $valueFormate > 0 ? $valueFormate : null;
                     $this->{$attribute} =  $valueFormate > 0 ? round($calculator->getConvertedAmountDate($valueFormate, $this->currency, $this->purchaseDate), 2) : null;
                 } else {
-                    $this->{$attribute} =  strlen($value) > 0 ? $value : null;
+                    $this->{$attribute} =  strlen((string) $value) > 0 ? $value : null;
                 }
             }
         }
@@ -378,7 +378,7 @@ class AmazonOrder
 
     private function camelize($input, $separator = '-')
     {
-        return lcfirst(str_replace($separator, '', ucwords($input, $separator)));
+        return lcfirst(str_replace($separator, '', ucwords((string) $input, $separator)));
     }
 
    

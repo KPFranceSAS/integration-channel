@@ -17,16 +17,13 @@ class CheckInvoiceAmazonOrderCommand extends Command
     protected static $defaultName = 'app:amz-check-invoiced';
     protected static $defaultDescription = 'Check if amz is invoiced';
 
-    public function __construct(ManagerRegistry $manager, KpFranceConnector $kpfranceConnector)
+    public function __construct(ManagerRegistry $manager, private readonly KpFranceConnector $kpfranceConnector)
     {
         $this->manager = $manager->getManager();
-        $this->kpfranceConnector = $kpfranceConnector;
         parent::__construct();
     }
 
     private $manager;
-
-    private $kpfranceConnector;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

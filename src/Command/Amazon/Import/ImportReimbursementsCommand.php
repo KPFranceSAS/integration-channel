@@ -14,13 +14,10 @@ class ImportReimbursementsCommand extends Command
     protected static $defaultName = 'app:amz-import-reimbursements';
     protected static $defaultDescription = 'Import reimbursements from AMZ';
 
-    public function __construct(AmzApiImportReimbursement $amzApiImportReimbursement)
+    public function __construct(private readonly AmzApiImportReimbursement $amzApiImportReimbursement)
     {
-        $this->amzApiImportReimbursement = $amzApiImportReimbursement;
         parent::__construct();
     }
-
-    private $amzApiImportReimbursement;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

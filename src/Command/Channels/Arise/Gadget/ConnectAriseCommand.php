@@ -14,16 +14,10 @@ class ConnectAriseCommand extends Command
     protected static $defaultName = 'app:arise-test';
     protected static $defaultDescription = 'Connection to Gadget express';
 
-    public function __construct(GadgetApi $ariseApi, FilesystemOperator $ariseLabelStorage)
+    public function __construct(private readonly GadgetApi $ariseApi, private readonly FilesystemOperator $ariseLabelStorage)
     {
-        $this->ariseApi = $ariseApi;
-        $this->ariseLabelStorage = $ariseLabelStorage;
         parent::__construct();
     }
-
-    private $ariseApi;
-
-    private $ariseLabelStorage;
 
   
 
@@ -52,7 +46,7 @@ class ConnectAriseCommand extends Command
     
     private function getBrandProduct()
     {
-        $result = $this->ariseApi->getBrandProduct(1355778698378079);
+        $result = $this->ariseApi->getBrandProduct(1_355_778_698_378_079);
         var_dump($result);
     }
 
@@ -73,14 +67,14 @@ class ConnectAriseCommand extends Command
 
     private function updatePrice()
     {
-        $result = $this->ariseApi->updatePrice(1355779509600516, 2068482878177540, "X-W2040OV4N", 0);
+        $result = $this->ariseApi->updatePrice(1_355_779_509_600_516, 2_068_482_878_177_540, "X-W2040OV4N", 0);
         var_dump($result);
     }
 
 
     private function updateStockLevel()
     {
-        $result = $this->ariseApi->updateStockLevel(1355779509600516, 2068482878177540, "X-W2040OV4N", 2500);
+        $result = $this->ariseApi->updateStockLevel(1_355_779_509_600_516, 2_068_482_878_177_540, "X-W2040OV4N", 2500);
         var_dump($result);
     }
 
@@ -88,7 +82,7 @@ class ConnectAriseCommand extends Command
 
     private function markOrderAsFulfill()
     {
-        $result = $this->ariseApi->markOrderAsFulfill(46301516006, "DHL", "0837682350");
+        $result = $this->ariseApi->markOrderAsFulfill(46_301_516_006, "DHL", "0837682350");
         var_dump($result);
     }
 

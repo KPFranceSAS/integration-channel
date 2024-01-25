@@ -13,13 +13,10 @@ class OrderIntegrateChannelCommand extends Command
     protected static $defaultName = 'app:integrate-orders-from';
     protected static $defaultDescription = 'INtegrates all orders waiting to be invoiced with the given sale channel';
 
-    public function __construct(IntegratorAggregator $integrate)
+    public function __construct(private readonly IntegratorAggregator $integrate)
     {
-        $this->integrate = $integrate;
         parent::__construct();
     }
-
-    private $integrate;
 
 
     protected function configure(): void
@@ -32,7 +29,7 @@ class OrderIntegrateChannelCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
+        $channelIntegration = strtoupper((string) $input->getArgument('channelIntegration'));
 
         $integrator = $this->integrate->getIntegrator($channelIntegration);
         $retryIntegration = boolval($input->getArgument('retryIntegration'));

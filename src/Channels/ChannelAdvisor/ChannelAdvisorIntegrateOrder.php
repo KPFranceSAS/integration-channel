@@ -21,13 +21,13 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
 {
 
 
-    public const AMZ_KP_FR = '000222';
-    public const AMZ_KP_ES = '000230';
-    public const AMZ_KP_IT = '000163';
-    public const AMZ_KP_DE = '000193';
-    public const AMZ_KP_UK = '000223';
-    public const AMZ_GI_ES = '003315';
-    public const CDISC_KP_FR = '000809';
+    final public const AMZ_KP_FR = '000222';
+    final public const AMZ_KP_ES = '000230';
+    final public const AMZ_KP_IT = '000163';
+    final public const AMZ_KP_DE = '000193';
+    final public const AMZ_KP_UK = '000223';
+    final public const AMZ_GI_ES = '003315';
+    final public const CDISC_KP_FR = '000809';
 
  
 
@@ -121,31 +121,31 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
 
         $orderBC->billToName = $orderApi->BillingFirstName . ' ' . $orderApi->BillingLastName;
 
-        $orderBC->sellingPostalAddress->street = substr($orderApi->BillingAddressLine1, 0, 100);
-        if ($orderApi->BillingAddressLine2 && strlen($orderApi->BillingAddressLine2) > 0) {
-            $orderBC->sellingPostalAddress->street .= "\r\n" . substr($orderApi->BillingAddressLine2, 0, 100);
+        $orderBC->sellingPostalAddress->street = substr((string) $orderApi->BillingAddressLine1, 0, 100);
+        if ($orderApi->BillingAddressLine2 && strlen((string) $orderApi->BillingAddressLine2) > 0) {
+            $orderBC->sellingPostalAddress->street .= "\r\n" . substr((string) $orderApi->BillingAddressLine2, 0, 100);
         }
-        $orderBC->sellingPostalAddress->city = substr($orderApi->BillingCity, 0, 100);
+        $orderBC->sellingPostalAddress->city = substr((string) $orderApi->BillingCity, 0, 100);
         $orderBC->sellingPostalAddress->postalCode = $orderApi->BillingPostalCode;
         $orderBC->sellingPostalAddress->countryLetterCode = $orderApi->BillingCountry;
-        if ($orderApi->BillingStateOrProvinceName && strlen($orderApi->BillingStateOrProvinceName) > 0 && $orderApi->BillingStateOrProvinceName != "--") {
-            $orderBC->sellingPostalAddress->state = substr($orderApi->BillingStateOrProvinceName, 0, 30);
+        if ($orderApi->BillingStateOrProvinceName && strlen((string) $orderApi->BillingStateOrProvinceName) > 0 && $orderApi->BillingStateOrProvinceName != "--") {
+            $orderBC->sellingPostalAddress->state = substr((string) $orderApi->BillingStateOrProvinceName, 0, 30);
         }
 
         $orderBC->shipToName = $orderApi->ShippingFirstName . ' ' . $orderApi->ShippingLastName;
         if ($orderApi->ShippingAddressLine1) {
-            $orderBC->shippingPostalAddress->street = substr($orderApi->ShippingAddressLine1, 0, 100);
+            $orderBC->shippingPostalAddress->street = substr((string) $orderApi->ShippingAddressLine1, 0, 100);
         } else {
             $orderBC->shippingPostalAddress->street='';
         }
-        if ($orderApi->ShippingAddressLine2 && strlen($orderApi->ShippingAddressLine2) > 0) {
-            $orderBC->shippingPostalAddress->street .= "\r\n" . substr($orderApi->ShippingAddressLine2, 0, 100);
+        if ($orderApi->ShippingAddressLine2 && strlen((string) $orderApi->ShippingAddressLine2) > 0) {
+            $orderBC->shippingPostalAddress->street .= "\r\n" . substr((string) $orderApi->ShippingAddressLine2, 0, 100);
         }
-        $orderBC->shippingPostalAddress->city = substr($orderApi->ShippingCity, 0, 100);
+        $orderBC->shippingPostalAddress->city = substr((string) $orderApi->ShippingCity, 0, 100);
         $orderBC->shippingPostalAddress->postalCode = $orderApi->ShippingPostalCode;
         $orderBC->shippingPostalAddress->countryLetterCode = $orderApi->ShippingCountry;
-        if ($orderApi->ShippingStateOrProvinceName && strlen($orderApi->ShippingStateOrProvinceName) > 0 && $orderApi->ShippingStateOrProvinceName != "--") {
-            $orderBC->shippingPostalAddress->state = substr($orderApi->BillingStateOrProvinceName, 0, 30);
+        if ($orderApi->ShippingStateOrProvinceName && strlen((string) $orderApi->ShippingStateOrProvinceName) > 0 && $orderApi->ShippingStateOrProvinceName != "--") {
+            $orderBC->shippingPostalAddress->state = substr((string) $orderApi->BillingStateOrProvinceName, 0, 30);
         }
 
         $orderBC->email = $orderApi->BuyerEmailAddress;

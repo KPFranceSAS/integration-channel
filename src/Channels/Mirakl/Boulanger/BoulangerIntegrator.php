@@ -10,7 +10,7 @@ use Exception;
 
 class BoulangerIntegrator extends MiraklIntegratorParent
 {
-    public const BOULANGER_FR = '000820';
+    final public const BOULANGER_FR = '000820';
        
 
 

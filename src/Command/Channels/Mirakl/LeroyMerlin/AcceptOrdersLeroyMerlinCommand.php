@@ -14,13 +14,10 @@ class AcceptOrdersLeroyMerlinCommand extends Command
     protected static $defaultDescription = 'Accept orders on Leroy Merlin';
 
     public function __construct(
-        LeroyMerlinAcceptOrder $leroyMerlinAcceptOrder
+        private readonly LeroyMerlinAcceptOrder $leroyMerlinAcceptOrder
     ) {
-        $this->leroyMerlinAcceptOrder = $leroyMerlinAcceptOrder;
         parent::__construct();
     }
-
-    private $leroyMerlinAcceptOrder;
 
   
 

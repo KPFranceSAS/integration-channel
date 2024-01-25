@@ -6,22 +6,15 @@ use Exception;
 
 class AriseRequest
 {
-    public $apiName;
+    public $headerParams = [];
 
-    public $headerParams = array();
+    public $udfParams = [];
 
-    public $udfParams = array();
+    public $fileParams = [];
 
-    public $fileParams = array();
-
-    public $httpMethod = 'POST';
-
-    public function __construct($apiName, $httpMethod = 'POST')
+    public function __construct(public $apiName, public $httpMethod = 'POST')
     {
-        $this->apiName = $apiName;
-        $this->httpMethod = $httpMethod;
-
-        if ($this->startWith($apiName, "//")) {
+        if ($this->startWith($this->apiName, "//")) {
             throw new Exception("api name is invalid. It should be start with /");
         }
     }
@@ -46,11 +39,7 @@ class AriseRequest
             throw new Exception("api file param key should be string");
         }
 
-        $file = array(
-            'type' => $mimeType,
-            'content' => $content,
-            'name' => $key
-        );
+        $file = ['type' => $mimeType, 'content' => $content, 'name' => $key];
         $this->fileParams[$key] = $file;
     }
 
@@ -69,6 +58,6 @@ class AriseRequest
 
     public function startWith($str, $needle)
     {
-        return strpos($str, $needle) === 0;
+        return str_starts_with((string) $str, (string) $needle);
     }
 }

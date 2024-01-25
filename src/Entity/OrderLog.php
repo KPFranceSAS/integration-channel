@@ -13,24 +13,24 @@ class OrderLog
 {
     use TraitTimeUpdated;
 
-    public const CATEGORY_ERP = 'Business central';
+    final public const CATEGORY_ERP = 'Business central';
 
    
-    public const CATEGORY_SYSTEM = 'Third party system';
+    final public const CATEGORY_SYSTEM = 'Third party system';
 
-    public const CATEGORY_SKU = 'Sku correlation';
+    final public const CATEGORY_SKU = 'Sku correlation';
 
-    public const CATEGORY_DELAY_SHIPMENT_CREATION = 'Shipment creation';
+    final public const CATEGORY_DELAY_SHIPMENT_CREATION = 'Shipment creation';
 
-    public const CATEGORY_DELAY_SHIPPING = 'Shipping delay';
+    final public const CATEGORY_DELAY_SHIPPING = 'Shipping delay';
 
-    public const CATEGORY_DELAY_DELIVERY = 'Delivery delay';
+    final public const CATEGORY_DELAY_DELIVERY = 'Delivery delay';
 
-    public const CATEGORY_DELAY_INVOICE = 'Invoice delay';
+    final public const CATEGORY_DELAY_INVOICE = 'Invoice delay';
 
-    public const CATEGORY_LENGTH = 'Address length';
+    final public const CATEGORY_LENGTH = 'Address length';
 
-    public const CATEGORY_OTHERS = 'Others';
+    final public const CATEGORY_OTHERS = 'Others';
 
 
     /**
@@ -38,47 +38,47 @@ class OrderLog
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $orderNumber;
+    private ?string $orderNumber = null;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $orderId;
+    private ?int $orderId = null;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $logDate;
+    private ?\DateTimeInterface $logDate = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $unicityHash;
+    private ?string $unicityHash = null;
 
     /**
      * @ORM\Column(type="text")
      */
-    private $description;
+    private ?string $description = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $category;
+    private ?string $category = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $integrationChannel;
+    private ?string $integrationChannel = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $marketplace;
+    private ?string $marketplace = null;
 
     public function getId(): ?int
     {

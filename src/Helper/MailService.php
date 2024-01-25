@@ -12,22 +12,14 @@ use Symfony\Component\Mime\Email;
 
 class MailService
 {
-    private $logger;
-
-    private $mailer;
-
     private $manager;
 
     /**
      * Constructor
-     *
-     * @param LoggerInterface $logger
      */
-    public function __construct(MailerInterface $mailer, LoggerInterface $logger, ManagerRegistry $managerRegistry)
+    public function __construct(private readonly MailerInterface $mailer, private readonly LoggerInterface $logger, ManagerRegistry $managerRegistry)
     {
-        $this->mailer = $mailer;
         $this->manager = $managerRegistry->getManager();
-        $this->logger = $logger;
     }
 
 

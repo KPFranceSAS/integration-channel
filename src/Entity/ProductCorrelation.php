@@ -22,25 +22,25 @@ class ProductCorrelation
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
      * 
      */
-    private $skuUsed;
+    private ?string $skuUsed = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      *
      */
-    private $skuErp;
+    private ?string $skuErp = null;
 
     /**
      * @Assert\NotNull()
      * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="productCorrelations")
      */
-    private $product;
+    private ?\App\Entity\Product $product = null;
 
 
 

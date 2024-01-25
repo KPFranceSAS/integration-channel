@@ -16,33 +16,24 @@ class ChannelAdvisorApi implements ApiInterface
         return IntegrationChannel::CHANNEL_CHANNELADVISOR;
     }
 
-    public const AUTH_URL = 'https://api.channeladvisor.com/oauth2/token';
+    final public const AUTH_URL = 'https://api.channeladvisor.com/oauth2/token';
 
-    public const API_URL = 'https://api.channeladvisor.com/v1/';
+    final public const API_URL = 'https://api.channeladvisor.com/v1/';
 
     protected $channelEndpoint;
 
-    protected $refreshToken;
-
-    protected $applicationId;
-
-    protected $sharedSecret;
-
     protected $accessToken;
 
-    public const TIME_TO_REFRESH_TOKEN = 30;
+    final public const TIME_TO_REFRESH_TOKEN = 30;
 
     protected $dateInitialisationToken;
 
     protected $logger;
 
-    public function __construct(LoggerInterface $logger, $channelEndpoint, $channelRefreshToken, $channelApplicationId, $channelSharedSecret)
+    public function __construct(LoggerInterface $logger, $channelEndpoint, protected $refreshToken, protected $applicationId, protected $sharedSecret)
     {
         $this->logger = $logger;
         $this->channelEndpoint = 'https://'.$channelEndpoint;
-        $this->refreshToken = $channelRefreshToken;
-        $this->applicationId = $channelApplicationId;
-        $this->sharedSecret = $channelSharedSecret;
         
     }
 
@@ -112,7 +103,7 @@ class ChannelAdvisorApi implements ApiInterface
      *
      * @return stdClass
      */
-    public function getNextResults($link)
+    public function getNextResults($link): stdClass
     {
         $client = new Client();
         $response = $client->request('GET', $link);
@@ -172,8 +163,8 @@ class ChannelAdvisorApi implements ApiInterface
             'ProfileID' => $profileId,
             'OrderID' => $orderId,
             'DocumentType' => 'AmazonVATInvoice',
-            'TotalAmount' => str_replace(',', '.', $totalAmount),
-            'TotalVATAmount' => str_replace(',', '.', $totalVATAAmount),
+            'TotalAmount' => str_replace(',', '.', (string) $totalAmount),
+            'TotalVATAmount' => str_replace(',', '.', (string) $totalVATAAmount),
             'InvoiceNumber' => $invoiceNumber,
         ];
 
@@ -193,8 +184,8 @@ class ChannelAdvisorApi implements ApiInterface
             'ProfileID' => $profileId,
             'OrderID' => $orderId,
             'DocumentType' => 'AmazonVATCreditNote',
-            'TotalAmount' => str_replace(',', '.', $totalAmount),
-            'TotalVATAmount' => str_replace(',', '.', $totalVATAAmount),
+            'TotalAmount' => str_replace(',', '.', (string) $totalAmount),
+            'TotalVATAmount' => str_replace(',', '.', (string) $totalVATAAmount),
             'InvoiceNumber' => $invoiceNumber,
             'AdjustmentID' => $adjustmentID,
         ];

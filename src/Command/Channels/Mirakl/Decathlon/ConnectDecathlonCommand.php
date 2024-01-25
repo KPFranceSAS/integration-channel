@@ -19,13 +19,10 @@ class ConnectDecathlonCommand extends Command
     protected static $defaultDescription = 'Connection to Deacthlon';
 
     public function __construct(
-        DecathlonApi $decathlonApi
+        private readonly DecathlonApi $decathlonApi
     ) {
-        $this->decathlonApi = $decathlonApi;
         parent::__construct();
     }
-
-    private $decathlonApi;
 
   
 

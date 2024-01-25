@@ -34,11 +34,7 @@ class BrandCrudController extends AdminCrudController
     public function configureActions(Actions $actions): Actions
     {
         $actions = parent::configureActions($actions);
-        $actions->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
-            return $action->displayIf(static function ($entity) {
-                return $entity && count($entity->getProducts()) == 0;
-            });
-        })->disable(Action::BATCH_DELETE);
+        $actions->update(Crud::PAGE_INDEX, Action::DELETE, fn(Action $action) => $action->displayIf(static fn($entity) => $entity && count($entity->getProducts()) == 0))->disable(Action::BATCH_DELETE);
         return $actions;
     }
 

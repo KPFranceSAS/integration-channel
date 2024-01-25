@@ -26,17 +26,11 @@ class BuildProductPriceCommand extends Command
     protected static $defaultName = 'app:aliexpress-build-product-prices';
     protected static $defaultDescription = 'Build product for aliexpress';
 
-    public function __construct(GadgetIberiaConnector $saleOrderConnector, ManagerRegistry $manager, AliExpressApi $aliExpressApi)
+    public function __construct(private readonly GadgetIberiaConnector $bcConnector, ManagerRegistry $manager, private readonly AliExpressApi $aliExpressApi)
     {
-        $this->aliExpressApi = $aliExpressApi;
         $this->manager = $manager->getManager();
-        $this->bcConnector = $saleOrderConnector;
         parent::__construct();
     }
-
-    private $bcConnector;
-
-    private $aliExpressApi;
 
     private $manager;
 
@@ -151,7 +145,7 @@ class BuildProductPriceCommand extends Command
     {
         foreach ($productInfo->aeop_ae_product_propertys->global_aeop_ae_product_property as $skuList) {
             if ($skuList->attr_name = 'Brand Name') {
-                return strtoupper($skuList->attr_value);
+                return strtoupper((string) $skuList->attr_value);
             }
         }
         return null;

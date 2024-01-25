@@ -12,13 +12,10 @@ class IntegrateFbaReturnCommand extends Command
     protected static $defaultName = 'app:amz-generate-returns';
     protected static $defaultDescription = 'Generate FBA Returns';
 
-    public function __construct(GenerateAmzFbaReturn $amzFbaReturn)
+    public function __construct(private readonly GenerateAmzFbaReturn $amzFbaReturn)
     {
-        $this->amzFbaReturn = $amzFbaReturn;
         parent::__construct();
     }
-
-    private $amzFbaReturn;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

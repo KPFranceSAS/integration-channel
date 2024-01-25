@@ -133,14 +133,14 @@ class GenerateAmzFbaReturn
         $qb = $this->manager->createQueryBuilder();
         $expr = $this->manager->getExpressionBuilder();
         $qb->select('amz')
-            ->from('App\Entity\AmazonFinancialEvent', 'amz')
+            ->from(\App\Entity\AmazonFinancialEvent::class, 'amz')
             ->where('amz.transactionType = :transactionType')
             ->andWhere('amz.amountDescription = :amountDescription')
             ->andWhere($expr->notIn(
                 'amz.adjustmentId',
                 $this->manager->createQueryBuilder()
                     ->select('fba.adjustmentId')
-                    ->from('App\Entity\FbaReturn', 'fba')
+                    ->from(\App\Entity\FbaReturn::class, 'fba')
                     ->getDQL()
             ))
             ->setParameter('transactionType', "RefundEvent")

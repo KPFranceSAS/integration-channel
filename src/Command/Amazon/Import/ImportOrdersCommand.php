@@ -14,13 +14,10 @@ class ImportOrdersCommand extends Command
     protected static $defaultName = 'app:amz-import-orders';
     protected static $defaultDescription = 'Import orders from AMZ';
 
-    public function __construct(AmzApiImportOrder $amzApiImportOrder)
+    public function __construct(private readonly AmzApiImportOrder $amzApiImportOrder)
     {
-        $this->amzApiImportOrder = $amzApiImportOrder;
         parent::__construct();
     }
-
-    private $amzApiImportOrder;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

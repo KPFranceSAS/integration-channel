@@ -19,9 +19,9 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * @Gedmo\Loggable(logEntryClass=ProductLogEntry::class)
  * @ORM\HasLifecycleCallbacks()
  */
-class ProductSaleChannel
+class ProductSaleChannel implements \Stringable
 {
-    public const TX_MARGIN = 19;
+    final public const TX_MARGIN = 19;
 
     use TraitTimeUpdated;
   
@@ -30,33 +30,34 @@ class ProductSaleChannel
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="productSaleChannels")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $product;
+    private ?\App\Entity\Product $product = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=SaleChannel::class, inversedBy="productSaleChannels")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $saleChannel;
+    private ?\App\Entity\SaleChannel $saleChannel = null;
 
 
     /**
      * @ORM\Column(type="boolean")
      * @Gedmo\Versioned
      */
-    private $enabled=false;
+    private ?bool $enabled=false;
 
     /**
      * @Assert\Valid()
      * @ORM\OneToMany(targetEntity=Promotion::class, mappedBy="productSaleChannel", orphanRemoval=true, cascade={"persist","remove"})
      *
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Promotion>
      */
-    private $promotions;
+    private \Doctrine\Common\Collections\Collection $promotions;
 
     /**
      * @Gedmo\Versioned
@@ -67,37 +68,38 @@ class ProductSaleChannel
      * )
      *  @Assert\GreaterThanOrEqual(0)
      */
-    private $price;
+    private ?float $price = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $recommendedPrice;
+    private ?float $recommendedPrice = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $estimatedCommission;
+    private ?float $estimatedCommission = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $estimatedShipping;
+    private ?float $estimatedShipping = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $estimatedCommissionPercent;
+    private ?float $estimatedCommissionPercent = null;
 
     /**
      * @ORM\Column(type="float", nullable=true)
      */
-    private $estimatedShippingPercent;
+    private ?float $estimatedShippingPercent = null;
 
     /**
      * @ORM\OneToMany(targetEntity=ProductSaleChannelHistory::class, mappedBy="productSaleChannel", cascade={"persist","remove"}, orphanRemoval=true)
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\ProductSaleChannelHistory>
      */
-    private $productSaleChannelHistories;
+    private \Doctrine\Common\Collections\Collection $productSaleChannelHistories;
 
 
     public function getSalePriceForNow()
@@ -158,7 +160,7 @@ class ProductSaleChannel
         return $this->saleChannel->getName();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->product->getBrand().' '.$this->product->getSku().' > '.$this->getSaleChannelName();
     }
@@ -318,7 +320,7 @@ class ProductSaleChannel
     /**
      * @return Collection|Promotion[]
      */
-    public function getPromotions(): Collection
+    public function getPromotions(): Collection|\Doctrine\Common\Collections\Collection
     {
         return $this->promotions;
     }

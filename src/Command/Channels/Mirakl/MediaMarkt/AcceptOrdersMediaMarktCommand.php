@@ -13,13 +13,10 @@ class AcceptOrdersMediaMarktCommand extends Command
     protected static $defaultDescription = 'Accept orders on mediamarkt';
 
     public function __construct(
-        MediaMarktAcceptOrder $mediaMarktAcceptOrder
+        private readonly MediaMarktAcceptOrder $mediaMarktAcceptOrder
     ) {
-        $this->mediaMarktAcceptOrder = $mediaMarktAcceptOrder;
         parent::__construct();
     }
-
-    private $mediaMarktAcceptOrder;
 
   
 

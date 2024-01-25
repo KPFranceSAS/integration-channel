@@ -102,7 +102,7 @@ class StoreErrorsLogCommand extends Command
 
     protected function getCategory($description): string
     {
-        $strDescription = strtoupper($description);
+        $strDescription = strtoupper((string) $description);
         if (u($strDescription)->containsAny(["ADDRESS LENGTH", "LENGTH OF THE STREET" ,'FORBIDDEN WORD'])) {
             return OrderLog::CATEGORY_LENGTH;
         } elseif(u($strDescription)->containsAny(["WAREHOUSE SHIPMENT HAS NOT BEEN CREATED"])) {

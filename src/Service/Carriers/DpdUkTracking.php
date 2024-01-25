@@ -10,9 +10,9 @@ class DpdUkTracking
 {
 
 
-    public const BASE_URL = 'https://apis.track.dpd.co.uk/v1/';
+    final public const BASE_URL = 'https://apis.track.dpd.co.uk/v1/';
 
-    public const BASE_PARAMS = [
+    final public const BASE_PARAMS = [
         'connect_timeout' => 1
     ];
 

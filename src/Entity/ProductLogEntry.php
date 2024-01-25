@@ -24,22 +24,22 @@ class ProductLogEntry extends AbstractLogEntry
      *
      * @ORM\Column(name="product_id", type="integer", nullable=true)
      */
-    private $productId;
+    private ?int $productId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $productSku;
+    private ?string $productSku = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $saleChannelId;
+    private ?int $saleChannelId = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $saleChannelName;
+    private ?string $saleChannelName = null;
 
 
     public function getHumanType(){
@@ -61,9 +61,6 @@ class ProductLogEntry extends AbstractLogEntry
         return $this->productId;
     }
 
-    /**
-     * @param string $productId
-     */
     public function setProductId(string $productId): void
     {
         $this->productId = $productId;

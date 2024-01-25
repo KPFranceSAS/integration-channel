@@ -25,7 +25,7 @@ class TrackingAggregator
         switch ($carrier) {
             case WebOrder::CARRIER_DHL:
                 $shippyProSteps = $this->shippyProTracking->checkIfDelivered($codeTracking);
-                return $shippyProSteps ? $shippyProSteps :  DhlGetTracking::checkIfDelivered($codeTracking);
+                return $shippyProSteps ?: DhlGetTracking::checkIfDelivered($codeTracking);
             case WebOrder::CARRIER_ARISE:
                 return AriseTracking::checkIfDelivered($codeTracking, $zipCode);
             case WebOrder::CARRIER_DPDUK:
@@ -50,7 +50,7 @@ class TrackingAggregator
                 return AriseTracking::getStepsTrackings($codeTracking, $zipCode);
             case WebOrder::CARRIER_DHL:
                 $shippyProSteps = $this->shippyProTracking->getStepsTrackings($codeTracking);
-                return $shippyProSteps ? $shippyProSteps : DhlGetTracking::getStepsTrackings($codeTracking);
+                return $shippyProSteps ?: DhlGetTracking::getStepsTrackings($codeTracking);
             case WebOrder::CARRIER_DPDUK:
                 return DpdUkTracking::getStepsTrackings($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
@@ -65,26 +65,17 @@ class TrackingAggregator
 
     public function getTrackingUrlBase($carrier, $codeTracking, $zipCode=null)
     {
-        switch ($carrier) {
-            case WebOrder::CARRIER_DHL:
-                return DhlGetTracking::getTrackingUrlBase($codeTracking);
-            case WebOrder::CARRIER_ARISE:
-                return AriseTracking::getTrackingUrlBase($codeTracking, $zipCode);
-            case WebOrder::CARRIER_DPDUK:
-                return DpdUkTracking::getTrackingUrlBase($codeTracking, $zipCode);
-            case WebOrder::CARRIER_DPDUK:
-                return DpdUkTracking::getTrackingUrlBase($codeTracking, $zipCode);
-            case WebOrder::CARRIER_UPS:
-                return UpsGetTracking::getTrackingUrlBase($codeTracking);
-            case WebOrder::CARRIER_DBSCHENKER:
-                return DbSchenkerGetTracking::getTrackingUrlBase($codeTracking);
-            case WebOrder::CARRIER_SENDING:
-                return SendingGetTracking::getTrackingUrlBase($codeTracking);
-            case WebOrder::CARRIER_TNT:
-                return TntGetTracking::getTrackingUrlBase($codeTracking);
-            case WebOrder::CARRIER_CORREOSEXP:
-                return CorreosExpTracking::getTrackingUrlBase($codeTracking);
-        }
-        return null;
+        return match ($carrier) {
+            WebOrder::CARRIER_DHL => DhlGetTracking::getTrackingUrlBase($codeTracking),
+            WebOrder::CARRIER_ARISE => AriseTracking::getTrackingUrlBase($codeTracking, $zipCode),
+            WebOrder::CARRIER_DPDUK => DpdUkTracking::getTrackingUrlBase($codeTracking, $zipCode),
+            WebOrder::CARRIER_DPDUK => DpdUkTracking::getTrackingUrlBase($codeTracking, $zipCode),
+            WebOrder::CARRIER_UPS => UpsGetTracking::getTrackingUrlBase($codeTracking),
+            WebOrder::CARRIER_DBSCHENKER => DbSchenkerGetTracking::getTrackingUrlBase($codeTracking),
+            WebOrder::CARRIER_SENDING => SendingGetTracking::getTrackingUrlBase($codeTracking),
+            WebOrder::CARRIER_TNT => TntGetTracking::getTrackingUrlBase($codeTracking),
+            WebOrder::CARRIER_CORREOSEXP => CorreosExpTracking::getTrackingUrlBase($codeTracking),
+            default => null,
+        };
     }
 }

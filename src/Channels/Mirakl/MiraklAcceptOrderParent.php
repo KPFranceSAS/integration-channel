@@ -49,7 +49,7 @@ abstract class MiraklAcceptOrderParent
      *
      * @return void
      */
-    public function acceptAllOrders()
+    public function acceptAllOrders(): void
     {
         $ordersApi = $this->apiClient->getAllOrdersToAccept();
         if(count($ordersApi)>0) {

@@ -15,15 +15,10 @@ class ExchangeRateCommand extends Command
     protected static $defaultDescription = 'Get exchange rates';
 
     public function __construct(
-        ExchangeRateCalculator $exchangeRateCalculator
+        private readonly ExchangeRateCalculator $exchangeRateCalculator
     ) {
-        $this->exchangeRateCalculator = $exchangeRateCalculator;
         parent::__construct();
     }
-
-
-
-    private $exchangeRateCalculator;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

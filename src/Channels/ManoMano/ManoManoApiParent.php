@@ -40,10 +40,9 @@ abstract class ManoManoApiParent implements ApiInterface
      * start_date end_date
      * order_state_codes
      * WAITING_PAYMENT, PENDING, REFUSED, PREPARATION, SHIPPED, REFUNDED, REFUNDING, REMORSE_PERIOD
-     * @param array $params
      * @return array
      */
-    public function getOrders(array $params = [])
+    public function getOrders(array $params = []): array
     {
         $offset = 1;
         $max_page = 1;
@@ -54,7 +53,7 @@ abstract class ManoManoApiParent implements ApiInterface
             $this->logger->info('Get orders batch n°' . $offset . ' / ' . $max_page . ' >>' . json_encode($params));
             $reponse =  $this->sendRequest('orders/v1/orders', $params);
 
-            $reponse= json_decode($reponse->getBody(), true);
+            $reponse= json_decode((string) $reponse->getBody(), true);
             $orders = array_merge($orders, $reponse['content']);
             $max_page  = $reponse['pagination']['pages'];
             $this->logger->info('Pagination '.json_encode($reponse['pagination']));
@@ -78,11 +77,11 @@ abstract class ManoManoApiParent implements ApiInterface
         $this->logger->info('Get Order  ' . $orderNumber);
         $reponse =  $this->sendRequest('orders/v1/orders/'.$orderNumber, ['seller_contract_id'=>$this->contractId]);
 
-        $response =  json_decode($reponse->getBody(), true);
+        $response =  json_decode((string) $reponse->getBody(), true);
         return $response['content'];
     }
 
-    public const PAGINATION = 50;
+    final public const PAGINATION = 50;
 
 
     public function markOrderAsFulfill($orderId, $carrierCode, $carrierName, $carrierUrl, $trackingNumber):bool
@@ -150,7 +149,7 @@ abstract class ManoManoApiParent implements ApiInterface
           ];
         $this->logger->info(json_encode($body));
         $reponse =  $this->sendRequest('api/v2/offer-information/offers', [], 'PATCH', json_encode($body));
-        return json_decode($reponse->getBody(), true);
+        return json_decode((string) $reponse->getBody(), true);
     }
 
 
@@ -165,7 +164,7 @@ abstract class ManoManoApiParent implements ApiInterface
         while ($continue) {
             $params ['page'] = $offset;
             $reponse =  $this->sendRequest('api/v1/offer-information/offers', $params);
-            $reponse= json_decode($reponse->getBody(), true);
+            $reponse= json_decode((string) $reponse->getBody(), true);
             $offers = array_merge($offers, $reponse['content']);
             if(count($offers)==$reponse['pagination']['items']) {
                 $continue= false;

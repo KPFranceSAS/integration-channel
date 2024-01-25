@@ -18,60 +18,35 @@ use Psr\Log\LoggerInterface;
 
 class AmzApi
 {
-    public const TYPE_REPORT_LAST_UPDATE_ORDERS = 'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL';
-    public const TYPE_REPORT_LAST_UPDATE_ARCHIVED_ORDERS = 'GET_FLAT_FILE_ARCHIVED_ORDERS_DATA_BY_ORDER_DATE';
-    public const TYPE_REPORT_LISTINGS_ALL_DATA = 'GET_MERCHANT_LISTINGS_ALL_DATA';
-    public const TYPE_REPORT_OPEN_LISTINGS_DATA = 'GET_FLAT_FILE_OPEN_LISTINGS_DATA';
-    public const TYPE_REPORT_RETURNS_DATA = 'GET_FBA_FULFILLMENT_CUSTOMER_RETURNS_DATA';
-    public const TYPE_REPORT_INVENTORY_DATA_BY_COUNTRY = 'GET_AFN_INVENTORY_DATA_BY_COUNTRY';
-    public const TYPE_REPORT_INVENTORY_DATA = 'GET_AFN_INVENTORY_DATA';
-    public const TYPE_REPORT_MANAGE_INVENTORY = 'GET_FBA_MYI_UNSUPPRESSED_INVENTORY_DATA';
-    public const TYPE_REPORT_RESTOCK_INVENTORY = 'GET_RESTOCK_INVENTORY_RECOMMENDATIONS_REPORT';
-    public const TYPE_REPORT_REIMBURSEMENT = 'GET_FBA_REIMBURSEMENTS_DATA';
-    public const TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED = 'GET_FBA_MYI_ALL_INVENTORY_DATA';
-    public const TYPE_REPORT_REMOVAL_SHIPMENT_DETAIL = 'GET_FBA_FULFILLMENT_REMOVAL_SHIPMENT_DETAIL_DATA';
-    public const TYPE_REPORT_REMOVAL_ORDER_DETAIL = 'GET_FBA_FULFILLMENT_REMOVAL_ORDER_DETAIL_DATA';
+    final public const TYPE_REPORT_LAST_UPDATE_ORDERS = 'GET_FLAT_FILE_ALL_ORDERS_DATA_BY_LAST_UPDATE_GENERAL';
+    final public const TYPE_REPORT_LAST_UPDATE_ARCHIVED_ORDERS = 'GET_FLAT_FILE_ARCHIVED_ORDERS_DATA_BY_ORDER_DATE';
+    final public const TYPE_REPORT_LISTINGS_ALL_DATA = 'GET_MERCHANT_LISTINGS_ALL_DATA';
+    final public const TYPE_REPORT_OPEN_LISTINGS_DATA = 'GET_FLAT_FILE_OPEN_LISTINGS_DATA';
+    final public const TYPE_REPORT_RETURNS_DATA = 'GET_FBA_FULFILLMENT_CUSTOMER_RETURNS_DATA';
+    final public const TYPE_REPORT_INVENTORY_DATA_BY_COUNTRY = 'GET_AFN_INVENTORY_DATA_BY_COUNTRY';
+    final public const TYPE_REPORT_INVENTORY_DATA = 'GET_AFN_INVENTORY_DATA';
+    final public const TYPE_REPORT_MANAGE_INVENTORY = 'GET_FBA_MYI_UNSUPPRESSED_INVENTORY_DATA';
+    final public const TYPE_REPORT_RESTOCK_INVENTORY = 'GET_RESTOCK_INVENTORY_RECOMMENDATIONS_REPORT';
+    final public const TYPE_REPORT_REIMBURSEMENT = 'GET_FBA_REIMBURSEMENTS_DATA';
+    final public const TYPE_REPORT_MANAGE_INVENTORY_ARCHIVED = 'GET_FBA_MYI_ALL_INVENTORY_DATA';
+    final public const TYPE_REPORT_REMOVAL_SHIPMENT_DETAIL = 'GET_FBA_FULFILLMENT_REMOVAL_SHIPMENT_DETAIL_DATA';
+    final public const TYPE_REPORT_REMOVAL_ORDER_DETAIL = 'GET_FBA_FULFILLMENT_REMOVAL_ORDER_DETAIL_DATA';
 
 
-    public const STATUS_REPORT_DONE = 'DONE';
-    public const STATUS_REPORT_CANCELLED = 'CANCELLED';
-    public const STATUS_REPORT_FATAL = 'FATAL';
-    public const STATUS_REPORT_IN_PROGRESS = 'IN_PROGRESS';
-    public const STATUS_REPORT_IN_QUEUE = 'IN_QUEUE';
-
-
-
-
-    private $amzLwaId;
-
-    private $amzLwaSecret;
-
-    private $amzAwsId;
-
-    private $amzAwsSecret;
-
-    private $amzArn;
-
-    private $amzRefreshToken;
+    final public const STATUS_REPORT_DONE = 'DONE';
+    final public const STATUS_REPORT_CANCELLED = 'CANCELLED';
+    final public const STATUS_REPORT_FATAL = 'FATAL';
+    final public const STATUS_REPORT_IN_PROGRESS = 'IN_PROGRESS';
+    final public const STATUS_REPORT_IN_QUEUE = 'IN_QUEUE';
 
     private $dateInitialisationToken;
 
     private $sdk;
 
-    private $logger;
-
     private $accessToken;
 
-    public function __construct(LoggerInterface $logger, string $amzLwaId, string $amzLwaSecret, string $amzAwsId, string $amzAwsSecret, string $amzArn, string $amzRefreshToken)
+    public function __construct(private readonly LoggerInterface $logger, private readonly string $amzLwaId, private readonly string $amzLwaSecret, private readonly string $amzAwsId, private readonly string $amzAwsSecret, private readonly string $amzArn, private readonly string $amzRefreshToken)
     {
-        $this->amzLwaId = $amzLwaId;
-        $this->amzLwaSecret = $amzLwaSecret;
-        $this->amzAwsId = $amzAwsId;
-        $this->amzAwsSecret = $amzAwsSecret;
-        $this->amzRefreshToken = $amzRefreshToken;
-        $this->amzArn = $amzArn;
-        $this->logger = $logger;
-
         $factory = new Psr17Factory();
         $client = new Curl($factory);
 
@@ -361,7 +336,7 @@ class AmzApi
     private function transformDocumentReportToArray($decryptedData)
     {
         $datas = [];
-        $contentArray =  explode("\r\n", $decryptedData);
+        $contentArray =  explode("\r\n", (string) $decryptedData);
         $header = explode("\t", array_shift($contentArray));
         foreach ($contentArray as $contentLine) {
             $values = explode("\t", $contentLine);

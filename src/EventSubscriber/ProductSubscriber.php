@@ -16,14 +16,8 @@ class ProductSubscriber implements EventSubscriberInterface
 {
    
 
-    private $connector;
-
-
-    public function __construct(
-        KitPersonalizacionSportConnector $connector
-        
-    ) {
-        $this->connector = $connector;
+    public function __construct(private readonly KitPersonalizacionSportConnector $connector)
+    {
     }
 
     public static function getSubscribedEvents(): array

@@ -8,7 +8,7 @@ use App\Entity\IntegrationChannel;
 
 class FlashledIntegrateOrder extends ShopifyIntegrateOrder
 {
-    public const FLASHLED_CUSTOMER_NUMBER = "130956";
+    final public const FLASHLED_CUSTOMER_NUMBER = "130956";
 
     public function getChannel()
     {

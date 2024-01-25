@@ -43,7 +43,7 @@ class ProductTaxFinder
     {
         if ($shippingCountry == 'ES' || $billingCountry == 'ES') {
             $bcConnector= $this->getBusinessCentralConnector($company);
-            if ($item && $item['DigitalCopyTax'] && strlen($item['CanonDigitalCode'])>0) {
+            if ($item && $item['DigitalCopyTax'] && strlen((string) $item['CanonDigitalCode'])>0) {
                 $taxes = $bcConnector->getTaxesByCodeAndByFeeType($item['CanonDigitalCode'], 'Canon Digital');
                 if ($taxes) {
                     $this->logger->info('Canon digital de ' . $taxes['UnitPrice'] . ' for ' . $item['number']);
@@ -68,7 +68,7 @@ class ProductTaxFinder
         if ($shippingCountry == 'FR' || $billingCountry == 'FR') {
             $bcConnector= $this->getBusinessCentralConnector($company);
             
-            if ($item && $item['WEEE'] && strlen($item['WEEEcategorycode'])>0) {
+            if ($item && $item['WEEE'] && strlen((string) $item['WEEEcategorycode'])>0) {
                 $taxes = $bcConnector->getTaxesByCodeAndByFeeType($item['WEEEcategorycode'], 'WEEE');
                 if ($taxes) {
                     $this->logger->info('Ecotax de ' . $taxes['UnitPrice'] . ' for ' . $item['number']);

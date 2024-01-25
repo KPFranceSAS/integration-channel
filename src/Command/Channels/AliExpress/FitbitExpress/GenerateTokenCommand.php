@@ -13,13 +13,10 @@ class GenerateTokenCommand extends Command
     protected static $defaultName = 'app:fitbitexpress-generate-code';
     protected static $defaultDescription = 'Generate a new token';
 
-    public function __construct(FitbitExpressApi $fitbitExpress)
+    public function __construct(private readonly FitbitExpressApi $fitbitExpress)
     {
-        $this->fitbitExpress = $fitbitExpress;
         parent::__construct();
     }
-
-    private $fitbitExpress;
 
     protected function configure(): void
     {

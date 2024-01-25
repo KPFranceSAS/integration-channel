@@ -59,16 +59,12 @@ class WebOrderCrudController extends AdminCrudController
     public function configureActions(Actions $actions): Actions
     {
         $viewInvoice = Action::new('downloadInvoice', 'Invoice', 'fa fa-file-invoice')
-            ->displayIf(static function ($entity) {
-                return $entity->haveInvoice();
-            })
+            ->displayIf(static fn($entity) => $entity->haveInvoice())
             ->addCssClass('btn btn-success')
             ->linkToCrudAction('downloadInvoice');
 
         $retryIntegration = Action::new('retryIntegration', 'Retry', 'fas fa-redo')
-            ->displayIf(static function ($entity) {
-                return $entity->needRetry();
-            })
+            ->displayIf(static fn($entity) => $entity->needRetry())
             ->addCssClass('btn')
             ->linkToCrudAction('retryIntegration');
 
@@ -77,30 +73,20 @@ class WebOrderCrudController extends AdminCrudController
         $seeOriginalOrder = Action::new('checkOrderOnline', 'See online', 'fa fa-eye')
             ->addCssClass('btn')
             ->setHtmlAttributes(['target' => '_blank'])
-            ->linkToUrl(static function ($entity) {
-                return $entity->getUrl();
-            });
+            ->linkToUrl(static fn($entity) => $entity->getUrl());
 
         $seeTrackOrder = Action::new('trackOrder', 'Track order', 'fas fa-truck')
             ->addCssClass('btn')
             ->setHtmlAttributes(['target' => '_blank'])
-            ->displayIf(static function ($entity) {
-                return strlen($entity->getTrackingUrl()) > 0;
-            })
-            ->linkToUrl(static function ($entity) {
-                return $entity->getTrackingUrl();
-            });
+            ->displayIf(static fn($entity) => strlen((string) $entity->getTrackingUrl()) > 0)
+            ->linkToUrl(static fn($entity) => $entity->getTrackingUrl());
 
         $viewInvoiceIndex = Action::new('downloadInvoice', '', 'fa fa-file-invoice')
-            ->displayIf(static function ($entity) {
-                return $entity->haveInvoice();
-            })
+            ->displayIf(static fn($entity) => $entity->haveInvoice())
             ->linkToCrudAction('downloadInvoice');
 
         $retryIntegrationIndex = Action::new('retryIntegration', '', 'fas fa-redo')
-            ->displayIf(static function ($entity) {
-                return $entity->needRetry();
-            })
+            ->displayIf(static fn($entity) => $entity->needRetry())
             ->linkToCrudAction('retryIntegration');
 
 
@@ -122,7 +108,7 @@ class WebOrderCrudController extends AdminCrudController
 
         $url = $this->container->get(AdminUrlGenerator::class)
             ->setDashboard(DashboardController::class)
-            ->setController(get_class($this))
+            ->setController(static::class)
             ->set('filters', [
                 'isLate' => 1
             ])
@@ -154,17 +140,13 @@ class WebOrderCrudController extends AdminCrudController
         $user = $this->getUser();
         if ($user->hasRole('ROLE_ADMIN')) {
             $changeStatusToInvoiced = Action::new('changeStatusToInvoiced', 'Mark as invoiced', 'fas fa-check')
-                ->displayIf(static function ($entity) {
-                    return $entity->canChangeStatusToInvoiced();
-                })
+                ->displayIf(static fn($entity) => $entity->canChangeStatusToInvoiced())
                 ->addCssClass('btn')
                 ->linkToCrudAction('changeStatusToInvoiced');
             $actions->add(Crud::PAGE_DETAIL, $changeStatusToInvoiced);
 
             $changeStatusToCompleted = Action::new('changeStatusToComplete', 'Mark as complete', 'fas fa-user-check')
-            ->displayIf(static function ($entity) {
-                return $entity->canChangeStatusToComplete();
-            })
+            ->displayIf(static fn($entity) => $entity->canChangeStatusToComplete())
             ->addCssClass('btn')
             ->linkToCrudAction('changeStatusToComplete');
             $actions->add(Crud::PAGE_DETAIL, $changeStatusToCompleted);

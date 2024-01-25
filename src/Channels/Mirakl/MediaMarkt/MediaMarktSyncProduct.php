@@ -78,7 +78,7 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         
         // text
        
-        $flatProduct['TITLE__ES_ES'] = $this->getAttributeSimple($product, "manufacturer_number") ? $this->getAttributeSimple($product, "manufacturer_number") :  $product['identifier'];
+        $flatProduct['TITLE__ES_ES'] = $this->getAttributeSimple($product, "manufacturer_number") ?: $product['identifier'];
         $flatProduct['Product_Description__ES_ES'] = $this->getAttributeSimple($product, "description", 'es_ES');
 
         // Medias
@@ -104,10 +104,10 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $flatProduct["PROD_FEAT_10134__ES_ES"] = implode(", ", $this->getAttributeMultiChoice($product, 'connectivity_technology', 'es_ES'));
       
         $colorName = $this->getAttributeChoice($product, "color", "es_ES");
-        $flatProduct["PROD_FEAT_10812__ES_ES"] = $colorName ? $colorName : $this->getAttributeChoice($product, "color_generic", "es_ES");
+        $flatProduct["PROD_FEAT_10812__ES_ES"] = $colorName ?: $this->getAttributeChoice($product, "color_generic", "es_ES");
         $flatProduct["PROD_FEAT_00003"] = $this->getCodeMarketplaceInList('LOV_FEAT_Color_basic', $this->getAttributeChoice($product, "color_generic", "en_GB"));
         $contentBox= $this->getAttributeSimple($product, "in_the_box", "es_ES");
-        $flatProduct["PROD_FEAT_11470__ES_ES"] =  $contentBox ? strip_tags(str_replace('</li>', ', </li>', $contentBox)) :'';
+        $flatProduct["PROD_FEAT_11470__ES_ES"] =  $contentBox ? strip_tags(str_replace('</li>', ', </li>', (string) $contentBox)) :'';
 
 
         // power

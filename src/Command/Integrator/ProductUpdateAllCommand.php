@@ -19,25 +19,16 @@ class ProductUpdateAllCommand extends Command
     protected static $defaultDescription = 'Update products in all channels';
 
     public function __construct(
-        ProductSyncAggregator $productSyncAggregator,
+        private readonly ProductSyncAggregator $productSyncAggregator,
         ManagerRegistry $managerRegistry,
-        LoggerInterface $logger,
-        MailService $mailService
+        private readonly LoggerInterface $logger,
+        private readonly MailService $mailService
     ) {
-        $this->productSyncAggregator = $productSyncAggregator;
-        $this->logger = $logger;
-        $this->mailService = $mailService;
         $this->managerRegistry = $managerRegistry->getManager();
         parent::__construct();
     }
 
     private $managerRegistry;
-
-    private $productSyncAggregator;
-
-    private $logger;
-
-    private $mailService;
 
 
 

@@ -31,9 +31,7 @@ class AmazonRemovalCrudController extends AdminCrudController
     {
         $actions = parent::configureActions($actions);
         $actions->add(Crud::PAGE_INDEX, Action::DETAIL);
-        $actions->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
-            return $action->setIcon('fa fa-eye')->setLabel(false);
-        });
+        $actions->update(Crud::PAGE_INDEX, Action::DETAIL, fn(Action $action) => $action->setIcon('fa fa-eye')->setLabel(false));
         $actions->disable(Action::BATCH_DELETE, Action::NEW, Action::DELETE, Action::EDIT);
         return $actions;
     }

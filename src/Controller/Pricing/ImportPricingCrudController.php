@@ -81,9 +81,7 @@ class ImportPricingCrudController extends AdminCrudController
                         ->createAsGlobalAction()
                         ->linkToCrudAction('importPricings')
                 )
-            ->update(Crud::PAGE_INDEX, Action::DETAIL, function (Action $action) {
-                return $action->setIcon('fa fa-eye')->setLabel("");
-            });
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn(Action $action) => $action->setIcon('fa fa-eye')->setLabel(""));
     }
 
 
@@ -251,7 +249,7 @@ class ImportPricingCrudController extends AdminCrudController
         $header = null;
         $datas = [];
 
-        if (substr($uploadedFile->getClientOriginalName(), -3) == 'csv') {
+        if (str_ends_with($uploadedFile->getClientOriginalName(), 'csv')) {
             $reader = ReaderEntityFactory::createCSVReader();
             $reader->setFieldDelimiter(';');
             $reader->setFieldEnclosure('"');

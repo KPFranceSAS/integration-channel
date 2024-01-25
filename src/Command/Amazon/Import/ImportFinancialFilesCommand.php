@@ -22,10 +22,9 @@ class ImportFinancialFilesCommand extends Command
     protected static $defaultName = 'app:amz-import-financial-files';
     protected static $defaultDescription = 'Import historical events from Amz';
 
-    public function __construct(ManagerRegistry $manager, ExchangeRateCalculator $exchangeRateCalculator)
+    public function __construct(ManagerRegistry $manager, private readonly ExchangeRateCalculator $exchangeRateCalculator)
     {
         $this->manager = $manager->getManager();
-        $this->exchangeRateCalculator = $exchangeRateCalculator;
         parent::__construct();
     }
 
@@ -35,9 +34,6 @@ class ImportFinancialFilesCommand extends Command
             ->setDescription(self::$defaultDescription)
             ->addArgument('pathDirectory', InputArgument::REQUIRED, 'Path of the directories');
     }
-
-
-    private $exchangeRateCalculator;
 
     private $pathDirectory;
 
@@ -49,7 +45,7 @@ class ImportFinancialFilesCommand extends Command
     {
         $this->output = $output;
         $this->pathDirectory = $input->getArgument('pathDirectory');
-        $directories = array_diff(scandir($this->pathDirectory), array('..', '.'));
+        $directories = array_diff(scandir($this->pathDirectory), ['..', '.']);
         foreach ($directories as $directory) {
             $this->managerFolders($directory);
         }
@@ -63,7 +59,7 @@ class ImportFinancialFilesCommand extends Command
         $this->output->writeln("##############################");
         $this->output->writeln('---------Start -------' . $marketplace);
         $this->output->writeln("##############################");
-        $files = array_diff(scandir($this->pathDirectory . '/' . $directory), array('..', '.'));
+        $files = array_diff(scandir($this->pathDirectory . '/' . $directory), ['..', '.']);
         foreach ($files as $file) {
             $this->output->writeln('---------Start -------' . $file);
             $this->managerFiles($file, $this->pathDirectory . '/' . $directory, $marketplace);
@@ -145,7 +141,7 @@ class ImportFinancialFilesCommand extends Command
         if ($locale == 'GB') {
             return "Amazon.co.uk";
         } else {
-            return 'Amazon.' . strtolower($locale);
+            return 'Amazon.' . strtolower((string) $locale);
         }
     }
 
@@ -153,7 +149,7 @@ class ImportFinancialFilesCommand extends Command
 
     protected function managerFiles($file, $directory, $marketplace)
     {
-        $eventGroupName = str_replace('.txt', '', $file);
+        $eventGroupName = str_replace('.txt', '', (string) $file);
         $this->output->writeln('Import financialEvent  for ' . $eventGroupName);
         $this->cleanBeforeImport($eventGroupName);
         $datas = $this->getDataFromFiles($directory . '/' . $file);
@@ -168,7 +164,7 @@ class ImportFinancialFilesCommand extends Command
             $amzFinancialEvent->setAdjustmentId($data["adjustment-id"]);
             $amzFinancialEvent->setAmazonOrderId($data["order-id"]);
             $amzFinancialEvent->setPostedDate($this->convertDatetime($data["posted-date-time"]));
-            $amount = floatval(str_replace(',', '.', $data["amount"]));
+            $amount = floatval(str_replace(',', '.', (string) $data["amount"]));
 
             $amzFinancialEvent->setAmount($this->exchangeRateCalculator->getConvertedAmountDate($amount, $currency, $amzFinancialEvent->getPostedDate()));
             $amzFinancialEvent->setAmountCurrency($amount);
@@ -203,7 +199,7 @@ class ImportFinancialFilesCommand extends Command
 
     protected function getProductBySku($sku)
     {
-        $skuSanitized = strtoupper($sku);
+        $skuSanitized = strtoupper((string) $sku);
         $productCorrelation = $this->manager->getRepository(ProductCorrelation::class)->findOneBy(['skuUsed' => $skuSanitized]);
         $sku = $productCorrelation ? $productCorrelation->getSkuErpBc() : $skuSanitized;
 
@@ -216,18 +212,18 @@ class ImportFinancialFilesCommand extends Command
 
     protected function convertDatetime($value)
     {
-        return DateTime::createFromFormat('d.m.Y H:i:s', substr($value, 0, 19));
+        return DateTime::createFromFormat('d.m.Y H:i:s', substr((string) $value, 0, 19));
     }
 
     protected function getCurrency($value)
     {
-        return substr($value, -2) == 'uk' ? 'GBP' : 'EUR';
+        return str_ends_with((string) $value, 'uk') ? 'GBP' : 'EUR';
     }
 
 
     protected function convertEmptyToNull($value)
     {
-        return strlen($value) == 0 ? null : $value;
+        return strlen((string) $value) == 0 ? null : $value;
     }
 
     protected function convertAmountDescription($type)

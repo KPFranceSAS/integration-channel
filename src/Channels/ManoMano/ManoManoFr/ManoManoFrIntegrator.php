@@ -8,7 +8,7 @@ use App\Entity\IntegrationChannel;
 
 class ManoManoFrIntegrator extends ManoManoIntegratorParent
 {
-   public const MANOMANO_FR = '000783';
+   final public const MANOMANO_FR = '000783';
 
 
 

@@ -31,7 +31,7 @@ class ProductSaleChannelType extends AbstractType
         $builder
         ->addEventListener(
             FormEvents::PRE_SET_DATA,
-            [$this, 'onPreSetData']
+            $this->onPreSetData(...)
         );
     }
 

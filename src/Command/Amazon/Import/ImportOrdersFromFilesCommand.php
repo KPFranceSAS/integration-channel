@@ -14,16 +14,10 @@ class ImportOrdersFromFilesCommand extends Command
     protected static $defaultName = 'app:amz-import-orders-from-file';
     protected static $defaultDescription = 'Import orders from file provided';
 
-    public function __construct(AmzApiImportOrder $amzApiImportOrder, CsvExtracter $csvExtracter)
+    public function __construct(private readonly AmzApiImportOrder $amzApiImportOrder, private readonly CsvExtracter $csvExtracter)
     {
-        $this->csvExtracter = $csvExtracter;
-        $this->amzApiImportOrder = $amzApiImportOrder;
         parent::__construct();
     }
-
-    private $amzApiImportOrder;
-
-    private $csvExtracter;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

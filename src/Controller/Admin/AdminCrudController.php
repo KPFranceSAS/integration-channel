@@ -76,15 +76,9 @@ abstract class AdminCrudController extends AbstractCrudController
 
         return $actions
             ->add(Crud::PAGE_INDEX, $exportIndex)
-            ->update(Crud::PAGE_INDEX, Action::NEW, function (Action $action) {
-                return $action->setIcon('fa fa-plus')->setLabel("Add a new " . $this->getName());
-            })
-            ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
-                return $action->setIcon('fa fa-pencil')->setLabel(false);
-            })
-            ->update(Crud::PAGE_INDEX, Action::DELETE, function (Action $action) {
-                return $action->setIcon('fa fa-trash')->setLabel(false);
-            });
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn(Action $action) => $action->setIcon('fa fa-plus')->setLabel("Add a new " . $this->getName()))
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn(Action $action) => $action->setIcon('fa fa-pencil')->setLabel(false))
+            ->update(Crud::PAGE_INDEX, Action::DELETE, fn(Action $action) => $action->setIcon('fa fa-trash')->setLabel(false));
     }
 
 

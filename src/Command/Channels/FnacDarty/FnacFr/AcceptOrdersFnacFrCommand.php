@@ -13,13 +13,10 @@ class AcceptOrdersFnacFrCommand extends Command
     protected static $defaultDescription = 'Accept orders on Fnac Fr';
 
     public function __construct(
-        FnacFrAcceptOrder $fnacFrAcceptOrder
+        private readonly FnacFrAcceptOrder $fnacFrAcceptOrder
     ) {
-        $this->fnacFrAcceptOrder = $fnacFrAcceptOrder;
         parent::__construct();
     }
-
-    private $fnacFrAcceptOrder;
 
   
 

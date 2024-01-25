@@ -16,13 +16,10 @@ class FlashledConnectCommand extends Command
     protected static $defaultName = 'app:connect-flashled';
     protected static $defaultDescription = 'Connection to flashled';
 
-    public function __construct(FlashledApi $flashledApi)
+    public function __construct(private readonly FlashledApi $flashledApi)
     {
-        $this->flashledApi = $flashledApi;
         parent::__construct();
     }
-
-    private $flashledApi;
 
 
 

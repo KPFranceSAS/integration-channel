@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class WebOrder
+class WebOrder implements \Stringable
 {
     use TraitTimeUpdated;
 
@@ -27,56 +27,56 @@ class WebOrder
 
 
 
-    public const  DOCUMENT_ORDER = 'ORDER';
-    public const  DOCUMENT_INVOICE = 'INVOICE';
+    final public const  DOCUMENT_ORDER = 'ORDER';
+    final public const  DOCUMENT_INVOICE = 'INVOICE';
 
-    public const  DEPOT_FBA_AMAZON = 'AMAZON';
-    public const  DEPOT_CENTRAL = 'CENTRAL';
-    public const  DEPOT_LAROCA = 'LAROCA';
-    public const  DEPOT_3PLUK = '3PLUK';
-    public const  DEPOT_3PLUE = '3PLUE';
-    public const  DEPOT_MADRID = 'MADRID';
-    public const  DEPOT_MIXED = 'MIXED';
+    final public const  DEPOT_FBA_AMAZON = 'AMAZON';
+    final public const  DEPOT_CENTRAL = 'CENTRAL';
+    final public const  DEPOT_LAROCA = 'LAROCA';
+    final public const  DEPOT_3PLUK = '3PLUK';
+    final public const  DEPOT_3PLUE = '3PLUE';
+    final public const  DEPOT_MADRID = 'MADRID';
+    final public const  DEPOT_MIXED = 'MIXED';
 
-    public const  TIMING_INTEGRATION = 24;
-    public const  TIMING_SHIPPING = 30;
-    public const  TIMING_DELIVERY = 192;
+    final public const  TIMING_INTEGRATION = 24;
+    final public const  TIMING_SHIPPING = 30;
+    final public const  TIMING_DELIVERY = 192;
 
-    public const  FULFILLED_BY_EXTERNAL = 'EXTERNALLY MANAGED';
-    public const  FULFILLED_BY_SELLER = 'OWN MANAGED';
-    public const  FULFILLED_MIXED = 'MIXED MANAGED';
+    final public const  FULFILLED_BY_EXTERNAL = 'EXTERNALLY MANAGED';
+    final public const  FULFILLED_BY_SELLER = 'OWN MANAGED';
+    final public const  FULFILLED_MIXED = 'MIXED MANAGED';
 
 
-    public const  CARRIER_DHL = 'DHL';
-    public const  CARRIER_DPDUK = 'DPDUK';
-    public const  CARRIER_ARISE = 'ARISE';
-    public const  CARRIER_FBA = 'FBA';
-    public const  CARRIER_UPS = 'UPS';
-    public const  CARRIER_DBSCHENKER = 'DBSCHENKER';
-    public const  CARRIER_SENDING = 'SENDING';
-    public const  CARRIER_CORREOSEXP = 'CORREOSEXP';
-    public const  CARRIER_TNT = 'TNT';
+    final public const  CARRIER_DHL = 'DHL';
+    final public const  CARRIER_DPDUK = 'DPDUK';
+    final public const  CARRIER_ARISE = 'ARISE';
+    final public const  CARRIER_FBA = 'FBA';
+    final public const  CARRIER_UPS = 'UPS';
+    final public const  CARRIER_DBSCHENKER = 'DBSCHENKER';
+    final public const  CARRIER_SENDING = 'SENDING';
+    final public const  CARRIER_CORREOSEXP = 'CORREOSEXP';
+    final public const  CARRIER_TNT = 'TNT';
     
 
-    public const  STATE_ERROR_INVOICE = -2;
-    public const  STATE_ERROR = -1;
-    public const  STATE_CREATED = 0;
-    public const  STATE_SYNC_TO_ERP = 1;
-    public const  STATE_INVOICED = 5;
-    public const  STATE_COMPLETE = 6;
-    public const  STATE_CANCELLED = 7;
+    final public const  STATE_ERROR_INVOICE = -2;
+    final public const  STATE_ERROR = -1;
+    final public const  STATE_CREATED = 0;
+    final public const  STATE_SYNC_TO_ERP = 1;
+    final public const  STATE_INVOICED = 5;
+    final public const  STATE_COMPLETE = 6;
+    final public const  STATE_CANCELLED = 7;
 
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $externalNumber;
+    private ?string $externalNumber = null;
 
     /**
      * @ORM\Column(type="json")
@@ -87,13 +87,13 @@ class WebOrder
      * @Assert\NotBlank()
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $orderErp;
+    private ?string $orderErp = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank()
      */
-    private $invoiceErp;
+    private ?string $invoiceErp = null;
 
     /**
      * @ORM\Column(type="json", nullable=true)
@@ -103,33 +103,33 @@ class WebOrder
     /**
      * @ORM\Column(type="integer")
      */
-    private $status = self::STATE_CREATED;
+    private ?int $status = self::STATE_CREATED;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $channel;
+    private ?string $channel = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $subchannel;
+    private ?string $subchannel = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $warehouse=self::DEPOT_LAROCA;
+    private ?string $warehouse=self::DEPOT_LAROCA;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $erpDocument = self::DOCUMENT_ORDER;
+    private ?string $erpDocument = self::DOCUMENT_ORDER;
 
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $company;
+    private ?string $company = null;
 
     public $orderBCContent = [];
 
@@ -138,24 +138,24 @@ class WebOrder
     /**
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $purchaseDate;
+    private ?\DateTimeInterface $purchaseDate = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $customerNumber;
+    private ?string $customerNumber = null;
 
     /**
      * Assert\Url(relativeProtocol = true)
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $trackingUrl;
+    private ?string $trackingUrl = null;
 
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $fulfilledBy = self::FULFILLED_BY_SELLER;
+    private ?string $fulfilledBy = self::FULFILLED_BY_SELLER;
 
     public $deliverySteps;
     public $amzEvents;
@@ -163,12 +163,12 @@ class WebOrder
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $trackingCode;
+    private ?string $trackingCode = null;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $carrierService = self::CARRIER_DHL;
+    private ?string $carrierService = self::CARRIER_DHL;
 
 
 
@@ -356,7 +356,7 @@ class WebOrder
         return 'No delay message for ' . $this->__toString();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return 'Order ' . $this->subchannel . ' n°' . $this->externalNumber . ' (#' . $this->id . ')';
     }
@@ -376,51 +376,25 @@ class WebOrder
     public function getUrl()
     {
         $order = $this->getOrderContent();
-        switch ($this->channel) {
-            case IntegrationChannel::CHANNEL_FITBITEXPRESS:
-            case IntegrationChannel::CHANNEL_ALIEXPRESS:
-                return 'https://gsp.aliexpress.com/apps/order/detail?orderId=' . $this->externalNumber;
-            case IntegrationChannel::CHANNEL_CHANNELADVISOR:
-                return 'https://sellercentral.amazon.fr/orders-v3/order/' . $this->externalNumber;
-            case IntegrationChannel::CHANNEL_OWLETCARE:
-                return 'https://owlet-spain.myshopify.com/admin/orders/' . $order['id'];
-            case IntegrationChannel::CHANNEL_MINIBATT:
-                return 'https://minibattstore.myshopify.com/admin/orders/' . $order['id'];
-            case IntegrationChannel::CHANNEL_FLASHLED:
-                return 'https://testflashled.myshopify.com/admin/orders/' . $order['id'];
-            case IntegrationChannel::CHANNEL_PAXUK:
-                return 'https://paxlabsuk.myshopify.com/admin/orders/' . $order['id'];
-            case IntegrationChannel::CHANNEL_FITBITCORPORATE:
-                return 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'];
-            case IntegrationChannel::CHANNEL_AMAZFIT_ARISE:
-            case IntegrationChannel::CHANNEL_SONOS_ARISE:
-            case IntegrationChannel::CHANNEL_ARISE:
-                return 'https://sellercenter.miravia.es/apps/order/detail?tradeOrderId=' . $this->externalNumber;
-            case IntegrationChannel::CHANNEL_LEROYMERLIN:
-                return 'https://adeo-marketplace.mirakl.net/mmp/shop/order/' . $order['id'];
-            case IntegrationChannel::CHANNEL_DECATHLON:
-                return 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $order['id'];
-            case IntegrationChannel::CHANNEL_BOULANGER:
-                return 'https://merchant.boulanger.com/mmp/shop/order/' . $order['id'];
-            case IntegrationChannel::CHANNEL_MEDIAMARKT:
-                return 'https://mediamarktsaturn.mirakl.net/mmp/shop/order/' . $order['id'];
-            case IntegrationChannel::CHANNEL_MANOMANO_DE:
-            case IntegrationChannel::CHANNEL_MANOMANO_IT:
-            case IntegrationChannel::CHANNEL_MANOMANO_ES:
-            case IntegrationChannel::CHANNEL_MANOMANO_FR:
-                return 'https://toolbox.manomano.com/orders';
-
-            case IntegrationChannel::CHANNEL_FNAC_FR:
-                return 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber;
-            case IntegrationChannel::CHANNEL_FNAC_ES:
-                return 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber;
-            case IntegrationChannel::CHANNEL_DARTY_FR:
-                return 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber;
-    
-
-
-        }
-        throw new Exception('No url link of weborder for ' . $this->channel);
+        return match ($this->channel) {
+            IntegrationChannel::CHANNEL_FITBITEXPRESS, IntegrationChannel::CHANNEL_ALIEXPRESS => 'https://gsp.aliexpress.com/apps/order/detail?orderId=' . $this->externalNumber,
+            IntegrationChannel::CHANNEL_CHANNELADVISOR => 'https://sellercentral.amazon.fr/orders-v3/order/' . $this->externalNumber,
+            IntegrationChannel::CHANNEL_OWLETCARE => 'https://owlet-spain.myshopify.com/admin/orders/' . $order['id'],
+            IntegrationChannel::CHANNEL_MINIBATT => 'https://minibattstore.myshopify.com/admin/orders/' . $order['id'],
+            IntegrationChannel::CHANNEL_FLASHLED => 'https://testflashled.myshopify.com/admin/orders/' . $order['id'],
+            IntegrationChannel::CHANNEL_PAXUK => 'https://paxlabsuk.myshopify.com/admin/orders/' . $order['id'],
+            IntegrationChannel::CHANNEL_FITBITCORPORATE => 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'],
+            IntegrationChannel::CHANNEL_AMAZFIT_ARISE, IntegrationChannel::CHANNEL_SONOS_ARISE, IntegrationChannel::CHANNEL_ARISE => 'https://sellercenter.miravia.es/apps/order/detail?tradeOrderId=' . $this->externalNumber,
+            IntegrationChannel::CHANNEL_LEROYMERLIN => 'https://adeo-marketplace.mirakl.net/mmp/shop/order/' . $order['id'],
+            IntegrationChannel::CHANNEL_DECATHLON => 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $order['id'],
+            IntegrationChannel::CHANNEL_BOULANGER => 'https://merchant.boulanger.com/mmp/shop/order/' . $order['id'],
+            IntegrationChannel::CHANNEL_MEDIAMARKT => 'https://mediamarktsaturn.mirakl.net/mmp/shop/order/' . $order['id'],
+            IntegrationChannel::CHANNEL_MANOMANO_DE, IntegrationChannel::CHANNEL_MANOMANO_IT, IntegrationChannel::CHANNEL_MANOMANO_ES, IntegrationChannel::CHANNEL_MANOMANO_FR => 'https://toolbox.manomano.com/orders',
+            IntegrationChannel::CHANNEL_FNAC_FR => 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber,
+            IntegrationChannel::CHANNEL_FNAC_ES => 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber,
+            IntegrationChannel::CHANNEL_DARTY_FR => 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber,
+            default => throw new Exception('No url link of weborder for ' . $this->channel),
+        };
     }
 
     public static function createOneFromChannelAdvisor($orderApi): WebOrder

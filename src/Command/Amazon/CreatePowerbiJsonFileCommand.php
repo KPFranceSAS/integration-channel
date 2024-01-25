@@ -13,13 +13,10 @@ class CreatePowerbiJsonFileCommand extends Command
     protected static $defaultName = 'app:amz-create-json-files';
     protected static $defaultDescription = 'Export json files for Power BI';
 
-    public function __construct(PublishPowerBi $publishPowerBi)
+    public function __construct(private readonly PublishPowerBi $publishPowerBi)
     {
-        $this->publishPowerBi = $publishPowerBi;
         parent::__construct();
     }
-
-    private $publishPowerBi;
 
 
 

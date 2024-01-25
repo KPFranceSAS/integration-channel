@@ -163,7 +163,7 @@ class AmzApiFinancial
     {
         $financialEvents = $this->amzApi->getFinancialEventsInGroup($groupEventId);
         $financialEventFormates = $this->formateFinancialEvents($financialEvents);
-        $this->dateNow = $this->dateNow ? $this->dateNow : new DateTime('now');
+        $this->dateNow = $this->dateNow ?: new DateTime('now');
         $financialEventTotals = [];
 
         foreach ($this->getFinancialTypes() as $financialType) {
@@ -576,7 +576,7 @@ class AmzApiFinancial
 
     protected function getProductBySku($sku)
     {
-        $skuSanitized = strtoupper($sku);
+        $skuSanitized = strtoupper((string) $sku);
         if (strlen($skuSanitized) > 0) {
             $productCorrelation = $this->manager
                                     ->getRepository(ProductCorrelation::class)
@@ -658,9 +658,7 @@ class AmzApiFinancial
             if ($value) {
                 $valueFormate = $value->getCurrencyAmount();
 
-                $dateCalcul = $amzFinancialEventGroup->getEndDate()
-                        ? $amzFinancialEventGroup->getEndDate()
-                        : $amzFinancialEventGroup->getStartDate();
+                $dateCalcul = $amzFinancialEventGroup->getEndDate() ?: $amzFinancialEventGroup->getStartDate();
                        
                 $valueFormateCurrency = $this->calculator->getConvertedAmountDate(
                     $valueFormate,

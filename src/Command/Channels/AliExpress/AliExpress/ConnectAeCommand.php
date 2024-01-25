@@ -15,28 +15,15 @@ class ConnectAeCommand extends Command
     protected static $defaultName = 'app:ae-test';
     protected static $defaultDescription = 'Connection to Ali express';
 
-    public function __construct(AliExpressApi $aliExpress, AliExpressIntegrateOrder $aliExpressIntegrateOrder, GadgetIberiaConnector $gadgetIberiaConnector, AliExpressStock $aliExpressStock)
+    public function __construct(private readonly AliExpressApi $aliExpress, private readonly AliExpressIntegrateOrder $aliExpressIntegrateOrder, private readonly GadgetIberiaConnector $gadgetIberiaConnector, private readonly AliExpressStock $aliExpressStock)
     {
-        $this->aliExpress = $aliExpress;
-        $this->aliExpressStock = $aliExpressStock;
-        $this->aliExpressIntegrateOrder = $aliExpressIntegrateOrder;
-        $this->gadgetIberiaConnector = $gadgetIberiaConnector;
-
         parent::__construct();
     }
-
-    private $aliExpress;
-
-    private $aliExpressStock;
-
-    private $gadgetIberiaConnector;
-
-    private $aliExpressIntegrateOrder;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dump($this->aliExpress->updatePrice(1005002778809836, 'X-GDS4147GL', '12.99', '11.50'));
+        dump($this->aliExpress->updatePrice(1_005_002_778_809_836, 'X-GDS4147GL', '12.99', '11.50'));
         return Command::SUCCESS;
     }
 

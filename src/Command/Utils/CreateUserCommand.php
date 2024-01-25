@@ -15,10 +15,9 @@ class CreateUserCommand extends Command
     protected static $defaultName = 'app:utils-create-user';
     protected static $defaultDescription = 'Create an user';
 
-    public function __construct(ManagerRegistry $manager, UserPasswordHasherInterface $passwordEncoder)
+    public function __construct(ManagerRegistry $manager, private readonly UserPasswordHasherInterface $passwordEncoder)
     {
         $this->manager = $manager->getManager();
-        $this->passwordEncoder = $passwordEncoder;
         parent::__construct();
     }
 
@@ -44,6 +43,4 @@ class CreateUserCommand extends Command
     }
 
     private $manager;
-
-    private $passwordEncoder;
 }

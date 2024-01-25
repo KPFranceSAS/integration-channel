@@ -14,16 +14,10 @@ class ErpNameIntegrationCommand extends Command
     protected static $defaultName = 'app:pim-erp-name-from-bc-to-pim';
     protected static $defaultDescription = 'Put the name from erp';
 
-    public function __construct(KpFranceConnector $businessCentralConnector, AkeneoConnector $akeneoConnector)
+    public function __construct(private readonly KpFranceConnector $businessCentralConnector, private readonly AkeneoConnector $akeneoConnector)
     {
-        $this->businessCentralConnector = $businessCentralConnector;
-        $this->akeneoConnector = $akeneoConnector;
         parent::__construct();
     }
-
-    private $businessCentralConnector;
-
-    private $akeneoConnector;
 
 
 
@@ -44,7 +38,7 @@ class ErpNameIntegrationCommand extends Command
                                 [
                                     "locale" => null,
                                     "scope" => null,
-                                    "data" => strtoupper($articleBc['displayName'])
+                                    "data" => strtoupper((string) $articleBc['displayName'])
                                 ],
                         ];
                 }

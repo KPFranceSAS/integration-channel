@@ -11,12 +11,6 @@ use stdClass;
 
 abstract class AliExpressApiParent implements ApiInterface
 {
-    protected $clientId;
-
-    protected $clientSecret;
-
-    protected $clientAccessToken;
-
     protected $client;
 
     protected $logger;
@@ -24,13 +18,10 @@ abstract class AliExpressApiParent implements ApiInterface
     abstract public function getChannel();
 
 
-    public function __construct(LoggerInterface $logger, $clientId, $clientSecret, $clientAccessToken)
+    public function __construct(LoggerInterface $logger, protected $clientId, protected $clientSecret, protected $clientAccessToken)
     {
-        $this->clientAccessToken = $clientAccessToken;
-        $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
         $this->client = new AliExpressClient();
-        $this->client->addParams($logger, $clientId, $clientSecret, $clientAccessToken);
+        $this->client->addParams($logger, $this->clientId, $this->clientSecret, $this->clientAccessToken);
         $this->logger = $logger;
     }
 
@@ -50,7 +41,7 @@ abstract class AliExpressApiParent implements ApiInterface
         return $this->getAllOrders($params);
     }
 
-    public const PAGINATION = 50;
+    final public const PAGINATION = 50;
 
     /**
      * https://developers.aliexpress.com/en/doc.htm?docId=42270&docType=2
@@ -160,7 +151,7 @@ abstract class AliExpressApiParent implements ApiInterface
             [
                 'price'=>$price, 
                 'sku_code' =>$productSku, 
-                'discount_price'=> $discountPrice? $discountPrice: null
+                'discount_price'=> $discountPrice ?: null
             ]
         ];
         $req->addApiParam('mutiple_product_update_list', $mutipleProductUpdateList);
@@ -271,19 +262,12 @@ abstract class AliExpressApiParent implements ApiInterface
     public function getNewAccessToken($code)
     {
         $url = 'https://oauth.aliexpress.com/token';
-        $postfields = array(
-            'grant_type' => 'authorization_code',
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'code' => $code,
-            'sp' => 'ae',
-            'redirect_uri' => 'http://www.oauth.net/2/'
-        );
+        $postfields = ['grant_type' => 'authorization_code', 'client_id' => $this->clientId, 'client_secret' => $this->clientSecret, 'code' => $code, 'sp' => 'ae', 'redirect_uri' => 'http://www.oauth.net/2/'];
         $post_data = '';
 
 
         foreach ($postfields as $key => $value) {
-            $post_data .= "$key=" . urlencode($value) . "&";
+            $post_data .= "$key=" . urlencode((string) $value) . "&";
         }
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);

@@ -13,13 +13,10 @@ class AcceptOrdersBoulangerCommand extends Command
     protected static $defaultDescription = 'Accept orders on Boulnager';
 
     public function __construct(
-        BoulangerAcceptOrder $boulangerAcceptOrder
+        private readonly BoulangerAcceptOrder $boulangerAcceptOrder
     ) {
-        $this->boulangerAcceptOrder = $boulangerAcceptOrder;
         parent::__construct();
     }
-
-    private $boulangerAcceptOrder;
 
   
 

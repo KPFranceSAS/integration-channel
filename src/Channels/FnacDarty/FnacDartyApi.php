@@ -17,19 +17,15 @@ abstract class FnacDartyApi extends MiraklApiParent
     public function __construct(
         LoggerInterface $logger,
         Environment $twig,
-        $fnacDartyClientUrl,
-        $fnacDartyClientPartnerId,
-        $fnacDartyClientShopId,
-        $fnacDartyClientKey,
+        protected $fnacDartyClientUrl,
+        protected $fnacDartyClientPartnerId,
+        protected $fnacDartyClientShopId,
+        protected $fnacDartyClientKey,
         $projectDir,
         $fnacDartyMiraklClientUrl,
         $fnacDartyMiraklClientKey
     ) {
         $this->logger= $logger;
-        $this->fnacDartyClientKey=$fnacDartyClientKey;
-        $this->fnacDartyClientPartnerId=    $fnacDartyClientPartnerId;
-        $this->fnacDartyClientUrl =  $fnacDartyClientUrl;
-        $this->fnacDartyClientShopId =  $fnacDartyClientShopId;
         $this->twig =  $twig;
         parent::__construct($logger, $projectDir, $fnacDartyMiraklClientUrl, $fnacDartyMiraklClientKey);
     }
@@ -38,14 +34,6 @@ abstract class FnacDartyApi extends MiraklApiParent
 
 
     protected $logger;
-
-    protected $fnacDartyClientUrl;
-
-    protected $fnacDartyClientPartnerId;
-
-    protected $fnacDartyClientShopId;
-
-    protected $fnacDartyClientKey;
 
     protected $twig;
 
@@ -61,9 +49,9 @@ abstract class FnacDartyApi extends MiraklApiParent
                 'fnacDartyClientPartnerId'=> $this->fnacDartyClientPartnerId,
                 'fnacDartyClientShopId'=> $this->fnacDartyClientShopId,
             ]);
-            $xmlAuthentication  = simplexml_load_string($xmlGenerated);
+            $xmlAuthentication  = simplexml_load_string((string) $xmlGenerated);
             $response    = $this->doPostRequest("auth", $xmlAuthentication->asXML());
-            $xmlResponse = simplexml_load_string(trim($response));
+            $xmlResponse = simplexml_load_string(trim((string) $response));
             $this->fnacToken = $xmlResponse->token;
         }
         return $this->fnacToken;
@@ -81,9 +69,9 @@ abstract class FnacDartyApi extends MiraklApiParent
             'offers' => $offers,
             'toDeletes' => $toDeletes
         ]);
-        $xmlAuthentication  = simplexml_load_string($xmlGenerated);
+        $xmlAuthentication  = simplexml_load_string((string) $xmlGenerated);
         $response    = $this->doPostRequest("offers_update", $xmlAuthentication->asXML());
-        $xmlResponse = simplexml_load_string(trim($response));
+        $xmlResponse = simplexml_load_string(trim((string) $response));
         if((string)$xmlResponse->attributes()->status=='OK') {
             $this->logger->info('Created batch '.$xmlResponse->batch_id);
             return $xmlResponse->batch_id;
@@ -104,9 +92,9 @@ abstract class FnacDartyApi extends MiraklApiParent
             'orderId' => $orderId,
             'status' => $status
         ]);
-        $xmlAuthentication  = simplexml_load_string($xmlGenerated);
+        $xmlAuthentication  = simplexml_load_string((string) $xmlGenerated);
         $response    = $this->doPostRequest("orders_update", $xmlAuthentication->asXML());
-        $xmlResponse = simplexml_load_string(trim($response));
+        $xmlResponse = simplexml_load_string(trim((string) $response));
         return (string)$xmlResponse->attributes()->status=='OK';
     }
 
@@ -118,9 +106,9 @@ abstract class FnacDartyApi extends MiraklApiParent
             'fnacDartyClientPartnerId'=> $this->fnacDartyClientPartnerId,
             'fnacDartyClientShopId'=> $this->fnacDartyClientShopId,
         ]);
-        $xmlAuthentication  = simplexml_load_string($xmlGenerated);
+        $xmlAuthentication  = simplexml_load_string((string) $xmlGenerated);
         $response    = $this->doPostRequest("batch_query", $xmlAuthentication->asXML());
-        $xmlResponse = simplexml_load_string(trim($response));
+        $xmlResponse = simplexml_load_string(trim((string) $response));
         return $xmlResponse;
     }
 
@@ -132,9 +120,9 @@ abstract class FnacDartyApi extends MiraklApiParent
             'fnacDartyClientShopId'=> $this->fnacDartyClientShopId,
             'batchId' => $batchId,
         ]);
-        $xmlAuthentication  = simplexml_load_string($xmlGenerated);
+        $xmlAuthentication  = simplexml_load_string((string) $xmlGenerated);
         $response    = $this->doPostRequest("batch_status", $xmlAuthentication->asXML());
-        $xmlResponse = simplexml_load_string(trim($response));
+        $xmlResponse = simplexml_load_string(trim((string) $response));
         return $xmlResponse;
     }
 
@@ -150,9 +138,9 @@ abstract class FnacDartyApi extends MiraklApiParent
             'carrierCode' => $carrierCode,
             'trackingNumber' => $trackingNumber
         ]);
-        $xmlAuthentication  = simplexml_load_string($xmlGenerated);
+        $xmlAuthentication  = simplexml_load_string((string) $xmlGenerated);
         $response    = $this->doPostRequest("orders_update", $xmlAuthentication->asXML());
-        $xmlResponse = simplexml_load_string(trim($response));
+        $xmlResponse = simplexml_load_string(trim((string) $response));
         return (string)$xmlResponse->attributes()->status=='OK';
     }
 
@@ -164,7 +152,7 @@ abstract class FnacDartyApi extends MiraklApiParent
             'fnacDartyClientPartnerId'=> $this->fnacDartyClientPartnerId,
             'fnacDartyClientShopId'=> $this->fnacDartyClientShopId,
         ]);
-        $xmlAuthentication  = simplexml_load_string($xmlGenerated);
+        $xmlAuthentication  = simplexml_load_string((string) $xmlGenerated);
         $response    = $this->doPostRequest("carriers_query", $xmlAuthentication->asXML());
         return $response;
     }
@@ -215,9 +203,9 @@ abstract class FnacDartyApi extends MiraklApiParent
                 'pagination' => 50,
                 'paging' => $offset
             ]);
-            $xmlAuthentication  = simplexml_load_string($xmlGenerated);
+            $xmlAuthentication  = simplexml_load_string((string) $xmlGenerated);
             $response    = $this->doPostRequest("orders_query", $xmlAuthentication->asXML());
-            $xmlResponse = simplexml_load_string(trim($response), 'SimpleXMLElement', LIBXML_NOCDATA);
+            $xmlResponse = simplexml_load_string(trim((string) $response), 'SimpleXMLElement', LIBXML_NOCDATA);
             $reponse = json_decode(json_encode((array)$xmlResponse), true);
 
             if(array_key_exists('order', $reponse)) {
@@ -243,7 +231,7 @@ abstract class FnacDartyApi extends MiraklApiParent
 
 
 
-    public function getOffers(array $params= [])
+    public function getOffers(array $params= []): array
     {
 
         $offset = 0;
@@ -260,9 +248,9 @@ abstract class FnacDartyApi extends MiraklApiParent
                 'pagination' => 50,
                 'paging' => $offset
             ]);
-            $xmlAuthentication  = simplexml_load_string($xmlGenerated);
+            $xmlAuthentication  = simplexml_load_string((string) $xmlGenerated);
             $response    = $this->doPostRequest("offers_query", $xmlAuthentication->asXML());
-            $xmlResponse = simplexml_load_string(trim($response), 'SimpleXMLElement', LIBXML_NOCDATA);
+            $xmlResponse = simplexml_load_string(trim((string) $response), 'SimpleXMLElement', LIBXML_NOCDATA);
             $reponse = json_decode(json_encode((array)$xmlResponse), true);
             if(array_key_exists('offer', $reponse)) {
                 if(array_key_exists('offer_fnac_id', $reponse['offer'])) {

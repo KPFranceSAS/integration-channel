@@ -16,30 +16,23 @@ abstract class ShopifyApiParent implements ApiInterface
 
     protected $logger;
 
-    protected $shopifyShopDomain;
-
-    protected $shopifyToken;
-
     abstract public function getChannel();
 
 
     public function __construct(
         LoggerInterface $logger,
-        $shopifyToken,
+        protected $shopifyToken,
         $shopifyClientId,
         $shopifyClientSecret,
-        $shopifyShopDomain,
+        protected $shopifyShopDomain,
         $shopifyVersion,
         $shopifyScopes
     ) {
-        $this->shopifyToken = $shopifyToken;
-        $this->shopifyShopDomain = $shopifyShopDomain;
-
         Context::initialize(
             $shopifyClientId,
             $shopifyClientSecret,
             $shopifyScopes,
-            $shopifyShopDomain,
+            $this->shopifyShopDomain,
             new FileSessionStorage('/tmp/php_sessions'),
             $shopifyVersion,
         );
@@ -289,17 +282,17 @@ abstract class ShopifyApiParent implements ApiInterface
             return null;
         }
         $link = $links[0];
-        if (strpos($link, 'rel="next"') === false) {
+        if (!str_contains((string) $link, 'rel="next"')) {
             return null;
         }
 
-        if (strpos($link, 'rel="previous"') !== false) {
-            $linkPart = explode('rel="previous"', $link, 2);
+        if (str_contains((string) $link, 'rel="previous"')) {
+            $linkPart = explode('rel="previous"', (string) $link, 2);
             $link = $linkPart[1];
         }
         $tobeReplace = ["<", ">", 'rel="next"', ";", 'rel="previous"'];
         $tobeReplaceWith = ["", "", "", ""];
-        parse_str(parse_url(str_replace($tobeReplace, $tobeReplaceWith, $link), PHP_URL_QUERY), $op);
+        parse_str(parse_url(str_replace($tobeReplace, $tobeReplaceWith, (string) $link), PHP_URL_QUERY), $op);
         return trim($op['page_info']);
     }
 
@@ -309,7 +302,7 @@ abstract class ShopifyApiParent implements ApiInterface
         $nextToken = null;
         $elements = [];
 
-        $indexKey = $associativeIndex ? $associativeIndex : $endPoint;
+        $indexKey = $associativeIndex ?: $endPoint;
         do {
             if ($nextToken) {
                 $query = [];

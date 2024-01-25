@@ -8,7 +8,7 @@ use App\Entity\IntegrationChannel;
 
 class DartyFrIntegrator extends FnacDartyIntegratorParent
 {
-    public const DARTY_FR = 'KPF00865';
+    final public const DARTY_FR = 'KPF00865';
        
 
     public function getChannel()

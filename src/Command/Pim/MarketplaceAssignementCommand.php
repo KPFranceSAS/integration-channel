@@ -23,16 +23,13 @@ class MarketplaceAssignementCommand extends Command
 
     public function __construct(
         ManagerRegistry $manager,
-        AkeneoConnector $akeneoConnector
+        private readonly AkeneoConnector $akeneoConnector
     ) {
         $this->manager = $manager->getManager();
-        $this->akeneoConnector = $akeneoConnector;
         parent::__construct();
     }
 
     private $manager;
-
-    private $akeneoConnector;
 
 
 

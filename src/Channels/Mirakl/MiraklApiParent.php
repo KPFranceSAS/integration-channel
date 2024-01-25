@@ -67,11 +67,10 @@ abstract class MiraklApiParent implements ApiInterface
 
 
     /**
-         * Summary of GetOrdersRequest
-         * @param array $params
-         * @return array
-         */
-    public function getMessages(array $params = [])
+     * Summary of GetOrdersRequest
+     * @return array
+     */
+    public function getMessages(array $params = []): array
     {
         $continue = true;
         $orders = [];
@@ -112,10 +111,9 @@ abstract class MiraklApiParent implements ApiInterface
     
     /**
      * Summary of GetOrdersRequest
-     * @param array $params
      * @return array
      */
-    public function getOrders(array $params = [])
+    public function getOrders(array $params = []): array
     {
         $offset = 0;
         $max_page = 1;
@@ -160,10 +158,9 @@ abstract class MiraklApiParent implements ApiInterface
 
     /**
      * Summary of GetOrdersRequest
-     * @param array $params
      * @return array
      */
-    public function getOffers(array $params = [])
+    public function getOffers(array $params = []): array
     {
         $offset = 0;
         $max_page = 1;
@@ -246,7 +243,7 @@ abstract class MiraklApiParent implements ApiInterface
     {
         $docs = new DocumentCollection();
         $fs = new Filesystem();
-        $filename= 'invoice_'.str_replace("/", '_', $invoiceNumber).'_'.date('YmdHis').'.pdf';
+        $filename= 'invoice_'.str_replace("/", '_', (string) $invoiceNumber).'_'.date('YmdHis').'.pdf';
         $filePath = $this->projectDir.$filename;
         $fs->dumpFile($filePath, $invoiceContent);
         $file = new SplFileObject($filePath);

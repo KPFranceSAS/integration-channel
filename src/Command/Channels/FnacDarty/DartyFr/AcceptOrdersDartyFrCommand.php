@@ -13,13 +13,10 @@ class AcceptOrdersDartyFrCommand extends Command
     protected static $defaultDescription = 'Accept orders on Darty Fr';
 
     public function __construct(
-        DartyFrAcceptOrder $dartyFrAcceptOrder
+        private readonly DartyFrAcceptOrder $dartyFrAcceptOrder
     ) {
-        $this->dartyFrAcceptOrder = $dartyFrAcceptOrder;
         parent::__construct();
     }
-
-    private $dartyFrAcceptOrder;
 
   
 

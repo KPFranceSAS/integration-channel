@@ -12,20 +12,17 @@ class ConnectDartyFrCommand extends Command
     protected static $defaultName = 'app:connect-darty-fr';
     protected static $defaultDescription = 'Connection to DartyFr';
 
-    public function __construct(DartyFrApi $dartyFrApi)
+    public function __construct(private readonly DartyFrApi $dartyFrApi)
     {
-        $this->dartyFrApi = $dartyFrApi;
         parent::__construct();
     }
-
-    private $dartyFrApi;
 
 
   
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dd(str_replace("\n", '', $this->dartyFrApi->getAllCarriers()));
+        dd(str_replace("\n", '', (string) $this->dartyFrApi->getAllCarriers()));
         
         return Command::SUCCESS;
     }

@@ -11,7 +11,7 @@ use App\Entity\WebOrder;
 
 class PaxUkIntegrateOrder extends ShopifyIntegrateOrder
 {
-    public const PAXUK_CUSTOMER_NUMBER = "KPU000020";
+    final public const PAXUK_CUSTOMER_NUMBER = "KPU000020";
 
     public function getChannel()
     {

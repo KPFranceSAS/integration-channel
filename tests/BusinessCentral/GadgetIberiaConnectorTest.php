@@ -290,6 +290,6 @@ class GadgetIberiaConnectorTest extends KernelTestCase
 
     protected function cleanEtag($etag)
     {
-        return str_replace(['"', 'W/\"'], '', $etag);
+        return str_replace(['"', 'W/\"'], '', (string) $etag);
     }
 }

@@ -12,13 +12,10 @@ class ExportMinibattShopifyTransactionCommand extends Command
     protected static $defaultName = 'app:export-minibatt-shopify';
     protected static $defaultDescription = 'Cretae export file of all shopify tracnsaction on';
 
-    public function __construct(MinibattApi $minibattApi)
+    public function __construct(private readonly MinibattApi $minibattApi)
     {
-        $this->minibattApi = $minibattApi;
         parent::__construct();
     }
-
-    private $minibattApi;
 
 
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -20,7 +20,7 @@ abstract class AriseStockParent extends StockParent
      *
      * @return void
      */
-    public function sendStocks()
+    public function sendStocks(): void
     {
         $products = $this->getAriseApi()->getAllProducts();
         foreach ($products as $product) {

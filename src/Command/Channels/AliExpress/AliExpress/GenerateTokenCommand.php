@@ -13,13 +13,10 @@ class GenerateTokenCommand extends Command
     protected static $defaultName = 'app:aliexpress-generate-code';
     protected static $defaultDescription = 'Generate a new token';
 
-    public function __construct(AliExpressApi $aliExpress)
+    public function __construct(private readonly AliExpressApi $aliExpress)
     {
-        $this->aliExpress = $aliExpress;
         parent::__construct();
     }
-
-    private $aliExpress;
 
     protected function configure(): void
     {

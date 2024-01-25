@@ -26,12 +26,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $email;
+    private ?string $email = null;
 
     /**
      * @ORM\Column(type="json")
@@ -42,7 +42,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private $password;
+    private ?string $password = null;
 
 
     public $plainPassword;
@@ -58,33 +58,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\ManyToMany(targetEntity=SaleChannel::class, inversedBy="users")
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\SaleChannel>
      */
-    private $saleChannels;
+    private \Doctrine\Common\Collections\Collection $saleChannels;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isAdmin;
+    private ?bool $isAdmin = null;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isPricingManager;
+    private ?bool $isPricingManager = null;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isFbaManager;
+    private ?bool $isFbaManager = null;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isOrderManager;
+    private ?bool $isOrderManager = null;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      */
-    private $isSuperAdmin;
+    private ?bool $isSuperAdmin = null;
 
 
 
@@ -216,7 +217,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
 
-    public function getRoles(): ?array
+    public function getRoles(): array
     {
         return $this->roles;
     }

@@ -12,14 +12,10 @@ class ConnectOwletCareCommand extends Command
     protected static $defaultName = 'app:owletcare-test';
     protected static $defaultDescription = 'Connection to owletcare test';
 
-    public function __construct(OwletCareApi $owletCareApi)
+    public function __construct(private readonly OwletCareApi $owletCareApi)
     {
-        $this->owletCareApi = $owletCareApi;
         parent::__construct();
     }
-
-
-    private $owletCareApi;
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

@@ -10,70 +10,70 @@ use Doctrine\ORM\Mapping as ORM;
 class IntegrationFile
 {
 
-    const TYPE_INVOICE = 1;
-    const TYPE_CREDIT = 2;
+    final public const TYPE_INVOICE = 1;
+    final public const TYPE_CREDIT = 2;
 
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $documentNumber;
+    private ?string $documentNumber = null;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $documentType;
+    private ?int $documentType = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $externalOrderId;
+    private ?string $externalOrderId = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $profileChannel;
+    private ?string $profileChannel = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $currency;
+    private ?string $currency = null;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $totalAmount;
+    private ?float $totalAmount = null;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $totalVat;
+    private ?float $totalVat = null;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $totalVatIncluded;
+    private ?float $totalVatIncluded = null;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private $dateUpdated;
+    private ?\DateTimeInterface $dateUpdated = null;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $channelOrderId;
+    private ?int $channelOrderId = null;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $channelAdjustementId;
+    private ?int $channelAdjustementId = null;
 
 
     public function __construct($data = [])
@@ -101,13 +101,13 @@ class IntegrationFile
 
         $path = "integrated/" . $this->getProfileChannel() . "/";
         $path .= $this->documentType == self::TYPE_INVOICE ? 'invoices' : 'credit_notes';
-        $path .= "/" . $this->externalOrderId . '_' . str_replace("/", "-", $this->documentNumber) . '_' . date('Ymd-His') . '.pdf';
+        $path .= "/" . $this->externalOrderId . '_' . str_replace("/", "-", (string) $this->documentNumber) . '_' . date('Ymd-His') . '.pdf';
         return $path;
     }
 
     private function convertFloat($stringFloat)
     {
-        return floatval(str_replace(",", '.', $stringFloat));
+        return floatval(str_replace(",", '.', (string) $stringFloat));
     }
 
     public function getId(): ?int

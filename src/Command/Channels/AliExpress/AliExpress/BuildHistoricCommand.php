@@ -19,17 +19,11 @@ class BuildHistoricCommand extends Command
     protected static $defaultName = 'app:aliexpress-build-historic';
     protected static $defaultDescription = 'Build historical orders for aliexpress';
 
-    public function __construct(GadgetIberiaConnector $saleOrderConnector, ManagerRegistry $manager, AliExpressApi $aliExpressApi)
+    public function __construct(private readonly GadgetIberiaConnector $bcConnector, ManagerRegistry $manager, private readonly AliExpressApi $aliExpressApi)
     {
-        $this->aliExpressApi = $aliExpressApi;
         $this->manager = $manager->getManager();
-        $this->bcConnector = $saleOrderConnector;
         parent::__construct();
     }
-
-    private $bcConnector;
-
-    private $aliExpressApi;
 
     private $manager;
 

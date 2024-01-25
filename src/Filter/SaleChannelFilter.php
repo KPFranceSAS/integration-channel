@@ -25,7 +25,7 @@ class SaleChannelFilter implements FilterInterface
     public static function new(string $propertyName, $label = null): self
     {
         return (new self())
-            ->setFilterFqcn(__CLASS__)
+            ->setFilterFqcn(self::class)
             ->setProperty($propertyName)
             ->setLabel($label)
             ->setFormType(EntityFilterType::class)
@@ -60,21 +60,16 @@ class SaleChannelFilter implements FilterInterface
         }
     }
            // see https://github.com/EasyCorp/EasyAdminBundle/pull/4344
-           
     /**
-     * @param mixed $parameterValue
-     *
      * @return mixed
      */
-    private function processParameterValue(QueryBuilder $queryBuilder, $parameterValue)
+    private function processParameterValue(QueryBuilder $queryBuilder, mixed $parameterValue)
     {
         if (!$parameterValue instanceof ArrayCollection) {
             return $this->processSingleParameterValue($queryBuilder, $parameterValue);
         }
 
-        return $parameterValue->map(function ($element) use ($queryBuilder) {
-            return $this->processSingleParameterValue($queryBuilder, $element);
-        });
+        return $parameterValue->map(fn($element) => $this->processSingleParameterValue($queryBuilder, $element));
     }
 
     /**
@@ -98,17 +93,16 @@ class SaleChannelFilter implements FilterInterface
      *
      *      b"\x1EÄÕ\x1FÇFo`¶˜cC„Á¶L"
      *
-     * @param mixed $parameterValue
      *
      * @return mixed
      */
-    private function processSingleParameterValue(QueryBuilder $queryBuilder, $parameterValue)
+    private function processSingleParameterValue(QueryBuilder $queryBuilder, mixed $parameterValue)
     {
         $entityManager = $queryBuilder->getEntityManager();
 
         try {
-            $classMetadata = $entityManager->getClassMetadata(\get_class($parameterValue));
-        } catch (\Throwable $exception) {
+            $classMetadata = $entityManager->getClassMetadata($parameterValue::class);
+        } catch (\Throwable) {
             // only reached if $parameterValue does not contain an object of a managed
             // entity, return as we only need to process bound entities
             return $parameterValue;
@@ -116,8 +110,8 @@ class SaleChannelFilter implements FilterInterface
 
         try {
             $identifierType = $classMetadata->getTypeOfField($classMetadata->getSingleIdentifierFieldName());
-        } catch (MappingException $exception) {
-            throw new \RuntimeException(sprintf('The EntityFilter does not support entities with a composite primary key or entities without an identifier. Please check your entity "%s".', \get_class($parameterValue)));
+        } catch (MappingException) {
+            throw new \RuntimeException(sprintf('The EntityFilter does not support entities with a composite primary key or entities without an identifier. Please check your entity "%s".', $parameterValue::class));
         }
 
         $identifierValue = $entityManager->getUnitOfWork()->getSingleIdentifierValue($parameterValue);
@@ -126,7 +120,7 @@ class SaleChannelFilter implements FilterInterface
             || ('ulid' === $identifierType && $identifierValue instanceof Ulid)) {
             try {
                 return Type::getType($identifierType)->convertToDatabaseValue($identifierValue, $entityManager->getConnection()->getDatabasePlatform());
-            } catch (\Throwable $exception) {
+            } catch (\Throwable) {
                 // if the conversion fails we cannot process the uid parameter value
                 return $parameterValue;
             }

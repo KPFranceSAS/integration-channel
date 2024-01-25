@@ -27,14 +27,6 @@ doctrine:
                 prefix: Gedmo\Loggable\Entity
                 dir: "%kernel.project_dir%/vendor/gedmo/doctrine-extensions/src/Loggable/Entity"    
 
-services:
-    Gedmo\Loggable\LoggableListener:
-        class: App\Listener\UserLoggableListener
-        tags:
-            - { name: doctrine.event_subscriber, connection: default }
-        calls:
-            - [ setAnnotationReader, [ "@annotation_reader" ] ]
-            - [ setSecurity, [ "@security.helper" ] ]
 
 when@test:
     doctrine:

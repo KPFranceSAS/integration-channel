@@ -19,29 +19,17 @@ class PriceUpdateAllCommand extends Command
     protected static $defaultDescription = 'Update prices in all channels';
 
     public function __construct(
-        PriceAggregator $priceAggregator,
-        PriceStockAggregator $priceStockAggregator,
+        private readonly PriceAggregator $priceAggregator,
+        private readonly PriceStockAggregator $priceStockAggregator,
         ManagerRegistry $managerRegistry,
-        LoggerInterface $logger,
-        MailService $mailService
+        private readonly LoggerInterface $logger,
+        private readonly MailService $mailService
     ) {
-        $this->priceAggregator = $priceAggregator;
-        $this->priceStockAggregator = $priceStockAggregator;
-        $this->logger = $logger;
-        $this->mailService = $mailService;
         $this->managerRegistry = $managerRegistry->getManager();
         parent::__construct();
     }
 
     private $managerRegistry;
-
-    private $priceAggregator;
-
-    private $priceStockAggregator;
-
-    private $logger;
-
-    private $mailService;
 
 
 

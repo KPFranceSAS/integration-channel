@@ -14,16 +14,10 @@ class ImportSpecificCommand extends Command
     protected static $defaultName = 'app:channel-import-command';
     protected static $defaultDescription = 'Import command';
 
-    public function __construct(ChannelAdvisorApi $channelAdvisorApi, ChannelAdvisorIntegrateOrder $channelAdvisorIntegrateOrder)
+    public function __construct(private readonly ChannelAdvisorApi $channelAdvisorApi, private readonly ChannelAdvisorIntegrateOrder $channelAdvisorIntegrateOrder)
     {
-        $this->channelAdvisorApi = $channelAdvisorApi;
-        $this->channelAdvisorIntegrateOrder= $channelAdvisorIntegrateOrder;
         parent::__construct();
     }
-
-    private $channelAdvisorApi;
-
-    private $channelAdvisorIntegrateOrder;
    
     protected function configure(): void
     {

@@ -19,22 +19,13 @@ class OrderIntegrateAllCommand extends Command
     protected static $defaultName = 'app:integrate-orders-all';
     protected static $defaultDescription = 'Integrates all orders from all sale channels';
 
-    public function __construct(IntegratorAggregator $integrateAggregator, ManagerRegistry $managerRegistry, LoggerInterface $logger, MailService $mailService)
+    public function __construct(private readonly IntegratorAggregator $integrateAggregator, ManagerRegistry $managerRegistry, private readonly LoggerInterface $logger, private readonly MailService $mailService)
     {
-        $this->integrateAggregator = $integrateAggregator;
-        $this->logger = $logger;
-        $this->mailService = $mailService;
         $this->managerRegistry = $managerRegistry->getManager();
         parent::__construct();
     }
 
     private $managerRegistry;
-
-    private $integrateAggregator;
-
-    private $logger;
-
-    private $mailService;
 
 
     protected function configure(): void

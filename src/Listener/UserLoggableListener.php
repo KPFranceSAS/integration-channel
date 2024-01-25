@@ -4,10 +4,13 @@ namespace App\Listener;
 
 use App\Entity\ProductSaleChannel;
 use App\Entity\Promotion;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\EventArgs;
+use Doctrine\ORM\Events;
 use Gedmo\Loggable\LoggableListener;
 use Symfony\Component\Security\Core\Security;
 
+#[AsDoctrineListener(event: Events::onFlush, priority: 500, connection: 'default')]
 class UserLoggableListener extends LoggableListener
 {
     private $security;

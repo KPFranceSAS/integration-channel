@@ -8,7 +8,7 @@ use App\Entity\IntegrationChannel;
 
 class MinibattIntegrateOrder extends ShopifyIntegrateOrder
 {
-    public const MINIBATT_CUSTOMER_NUMBER = "130957";
+    final public const MINIBATT_CUSTOMER_NUMBER = "130957";
 
     public function getChannel()
     {

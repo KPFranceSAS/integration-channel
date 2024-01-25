@@ -18,28 +18,16 @@ class StockUpdateAllCommand extends Command
     protected static $defaultName = 'app:update-stocks-all';
     protected static $defaultDescription = 'Update stocks in all channels';
 
-    public function __construct(StockAggregator $stockAggregator,
-    PriceStockAggregator $priceStockAggregator, 
+    public function __construct(private readonly StockAggregator $stockAggregator,
+    private readonly PriceStockAggregator $priceStockAggregator, 
     ManagerRegistry $managerRegistry, 
-    LoggerInterface $logger, MailService $mailService)
+    private readonly LoggerInterface $logger, private readonly MailService $mailService)
     {
-        $this->stockAggregator = $stockAggregator;
-        $this->priceStockAggregator = $priceStockAggregator;
-        $this->logger = $logger;
-        $this->mailService = $mailService;
         $this->managerRegistry = $managerRegistry->getManager();
         parent::__construct();
     }
 
     private $managerRegistry;
-
-    private $stockAggregator;
-
-    private $priceStockAggregator;
-
-    private $logger;
-
-    private $mailService;
 
 
 

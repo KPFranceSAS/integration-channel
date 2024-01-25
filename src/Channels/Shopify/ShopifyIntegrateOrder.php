@@ -36,9 +36,9 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
             $orderBC->currencyCode =  $orderApi['currency'];
         }
 
-        if (strlen($orderApi['shipping_address']["phone"]) > 0) {
+        if (strlen((string) $orderApi['shipping_address']["phone"]) > 0) {
             $orderBC->phoneNumber = $orderApi['shipping_address']["phone"];
-        } elseif (strlen($orderApi['billing_address']["phone"]) > 0) {
+        } elseif (strlen((string) $orderApi['billing_address']["phone"]) > 0) {
             $orderBC->phoneNumber = $orderApi['billing_address']["phone"];
         }
 
@@ -58,7 +58,7 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
                 $saleLineDelivery->quantity = 1;
                 $saleLineDelivery->accountId = $account['id'];
                 $saleLineDelivery->unitPrice = floatval($line['price']);
-                $saleLineDelivery->description = substr('SHIPPING ' . strtoupper($line['code']), 0, 100);
+                $saleLineDelivery->description = substr('SHIPPING ' . strtoupper((string) $line['code']), 0, 100);
                 $orderBC->salesLines[] = $saleLineDelivery;
             }
         }
@@ -74,7 +74,7 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
                 $saleLineDelivery->quantity = 1;
                 $saleLineDelivery->accountId = $account['id'];
                 $saleLineDelivery->unitPrice = -$discount['value'];
-                $saleLineDelivery->description = substr(strtoupper($discount['description']), 0, 100);
+                $saleLineDelivery->description = substr(strtoupper((string) $discount['description']), 0, 100);
                 $orderBC->salesLines[] = $saleLineDelivery;
             }
         }
@@ -149,21 +149,21 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
 
     private function transformAddress(SaleOrder $saleOrder, array $addressShopifyType, string $addressBusinessType)
     {
-        $adress =  trim($addressShopifyType['address1']);
-        if (strlen($addressShopifyType['address2']) > 0) {
-            $adress .= ', ' . trim($addressShopifyType['address2']);
+        $adress =  trim((string) $addressShopifyType['address1']);
+        if (strlen((string) $addressShopifyType['address2']) > 0) {
+            $adress .= ', ' . trim((string) $addressShopifyType['address2']);
         }
         $adress = $this->simplifyAddress($adress);
-        if (strlen($adress) < 100) {
+        if (strlen((string) $adress) < 100) {
             $saleOrder->{$addressBusinessType . "PostalAddress"}->street = $adress;
         } else {
-            $saleOrder->{$addressBusinessType . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
+            $saleOrder->{$addressBusinessType . "PostalAddress"}->street = substr((string) $adress, 0, 100) . "\r\n" . substr((string) $adress, 99);
         }
-        $saleOrder->{$addressBusinessType . "PostalAddress"}->city = substr($addressShopifyType['city'], 0, 100);
+        $saleOrder->{$addressBusinessType . "PostalAddress"}->city = substr((string) $addressShopifyType['city'], 0, 100);
         $saleOrder->{$addressBusinessType . "PostalAddress"}->postalCode = $addressShopifyType['zip'];
         $saleOrder->{$addressBusinessType . "PostalAddress"}->countryLetterCode = $addressShopifyType['country_code'];
-        if (strlen($addressShopifyType['province']) > 0) {
-            $saleOrder->{$addressBusinessType . "PostalAddress"}->state = substr($addressShopifyType['province'], 0, 30);
+        if (strlen((string) $addressShopifyType['province']) > 0) {
+            $saleOrder->{$addressBusinessType . "PostalAddress"}->state = substr((string) $addressShopifyType['province'], 0, 30);
             ;
         }
     }

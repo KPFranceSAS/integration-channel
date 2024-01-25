@@ -18,7 +18,7 @@ class NeedToAlertFilter implements FilterInterface
     public static function new(string $propertyName, $label = null): self
     {
         return (new self())
-            ->setFilterFqcn(__CLASS__)
+            ->setFilterFqcn(self::class)
             ->setProperty($propertyName)
             ->setLabel($label)
             ->setFormType(BooleanFilterType::class);

@@ -14,16 +14,10 @@ class PriceUpdateCommand extends Command
     protected static $defaultName = 'app:update-prices-to';
     protected static $defaultDescription = 'Update prices with the given sale channel';
 
-    public function __construct(PriceAggregator $priceAggregator, PriceStockAggregator $priceStockAggregator)
+    public function __construct(private readonly PriceAggregator $priceAggregator, private readonly PriceStockAggregator $priceStockAggregator)
     {
-        $this->priceAggregator = $priceAggregator;
-        $this->priceStockAggregator = $priceStockAggregator;
         parent::__construct();
     }
-
-    private $priceAggregator;
-
-    private $priceStockAggregator;
 
 
     protected function configure(): void
@@ -35,7 +29,7 @@ class PriceUpdateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
+        $channelIntegration = strtoupper((string) $input->getArgument('channelIntegration'));
         $priceUpdater = $this->priceAggregator->getPrice($channelIntegration);
         if(!$priceUpdater){
             $priceUpdater = $this->priceStockAggregator->getPriceStock($channelIntegration);

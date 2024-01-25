@@ -15,16 +15,13 @@ class BrandIntegrationCommand extends Command
     protected static $defaultName = 'app:pim-product-brand-integration-from-pim';
     protected static $defaultDescription = 'Import all brands';
 
-    public function __construct(ManagerRegistry $manager, AkeneoConnector $akeneoConnector)
+    public function __construct(ManagerRegistry $manager, private readonly AkeneoConnector $akeneoConnector)
     {
         $this->manager = $manager->getManager();
-        $this->akeneoConnector = $akeneoConnector;
         parent::__construct();
     }
 
     private $manager;
-
-    private $akeneoConnector;
 
 
 

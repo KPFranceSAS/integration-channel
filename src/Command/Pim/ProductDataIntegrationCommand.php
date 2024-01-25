@@ -22,28 +22,16 @@ class ProductDataIntegrationCommand extends Command
 
     public function __construct(
         ManagerRegistry $manager,
-        AkeneoConnector $akeneoConnector,
-        KitPersonalizacionSportConnector $kitPerzonalizacionConnector,
-        LogisticClassFinder $logisticClassFinder,
-        MailService $mailService
+        private readonly AkeneoConnector $akeneoConnector,
+        private readonly KitPersonalizacionSportConnector $kitPerzonalizacionConnector,
+        private readonly LogisticClassFinder $logisticClassFinder,
+        private readonly MailService $mailService
     ) {
         $this->manager = $manager->getManager();
-        $this->akeneoConnector = $akeneoConnector;
-        $this->kitPerzonalizacionConnector = $kitPerzonalizacionConnector;
-        $this->mailService = $mailService;
-        $this->logisticClassFinder = $logisticClassFinder;
         parent::__construct();
     }
 
-    private $kitPerzonalizacionConnector;
-
-    private $logisticClassFinder;
-
-    private $mailService;
-
     private $manager;
-
-    private $akeneoConnector;
 
 
 

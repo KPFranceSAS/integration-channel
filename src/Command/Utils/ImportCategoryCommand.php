@@ -15,16 +15,13 @@ class ImportCategoryCommand extends Command
     protected static $defaultName = 'app:import-category';
     protected static $defaultDescription = 'Import all categories';
 
-    public function __construct(ManagerRegistry $manager, CsvExtracter $csvExtracter)
+    public function __construct(ManagerRegistry $manager, private readonly CsvExtracter $csvExtracter)
     {
         $this->manager = $manager->getManager();
-        $this->csvExtracter = $csvExtracter;
         parent::__construct();
     }
 
     private $manager;
-
-    private $csvExtracter;
 
 
     protected function configure(): void

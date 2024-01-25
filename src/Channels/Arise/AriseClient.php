@@ -77,13 +77,13 @@ class AriseClient
         }
         unset($k, $v);
 
-        return strtoupper($this->hmac_sha256($stringToBeSigned, $this->secretKey));
+        return strtoupper((string) $this->hmac_sha256($stringToBeSigned, $this->secretKey));
     }
 
 
     public function hmac_sha256($data, $key)
     {
-        return hash_hmac('sha256', $data, $key);
+        return hash_hmac('sha256', (string) $data, (string) $key);
     }
 
     public function curl_get($url, $apiFields = null, $headerFields = null)
@@ -91,7 +91,7 @@ class AriseClient
         $ch = curl_init();
 
         foreach ($apiFields as $key => $value) {
-            $url .= "&" ."$key=" . urlencode($value);
+            $url .= "&" ."$key=" . urlencode((string) $value);
         }
 
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -101,7 +101,7 @@ class AriseClient
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 
         if ($headerFields) {
-            $headers = array();
+            $headers = [];
             foreach ($headerFields as $key => $value) {
                 $headers[] = "$key: $value";
             }
@@ -120,7 +120,7 @@ class AriseClient
         curl_setopt($ch, CURLOPT_USERAGENT, $this->sdkVersion);
 
         //https ignore ssl check ?
-        if (strlen($url) > 5 && strtolower(substr($url, 0, 5)) == "https") {
+        if (strlen((string) $url) > 5 && strtolower(substr((string) $url, 0, 5)) == "https") {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         }
@@ -165,7 +165,7 @@ class AriseClient
         }
 
         if ($headerFields) {
-            $headers = array();
+            $headers = [];
             foreach ($headerFields as $key => $value) {
                 $headers[] = "$key: $value";
             }
@@ -176,7 +176,7 @@ class AriseClient
         curl_setopt($ch, CURLOPT_USERAGENT, $this->sdkVersion);
 
         //https ignore ssl check ?
-        if (strlen($url) > 5 && strtolower(substr($url, 0, 5)) == "https") {
+        if (strlen((string) $url) > 5 && strtolower(substr((string) $url, 0, 5)) == "https") {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         }
@@ -207,10 +207,7 @@ class AriseClient
         curl_setopt(
             $ch,
             CURLOPT_HTTPHEADER,
-            array(
-                'Content-Type: multipart/form-data; boundary=' . $delimiter,
-                'Content-Length: ' . strlen($data)
-            )
+            ['Content-Type: multipart/form-data; boundary=' . $delimiter, 'Content-Length: ' . strlen($data)]
         );
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -253,7 +250,7 @@ class AriseClient
         $requestUrl = $this->gatewayUrl;
 
         if ($this->endWith($requestUrl, "/")) {
-            $requestUrl = substr($requestUrl, 0, -1);
+            $requestUrl = substr((string) $requestUrl, 0, -1);
         }
 
         $requestUrl .= $request->apiName;
@@ -263,7 +260,7 @@ class AriseClient
         $sysParams["sign"] = $this->generateSign($request->apiName, array_merge($apiParams, $sysParams));
 
         foreach ($sysParams as $sysParamKey => $sysParamValue) {
-            $requestUrl .= "$sysParamKey=" . urlencode($sysParamValue) . "&";
+            $requestUrl .= "$sysParamKey=" . urlencode((string) $sysParamValue) . "&";
         }
 
         $requestUrl = substr($requestUrl, 0, -1);
@@ -283,7 +280,7 @@ class AriseClient
 
         unset($apiParams);
 
-        $respObject = json_decode($resp);
+        $respObject = json_decode((string) $resp);
         if (isset($respObject->code) && $respObject->code != "0") {
             $this->logApiError($requestUrl, $respObject->code, $respObject->message, 'error');
         } else {
@@ -299,23 +296,23 @@ class AriseClient
             'KEY '.$this->appkey,
             'URL '.$requestUrl,
             $errorCode,
-            str_replace("\n", "", $responseTxt)
+            str_replace("\n", "", (string) $responseTxt)
         ];
         $this->logger->{$type}(implode(' -- ', $logData));
     }
 
     public function msectime()
     {
-        list($msec, $sec) = explode(' ', microtime());
+        [$msec, $sec] = explode(' ', microtime());
         return $sec . '000';
     }
 
      public function endWith($haystack, $needle)
      {
-         $length = strlen($needle);
+         $length = strlen((string) $needle);
          if ($length == 0) {
              return false;
          }
-         return (substr($haystack, -$length) === $needle);
+         return (substr((string) $haystack, -$length) === $needle);
      }
 }

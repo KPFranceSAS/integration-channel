@@ -17,22 +17,13 @@ class StockCheckAllCommand extends Command
     protected static $defaultName = 'app:check-stocks-all';
     protected static $defaultDescription = 'Check skus in all channels to ensure sku mapping is OK';
 
-    public function __construct(StockAggregator $stockAggregator, ManagerRegistry $managerRegistry, LoggerInterface $logger, MailService $mailService)
+    public function __construct(private readonly StockAggregator $stockAggregator, ManagerRegistry $managerRegistry, private readonly LoggerInterface $logger, private readonly MailService $mailService)
     {
-        $this->stockAggregator = $stockAggregator;
-        $this->logger = $logger;
-        $this->mailService = $mailService;
         $this->managerRegistry = $managerRegistry->getManager();
         parent::__construct();
     }
 
     private $managerRegistry;
-
-    private $stockAggregator;
-
-    private $logger;
-
-    private $mailService;
 
 
 

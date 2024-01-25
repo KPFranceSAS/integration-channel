@@ -4,9 +4,9 @@ namespace App\BusinessCentral\Model;
 
 class SaleReturnOrderLine
 {
-    const TYPE_COMMENT = "Comment";
-    const TYPE_GLACCOUNT = "Account";
-    const TYPE_ITEM = "Item";
+    final public const TYPE_COMMENT = "Comment";
+    final public const TYPE_GLACCOUNT = "Account";
+    final public const TYPE_ITEM = "Item";
 
     public $documentNo;
 

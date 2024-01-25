@@ -14,32 +14,32 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity("code")
  *
  */
-class IntegrationChannel
+class IntegrationChannel implements \Stringable
 {
-    public const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
-    public const CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
-    public const CHANNEL_FITBITEXPRESS = 'FITBITEXPRESS';
-    public const CHANNEL_OWLETCARE = 'OWLETCARE';
-    public const CHANNEL_MINIBATT = 'MINIBATT';
-    public const CHANNEL_FLASHLED = 'FLASHLED';
-    public const CHANNEL_FITBITCORPORATE = 'FITBITCORPORATE';
-    public const CHANNEL_ARISE = 'ARISE';
-    public const CHANNEL_SONOS_ARISE='SONOS_ARISE';
-    public const CHANNEL_AMAZFIT_ARISE='AMAZFIT_ARISE';
-    public const CHANNEL_DECATHLON='DECATHLON';
-    public const CHANNEL_BOULANGER='BOULANGER';
-    public const CHANNEL_LEROYMERLIN='LEROYMERLIN';
-    public const CHANNEL_MANOMANO_FR='MANOMANO_FR';
-    public const CHANNEL_MANOMANO_ES='MANOMANO_ES';
-    public const CHANNEL_MANOMANO_DE='MANOMANO_DE';
-    public const CHANNEL_MANOMANO_IT='MANOMANO_IT';
-    public const CHANNEL_CDISCOUNT='CDISCOUNT';
-    public const CHANNEL_PAXUK='PAXUK';
-    public const CHANNEL_PAXEU='PAXEU';
-    public const CHANNEL_MEDIAMARKT='MEDIAMARKT';
-    public const CHANNEL_FNAC_FR='FNAC_FR';
-    public const CHANNEL_FNAC_ES='FNAC_ES';
-    public const CHANNEL_DARTY_FR='DARTY_FR';
+    final public const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
+    final public const CHANNEL_ALIEXPRESS = 'ALIEXPRESS';
+    final public const CHANNEL_FITBITEXPRESS = 'FITBITEXPRESS';
+    final public const CHANNEL_OWLETCARE = 'OWLETCARE';
+    final public const CHANNEL_MINIBATT = 'MINIBATT';
+    final public const CHANNEL_FLASHLED = 'FLASHLED';
+    final public const CHANNEL_FITBITCORPORATE = 'FITBITCORPORATE';
+    final public const CHANNEL_ARISE = 'ARISE';
+    final public const CHANNEL_SONOS_ARISE='SONOS_ARISE';
+    final public const CHANNEL_AMAZFIT_ARISE='AMAZFIT_ARISE';
+    final public const CHANNEL_DECATHLON='DECATHLON';
+    final public const CHANNEL_BOULANGER='BOULANGER';
+    final public const CHANNEL_LEROYMERLIN='LEROYMERLIN';
+    final public const CHANNEL_MANOMANO_FR='MANOMANO_FR';
+    final public const CHANNEL_MANOMANO_ES='MANOMANO_ES';
+    final public const CHANNEL_MANOMANO_DE='MANOMANO_DE';
+    final public const CHANNEL_MANOMANO_IT='MANOMANO_IT';
+    final public const CHANNEL_CDISCOUNT='CDISCOUNT';
+    final public const CHANNEL_PAXUK='PAXUK';
+    final public const CHANNEL_PAXEU='PAXEU';
+    final public const CHANNEL_MEDIAMARKT='MEDIAMARKT';
+    final public const CHANNEL_FNAC_FR='FNAC_FR';
+    final public const CHANNEL_FNAC_ES='FNAC_ES';
+    final public const CHANNEL_DARTY_FR='DARTY_FR';
 
     use TraitTimeUpdated;
 
@@ -48,47 +48,48 @@ class IntegrationChannel
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $code;
+    private ?string $code = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name = null;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $active=false;
+    private ?bool $active=false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $orderSync=false;
+    private ?bool $orderSync=false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $stockSync=false;
+    private ?bool $stockSync=false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $priceSync=false;
+    private ?bool $priceSync=false;
 
     /**
      * @ORM\Column(type="boolean")
      */
-    private $productSync=false;
+    private ?bool $productSync=false;
 
     /**
      * @ORM\OneToMany(targetEntity=SaleChannel::class, mappedBy="integrationChannel")
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\SaleChannel>
      */
-    private $saleChannels;
+    private \Doctrine\Common\Collections\Collection $saleChannels;
 
     public function __construct()
     {
@@ -96,9 +97,9 @@ class IntegrationChannel
     }
 
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->code;
+        return (string) $this->code;
     }
 
     public function getId(): ?int

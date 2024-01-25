@@ -129,7 +129,6 @@ class AddMissingProductsCommand extends Command
     /**
      * Undocumented function
      *
-     * @param string $sku
      * @return string
      */
     protected function getProductCorrelationSku(string $sku): string

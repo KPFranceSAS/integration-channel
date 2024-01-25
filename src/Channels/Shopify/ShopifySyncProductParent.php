@@ -178,12 +178,12 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     {
         if (!$this->categoriesApi) {
             $categoriesApi =  $this->getShopifyApi()->getAllCustomCategory();
-            $this->categoriesApi = $categoriesApi ? $categoriesApi : [];
+            $this->categoriesApi = $categoriesApi ?: [];
         }
         
 
         foreach ($this->categoriesApi as $categoryApi) {
-            if ($categoryApi['handle']== strtolower($code)) {
+            if ($categoryApi['handle']== strtolower((string) $code)) {
                 return $categoryApi;
             }
         }
@@ -224,12 +224,12 @@ abstract class ShopifySyncProductParent extends ProductSyncParent
     {
         if (!$this->productsApi) {
             $productsApi =  $this->getShopifyApi()->getAllProducts();
-            $this->productsApi = $productsApi ? $productsApi : [];
+            $this->productsApi = $productsApi ?: [];
         }
         
 
         foreach ($this->productsApi as $productApi) {
-            if ($productApi['handle']== strtolower($sku)) {
+            if ($productApi['handle']== strtolower((string) $sku)) {
                 return $productApi;
             }
         }

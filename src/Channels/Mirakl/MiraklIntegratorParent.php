@@ -40,7 +40,7 @@ abstract class MiraklIntegratorParent extends IntegratorParent
      *
      * @return void
      */
-    public function integrateAllOrders()
+    public function integrateAllOrders(): void
     {
         $counter = 0;
         $ordersApi = $this->getApi()->getAllOrdersToSend();
@@ -99,18 +99,18 @@ abstract class MiraklIntegratorParent extends IntegratorParent
             }
             $adress = $this->simplifyAddress($adress);
 
-            if (strlen($adress) < 100) {
+            if (strlen((string) $adress) < 100) {
                 $orderBC->{$bcVal . "PostalAddress"}->street = $adress;
             } else {
-                $orderBC->{$bcVal . "PostalAddress"}->street = substr($adress, 0, 100) . "\r\n" . substr($adress, 99);
+                $orderBC->{$bcVal . "PostalAddress"}->street = substr((string) $adress, 0, 100) . "\r\n" . substr((string) $adress, 99);
             }
-            $orderBC->{$bcVal . "PostalAddress"}->city = substr($orderApi['customer'][$miraklVal.'_address']["city"], 0, 100);
+            $orderBC->{$bcVal . "PostalAddress"}->city = substr((string) $orderApi['customer'][$miraklVal.'_address']["city"], 0, 100);
             $orderBC->{$bcVal . "PostalAddress"}->postalCode = $orderApi['customer'][$miraklVal.'_address']["zip_code"];
             
             $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = $orderApi['customer'][$miraklVal.'_address']["country"];
 
             if (array_key_exists('state', $orderApi['customer'][$miraklVal.'_address'])) {
-                $orderBC->{$bcVal . "PostalAddress"}->state = substr($orderApi['customer'][$miraklVal.'_address']['state'], 0, 30);
+                $orderBC->{$bcVal . "PostalAddress"}->state = substr((string) $orderApi['customer'][$miraklVal.'_address']['state'], 0, 30);
             }
         }
 

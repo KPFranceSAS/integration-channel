@@ -18,33 +18,15 @@ class FullMajReportCommand extends Command
     protected static $defaultDescription = 'Get datas from amz and export it to power bi';
 
     public function __construct(
-        PublishPowerBi $publishPowerBi,
-        AmzApiImportProduct $amzApiImportProduct,
-        AmzApiImportOrder $amzApiImportOrder,
-        AmzApiImportReturn $amzApiImportReturn,
-        AmzApiImportReimbursement $amzApiImportReimbursement,
-        AmzApiImportRemovalOrder $amzApiImportRemovalOrder
+        private readonly PublishPowerBi $publishPowerBi,
+        private readonly AmzApiImportProduct $amzApiImportProduct,
+        private readonly AmzApiImportOrder $amzApiImportOrder,
+        private readonly AmzApiImportReturn $amzApiImportReturn,
+        private readonly AmzApiImportReimbursement $amzApiImportReimbursement,
+        private readonly AmzApiImportRemovalOrder $amzApiImportRemovalOrder
     ) {
-        $this->amzApiImportProduct = $amzApiImportProduct;
-        $this->amzApiImportOrder = $amzApiImportOrder;
-        $this->amzApiImportReturn = $amzApiImportReturn;
-        $this->amzApiImportReimbursement = $amzApiImportReimbursement;
-        $this->amzApiImportRemovalOrder = $amzApiImportRemovalOrder;
-        $this->publishPowerBi = $publishPowerBi;
         parent::__construct();
     }
-
-    private $publishPowerBi;
-
-    private $amzApiImportProduct;
-
-    private $amzApiImportOrder;
-
-    private $amzApiImportReturn;
-
-    private $amzApiImportReimbursement;
-
-    private $amzApiImportRemovalOrder;
 
 
 

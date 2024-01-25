@@ -11,13 +11,13 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
-class LogisticClass
+class LogisticClass implements \Stringable
 {
 
     use TraitTimeUpdated;
     
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->code.' - '.$this->label.' - Between '.$this->minimumWeight.' and '.$this->maximumWeight.' kg';
     }
@@ -27,32 +27,33 @@ class LogisticClass
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private ?int $id = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $code;
+    private ?string $code = null;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $label;
+    private ?string $label = null;
 
     /**
      * @ORM\OneToMany(targetEntity=Product::class, mappedBy="logisticClass")
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Product>
      */
-    private $products;
+    private \Doctrine\Common\Collections\Collection $products;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $minimumWeight;
+    private ?float $minimumWeight = null;
 
     /**
      * @ORM\Column(type="float")
      */
-    private $maximumWeight;
+    private ?float $maximumWeight = null;
 
     public function __construct()
     {

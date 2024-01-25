@@ -12,13 +12,10 @@ class ConnectFnacCommand extends Command
     protected static $defaultName = 'app:connect-fnac-fr';
     protected static $defaultDescription = 'Connection to Fnac';
 
-    public function __construct(FnacFrApi $manoManoFrApi)
+    public function __construct(private readonly FnacFrApi $manoManoFrApi)
     {
-        $this->manoManoFrApi = $manoManoFrApi;
         parent::__construct();
     }
-
-    private $manoManoFrApi;
 
 
   

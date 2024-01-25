@@ -16,9 +16,9 @@ class ProductStockFinder
 
     protected $businessCentralAggregator;
 
-    protected $stockLevels;
+    protected $stockLevels = [];
 
-    protected $stockBuffers;
+    protected $stockBuffers = [];
 
     protected $manager;
 
@@ -28,8 +28,6 @@ class ProductStockFinder
         $this->logger = $logger;
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->manager = $managerRegistry->getManager();
-        $this->stockLevels = [];
-        $this->stockBuffers = [];
     }
 
 

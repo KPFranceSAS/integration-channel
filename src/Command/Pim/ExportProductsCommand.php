@@ -16,20 +16,10 @@ class ExportProductsCommand extends Command
     protected static $defaultName = 'app:pim-export-product';
     protected static $defaultDescription = 'Export product from Pim';
 
-    public function __construct(LoggerInterface $logger, AkeneoConnector $akeneoConnector, FilesystemOperator $productStorage)
+    public function __construct(private readonly LoggerInterface $logger, private readonly AkeneoConnector $akeneoConnector, private readonly FilesystemOperator $productStorage)
     {
-        $this->akeneoConnector = $akeneoConnector;
-        $this->productStorage = $productStorage;
-        $this->logger = $logger;
-        
         parent::__construct();
     }
-
-    private $akeneoConnector;
-
-    private $logger;
-
-    private $productStorage;
 
 
    
@@ -78,7 +68,7 @@ class ExportProductsCommand extends Command
         $flatProduct['updated'] = $product['updated'];
       
 
-        if (array_key_exists('parent', $product) && strlen($product['parent'])>0) {
+        if (array_key_exists('parent', $product) && strlen((string) $product['parent'])>0) {
             $parent = $this->getParentProduct($product['parent']);
             $flatProduct['parent'] = $parent['code'];
             $axesVariation = $this->getAxesVariation($product['family'], $parent['family_variant']);
@@ -139,7 +129,7 @@ class ExportProductsCommand extends Command
 
     protected function getParentProduct($productModelSku)
     {
-        if (strlen($productModelSku)==0) {
+        if (strlen((string) $productModelSku)==0) {
             return null;
         }
         $parent = $this->akeneoConnector->getProductModel($productModelSku);

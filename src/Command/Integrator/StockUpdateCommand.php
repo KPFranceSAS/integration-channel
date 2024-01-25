@@ -13,13 +13,10 @@ class StockUpdateCommand extends Command
     protected static $defaultName = 'app:update-stocks-to';
     protected static $defaultDescription = 'Update am with the given sale channel';
 
-    public function __construct(StockAggregator $stockAggregator)
+    public function __construct(private readonly StockAggregator $stockAggregator)
     {
-        $this->stockAggregator = $stockAggregator;
         parent::__construct();
     }
-
-    private $stockAggregator;
 
 
     protected function configure(): void
@@ -31,7 +28,7 @@ class StockUpdateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
+        $channelIntegration = strtoupper((string) $input->getArgument('channelIntegration'));
         $stockUpdate = $this->stockAggregator->getStock($channelIntegration);
         if($stockUpdate){
             $stockUpdate->send();

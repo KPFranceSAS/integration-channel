@@ -13,13 +13,10 @@ class ProductUpdateCommand extends Command
     protected static $defaultName = 'app:update-products-to';
     protected static $defaultDescription = 'Update products with the given sale channel';
 
-    public function __construct(ProductSyncAggregator $productSyncAggregator)
+    public function __construct(private readonly ProductSyncAggregator $productSyncAggregator)
     {
-        $this->productSyncAggregator = $productSyncAggregator;
         parent::__construct();
     }
-
-    private $productSyncAggregator;
 
 
     protected function configure(): void
@@ -31,7 +28,7 @@ class ProductUpdateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $channelIntegration = strtoupper($input->getArgument('channelIntegration'));
+        $channelIntegration = strtoupper((string) $input->getArgument('channelIntegration'));
         $productUpdater = $this->productSyncAggregator->getProductSync($channelIntegration);
         $productUpdater->syncProducts();
         return Command::SUCCESS;
