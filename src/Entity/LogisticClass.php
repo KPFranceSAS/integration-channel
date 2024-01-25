@@ -7,10 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class LogisticClass implements \Stringable
 {
 
@@ -22,37 +20,27 @@ class LogisticClass implements \Stringable
         return $this->code.' - '.$this->label.' - Between '.$this->minimumWeight.' and '.$this->maximumWeight.' kg';
     }
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $code = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $label = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="logisticClass")
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Product>
      */
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'logisticClass')]
     private \Doctrine\Common\Collections\Collection $products;
 
-    /**
-     * @ORM\Column(type="float")
-     */
+    #[ORM\Column(type: 'float')]
     private ?float $minimumWeight = null;
 
-    /**
-     * @ORM\Column(type="float")
-     */
+    #[ORM\Column(type: 'float')]
     private ?float $maximumWeight = null;
 
     public function __construct()

@@ -5,35 +5,25 @@ namespace App\Entity;
 use App\Helper\Traits\TraitTimeUpdated;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class SalePrice
 {
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="float")
-     */
+    #[ORM\Column(type: 'float')]
     private ?float $price = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $countryCode = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="salePrices")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'salePrices')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?\App\Entity\Product $product = null;
 
 

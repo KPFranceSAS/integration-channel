@@ -14,393 +14,277 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity()
  * @Gedmo\Loggable()
- * @ORM\HasLifecycleCallbacks()
  */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class Product implements \Stringable
 {
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     *
-     */
+    
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_product'])]
     private ?string $sku = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_product'])]
     private ?string $asin = null;
 
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_product"})
-     * @Assert\NotNull()
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_product'])]
+    #[Assert\NotNull]
     private ?string $description = null;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $comments = null;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[Groups(['export_product'])]
     private ?bool $active = true;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Brand::class, inversedBy="products")
-     * @Assert\NotNull()
-     */
+    #[ORM\ManyToOne(targetEntity: Brand::class, inversedBy: 'products')]
+    #[Assert\NotNull]
     private ?\App\Entity\Brand $brand = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_product'])]
     private ?string $fnsku = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="products")
-     */
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
     private ?\App\Entity\Category $category = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaSellableStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUnsellableStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaInboundStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaOutboundStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaReservedStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaInboundShippedStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaInboundWorkingStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaInboundReceivingStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaResearchingStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaTotalStock = 0;
 
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaEuSellableStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaEuUnsellableStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaEuInboundStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaEuOutboundStock = 0;
 
 
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaEuReservedStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaEuInboundShippedStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaEuInboundWorkingStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaEuInboundReceivingStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaEuResearchingStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaEuTotalStock = 0;
 
 
 
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUkSellableStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUkUnsellableStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUkInboundStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUkOutboundStock = 0;
 
 
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUkReservedStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUkInboundShippedStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUkInboundWorkingStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUkInboundReceivingStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUkResearchingStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $fbaUkTotalStock = 0;
 
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $laRocaBusinessCentralStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $laRocaPurchaseBusinessCentralStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $uk3plBusinessCentralStock= 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $uk3plPurchaseBusinessCentralStock= 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $businessCentralTotalStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $businessCentralStock = 0;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_product'])]
     private ?float $ratioStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $soldStockNotIntegrated = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $returnStockNotIntegrated = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_product'])]
     private ?int $differenceStock = 0;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\GreaterThan(value = 0)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Assert\GreaterThan(value: 0)]
+    #[Groups(['export_product'])]
     private ?int $minQtyFbaEu = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\GreaterThan(value = 0)
-     * @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Assert\GreaterThan(value: 0)]
+    #[Groups(['export_product'])]
     private ?int $minQtyFbaUk = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_product"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_product'])]
     private ?float $unitCost = null;
 
     /**
-     * @Assert\Valid
-     * @ORM\OneToMany(targetEntity=ProductSaleChannel::class, mappedBy="product", cascade={"persist","remove"}, orphanRemoval=true)
      *
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\ProductSaleChannel>
      */
+    #[Assert\Valid]
+    #[ORM\OneToMany(targetEntity: ProductSaleChannel::class, mappedBy: 'product', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private \Doctrine\Common\Collections\Collection $productSaleChannels;
 
     /**
-     * @ORM\OneToMany(targetEntity=SalePrice::class, mappedBy="product", orphanRemoval=true, cascade={"persist","remove"})
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\SalePrice>
      */
+    #[ORM\OneToMany(targetEntity: SalePrice::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private \Doctrine\Common\Collections\Collection $salePrices;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *
-     * */
+    
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $eurPrice = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $gbpPrice = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProductCorrelation::class, mappedBy="product", orphanRemoval=true, cascade={"persist","remove"})
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\ProductCorrelation>
      */
+    #[ORM\OneToMany(targetEntity: ProductCorrelation::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private \Doctrine\Common\Collections\Collection $productCorrelations;
 
      /**
-     * @ORM\OneToMany(targetEntity=ProductStockDaily::class, mappedBy="product", orphanRemoval=true, cascade={"persist","remove"})
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\ProductStockDaily>
      */
+    #[ORM\OneToMany(targetEntity: ProductStockDaily::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private \Doctrine\Common\Collections\Collection $productStockDailys;
 
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $ean = null;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $dangerousGood = false;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=LogisticClass::class, inversedBy="products")
-     */
+    #[ORM\ManyToOne(targetEntity: LogisticClass::class, inversedBy: 'products')]
     private ?\App\Entity\LogisticClass $logisticClass = null;
 
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $freeShipping = false;
 
 
@@ -467,28 +351,22 @@ class Product implements \Stringable
     }
 
 
-    /**
-     * @Groups({"export_product"})
-     */
+    #[Groups(['export_product'])]
     public function getProductId(): int
     {
         return $this->getId();
     }
 
-    /**
-     *
-     * @Groups({"export_product"})
-     */
+    
+    #[Groups(['export_product'])]
     public function getBrandName(): string
     {
         return $this->brand ? $this->brand->getName() : 'NO BRAND';
     }
 
 
-    /**
-     *
-     * @Groups({"export_product"})
-     */
+    
+    #[Groups(['export_product'])]
     public function getCategoryName(): string
     {
         return $this->category ? $this->category->getName() : 'NO CATEGORY';
@@ -497,19 +375,15 @@ class Product implements \Stringable
 
 
 
-    /**
-     *
-     * @Groups({"export_product"})
-     */
+    
+    #[Groups(['export_product'])]
     public function getNeedTobeAlertEu(): bool
     {
         return $this->needTobeAlertEu();
     }
 
-    /**
-     *
-     * @Groups({"export_product"})
-     */
+    
+    #[Groups(['export_product'])]
     public function getNeedTobeAlertUk(): bool
     {
         return $this->needTobeAlertUk();
@@ -538,17 +412,13 @@ class Product implements \Stringable
     }
 
 
-    /**
-     * @ORM\PrePersist
-     */
+    #[ORM\PrePersist]
     public function prePersist(): void
     {
         $this->calculateRatio();
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
+    #[ORM\PreUpdate]
     public function preUpdate(): void
     {
         $this->calculateRatio();

@@ -7,29 +7,21 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait TraitTimeUpdated
 {
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column(type: 'datetime_immutable')]
     private $createdAt;
 
-    /**
-     * @ORM\Column(type="datetime_immutable")
-     */
+    #[ORM\Column(type: 'datetime_immutable')]
     private $updatedAt;
 
 
-    /**
-    * @ORM\PrePersist
-    */
+    #[ORM\PrePersist]
     public function setCreatedAtValue(): void
     {
         $this->createdAt = new DateTimeImmutable();
         $this->updatedAt = new DateTimeImmutable();
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
+    #[ORM\PreUpdate]
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new DateTimeImmutable();

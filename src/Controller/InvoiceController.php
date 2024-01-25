@@ -18,9 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class InvoiceController extends AbstractController
 {
-    /**
-     * @Route("/invoice/aliexpress", name="invoice_list", methods={"GET","POST"})
-     */
+    #[Route(path: '/invoice/aliexpress', name: 'invoice_list', methods: ['GET', 'POST'])]
     public function getInvoice(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector, ApiAggregator $apiAggregator): Response
     {
         $invoice = new InvoiceDownload();
@@ -110,9 +108,7 @@ class InvoiceController extends AbstractController
 
 
 
-     /**
-     * @Route("/invoice/miravia", name="invoice_miravia", methods={"GET","POST"})
-     */
+     #[Route(path: '/invoice/miravia', name: 'invoice_miravia', methods: ['GET', 'POST'])]
     public function getInvoiceArise(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector, ApiAggregator $apiAggregator): Response
     {
         $invoice = new InvoiceDownload();

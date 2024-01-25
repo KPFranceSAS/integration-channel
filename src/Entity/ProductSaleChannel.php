@@ -15,90 +15,71 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * @ORM\Entity()
  * @Gedmo\Loggable(logEntryClass=ProductLogEntry::class)
- * @ORM\HasLifecycleCallbacks()
  */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class ProductSaleChannel implements \Stringable
 {
     final public const TX_MARGIN = 19;
 
     use TraitTimeUpdated;
   
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="productSaleChannels")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'productSaleChannels')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?\App\Entity\Product $product = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=SaleChannel::class, inversedBy="productSaleChannels")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: SaleChannel::class, inversedBy: 'productSaleChannels')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?\App\Entity\SaleChannel $saleChannel = null;
 
 
     /**
-     * @ORM\Column(type="boolean")
      * @Gedmo\Versioned
      */
+    #[ORM\Column(type: 'boolean')]
     private ?bool $enabled=false;
 
     /**
-     * @Assert\Valid()
-     * @ORM\OneToMany(targetEntity=Promotion::class, mappedBy="productSaleChannel", orphanRemoval=true, cascade={"persist","remove"})
      *
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Promotion>
      */
+    #[Assert\Valid]
+    #[ORM\OneToMany(targetEntity: Promotion::class, mappedBy: 'productSaleChannel', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private \Doctrine\Common\Collections\Collection $promotions;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="float", nullable=true)
-     * @Assert\Expression(
-     *   expression= "this.getEnabled() == false or (this.getEnabled() === true and value !== null)",
-     *   message="You must specify the value if Enabled is activated"
-     * )
-     *  @Assert\GreaterThanOrEqual(0)
      */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Assert\Expression(expression: 'this.getEnabled() == false or (this.getEnabled() === true and value !== null)', message: 'You must specify the value if Enabled is activated')]
+    #[Assert\GreaterThanOrEqual(0)]
     private ?float $price = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $recommendedPrice = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $estimatedCommission = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $estimatedShipping = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $estimatedCommissionPercent = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $estimatedShippingPercent = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProductSaleChannelHistory::class, mappedBy="productSaleChannel", cascade={"persist","remove"}, orphanRemoval=true)
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\ProductSaleChannelHistory>
      */
+    #[ORM\OneToMany(targetEntity: ProductSaleChannelHistory::class, mappedBy: 'productSaleChannel', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private \Doctrine\Common\Collections\Collection $productSaleChannelHistories;
 
 
@@ -320,7 +301,7 @@ class ProductSaleChannel implements \Stringable
     /**
      * @return Collection|Promotion[]
      */
-    public function getPromotions(): Collection|\Doctrine\Common\Collections\Collection
+    public function getPromotions(): Collection
     {
         return $this->promotions;
     }
@@ -348,9 +329,7 @@ class ProductSaleChannel implements \Stringable
     }
 
 
-     /**
-     * @Assert\Callback
-     */
+     #[Assert\Callback]
     public function validate(ExecutionContextInterface $context, $payload)
     {
         if ($this->price && $this->price < ((100 + self::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {

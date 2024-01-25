@@ -11,158 +11,112 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class AmazonRemovalOrder
 {
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'datetime')]
+    #[Groups(['export_order'])]
     private ?\DateTimeInterface $requestDate = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_order'])]
     private ?string $orderId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $orderType = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $serviceSpeed = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $orderStatus = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(['export_order'])]
     private ?\DateTimeInterface $lastUpdatedDate = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $sku = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $fnsku = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $disposition = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_order'])]
     private ?int $requestedQuantity = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_order'])]
     private ?int $cancelledQuantity = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_order'])]
     private ?int $disposedQuantity = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_order'])]
     private ?int $shippedQuantity = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_order'])]
     private ?int $inProcessQuantity = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $removalFee = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
     private ?float $removalFeeCurrency = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-    *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $currency = null;
 
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Product::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Product::class)]
     private ?\App\Entity\Product $product = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=AmazonReturn::class, mappedBy="amazonRemovalOrder")
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\AmazonReturn>
      */
+    #[ORM\OneToMany(targetEntity: AmazonReturn::class, mappedBy: 'amazonRemovalOrder')]
     private \Doctrine\Common\Collections\Collection $returns;
 
     /**
-     * @ORM\OneToMany(targetEntity=FbaReturn::class, mappedBy="amazonRemoval")
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\FbaReturn>
      */
+    #[ORM\OneToMany(targetEntity: FbaReturn::class, mappedBy: 'amazonRemoval')]
     private \Doctrine\Common\Collections\Collection $fbaReturns;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AmazonRemoval::class, inversedBy="amazonRemovalOrders")
-     */
+    #[ORM\ManyToOne(targetEntity: AmazonRemoval::class, inversedBy: 'amazonRemovalOrders')]
     private ?\App\Entity\AmazonRemoval $amazonRemoval = null;
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getRequestDateFormatYmd()
     {
         return $this->requestDate->format('Y-m-d');
     }
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getRequestDateFormatCalendar()
     {
         return $this->requestDate->format('j/n/Y');
@@ -212,9 +166,7 @@ class AmazonRemovalOrder
         }
     }
 
-    /**
-     *  @Groups({"export_order"})
-     */
+    #[Groups(['export_order'])]
     public function getProductId()
     {
         return $this->product ? $this->product->getId() :  null;

@@ -11,132 +11,90 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class AmazonFinancialEvent
 {
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AmazonFinancialEventGroup::class, inversedBy="amazonFinancialEvents")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: AmazonFinancialEventGroup::class, inversedBy: 'amazonFinancialEvents')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?\App\Entity\AmazonFinancialEventGroup $eventGroup = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_order'])]
     private ?string $transactionType = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $amazonOrderId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $sellerOrderId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $adjustmentId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $shipmentId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $marketplaceName = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $amountType = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $amountDescription = null;
 
-    /**
-     * @ORM\Column(type="float")
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float')]
+    #[Groups(['export_order'])]
     private ?float $amount = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $amountCurrency = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'datetime')]
+    #[Groups(['export_order'])]
     private ?\DateTimeInterface $postedDate = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $orderItemCode = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $sku = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Product::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Product::class)]
     private ?\App\Entity\Product $product = null;
 
-    /**
-     *  @Groups({"export_order"})
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[Groups(['export_order'])]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $qtyPurchased = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $promotionId = null;
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getPostedDateFormatYmd()
     {
         return $this->postedDate->format('Y-m-d');
     }
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getPostedDateFormatCalendar()
     {
         return $this->postedDate->format('j/n/Y');
@@ -148,35 +106,27 @@ class AmazonFinancialEvent
     }
 
 
-    /**
-     *  @Groups({"export_order"})
-     */
+    #[Groups(['export_order'])]
     public function getGroupId()
     {
         return $this->eventGroup ? $this->eventGroup->getId() :  null;
     }
 
-    /**
-     *  @Groups({"export_order"})
-     */
+    #[Groups(['export_order'])]
     public function getProductId()
     {
         return $this->product ? $this->product->getId() :  null;
     }
 
 
-    /**
-     *  @Groups({"export_order"})
-     */
+    #[Groups(['export_order'])]
     public function getProductUnitCost()
     {
         return $this->product ? $this->product->getUnitCost() :  null;
     }
 
 
-    /**
-     *  @Groups({"export_order"})
-     */
+    #[Groups(['export_order'])]
     public function getAmazonOrderIdProductId()
     {
         return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';

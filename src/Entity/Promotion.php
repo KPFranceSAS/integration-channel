@@ -16,10 +16,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
  * @Gedmo\Loggable(logEntryClass=ProductLogEntry::class)
  */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class Promotion implements \Stringable
 {
     use TraitTimeUpdated;
@@ -36,110 +36,106 @@ class Promotion implements \Stringable
 
     final public const FREQUENCIES = [self::FREQUENCY_CONTINUE, self::FREQUENCY_WEEKEND, self::FREQUENCY_TIMETOTIME];
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="datetime")
      */
+    #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $beginDate = null;
 
     /**
      * @Gedmo\Versioned
-     * @Assert\GreaterThan(propertyPath="beginDate")
-     * @ORM\Column(type="datetime")
      */
+    #[Assert\GreaterThan(propertyPath: 'beginDate')]
+    #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $endDate = null;
  
 
     /**
      * @Gedmo\Versioned
-     * @ORM\ManyToOne(targetEntity=ProductSaleChannel::class, inversedBy="promotions")
-     * @ORM\JoinColumn(nullable=false)
      */
+    #[ORM\ManyToOne(targetEntity: ProductSaleChannel::class, inversedBy: 'promotions')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?\App\Entity\ProductSaleChannel $productSaleChannel = null;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Choice(choices=Promotion::TYPES, message="Choose a valid type.")
      */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Choice(choices: Promotion::TYPES, message: 'Choose a valid type.')]
     private ?string $discountType=self::TYPE_PERCENT;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="float", nullable=true)
-     * @Assert\GreaterThan(0)
-     * @Assert\LessThan(50)
      */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Assert\GreaterThan(0)]
+    #[Assert\LessThan(50)]
     private ?float $percentageAmount = null;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="float", nullable=true)
-     * @Assert\GreaterThan(0)
      */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Assert\GreaterThan(0)]
     private ?float $fixedAmount = null;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Assert\Length(max = 255)
      */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $comment = null;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="boolean")
      */
+    #[ORM\Column(type: 'boolean')]
     private ?bool $active=true;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="integer")
-     * @Assert\Range( min = 0,max = 10)
      */
+    #[ORM\Column(type: 'integer')]
+    #[Assert\Range(min: 0, max: 10)]
     private ?int $priority=0;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="string", length=255)
-     * @Assert\Choice(choices=Promotion::FREQUENCIES, message="Choose a valid type.")
      */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\Choice(choices: Promotion::FREQUENCIES, message: 'Choose a valid type.')]
     private ?string $frequency = self::FREQUENCY_CONTINUE;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="array", nullable=true)
      */
+    #[ORM\Column(type: 'array', nullable: true)]
     private $weekDays = [];
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $searchableDescription = null;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="time", nullable=true)
      */
+    #[ORM\Column(type: 'time', nullable: true)]
     private ?\DateTimeInterface $beginHour = null;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="time", nullable=true)
      */
+    #[ORM\Column(type: 'time', nullable: true)]
     private ?\DateTimeInterface $endHour = null;
 
     /**
      * @Gedmo\Versioned
-     * @ORM\Column(type="boolean", nullable=true)
      */
+    #[ORM\Column(type: 'boolean', nullable: true)]
     private ?bool $overrided=false;
 
 
@@ -192,18 +188,14 @@ class Promotion implements \Stringable
     }
 
 
-    /**
-    * @ORM\PrePersist
-    */
+    #[ORM\PrePersist]
     public function prePersist(): void
     {
         $this->cleanValues();
         $this->storeSearchableDescription();
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
+    #[ORM\PreUpdate]
     public function preUpdate(): void
     {
         $this->cleanValues();
@@ -334,9 +326,7 @@ class Promotion implements \Stringable
 
     
 
-    /**
-     * @Assert\Callback
-     */
+    #[Assert\Callback]
     public function validate(ExecutionContextInterface $context, $payload)
     {
         $path = $this->isPercentageType() ? 'percentageAmount' : 'fixedAmount';

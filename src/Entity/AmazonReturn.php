@@ -9,107 +9,73 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class AmazonReturn implements \Stringable
 {
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'datetime')]
+    #[Groups(['export_order'])]
     private ?\DateTimeInterface $returnDate = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_order'])]
     private ?string $orderId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_order'])]
     private ?string $sku = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_order'])]
     private ?string $asin = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_order'])]
     private ?string $fnsku = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'integer')]
+    #[Groups(['export_order'])]
     private ?int $quantity = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $fulfillmentCenterId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $detailedDisposition = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $reason = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $status = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $licensePlateNumber = null;
 
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Product::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Product::class)]
     private ?\App\Entity\Product $product = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AmazonRemovalOrder::class, inversedBy="returns")
-     */
+    #[ORM\ManyToOne(targetEntity: AmazonRemovalOrder::class, inversedBy: 'returns')]
     private ?\App\Entity\AmazonRemovalOrder $amazonRemovalOrder = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $marketplaceName = null;
 
-    /**
-     *  @Groups({"export_order"})
-     */
+    #[Groups(['export_order'])]
     public function getAmazonOrderIdProductId()
     {
         return $this->product ? $this->orderId . '_' . $this->product->getId() :  $this->orderId . '_';
@@ -121,27 +87,21 @@ class AmazonReturn implements \Stringable
         return "#".$this->orderId.' Sku>'.$this->sku.' LPN> '.$this->licensePlateNumber;
     }
 
-    /**
-     *  @Groups({"export_order"})
-     */
+    #[Groups(['export_order'])]
     public function getProductId()
     {
         return $this->product ? $this->product->getId() :  null;
     }
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getReturnDateFormatYmd()
     {
         return $this->returnDate->format('Y-m-d');
     }
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getReturnDateFormatCalendar()
     {
         return $this->returnDate->format('j/n/Y');

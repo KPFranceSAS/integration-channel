@@ -7,39 +7,29 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("skuUsed")
- *
- */
+
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
+#[UniqueEntity('skuUsed')]
 class ProductCorrelation
 {
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     * 
-     */
+    
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
     private ?string $skuUsed = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     */
+    
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $skuErp = null;
 
-    /**
-     * @Assert\NotNull()
-     * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="productCorrelations")
-     */
+    #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'productCorrelations')]
     private ?\App\Entity\Product $product = null;
 
 

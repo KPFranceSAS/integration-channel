@@ -60,9 +60,7 @@ class DashboardController extends AbstractDashboardController
         $this->adminContext = $adminContext;
     }
 
-    /**
-     * @Route("/", name="admin")
-     */
+    #[Route(path: '/', name: 'admin')]
     public function index(): Response
     {
         $menu= $this->adminContext->getContext()->getMainMenu();
@@ -70,9 +68,7 @@ class DashboardController extends AbstractDashboardController
     }
 
 
-    /**
-     * @Route("/help", name="help")
-     */
+    #[Route(path: '/help', name: 'help')]
     public function help(): Response
     {
         return $this->render('help/user.html.twig');

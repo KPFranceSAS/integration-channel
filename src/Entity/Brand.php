@@ -8,10 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class Brand implements \Stringable
 {
     final public const DEFAULT_BUFFER = 10;
@@ -19,33 +17,25 @@ class Brand implements \Stringable
 
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private ?bool $active = true;
 
     /**
-     * @ORM\OneToMany(targetEntity=Product::class, mappedBy="brand")
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Product>
      */
+    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'brand')]
     private \Doctrine\Common\Collections\Collection $products;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Assert\GreaterThanOrEqual(0)
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Assert\GreaterThanOrEqual(0)]
     private ?int $stockBuffer=self::DEFAULT_BUFFER;
 
     public function __construct()

@@ -11,142 +11,104 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- *
- */
+
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class AmazonFinancialEventGroup
 {
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups({"export_order"})
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    #[Groups(['export_order'])]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_order'])]
     private ?string $financialEventId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_order'])]
     private ?string $processingStatus = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $fundTransfertStatus = null;
 
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(['export_order'])]
     private ?\DateTimeInterface $fundTransferDate = null;
 
 
 
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $traceIdentfier = null;
 
 
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(['export_order'])]
     private ?\DateTimeInterface $startDate = null;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Groups(['export_order'])]
     private ?\DateTimeInterface $endDate = null;
 
 
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $originalTotal = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $convertedTotal = null;
 
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $originalTotalCurrency = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $convertedTotalCurrency = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $beginningBalance = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $beginningBalanceCurrency = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $currencyCode = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=AmazonFinancialEvent::class, mappedBy="eventGroup", orphanRemoval=true)
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\AmazonFinancialEvent>
      */
+    #[ORM\OneToMany(targetEntity: AmazonFinancialEvent::class, mappedBy: 'eventGroup', orphanRemoval: true)]
     private \Doctrine\Common\Collections\Collection $amazonFinancialEvents;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $marketplace = null;
 
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getStartDateFormatYmd()
     {
         return $this->startDate ? $this->startDate->format('Y-m-d') :  null;
     }
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getStartDateFormatCalendar()
     {
         return $this->startDate ? $this->startDate->format('j/n/Y') :  null;
@@ -154,18 +116,14 @@ class AmazonFinancialEventGroup
 
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getEndDateFormatYmd()
     {
         return $this->endDate ? $this->endDate->format('Y-m-d') :  null;
     }
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getEndDateFormatCalendar()
     {
         return $this->endDate ? $this->endDate->format('j/n/Y') :  null;

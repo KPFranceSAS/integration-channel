@@ -8,12 +8,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("code")
- *
- */
+
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
+#[UniqueEntity('code')]
 class IntegrationChannel implements \Stringable
 {
     final public const CHANNEL_CHANNELADVISOR = 'CHANNELADVISOR';
@@ -43,52 +41,36 @@ class IntegrationChannel implements \Stringable
 
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $code = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private ?bool $active=false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private ?bool $orderSync=false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private ?bool $stockSync=false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private ?bool $priceSync=false;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private ?bool $productSync=false;
 
     /**
-     * @ORM\OneToMany(targetEntity=SaleChannel::class, mappedBy="integrationChannel")
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\SaleChannel>
      */
+    #[ORM\OneToMany(targetEntity: SaleChannel::class, mappedBy: 'integrationChannel')]
     private \Doctrine\Common\Collections\Collection $saleChannels;
 
     public function __construct()

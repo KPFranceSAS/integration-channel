@@ -9,145 +9,99 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
 class AmazonReimbursement implements \Stringable
 {
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="datetime")
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'datetime')]
+    #[Groups(['export_order'])]
     private ?\DateTimeInterface $approvalDate = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_order'])]
     private ?string $reimbursementId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $caseId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $amazonOrderId = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $reason = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $sku = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $fnsku = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $asin = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $conditionItem = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['export_order'])]
     private ?string $currencyUnit = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $amountPerUnit = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $amountTotal = null;
 
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $amountPerUnitCurrency = null;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'float', nullable: true)]
+    #[Groups(['export_order'])]
     private ?float $amountTotalCurrency = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'integer')]
+    #[Groups(['export_order'])]
     private ?int $quantityReimbursedCash = null;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups(['export_order'])]
     private ?int $quantityReimbursedInventory = null;
 
-    /**
-     * @ORM\Column(type="integer")
-     * @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'integer')]
+    #[Groups(['export_order'])]
     private ?int $quantityReimbursedTotal = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=AmazonReimbursement::class)
-     */
+    #[ORM\ManyToOne(targetEntity: AmazonReimbursement::class)]
     private ?\App\Entity\AmazonReimbursement $originalReimbursement = null;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Product::class)
-     */
+    #[ORM\ManyToOne(targetEntity: Product::class)]
     private ?\App\Entity\Product $product = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-    *  @Groups({"export_order"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['export_order'])]
     private ?string $marketplaceName = null;
 
 
 
-    /**
-     *  @Groups({"export_order"})
-     */
+    #[Groups(['export_order'])]
     public function getAmazonOrderIdProductId()
     {
         return $this->product ? $this->amazonOrderId . '_' . $this->product->getId() :  $this->amazonOrderId . '_';
@@ -159,18 +113,14 @@ class AmazonReimbursement implements \Stringable
         return (string) ($this->product ? $this->amazonOrderId . ' ' . $this->product->getSku() :  $this->amazonOrderId);
     }
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getApprovalDateFormatYmd()
     {
         return $this->approvalDate->format('Y-m-d');
     }
 
 
-    /**
-    *  @Groups({"export_order"})
-    */
+    #[Groups(['export_order'])]
     public function getApprovalDateFormatCalendar()
     {
         return $this->approvalDate->format('j/n/Y');
@@ -212,18 +162,14 @@ class AmazonReimbursement implements \Stringable
 
     }
 
-    /**
-     *  @Groups({"export_order"})
-     */
+    #[Groups(['export_order'])]
     public function getProductId()
     {
         return $this->product ? $this->product->getId() :  null;
     }
 
 
-    /**
-     *  @Groups({"export_order"})
-     */
+    #[Groups(['export_order'])]
     public function getOriginalReimbursementId()
     {
         return $this->originalReimbursement ? $this->originalReimbursement->getId() :  null;

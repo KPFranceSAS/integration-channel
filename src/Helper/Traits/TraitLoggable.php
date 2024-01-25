@@ -6,9 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait TraitLoggable
 {
-    /**
-     * @ORM\Column(type="json", nullable=true)
-     */
+    #[ORM\Column(type: 'json', nullable: true)]
     private $logs = [];
 
 

@@ -9,9 +9,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    /**
-     * @Route("/login", name="login")
-     */
+    #[Route(path: '/login', name: 'login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -25,9 +23,7 @@ class SecurityController extends AbstractController
     }
 
 
-    /**
-     * @Route("/logout", name="logout", methods={"GET"})
-     */
+    #[Route(path: '/logout', name: 'logout', methods: ['GET'])]
     public function logout(): void
     {
         throw new \Exception('Don\'t forget to activate logout in security.yaml');

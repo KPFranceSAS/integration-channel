@@ -124,9 +124,7 @@ class UserCrudController extends AdminCrudController
         return $formBuilder;
     }
 
-    /**
-     * @required
-     */
+    #[\Symfony\Contracts\Service\Attribute\Required]
     public function setEncoder(UserPasswordHasherInterface $passwordEncoder): void
     {
         $this->passwordEncoder = $passwordEncoder;

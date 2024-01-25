@@ -10,78 +10,56 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-/**
- * @ORM\Entity()
- * @ORM\HasLifecycleCallbacks()
- * @UniqueEntity("code")
- */
+#[ORM\Entity]
+#[ORM\HasLifecycleCallbacks]
+#[UniqueEntity('code')]
 class SaleChannel implements \Stringable
 {
     use TraitTimeUpdated;
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    /**
-     * 
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
+    
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
     private ?string $code = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $name = null;
 
     /**
-     * @ORM\OneToMany(targetEntity=ProductSaleChannel::class, mappedBy="saleChannel", orphanRemoval=true, cascade={"persist","remove"})
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\ProductSaleChannel>
      */
+    #[ORM\OneToMany(targetEntity: ProductSaleChannel::class, mappedBy: 'saleChannel', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private \Doctrine\Common\Collections\Collection $productSaleChannels;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $currencyCode = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $countryCode = null;
 
-    /**
-    * @ORM\Column(type="string", length=255)
-    */
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $company = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $channel = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $color = null;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="saleChannels")
      * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\User>
      */
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'saleChannels')]
     private \Doctrine\Common\Collections\Collection $users;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=IntegrationChannel::class, inversedBy="saleChannels")
-     */
+    #[ORM\ManyToOne(targetEntity: IntegrationChannel::class, inversedBy: 'saleChannels')]
     private ?\App\Entity\IntegrationChannel $integrationChannel = null;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private ?string $codePim = null;
 
     
@@ -138,7 +116,7 @@ class SaleChannel implements \Stringable
     /**
      * @return Collection|ProductSaleChannel[]
      */
-    public function getProductSaleChannels(): Collection|\Doctrine\Common\Collections\Collection
+    public function getProductSaleChannels(): Collection
     {
         return $this->productSaleChannels;
     }

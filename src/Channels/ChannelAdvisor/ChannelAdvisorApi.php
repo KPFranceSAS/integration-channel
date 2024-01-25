@@ -30,7 +30,7 @@ class ChannelAdvisorApi implements ApiInterface
 
     protected $logger;
 
-    public function __construct(LoggerInterface $logger, $channelEndpoint, protected $refreshToken, protected $applicationId, protected $sharedSecret)
+    public function __construct(LoggerInterface $logger, $channelEndpoint, protected $channelRefreshToken, protected $channelApplicationId, protected $channelSharedSecret)
     {
         $this->logger = $logger;
         $this->channelEndpoint = 'https://'.$channelEndpoint;
@@ -53,10 +53,10 @@ class ChannelAdvisorApi implements ApiInterface
         $this->logger->info('Iniatialise token Channeladvisor');
         $client = new Client();
         $response = $client->request('POST', $this->getAuthEndPoint(), [
-            'auth' => [$this->applicationId, $this->sharedSecret],
+            'auth' => [$this->channelApplicationId, $this->channelSharedSecret],
             'form_params' => [
                 'grant_type' => 'refresh_token',
-                'refresh_token' => $this->refreshToken,
+                'refresh_token' => $this->channelRefreshToken,
             ],
             'debug' => false
         ]);
