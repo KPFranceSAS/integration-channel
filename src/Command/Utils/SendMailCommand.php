@@ -21,7 +21,7 @@ class SendMailCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('title', InputArgument::REQUIRED, 'Title of email')
             ->addArgument('content', InputArgument::REQUIRED, 'Content of email')
             ->addArgument('emailAddress', InputArgument::REQUIRED, 'email Address');

@@ -29,7 +29,7 @@ class BuildHistoricCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('dateStart', InputArgument::REQUIRED, 'Start Date Y-m-d')
             ->addArgument('dateEnd', InputArgument::REQUIRED, 'End Date Y-m-d');
     }

@@ -20,7 +20,7 @@ class StockCheckCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('channelIntegration', InputArgument::REQUIRED, 'Channel integration');
     }
 

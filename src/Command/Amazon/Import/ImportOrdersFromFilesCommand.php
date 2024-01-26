@@ -29,7 +29,6 @@ class ImportOrdersFromFilesCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addArgument('file', InputArgument::REQUIRED, 'Absolute path of file to import');
     }
 }

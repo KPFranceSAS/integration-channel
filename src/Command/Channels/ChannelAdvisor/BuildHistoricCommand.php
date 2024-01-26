@@ -30,11 +30,6 @@ class BuildHistoricCommand extends Command
     private $toTransform = [];
 
 
-    protected function configure(): void
-    {
-        $this
-            ->setDescription(self::$defaultDescription);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

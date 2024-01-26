@@ -27,7 +27,7 @@ class ReIntegrateSpecificCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('filePath', InputArgument::REQUIRED);
     }
 

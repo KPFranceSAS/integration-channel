@@ -22,7 +22,7 @@ class CreateUserCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('email', InputArgument::REQUIRED, 'email ')
             ->addArgument('password', InputArgument::REQUIRED, 'password ');
     }

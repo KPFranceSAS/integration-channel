@@ -39,6 +39,10 @@
     body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover {
         background: var(--sidebar-bg);
     }
+
+    body.ea-sidebar-width-compact #main-menu .menu .menu-item:hover .menu-item-contents {
+        color: #fff!important;
+    }
 }
 
 @media (max-width: 992px) {

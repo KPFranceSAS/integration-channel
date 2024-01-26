@@ -29,7 +29,7 @@ class StoreErrorsLogCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('nbHours', InputArgument::OPTIONAL, 'nbHours', 1);
     }
 

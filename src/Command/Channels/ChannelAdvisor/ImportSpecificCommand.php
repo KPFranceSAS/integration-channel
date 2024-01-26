@@ -20,7 +20,7 @@ class ImportSpecificCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('orderNumber', InputArgument::REQUIRED);
     }
 

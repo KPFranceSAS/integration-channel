@@ -21,7 +21,6 @@ class ImportFinancialCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addArgument('startDate', InputArgument::OPTIONAL, 'Start date Ymd')
             ->addArgument('endDate', InputArgument::OPTIONAL, 'End date Ymd');
     }

@@ -34,7 +34,7 @@ class ProductDataIntegrationFileCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('pathFile', InputArgument::REQUIRED, 'Path of the file for injecting correlation');
     }
 

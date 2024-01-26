@@ -29,7 +29,7 @@ class OrderIntegrateAllCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('retryIntegration', InputArgument::OPTIONAL, 'To reimport all errors add 1', false);
     }
 

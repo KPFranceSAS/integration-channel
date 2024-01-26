@@ -29,7 +29,6 @@ class ImportFinancialFilesCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
             ->addArgument('pathDirectory', InputArgument::REQUIRED, 'Path of the directories');
     }
 

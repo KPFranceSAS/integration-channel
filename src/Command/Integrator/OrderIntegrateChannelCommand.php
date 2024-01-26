@@ -20,7 +20,7 @@ class OrderIntegrateChannelCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('channelIntegration', InputArgument::REQUIRED, 'Channel integration')
             ->addArgument('retryIntegration', InputArgument::OPTIONAL, 'To reimport all errors add 1', false);
     }

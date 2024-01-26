@@ -19,7 +19,7 @@ class GenerateTokenCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('code', InputArgument::REQUIRED, 'code');
     }
 

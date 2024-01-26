@@ -20,7 +20,7 @@ class UpdateStatusChannelCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription(self::$defaultDescription)
+            
             ->addArgument('channelIntegration', InputArgument::REQUIRED, 'Channel integration')
             ->addArgument('retryIntegration', InputArgument::OPTIONAL, 'To reimport all invoices add 1', false);
     }

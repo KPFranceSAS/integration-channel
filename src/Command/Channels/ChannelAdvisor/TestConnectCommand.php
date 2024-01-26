@@ -16,12 +16,6 @@ class TestConnectCommand extends Command
     }
 
 
-   
-    protected function configure(): void
-    {
-        $this
-            ->setDescription(self::$defaultDescription);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {

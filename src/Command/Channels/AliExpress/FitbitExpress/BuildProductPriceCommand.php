@@ -29,11 +29,6 @@ class BuildProductPriceCommand extends Command
     private $manager;
 
 
-    protected function configure(): void
-    {
-        $this
-            ->setDescription(self::$defaultDescription);
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
