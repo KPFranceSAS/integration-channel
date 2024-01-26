@@ -100,7 +100,7 @@ class InvoiceController extends AbstractController
                 $this->addFlash('danger', 'Actualmente no tenemos pedidos que coincidan con el número de Aliexpress que has introducido.');
             }
         }
-        return $this->renderForm('invoice/aliexpress.html.twig', [
+        return $this->render('invoice/aliexpress.html.twig', [
             'form' => $form,
         ]);
     }
@@ -108,7 +108,7 @@ class InvoiceController extends AbstractController
 
 
 
-     #[Route(path: '/invoice/miravia', name: 'invoice_miravia', methods: ['GET', 'POST'])]
+    #[Route(path: '/invoice/miravia', name: 'invoice_miravia', methods: ['GET', 'POST'])]
     public function getInvoiceArise(Request $request, ManagerRegistry $doctrine, GadgetIberiaConnector $gadgetIberiaConnector, ApiAggregator $apiAggregator): Response
     {
         $invoice = new InvoiceDownload();
@@ -162,7 +162,7 @@ class InvoiceController extends AbstractController
             $webOrders = $qb->getQuery()->getResult();
             $webOrder = count($webOrders) > 0 ? reset($webOrders) : null;
             if ($webOrder) {
-                if (in_array($webOrder->getStatus(), [WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])){
+                if (in_array($webOrder->getStatus(), [WebOrder::STATE_INVOICED, WebOrder::STATE_COMPLETE])) {
                     $orderAli = $apiAggregator->getApi($webOrder->getChannel())
                                             ->getOrder($webOrder->getExternalNumber());
                     if (!$orderAli) {
@@ -190,7 +190,7 @@ class InvoiceController extends AbstractController
                 $this->addFlash('danger', 'Actualmente no tenemos pedidos que coincidan con el número de Miravia que has introducido.');
             }
         }
-        return $this->renderForm('invoice/miravia.html.twig', [
+        return $this->render('invoice/miravia.html.twig', [
             'form' => $form,
         ]);
     }

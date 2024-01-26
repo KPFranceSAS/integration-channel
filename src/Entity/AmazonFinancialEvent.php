@@ -19,7 +19,7 @@ class AmazonFinancialEvent
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $id = null;
 
 
@@ -27,52 +27,52 @@ class AmazonFinancialEvent
     #[ORM\JoinColumn(nullable: false)]
     private ?\App\Entity\AmazonFinancialEventGroup $eventGroup = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     #[Groups(['export_order'])]
     private ?string $transactionType = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_order'])]
     private ?string $amazonOrderId = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_order'])]
     private ?string $sellerOrderId = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     private ?string $adjustmentId = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     private ?string $shipmentId = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_order'])]
     private ?string $marketplaceName = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_order'])]
     private ?string $amountType = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_order'])]
     private ?string $amountDescription = null;
 
-    #[ORM\Column(type: 'float')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT)]
     #[Groups(['export_order'])]
     private ?float $amount = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     #[Groups(['export_order'])]
     private ?float $amountCurrency = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
     #[Groups(['export_order'])]
     private ?\DateTimeInterface $postedDate = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     private ?string $orderItemCode = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_order'])]
     private ?string $sku = null;
 
@@ -80,10 +80,10 @@ class AmazonFinancialEvent
     private ?\App\Entity\Product $product = null;
 
     #[Groups(['export_order'])]
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     private ?int $qtyPurchased = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     private ?string $promotionId = null;
 
 

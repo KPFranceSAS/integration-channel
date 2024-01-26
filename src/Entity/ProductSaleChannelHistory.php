@@ -30,29 +30,29 @@ class ProductSaleChannelHistory
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN)]
     private ?bool $enabled = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     private ?float $price = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     private ?int $typeModification = null;
 
     #[ORM\ManyToOne(targetEntity: ProductSaleChannel::class, inversedBy: 'productSaleChannelHistories')]
     #[ORM\JoinColumn(nullable: false)]
     private ?\App\Entity\ProductSaleChannel $productSaleChannel = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     private ?float $regularPrice = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     private ?float $promotionPrice = null;
 
 

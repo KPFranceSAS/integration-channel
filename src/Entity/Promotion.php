@@ -38,20 +38,20 @@ class Promotion implements \Stringable
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $id = null;
 
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $beginDate = null;
 
     /**
      * @Gedmo\Versioned
      */
     #[Assert\GreaterThan(propertyPath: 'beginDate')]
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $endDate = null;
  
 
@@ -65,14 +65,14 @@ class Promotion implements \Stringable
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     #[Assert\Choice(choices: Promotion::TYPES, message: 'Choose a valid type.')]
     private ?string $discountType=self::TYPE_PERCENT;
 
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     #[Assert\GreaterThan(0)]
     #[Assert\LessThan(50)]
     private ?float $percentageAmount = null;
@@ -80,62 +80,62 @@ class Promotion implements \Stringable
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     #[Assert\GreaterThan(0)]
     private ?float $fixedAmount = null;
 
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
     private ?string $comment = null;
 
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN)]
     private ?bool $active=true;
 
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     #[Assert\Range(min: 0, max: 10)]
     private ?int $priority=0;
 
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     #[Assert\Choice(choices: Promotion::FREQUENCIES, message: 'Choose a valid type.')]
     private ?string $frequency = self::FREQUENCY_CONTINUE;
 
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'array', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::ARRAY, nullable: true)]
     private $weekDays = [];
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TEXT, nullable: true)]
     private ?string $searchableDescription = null;
 
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'time', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $beginHour = null;
 
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'time', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $endHour = null;
 
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     private ?bool $overrided=false;
 
 

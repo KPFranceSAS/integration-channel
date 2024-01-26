@@ -13,40 +13,40 @@ class IntegrationFile
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     private ?string $documentNumber = null;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $documentType = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     private ?string $externalOrderId = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     private ?string $profileChannel = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     private ?string $currency = null;
 
-    #[ORM\Column(type: 'float')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT)]
     private ?float $totalAmount = null;
 
-    #[ORM\Column(type: 'float')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT)]
     private ?float $totalVat = null;
 
-    #[ORM\Column(type: 'float')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT)]
     private ?float $totalVatIncluded = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dateUpdated = null;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $channelOrderId = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     private ?int $channelAdjustementId = null;
 
 

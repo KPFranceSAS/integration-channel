@@ -20,16 +20,16 @@ class ProductLogEntry extends AbstractLogEntry
     /**
      * @var int
      */
-    #[ORM\Column(name: 'product_id', type: 'integer', nullable: true)]
+    #[ORM\Column(name: 'product_id', type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     private ?int $productId = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     private ?string $productSku = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     private ?int $saleChannelId = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     private ?string $saleChannelName = null;
 
 

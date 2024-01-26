@@ -27,7 +27,7 @@ class ProductSaleChannel implements \Stringable
   
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $id = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'productSaleChannels')]
@@ -42,7 +42,7 @@ class ProductSaleChannel implements \Stringable
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN)]
     private ?bool $enabled=false;
 
     /**
@@ -56,24 +56,24 @@ class ProductSaleChannel implements \Stringable
     /**
      * @Gedmo\Versioned
      */
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     #[Assert\Expression(expression: 'this.getEnabled() == false or (this.getEnabled() === true and value !== null)', message: 'You must specify the value if Enabled is activated')]
     #[Assert\GreaterThanOrEqual(0)]
     private ?float $price = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     private ?float $recommendedPrice = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     private ?float $estimatedCommission = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     private ?float $estimatedShipping = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     private ?float $estimatedCommissionPercent = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     private ?float $estimatedShippingPercent = null;
 
     /**

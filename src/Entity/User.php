@@ -21,25 +21,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column(type: 'json')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::JSON)]
     private $roles = ["ROLE_USER"];
 
     /**
      * @var string The hashed password
      */
-    #[ORM\Column(type: 'string')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING)]
     private ?string $password = null;
 
 
     public $plainPassword;
 
-    #[ORM\Column(type: 'json', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::JSON, nullable: true)]
     private $channels = [];
 
 
@@ -52,19 +52,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: SaleChannel::class, inversedBy: 'users')]
     private \Doctrine\Common\Collections\Collection $saleChannels;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     private ?bool $isAdmin = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     private ?bool $isPricingManager = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     private ?bool $isFbaManager = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     private ?bool $isOrderManager = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     private ?bool $isSuperAdmin = null;
 
 

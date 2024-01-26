@@ -13,7 +13,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 #[AsDoctrineListener(event: Events::onFlush, priority: 500, connection: 'default')]
 class UserLoggableListener extends LoggableListener
 {
-    public function __construct(private Security $security)
+    public function __construct(private readonly Security $security)
     {
         
     }

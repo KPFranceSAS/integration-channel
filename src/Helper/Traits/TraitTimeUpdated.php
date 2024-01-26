@@ -7,10 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait TraitTimeUpdated
 {
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_IMMUTABLE)]
     private $createdAt;
 
-    #[ORM\Column(type: 'datetime_immutable')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_IMMUTABLE)]
     private $updatedAt;
 
 

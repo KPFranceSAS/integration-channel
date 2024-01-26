@@ -25,27 +25,27 @@ class Product implements \Stringable
     
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     #[Groups(['export_product'])]
     private ?string $sku = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_product'])]
     private ?string $asin = null;
 
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_product'])]
     #[Assert\NotNull]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TEXT, nullable: true)]
     private ?string $comments = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     #[Groups(['export_product'])]
     private ?bool $active = true;
 
@@ -53,191 +53,191 @@ class Product implements \Stringable
     #[Assert\NotNull]
     private ?\App\Entity\Brand $brand = null;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_product'])]
     private ?string $fnsku = null;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
     private ?\App\Entity\Category $category = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaSellableStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUnsellableStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaInboundStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaOutboundStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaReservedStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaInboundShippedStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaInboundWorkingStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaInboundReceivingStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaResearchingStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaTotalStock = 0;
 
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaEuSellableStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaEuUnsellableStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaEuInboundStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaEuOutboundStock = 0;
 
 
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaEuReservedStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaEuInboundShippedStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaEuInboundWorkingStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaEuInboundReceivingStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaEuResearchingStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaEuTotalStock = 0;
 
 
 
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUkSellableStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUkUnsellableStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUkInboundStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUkOutboundStock = 0;
 
 
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUkReservedStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUkInboundShippedStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUkInboundWorkingStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUkInboundReceivingStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUkResearchingStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $fbaUkTotalStock = 0;
 
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $laRocaBusinessCentralStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $laRocaPurchaseBusinessCentralStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     private ?int $uk3plBusinessCentralStock= 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     private ?int $uk3plPurchaseBusinessCentralStock= 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $businessCentralTotalStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $businessCentralStock = 0;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     #[Groups(['export_product'])]
     private ?float $ratioStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $soldStockNotIntegrated = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $returnStockNotIntegrated = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Groups(['export_product'])]
     private ?int $differenceStock = 0;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Assert\GreaterThan(value: 0)]
     #[Groups(['export_product'])]
     private ?int $minQtyFbaEu = null;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER, nullable: true)]
     #[Assert\GreaterThan(value: 0)]
     #[Groups(['export_product'])]
     private ?int $minQtyFbaUk = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     #[Groups(['export_product'])]
     private ?float $unitCost = null;
 
@@ -256,10 +256,10 @@ class Product implements \Stringable
     private \Doctrine\Common\Collections\Collection $salePrices;
 
     
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     private ?float $eurPrice = null;
 
-    #[ORM\Column(type: 'float', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     private ?float $gbpPrice = null;
 
     /**
@@ -275,16 +275,16 @@ class Product implements \Stringable
     private \Doctrine\Common\Collections\Collection $productStockDailys;
 
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     private ?string $ean = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     private ?bool $dangerousGood = false;
 
     #[ORM\ManyToOne(targetEntity: LogisticClass::class, inversedBy: 'products')]
     private ?\App\Entity\LogisticClass $logisticClass = null;
 
-    #[ORM\Column(type: 'boolean', nullable: true)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     private ?bool $freeShipping = false;
 
 

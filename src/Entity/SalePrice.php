@@ -13,13 +13,13 @@ class SalePrice
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'float')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT)]
     private ?float $price = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     private ?string $countryCode = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class, inversedBy: 'salePrices')]

@@ -22,13 +22,13 @@ class LogisticClass implements \Stringable
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $id = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     private ?string $code = null;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     private ?string $label = null;
 
     /**
@@ -37,10 +37,10 @@ class LogisticClass implements \Stringable
     #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'logisticClass')]
     private \Doctrine\Common\Collections\Collection $products;
 
-    #[ORM\Column(type: 'float')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT)]
     private ?float $minimumWeight = null;
 
-    #[ORM\Column(type: 'float')]
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT)]
     private ?float $maximumWeight = null;
 
     public function __construct()
