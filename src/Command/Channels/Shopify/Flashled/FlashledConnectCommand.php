@@ -11,11 +11,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:connect-flashled', 'Connection to flashled')]
 class FlashledConnectCommand extends Command
 {
-    protected static $defaultName = 'app:connect-flashled';
-    protected static $defaultDescription = 'Connection to flashled';
-
     public function __construct(private readonly FlashledApi $flashledApi)
     {
         parent::__construct();

@@ -12,11 +12,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:create-sale-channels', 'Import sale channels')]
 class CreateSaleChannelsCommand extends Command
 {
-    protected static $defaultName = 'app:create-sale-channels';
-    protected static $defaultDescription = 'Import sale channels';
-
     public function __construct(ManagerRegistry $manager)
     {
         $this->manager = $manager->getManager();

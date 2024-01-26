@@ -10,11 +10,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-import-financial', 'Import financial events')]
 class ImportFinancialCommand extends Command
 {
-    protected static $defaultName = 'app:amz-import-financial';
-    protected static $defaultDescription = 'Import financial events';
-
     public function __construct(private readonly AmzApiFinancial $amzApiFinancial)
     {
         parent::__construct();

@@ -13,11 +13,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:update-products-all', 'Update products in all channels')]
 class ProductUpdateAllCommand extends Command
 {
-    protected static $defaultName = 'app:update-products-all';
-    protected static $defaultDescription = 'Update products in all channels';
-
     public function __construct(
         private readonly ProductSyncAggregator $productSyncAggregator,
         ManagerRegistry $managerRegistry,

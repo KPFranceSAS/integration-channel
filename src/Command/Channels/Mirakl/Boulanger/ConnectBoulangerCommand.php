@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:connect-boulanger', 'Connection to Boulanger')]
 class ConnectBoulangerCommand extends Command
 {
-    protected static $defaultName = 'app:connect-boulanger';
-    protected static $defaultDescription = 'Connection to Boulanger';
-
     public function __construct(
         private readonly BoulangerApi $boulangerApi
     ) {

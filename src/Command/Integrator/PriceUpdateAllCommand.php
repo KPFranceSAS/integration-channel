@@ -13,11 +13,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:update-prices-all', 'Update prices in all channels')]
 class PriceUpdateAllCommand extends Command
 {
-    protected static $defaultName = 'app:update-prices-all';
-    protected static $defaultDescription = 'Update prices in all channels';
-
     public function __construct(
         private readonly PriceAggregator $priceAggregator,
         private readonly PriceStockAggregator $priceStockAggregator,

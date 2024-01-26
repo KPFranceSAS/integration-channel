@@ -9,11 +9,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:pim-erp-name-from-bc-to-pim', 'Put the name from erp')]
 class ErpNameIntegrationCommand extends Command
 {
-    protected static $defaultName = 'app:pim-erp-name-from-bc-to-pim';
-    protected static $defaultDescription = 'Put the name from erp';
-
     public function __construct(private readonly KpFranceConnector $businessCentralConnector, private readonly AkeneoConnector $akeneoConnector)
     {
         parent::__construct();

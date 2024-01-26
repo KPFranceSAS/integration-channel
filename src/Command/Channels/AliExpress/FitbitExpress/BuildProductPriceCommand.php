@@ -17,11 +17,9 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:fitbitexpress-build-product-prices', 'Build product for fitbitexpress')]
 class BuildProductPriceCommand extends Command
 {
-    protected static $defaultName = 'app:fitbitexpress-build-product-prices';
-    protected static $defaultDescription = 'Build product for fitbitexpress';
-
     public function __construct(private readonly GadgetIberiaConnector $bcConnector, ManagerRegistry $manager, private readonly FitbitExpressApi $aliExpressApi)
     {
         $this->manager = $manager->getManager();

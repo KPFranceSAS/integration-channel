@@ -11,11 +11,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-add-returns', 'Add missing returns')]
 class AddMissingReturnsCommand extends Command
 {
-    protected static $defaultName = 'app:amz-add-returns';
-    protected static $defaultDescription = 'Add missing returns';
-
     protected $manager;
 
     protected $logger;

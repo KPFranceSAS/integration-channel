@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:export-minibatt', 'Connection to owletcare test')]
 class ExportMinibattTransactionCommand extends Command
 {
-    protected static $defaultName = 'app:export-minibatt';
-    protected static $defaultDescription = 'Connection to owletcare test';
-
     public function __construct(private readonly MinibattApi $minibattApi)
     {
         parent::__construct();

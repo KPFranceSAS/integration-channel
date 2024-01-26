@@ -9,11 +9,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-import-returns', 'Import returns from AMZ')]
 class ImportReturnsCommand extends Command
 {
-    protected static $defaultName = 'app:amz-import-returns';
-    protected static $defaultDescription = 'Import returns from AMZ';
-
     public function __construct(private readonly AmzApiImportReturn $amzApiImportReturn)
     {
         parent::__construct();

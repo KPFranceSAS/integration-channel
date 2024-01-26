@@ -12,11 +12,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:check-stocks-all', 'Check skus in all channels to ensure sku mapping is OK')]
 class StockCheckAllCommand extends Command
 {
-    protected static $defaultName = 'app:check-stocks-all';
-    protected static $defaultDescription = 'Check skus in all channels to ensure sku mapping is OK';
-
     public function __construct(private readonly StockAggregator $stockAggregator, ManagerRegistry $managerRegistry, private readonly LoggerInterface $logger, private readonly MailService $mailService)
     {
         $this->managerRegistry = $managerRegistry->getManager();

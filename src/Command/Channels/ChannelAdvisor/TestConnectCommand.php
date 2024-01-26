@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:channel-test-connect', 'Test connect')]
 class TestConnectCommand extends Command
 {
-    protected static $defaultName = 'app:channel-test-connect';
-    protected static $defaultDescription = 'Test connect';
-
     public function __construct(private readonly ChannelAdvisorApi $channelAdvisorApi)
     {
         parent::__construct();

@@ -14,11 +14,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:aliexpress-build-historic', 'Build historical orders for aliexpress')]
 class BuildHistoricCommand extends Command
 {
-    protected static $defaultName = 'app:aliexpress-build-historic';
-    protected static $defaultDescription = 'Build historical orders for aliexpress';
-
     public function __construct(private readonly GadgetIberiaConnector $bcConnector, ManagerRegistry $manager, private readonly AliExpressApi $aliExpressApi)
     {
         $this->manager = $manager->getManager();

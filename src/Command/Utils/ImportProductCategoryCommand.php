@@ -12,11 +12,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:import-product-category', 'Import all products / categoreis')]
 class ImportProductCategoryCommand extends Command
 {
-    protected static $defaultName = 'app:import-product-category';
-    protected static $defaultDescription = 'Import all products / categoreis';
-
     public function __construct(ManagerRegistry $manager, private readonly CsvExtracter $csvExtracter)
     {
         $this->manager = $manager->getManager();

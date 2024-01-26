@@ -9,12 +9,9 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:clean-files', 'Clean files')]
 class CleanFilesCommand extends Command
 {
-    protected static $defaultName = 'app:clean-files';
-    protected static $defaultDescription = 'Clean files';
-
-
     protected $directory;
     
     public function __construct(

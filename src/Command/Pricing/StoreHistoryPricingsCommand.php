@@ -9,11 +9,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:store-history-pricings', 'Store history pricings')]
 class StoreHistoryPricingsCommand extends Command
 {
-    protected static $defaultName = 'app:store-history-pricings';
-    protected static $defaultDescription = 'Store history pricings';
-
     private $manager;
 
     public function __construct(ManagerRegistry $manager)

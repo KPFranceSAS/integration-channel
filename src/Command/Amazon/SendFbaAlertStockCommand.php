@@ -11,11 +11,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Twig\Environment;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-send-alert-fba', 'Send alert stock FBA')]
 class SendFbaAlertStockCommand extends Command
 {
-    protected static $defaultName = 'app:amz-send-alert-fba';
-    protected static $defaultDescription = 'Send alert stock FBA';
-
     protected $twig;
 
     public function __construct(ManagerRegistry $manager, private readonly MailService $mailService, Environment $twig)

@@ -9,11 +9,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:exchange-rates', 'Get exchange rates')]
 class ExchangeRateCommand extends Command
 {
-    protected static $defaultName = 'app:exchange-rates';
-    protected static $defaultDescription = 'Get exchange rates';
-
     public function __construct(
         private readonly ExchangeRateCalculator $exchangeRateCalculator
     ) {

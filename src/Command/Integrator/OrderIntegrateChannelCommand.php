@@ -8,11 +8,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:integrate-orders-from', 'INtegrates all orders waiting to be invoiced with the given sale channel')]
 class OrderIntegrateChannelCommand extends Command
 {
-    protected static $defaultName = 'app:integrate-orders-from';
-    protected static $defaultDescription = 'INtegrates all orders waiting to be invoiced with the given sale channel';
-
     public function __construct(private readonly IntegratorAggregator $integrate)
     {
         parent::__construct();

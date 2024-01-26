@@ -8,6 +8,7 @@ use Rector\Doctrine\Set\DoctrineSetList;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Symfony\Set\SensiolabsSetList;
 use Rector\Symfony\Set\SymfonySetList;
+use Rector\Symfony\Symfony61\Rector\Class_\CommandPropertyToAttributeRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->paths([
@@ -19,6 +20,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     // register a single rule
     $rectorConfig->rule(InlineConstructorDefaultToPropertyRector::class);
+    $rectorConfig->rule(CommandPropertyToAttributeRector::class);
 
     $rectorConfig->sets([
         DoctrineSetList::DOCTRINE_CODE_QUALITY,

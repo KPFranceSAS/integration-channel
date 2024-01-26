@@ -9,11 +9,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:arise-test', 'Connection to Gadget express')]
 class ConnectAriseCommand extends Command
 {
-    protected static $defaultName = 'app:arise-test';
-    protected static $defaultDescription = 'Connection to Gadget express';
-
     public function __construct(private readonly GadgetApi $ariseApi, private readonly FilesystemOperator $ariseLabelStorage)
     {
         parent::__construct();

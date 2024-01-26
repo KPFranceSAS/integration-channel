@@ -14,11 +14,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:integrate-orders-all', 'Integrates all orders from all sale channels')]
 class OrderIntegrateAllCommand extends Command
 {
-    protected static $defaultName = 'app:integrate-orders-all';
-    protected static $defaultDescription = 'Integrates all orders from all sale channels';
-
     public function __construct(private readonly IntegratorAggregator $integrateAggregator, ManagerRegistry $managerRegistry, private readonly LoggerInterface $logger, private readonly MailService $mailService)
     {
         $this->managerRegistry = $managerRegistry->getManager();

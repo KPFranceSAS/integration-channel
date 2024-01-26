@@ -13,11 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:check-product', 'Check all products')]
 class CheckProductCommand extends Command
 {
-    protected static $defaultName = 'app:check-product';
-    protected static $defaultDescription = 'Check all products';
-
     public function __construct(ManagerRegistry $manager, private readonly ValidatorInterface $validator)
     {
         $this->manager = $manager->getManager();

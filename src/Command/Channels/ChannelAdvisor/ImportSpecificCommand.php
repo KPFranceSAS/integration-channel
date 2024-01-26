@@ -9,11 +9,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:channel-import-command', 'Import command')]
 class ImportSpecificCommand extends Command
 {
-    protected static $defaultName = 'app:channel-import-command';
-    protected static $defaultDescription = 'Import command';
-
     public function __construct(private readonly ChannelAdvisorApi $channelAdvisorApi, private readonly ChannelAdvisorIntegrateOrder $channelAdvisorIntegrateOrder)
     {
         parent::__construct();

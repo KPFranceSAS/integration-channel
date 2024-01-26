@@ -11,11 +11,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:pim-export-product', 'Export product from Pim')]
 class ExportProductsCommand extends Command
 {
-    protected static $defaultName = 'app:pim-export-product';
-    protected static $defaultDescription = 'Export product from Pim';
-
     public function __construct(private readonly LoggerInterface $logger, private readonly AkeneoConnector $akeneoConnector, private readonly FilesystemOperator $productStorage)
     {
         parent::__construct();

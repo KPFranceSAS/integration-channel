@@ -13,11 +13,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:connect-decathlon', 'Connection to Deacthlon')]
 class ConnectDecathlonCommand extends Command
 {
-    protected static $defaultName = 'app:connect-decathlon';
-    protected static $defaultDescription = 'Connection to Deacthlon';
-
     public function __construct(
         private readonly DecathlonApi $decathlonApi
     ) {

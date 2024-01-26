@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:accept-orders-fnacfr', 'Accept orders on Fnac Fr')]
 class AcceptOrdersFnacFrCommand extends Command
 {
-    protected static $defaultName = 'app:accept-orders-fnacfr';
-    protected static $defaultDescription = 'Accept orders on Fnac Fr';
-
     public function __construct(
         private readonly FnacFrAcceptOrder $fnacFrAcceptOrder
     ) {

@@ -9,11 +9,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:update-prices-to', 'Update prices with the given sale channel')]
 class PriceUpdateCommand extends Command
 {
-    protected static $defaultName = 'app:update-prices-to';
-    protected static $defaultDescription = 'Update prices with the given sale channel';
-
     public function __construct(private readonly PriceAggregator $priceAggregator, private readonly PriceStockAggregator $priceStockAggregator)
     {
         parent::__construct();

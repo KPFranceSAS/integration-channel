@@ -17,11 +17,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-import-financial-files', 'Import historical events from Amz')]
 class ImportFinancialFilesCommand extends Command
 {
-    protected static $defaultName = 'app:amz-import-financial-files';
-    protected static $defaultDescription = 'Import historical events from Amz';
-
     public function __construct(ManagerRegistry $manager, private readonly ExchangeRateCalculator $exchangeRateCalculator)
     {
         $this->manager = $manager->getManager();

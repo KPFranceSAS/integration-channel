@@ -8,11 +8,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:update-products-to', 'Update products with the given sale channel')]
 class ProductUpdateCommand extends Command
 {
-    protected static $defaultName = 'app:update-products-to';
-    protected static $defaultDescription = 'Update products with the given sale channel';
-
     public function __construct(private readonly ProductSyncAggregator $productSyncAggregator)
     {
         parent::__construct();

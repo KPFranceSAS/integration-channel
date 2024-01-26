@@ -8,11 +8,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:run-import-pricings', 'Import pricings')]
 class RunImportPricingsCommand extends Command
 {
-    protected static $defaultName = 'app:run-import-pricings';
-    protected static $defaultDescription = 'Import pricings';
-
     public function __construct(private readonly ImportPricingsImporter $productImporter)
     {
         parent::__construct();

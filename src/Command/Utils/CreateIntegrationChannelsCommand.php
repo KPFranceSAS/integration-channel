@@ -8,11 +8,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:create-integration-channels', 'Import integration channels')]
 class CreateIntegrationChannelsCommand extends Command
 {
-    protected static $defaultName = 'app:create-integration-channels';
-    protected static $defaultDescription = 'Import integration channels';
-
     public function __construct(ManagerRegistry $manager)
     {
         $this->manager = $manager->getManager();

@@ -8,11 +8,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:aliexpress-generate-code', 'Generate a new token')]
 class GenerateTokenCommand extends Command
 {
-    protected static $defaultName = 'app:aliexpress-generate-code';
-    protected static $defaultDescription = 'Generate a new token';
-
     public function __construct(private readonly AliExpressApi $aliExpress)
     {
         parent::__construct();

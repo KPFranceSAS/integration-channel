@@ -10,11 +10,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:ae-test', 'Connection to Ali express')]
 class ConnectAeCommand extends Command
 {
-    protected static $defaultName = 'app:ae-test';
-    protected static $defaultDescription = 'Connection to Ali express';
-
     public function __construct(private readonly AliExpressApi $aliExpress, private readonly AliExpressIntegrateOrder $aliExpressIntegrateOrder, private readonly GadgetIberiaConnector $gadgetIberiaConnector, private readonly AliExpressStock $aliExpressStock)
     {
         parent::__construct();

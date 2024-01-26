@@ -9,11 +9,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:update-delivery-from', 'Update all delivery sale orders for the given sale channel')]
 class UpdateDeliveryChannelCommand extends Command
 {
-    protected static $defaultName = 'app:update-delivery-from';
-    protected static $defaultDescription = 'Update all delivery sale orders for the given sale channel';
-
     public function __construct(private readonly UpdateDeliveryAggregator  $updateStatusAggregator)
     {
         parent::__construct();

@@ -9,11 +9,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-import-orders', 'Import orders from AMZ')]
 class ImportOrdersCommand extends Command
 {
-    protected static $defaultName = 'app:amz-import-orders';
-    protected static $defaultDescription = 'Import orders from AMZ';
-
     public function __construct(private readonly AmzApiImportOrder $amzApiImportOrder)
     {
         parent::__construct();

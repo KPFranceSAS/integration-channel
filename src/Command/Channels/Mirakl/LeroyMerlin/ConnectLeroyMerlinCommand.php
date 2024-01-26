@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:connect-leroymerlin', 'Connection to Leroy Merlin')]
 class ConnectLeroyMerlinCommand extends Command
 {
-    protected static $defaultName = 'app:connect-leroymerlin';
-    protected static $defaultDescription = 'Connection to Leroy Merlin';
-
     public function __construct(
         private readonly LeroyMerlinApi $leroyMerlinApi
     ) {

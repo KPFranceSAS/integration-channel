@@ -12,11 +12,9 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-check-invoiced', 'Check if amz is invoiced')]
 class CheckInvoiceAmazonOrderCommand extends Command
 {
-    protected static $defaultName = 'app:amz-check-invoiced';
-    protected static $defaultDescription = 'Check if amz is invoiced';
-
     public function __construct(ManagerRegistry $manager, private readonly KpFranceConnector $kpfranceConnector)
     {
         $this->manager = $manager->getManager();

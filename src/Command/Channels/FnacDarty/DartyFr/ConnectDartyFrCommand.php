@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:connect-darty-fr', 'Connection to DartyFr')]
 class ConnectDartyFrCommand extends Command
 {
-    protected static $defaultName = 'app:connect-darty-fr';
-    protected static $defaultDescription = 'Connection to DartyFr';
-
     public function __construct(private readonly DartyFrApi $dartyFrApi)
     {
         parent::__construct();

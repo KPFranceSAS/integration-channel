@@ -13,11 +13,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:update-stocks-all', 'Update stocks in all channels')]
 class StockUpdateAllCommand extends Command
 {
-    protected static $defaultName = 'app:update-stocks-all';
-    protected static $defaultDescription = 'Update stocks in all channels';
-
     public function __construct(private readonly StockAggregator $stockAggregator,
     private readonly PriceStockAggregator $priceStockAggregator, 
     ManagerRegistry $managerRegistry, 

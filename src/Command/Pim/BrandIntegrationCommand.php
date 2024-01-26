@@ -10,11 +10,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:pim-product-brand-integration-from-pim', 'Import all brands')]
 class BrandIntegrationCommand extends Command
 {
-    protected static $defaultName = 'app:pim-product-brand-integration-from-pim';
-    protected static $defaultDescription = 'Import all brands';
-
     public function __construct(ManagerRegistry $manager, private readonly AkeneoConnector $akeneoConnector)
     {
         $this->manager = $manager->getManager();

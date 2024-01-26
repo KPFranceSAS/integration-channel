@@ -8,11 +8,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:send-email', 'Send email')]
 class SendMailCommand extends Command
 {
-    protected static $defaultName = 'app:send-email';
-    protected static $defaultDescription = 'Send email';
-
     public function __construct(
         private readonly MailService $mailService
     ) {

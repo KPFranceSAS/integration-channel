@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:manomano-fr', 'Connection to ManoMano FR')]
 class ConnectManoManoFrCommand extends Command
 {
-    protected static $defaultName = 'app:manomano-fr';
-    protected static $defaultDescription = 'Connection to ManoMano FR';
-
     public function __construct(private readonly ManoManoFrApi $manoManoFrApi)
     {
         parent::__construct();

@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:fitbit-corporate-sync', 'Sync products with Shopify')]
 class FitbitCorporateProductSyncCommand extends Command
 {
-    protected static $defaultName = 'app:fitbit-corporate-sync';
-    protected static $defaultDescription = 'Sync products with Shopify';
-
     public function __construct(private readonly FitbitCorporateSyncProduct $fitbitCorporateSyncProduct)
     {
         parent::__construct();

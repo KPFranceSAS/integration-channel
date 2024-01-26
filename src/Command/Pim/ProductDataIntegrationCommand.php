@@ -15,11 +15,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:pim-product-integration-from-pim', 'Import all products and brands')]
 class ProductDataIntegrationCommand extends Command
 {
-    protected static $defaultName = 'app:pim-product-integration-from-pim';
-    protected static $defaultDescription = 'Import all products and brands';
-
     public function __construct(
         ManagerRegistry $manager,
         private readonly AkeneoConnector $akeneoConnector,

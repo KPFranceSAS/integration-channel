@@ -15,11 +15,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:export-product-stock-prices', 'Export product from Stock and prices')]
 class ExportProductsStockPriceCommand extends Command
 {
-    protected static $defaultName = 'app:export-product-stock-prices';
-    protected static $defaultDescription = 'Export product from Stock and prices';
-
     public function __construct(private readonly LoggerInterface $logger, ManagerRegistry $managerRegistry, private readonly FilesystemOperator $productStorage, private readonly ProductStockFinder $productStockFinder)
     {
         $this->manager = $managerRegistry->getManager();

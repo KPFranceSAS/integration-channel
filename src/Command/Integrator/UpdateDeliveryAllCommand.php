@@ -13,11 +13,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:update-delivery-orders-all', 'Update all status of deliveries from all sale channels')]
 class UpdateDeliveryAllCommand extends Command
 {
-    protected static $defaultName = 'app:update-delivery-orders-all';
-    protected static $defaultDescription = 'Update all status of deliveries from all sale channels';
-
     public function __construct(private readonly UpdateDeliveryAggregator $deliveryAggregator, ManagerRegistry $managerRegistry, private readonly LoggerInterface $logger, private readonly MailService $mailService)
     {
         $this->managerRegistry = $managerRegistry->getManager();

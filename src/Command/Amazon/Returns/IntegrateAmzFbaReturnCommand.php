@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-integrate-fba-returns', 'INtegrate FBA Returns')]
 class IntegrateAmzFbaReturnCommand extends Command
 {
-    protected static $defaultName = 'app:amz-integrate-fba-returns';
-    protected static $defaultDescription = 'INtegrate FBA Returns';
-
     public function __construct(private readonly IntegrateAmzFbaReturn $amzFbaReturn)
     {
         parent::__construct();

@@ -11,11 +11,9 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-store-daily-stocks', 'Store daily stocks')]
 class StoreDailyStockCommand extends Command
 {
-    protected static $defaultName = 'app:amz-store-daily-stocks';
-    protected static $defaultDescription = 'Store daily stocks';
-
     public function __construct(ManagerRegistry $manager)
     {
         $this->manager = $manager->getManager();

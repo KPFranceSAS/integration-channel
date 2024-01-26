@@ -10,11 +10,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:check-product-logistic', 'Check all products logistic class')]
 class CheckProductLogisticClassCommand extends Command
 {
-    protected static $defaultName = 'app:check-product-logistic';
-    protected static $defaultDescription = 'Check all products logistic class';
-
     public function __construct(
         ManagerRegistry $managerRegistry,
         private readonly LogisticClassFinder $logisticClassFinder)

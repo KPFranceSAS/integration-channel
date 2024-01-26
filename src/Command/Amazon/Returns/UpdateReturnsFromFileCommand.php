@@ -10,11 +10,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:update-returns-from-file', 'Update return from files')]
 class UpdateReturnsFromFileCommand extends Command
 {
-    protected static $defaultName = 'app:update-returns-from-file';
-    protected static $defaultDescription = 'Update return from files';
-
     public function __construct(ManagerRegistry $manager, private readonly CsvExtracter $csvExtracter)
     {
         $this->manager = $manager->getManager();

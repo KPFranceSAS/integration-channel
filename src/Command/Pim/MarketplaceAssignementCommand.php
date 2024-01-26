@@ -16,11 +16,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:sync-marketplace-assignments', 'Add marketplace assignments')]
 class MarketplaceAssignementCommand extends Command
 {
-    protected static $defaultName = 'app:sync-marketplace-assignments';
-    protected static $defaultDescription = 'Add marketplace assignments';
-
     public function __construct(
         ManagerRegistry $manager,
         private readonly AkeneoConnector $akeneoConnector

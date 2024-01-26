@@ -11,11 +11,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:export-flashled', 'Connection to owletcare test')]
 class ExportFlashledTransactionCommand extends Command
 {
-    protected static $defaultName = 'app:export-flashled';
-    protected static $defaultDescription = 'Connection to owletcare test';
-
     public function __construct(private readonly FlashledApi $flashledApi, private readonly KitPersonalizacionSportConnector $kitPerzonalisationSport)
     {
         parent::__construct();

@@ -13,11 +13,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:store-errors-logs', 'Store error logs')]
 class StoreErrorsLogCommand extends Command
 {
-    protected static $defaultName = 'app:store-errors-logs';
-    protected static $defaultDescription = 'Store error logs';
-
     private $manager;
 
     public function __construct(ManagerRegistry $manager)

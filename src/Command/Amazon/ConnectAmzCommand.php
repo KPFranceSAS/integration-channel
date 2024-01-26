@@ -12,11 +12,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-test', 'Add a short description for your command')]
 class ConnectAmzCommand extends Command
 {
-    protected static $defaultName = 'app:amz-test';
-    protected static $defaultDescription = 'Add a short description for your command';
-
     public function __construct(private readonly AmzApi $api, private readonly ExchangeRateCalculator $caluclator, private readonly AmzApiInbound $amzApiInbound, private readonly AmzApiFinancial $fincancial)
     {
         parent::__construct();

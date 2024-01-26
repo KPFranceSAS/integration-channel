@@ -21,11 +21,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:aliexpress-build-product-prices', 'Build product for aliexpress')]
 class BuildProductPriceCommand extends Command
 {
-    protected static $defaultName = 'app:aliexpress-build-product-prices';
-    protected static $defaultDescription = 'Build product for aliexpress';
-
     public function __construct(private readonly GadgetIberiaConnector $bcConnector, ManagerRegistry $manager, private readonly AliExpressApi $aliExpressApi)
     {
         $this->manager = $manager->getManager();

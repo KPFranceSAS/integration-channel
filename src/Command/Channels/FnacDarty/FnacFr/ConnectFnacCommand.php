@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:connect-fnac-fr', 'Connection to Fnac')]
 class ConnectFnacCommand extends Command
 {
-    protected static $defaultName = 'app:connect-fnac-fr';
-    protected static $defaultDescription = 'Connection to Fnac';
-
     public function __construct(private readonly FnacFrApi $manoManoFrApi)
     {
         parent::__construct();

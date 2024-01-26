@@ -10,11 +10,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-add-missing-products', 'Add missing products')]
 class AddMissingProductsCommand extends Command
 {
-    protected static $defaultName = 'app:amz-add-missing-products';
-    protected static $defaultDescription = 'Add missing products';
-
     protected $manager;
 
     protected $logger;

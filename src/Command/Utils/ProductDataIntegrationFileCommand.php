@@ -15,11 +15,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:product-integration-from-file', 'Import all products and brands from files')]
 class ProductDataIntegrationFileCommand extends Command
 {
-    protected static $defaultName = 'app:product-integration-from-file';
-    protected static $defaultDescription = 'Import all products and brands from files';
-
     public function __construct(
         ManagerRegistry $manager,
         private readonly KpFranceConnector $kpFranceConnector,

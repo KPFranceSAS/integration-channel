@@ -13,11 +13,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:channel-reintegrate-command', 'Reintegrate command from ChannelAdvisor')]
 class ReIntegrateSpecificCommand extends Command
 {
-    protected static $defaultName = 'app:channel-reintegrate-command';
-    protected static $defaultDescription = 'Reintegrate command from ChannelAdvisor';
-
     public function __construct(ManagerRegistry $managerRegistry, private readonly ChannelAdvisorApi $channelAdvisorApi, private readonly ChannelAdvisorIntegrateOrder $channelAdvisorIntegrateOrder, private readonly CsvExtracter $csvExtracter)
     {
         $this->managerRegistry= $managerRegistry->getManager();

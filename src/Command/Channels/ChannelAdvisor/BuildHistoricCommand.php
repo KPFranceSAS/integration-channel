@@ -14,11 +14,9 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:channel-build-historic', 'Build historical orders')]
 class BuildHistoricCommand extends Command
 {
-    protected static $defaultName = 'app:channel-build-historic';
-    protected static $defaultDescription = 'Build historical orders';
-
     public function __construct(private readonly KpFranceConnector $bcConnector, ManagerRegistry $manager)
     {
         /** @var \Doctrine\ORM\EntityManagerInterface */

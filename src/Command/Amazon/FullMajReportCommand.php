@@ -12,11 +12,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-full-maj-report-updates', 'Get datas from amz and export it to power bi')]
 class FullMajReportCommand extends Command
 {
-    protected static $defaultName = 'app:amz-full-maj-report-updates';
-    protected static $defaultDescription = 'Get datas from amz and export it to power bi';
-
     public function __construct(
         private readonly PublishPowerBi $publishPowerBi,
         private readonly AmzApiImportProduct $amzApiImportProduct,

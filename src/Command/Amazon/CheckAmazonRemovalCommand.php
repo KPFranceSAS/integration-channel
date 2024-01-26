@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amz-check-removal', 'Build and change status amz')]
 class CheckAmazonRemovalCommand extends Command
 {
-    protected static $defaultName = 'app:amz-check-removal';
-    protected static $defaultDescription = 'Build and change status amz';
-
     public function __construct(private readonly GenerateAmzFbaRemoval $generateAmzFbaRemoval)
     {
         parent::__construct();

@@ -7,11 +7,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:fitbitexpress-test', 'Connection to fitbitexpress express')]
 class ConnectFitbitCommand extends Command
 {
-    protected static $defaultName = 'app:fitbitexpress-test';
-    protected static $defaultDescription = 'Connection to fitbitexpress express';
-
     public function __construct(private readonly FitbitExpressApi $fitbitExpressApi)
     {
         parent::__construct();

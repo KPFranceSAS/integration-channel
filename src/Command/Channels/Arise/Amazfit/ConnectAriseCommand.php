@@ -11,11 +11,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[\Symfony\Component\Console\Attribute\AsCommand('app:amazfit-test', 'Connection to Arise amazfit')]
 class ConnectAriseCommand extends Command
 {
-    protected static $defaultName = 'app:amazfit-test';
-    protected static $defaultDescription = 'Connection to Arise amazfit';
-
     public function __construct(private readonly AmazfitApi $ariseApi, private readonly AmazfitIntegrator $amazfitIntegrator)
     {
         parent::__construct();
