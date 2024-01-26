@@ -6,6 +6,9 @@ framework:
     ide: vscode
     annotations: false
     handle_all_throwables: true
+    uid:
+        default_uuid_version: 7
+        time_based_uuid_version: 7
 
 
     # Enables session support. Note that the session will ONLY be started if you read or write from it.

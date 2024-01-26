@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\ProductSaleChannel;
 use App\Form\PromotionType;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -12,14 +13,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Security;
 
 class ProductSaleChannelType extends AbstractType
 {
 
     private $user;
 
-    public function __construct(Security $scurity){
+    public function __construct(Security $scurity)
+    {
         /**@var User */
         $this->user = $scurity->getUser();
     }

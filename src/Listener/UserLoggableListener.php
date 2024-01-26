@@ -2,6 +2,7 @@
 
 namespace App\Listener;
 
+use App\Entity\ProductLogEntry;
 use App\Entity\ProductSaleChannel;
 use App\Entity\Promotion;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
@@ -31,6 +32,8 @@ class UserLoggableListener extends LoggableListener
 
     protected function prePersistLogEntry($logEntry, $object)
     {
+        /** @var ProductLogEntry $logEntry   */
+
         if ($object instanceof ProductSaleChannel) {
             $logEntry->setProductId($object->getProduct()->getId());
             $logEntry->setProductSku($object->getProduct()->getSku());
@@ -40,6 +43,7 @@ class UserLoggableListener extends LoggableListener
 
 
         if ($object instanceof Promotion) {
+            
             $productSaleChannel = $object->getProductSaleChannel();
             $logEntry->setProductId($productSaleChannel->getProduct()->getId());
             $logEntry->setProductSku($productSaleChannel->getProduct()->getSku());
