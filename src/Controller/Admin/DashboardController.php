@@ -77,7 +77,6 @@ class DashboardController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->disableUrlSignatures()
             ->setTitle('Patxira');
     }
 

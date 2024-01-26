@@ -28,7 +28,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "league/flysystem-bundle": "^3.0",
         "league/flysystem-ftp": "^3.0",
-        "league/flysystem-sftp": "^3.0",
+        "league/flysystem-sftp-v3": "^3.22",
         "league/html-to-markdown": "^5.1",
         "mirakl/sdk-php-shop": "^1.17",
         "nesbot/carbon": "^2.54",

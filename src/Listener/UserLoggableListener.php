@@ -20,7 +20,7 @@ class UserLoggableListener extends LoggableListener
     }
 
 
-    public function onFlush(EventArgs $eventArgs)
+    public function onFlush(EventArgs $eventArgs): void
     {
         if ($this->security->getUser()) {
             $this->setUsername($this->security->getUser());
@@ -30,7 +30,7 @@ class UserLoggableListener extends LoggableListener
 
 
 
-    protected function prePersistLogEntry($logEntry, $object)
+    protected function prePersistLogEntry($logEntry, $object): void
     {
         /** @var ProductLogEntry $logEntry   */
 

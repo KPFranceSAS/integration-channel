@@ -187,9 +187,6 @@
     "league/flysystem-ftp": {
         "version": "2.0.8"
     },
-    "league/flysystem-sftp": {
-        "version": "2.0.8"
-    },
     "league/mime-type-detection": {
         "version": "1.7.0"
     },
@@ -252,9 +249,6 @@
     },
     "phpdocumentor/type-resolver": {
         "version": "1.4.0"
-    },
-    "phpseclib/phpseclib": {
-        "version": "2.0.32"
     },
     "phpspec/prophecy": {
         "version": "1.13.0"
