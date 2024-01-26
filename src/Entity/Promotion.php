@@ -15,11 +15,9 @@ use IntlCalendar;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * @Gedmo\Loggable(logEntryClass=ProductLogEntry::class)
- */
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
+#[Gedmo\Loggable(logEntryClass: ProductLogEntry::class)]
 class Promotion implements \Stringable
 {
     use TraitTimeUpdated;
@@ -41,101 +39,73 @@ class Promotion implements \Stringable
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     private ?int $id = null;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
+    #[Gedmo\Versioned]
     private ?\DateTimeInterface $beginDate = null;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[Assert\GreaterThan(propertyPath: 'beginDate')]
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
+    #[Gedmo\Versioned]
     private ?\DateTimeInterface $endDate = null;
  
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\ManyToOne(targetEntity: ProductSaleChannel::class, inversedBy: 'promotions')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Gedmo\Versioned]
     private ?\App\Entity\ProductSaleChannel $productSaleChannel = null;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     #[Assert\Choice(choices: Promotion::TYPES, message: 'Choose a valid type.')]
+    #[Gedmo\Versioned]
     private ?string $discountType=self::TYPE_PERCENT;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     #[Assert\GreaterThan(0)]
     #[Assert\LessThan(50)]
+    #[Gedmo\Versioned]
     private ?float $percentageAmount = null;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     #[Assert\GreaterThan(0)]
+    #[Gedmo\Versioned]
     private ?float $fixedAmount = null;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Assert\Length(max: 255)]
+    #[Gedmo\Versioned]
     private ?string $comment = null;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN)]
+    #[Gedmo\Versioned]
     private ?bool $active=true;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
     #[Assert\Range(min: 0, max: 10)]
+    #[Gedmo\Versioned]
     private ?int $priority=0;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     #[Assert\Choice(choices: Promotion::FREQUENCIES, message: 'Choose a valid type.')]
+    #[Gedmo\Versioned]
     private ?string $frequency = self::FREQUENCY_CONTINUE;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::ARRAY, nullable: true)]
+    #[Gedmo\Versioned]
     private $weekDays = [];
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TEXT, nullable: true)]
     private ?string $searchableDescription = null;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TIME_MUTABLE, nullable: true)]
+    #[Gedmo\Versioned]
     private ?\DateTimeInterface $beginHour = null;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TIME_MUTABLE, nullable: true)]
+    #[Gedmo\Versioned]
     private ?\DateTimeInterface $endHour = null;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
+    #[Gedmo\Versioned]
     private ?bool $overrided=false;
 
 

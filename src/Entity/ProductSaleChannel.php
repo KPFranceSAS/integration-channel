@@ -14,11 +14,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-/**
- * @Gedmo\Loggable(logEntryClass=ProductLogEntry::class)
- */
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
+#[Gedmo\Loggable(logEntryClass: ProductLogEntry::class)]
 class ProductSaleChannel implements \Stringable
 {
     final public const TX_MARGIN = 19;
@@ -39,10 +37,8 @@ class ProductSaleChannel implements \Stringable
     private ?\App\Entity\SaleChannel $saleChannel = null;
 
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN)]
+    #[Gedmo\Versioned]
     private ?bool $enabled=false;
 
     /**
@@ -53,12 +49,10 @@ class ProductSaleChannel implements \Stringable
     #[ORM\OneToMany(targetEntity: Promotion::class, mappedBy: 'productSaleChannel', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private \Doctrine\Common\Collections\Collection $promotions;
 
-    /**
-     * @Gedmo\Versioned
-     */
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     #[Assert\Expression(expression: 'this.getEnabled() == false or (this.getEnabled() === true and value !== null)', message: 'You must specify the value if Enabled is activated')]
     #[Assert\GreaterThanOrEqual(0)]
+    #[Gedmo\Versioned]
     private ?float $price = null;
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]

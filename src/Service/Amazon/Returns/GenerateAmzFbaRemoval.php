@@ -54,6 +54,7 @@ class GenerateAmzFbaRemoval
 
         $grouped = [];
         foreach ($removalOrdersBlanks as $removalOrdersBlank) {
+            
             $orderId = $removalOrdersBlank->getOrderId();
             if (!array_key_exists($orderId, $grouped)) {
                 $grouped[$orderId] = [];
