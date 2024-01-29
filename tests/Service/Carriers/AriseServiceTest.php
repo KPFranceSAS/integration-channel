@@ -10,12 +10,12 @@ class AriseServiceTest extends KernelTestCase
     public function testGetTracking(): void
     {
         $response = AriseTracking::getGlsResponse("314437110478070011",  "29140");
-        dump($response);
+        $this->assertNotNull($response);
 
         $response = AriseTracking::getGlsResponse("314437110449060010",  "47012");
-        dump($response);
+        $this->assertNotNull($response);
 
         $response = AriseTracking::getGlsResponse("314437110316450012",  "29140");
-        dump($response);
+        $this->assertNotNull($response);
     }
 }

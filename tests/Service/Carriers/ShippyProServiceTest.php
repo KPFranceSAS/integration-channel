@@ -10,6 +10,7 @@ class ShippyProServiceTest extends KernelTestCase
     public function testIntegrationClassic(): void
     {
         $shippyPro = static::getContainer()->get(ShippyProTracking::class);
-        dump($shippyPro->getTracking('1Z8F56Y16890814419'));
+        $tracking = $shippyPro->getTracking('1Z8F56Y16890814419');
+        $this->assertNotNull($tracking);
     }
 }

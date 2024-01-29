@@ -21,6 +21,5 @@ class StockBundleTest extends KernelTestCase
 
         $result3 = $kitConn->getFinalStockProductWarehouse('ANK-PCK-4');
         $this->assertIsInt($result3);
-        dump($result3);
     }
 }

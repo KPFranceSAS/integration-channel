@@ -31,6 +31,5 @@ class PriceGroupTest extends KernelTestCase
         $this->assertIsArray($order);
 
         $orderFull = $bcConnector->getFullSaleOrder($order['id']);
-        dump($orderFull);
     }
 }

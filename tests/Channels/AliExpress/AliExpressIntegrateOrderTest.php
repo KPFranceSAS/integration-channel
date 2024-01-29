@@ -76,8 +76,8 @@ class AliExpressIntegrateOrderTest extends KernelTestCase
         $this->assertIsArray($orderFull);
         $this->assertCount(2, $orderFull['salesOrderLines']);
         $this->assertEquals(416.89, $orderFull['totalAmountIncludingTax']);
-        $this->assertSame($orderFull['shippingAgent'], "DHL PARCEL");
-        $this->assertSame($orderFull['shippingAgentService'], "DHL1");
+        $this->assertSame($orderFull['shippingAgent'], "DHLB2C");
+        $this->assertSame($orderFull['shippingAgentService'], "DHLB2C");
         $this->assertSame($orderFull['locationCode'], "MADRID");
     }
 }
