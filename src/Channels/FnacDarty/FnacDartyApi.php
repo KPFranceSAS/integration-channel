@@ -3,7 +3,6 @@
 namespace App\Channels\FnacDarty;
 
 use App\Channels\Mirakl\MiraklApiParent;
-use App\Entity\IntegrationChannel;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
