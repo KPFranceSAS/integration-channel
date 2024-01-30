@@ -7,7 +7,6 @@ use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Controller\Admin\AdminCrudController;
 use App\Controller\Admin\DashboardController;
 use App\Entity\IntegrationChannel;
-use App\Entity\User;
 use App\Entity\WebOrder;
 use App\Filter\LateOrderFilter;
 use App\Form\ChangeCompleteType;
@@ -45,7 +44,8 @@ class WebOrderCrudController extends AdminCrudController
     {
         $crud = parent::configureCrud($crud);
         $crud->overrideTemplate('crud/detail', 'admin/crud/order/detail.html.twig');
-
+        $searchFields = ['externalNumber','channel','subchannel','company', 'customerNumber', 'orderErp','fulfilledBy','carrierService', 'warehouse','invoiceErp'];
+        $crud->setSearchFields($searchFields);
         return $crud;
     }
 
