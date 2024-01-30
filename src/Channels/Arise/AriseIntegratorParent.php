@@ -7,6 +7,7 @@ use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\BusinessCentral\ProductTaxFinder;
+use App\BusinessCentral\SaleOrderWeightCalculation;
 use App\Channels\Arise\AriseApiParent;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
@@ -14,7 +15,6 @@ use App\Service\Aggregator\IntegratorParent;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use function Symfony\Component\String\u;
 use League\Flysystem\FilesystemOperator;
 use Psr\Log\LoggerInterface;
 
@@ -24,6 +24,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
 
 
     public function __construct(
+        SaleOrderWeightCalculation $saleOrderWeightCalculation,
         ProductTaxFinder $productTaxFinder,
         ManagerRegistry $manager,
         LoggerInterface $logger,
@@ -32,7 +33,7 @@ abstract class AriseIntegratorParent extends IntegratorParent
         ApiAggregator $apiAggregator,
         FilesystemOperator $ariseLabelStorage
     ) {
-        parent::__construct($productTaxFinder, $manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator);
+        parent::__construct($saleOrderWeightCalculation, $productTaxFinder, $manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator);
         $this->ariseLabelStorage = $ariseLabelStorage;
     }
 

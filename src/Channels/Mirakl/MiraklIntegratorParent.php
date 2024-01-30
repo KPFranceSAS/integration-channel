@@ -2,39 +2,16 @@
 
 namespace App\Channels\Mirakl;
 
-use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
-use App\BusinessCentral\ProductTaxFinder;
 use App\Channels\Mirakl\MiraklApiParent;
-use App\Entity\WebOrder;
-use App\Helper\MailService;
-use App\Helper\Utils\DatetimeUtils;
-use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\IntegratorParent;
-use App\Service\Carriers\UpsGetTracking;
-use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use Psr\Log\LoggerInterface;
 
 abstract class MiraklIntegratorParent extends IntegratorParent
 {
 
-    public function __construct(
-        ProductTaxFinder $productTaxFinder,
-        ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        BusinessCentralAggregator $businessCentralAggregator,
-        ApiAggregator $apiAggregator
-    ) {
-        parent::__construct($productTaxFinder, $manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator);
-    }
-
-
-
-
-    
+   
     /**
      * process all invocies directory
      *

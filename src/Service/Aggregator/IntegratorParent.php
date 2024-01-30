@@ -7,6 +7,7 @@ use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
 use App\BusinessCentral\ProductTaxFinder;
+use App\BusinessCentral\SaleOrderWeightCalculation;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
@@ -14,6 +15,7 @@ use App\Entity\WebOrder;
 use App\Helper\MailService;
 use App\Helper\Traits\TraitServiceLog;
 use App\Service\Aggregator\ApiAggregator;
+use App\Service\Carriers\DhlGetTracking;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -21,29 +23,21 @@ use Psr\Log\LoggerInterface;
 abstract class IntegratorParent
 {
     use TraitServiceLog;
-    protected $logger;
-
-    protected $productTaxFinder;
 
     protected $manager;
 
     protected $errors;
 
-    protected $mailer;
-
-    protected $businessCentralAggregator;
-
-    protected $apiAggregator;
-
-
-    public function __construct(ProductTaxFinder $productTaxFinder, ManagerRegistry $manager, LoggerInterface $logger, MailService $mailer, BusinessCentralAggregator $businessCentralAggregator, ApiAggregator $apiAggregator)
+    public function __construct(
+            protected SaleOrderWeightCalculation $saleOrderWeightCalculation,
+            protected ProductTaxFinder $productTaxFinder, 
+            ManagerRegistry $manager, 
+            protected LoggerInterface $logger, 
+            protected MailService $mailer,
+            protected BusinessCentralAggregator $businessCentralAggregator,
+            protected ApiAggregator $apiAggregator)
     {
-        $this->productTaxFinder = $productTaxFinder;
-        $this->logger = $logger;
         $this->manager = $manager->getManager();
-        $this->mailer = $mailer;
-        $this->businessCentralAggregator = $businessCentralAggregator;
-        $this->apiAggregator = $apiAggregator;
     }
 
 
@@ -56,7 +50,6 @@ abstract class IntegratorParent
     abstract public function getCustomerBC($orderApi);
 
     abstract protected function getOrderId($orderApi);
-
 
 
     public function getApi()
@@ -154,7 +147,6 @@ abstract class IntegratorParent
                 
                 $this->addLogToOrder($webOrder, 'Define best carriers');
                 $this->defineBestCarrier($webOrder, $orderBC);
-                
                 $webOrder->setWarehouse($orderBC->locationCode);
                 $webOrder->setCustomerNumber($orderBC->customerNumber);
 
@@ -166,6 +158,7 @@ abstract class IntegratorParent
                 $this->addLogToOrder($webOrder, 'Order created in the ERP ' . $businessCentralConnector->getCompanyName() . ' with number ' . $erpOrder['number'].' and content '.json_encode($orderBC->transformToArray()));
                 $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
                 $webOrder->setOrderErp($erpOrder['number']);
+                // add reservation  for all lines
                 if($webOrder->getFulfilledBy()==WebOrder::FULFILLED_BY_SELLER) {
                     $this->createReservationEntries($webOrder);
                 }
@@ -242,7 +235,7 @@ abstract class IntegratorParent
                     $order->setCarrierService(WebOrder::CARRIER_DBSCHENKER);
                 } else {
                     $order->setCarrierService(WebOrder::CARRIER_DHL);
-                    if(in_array($saleOrder->shippingPostalAddress->countryLetterCode, ['ES', 'PT'])) {
+                    if($this->shouldUseDHLB2B($order, $saleOrder)) {
                         $saleOrder->shippingAgent="DHL PARCEL";
                         $saleOrder->shippingAgentService="DHL1";
                     }
@@ -257,6 +250,23 @@ abstract class IntegratorParent
     }
 
 
+    public function shouldUseDHLB2B(WebOrder $webOrder, SaleOrder $saleOrder)
+    {
+        if(in_array($saleOrder->shippingPostalAddress->countryLetterCode, ['ES', 'PT']) ) {
+            $this->addLogToOrder($webOrder, 'Need to be shipped with B2B services because send to '.$saleOrder->shippingPostalAddress->countryLetterCode);
+            return true;
+        }
+
+        $weightPackage = $this->saleOrderWeightCalculation->calculateWeight($saleOrder);
+
+        $this->addLogToOrder($webOrder, 'Weight sale order '.$weightPackage.' kg');
+        if($weightPackage > DhlGetTracking::MAX_B2C) {
+            $this->addLogToOrder($webOrder, 'Need to be shipped with B2B services because  Weight is greater than  '. DhlGetTracking::MAX_B2C.' kg');
+            return true;
+        }
+
+        return false;
+    }
 
 
 
@@ -311,6 +321,7 @@ abstract class IntegratorParent
             $this->addLogToOrder($order, 'Integration done ' . $erpOrder['number']);
             
             if($order->getFulfilledBy()==WebOrder::FULFILLED_BY_SELLER) {
+                $this->addLogToOrder($order, 'Add reservation to sale order lines');
                 $this->createReservationEntries($order);
             }
 
@@ -334,7 +345,7 @@ abstract class IntegratorParent
     {
         try {
           
-            $this->addLogToOrder($orderDb, 'Add reservation to sale order lines');
+            
             $connector = $this->businessCentralAggregator->getBusinessCentralConnector($orderDb->getCompany());
             $orderBc = $connector->getFullSaleOrderByNumber($orderDb->getOrderErp());
 

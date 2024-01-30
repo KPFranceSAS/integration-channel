@@ -8,6 +8,9 @@ use GuzzleHttp\Client;
 
 class DhlGetTracking
 {
+
+    public const MAX_B2C = 30;
+
     public static function getTrackingExternalWeb($externalOrderNumber): ?string
     {
         $body = self::getDHLResponse($externalOrderNumber);

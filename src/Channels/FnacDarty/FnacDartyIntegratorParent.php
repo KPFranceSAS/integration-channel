@@ -2,36 +2,16 @@
 
 namespace App\Channels\FnacDarty;
 
-use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
-use App\BusinessCentral\ProductTaxFinder;
 use App\Channels\FnacDarty\FnacDartyApi;
-use App\Helper\MailService;
-use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\IntegratorParent;
-use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use Psr\Log\LoggerInterface;
 
 abstract class FnacDartyIntegratorParent extends IntegratorParent
 {
 
-    public function __construct(
-        ProductTaxFinder $productTaxFinder,
-        ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        BusinessCentralAggregator $businessCentralAggregator,
-        ApiAggregator $apiAggregator
-    ) {
-        parent::__construct($productTaxFinder, $manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator);
-    }
-
-
-
-
-    
+     
     /**
      * process all invocies directory
      *

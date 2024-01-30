@@ -9,7 +9,6 @@ use App\Channels\ChannelAdvisor\ChannelAdvisorApi;
 use App\Entity\IntegrationChannel;
 use App\Entity\WebOrder;
 use App\Service\Aggregator\IntegratorParent;
-use App\Service\Carriers\UpsGetTracking;
 use Exception;
 use stdClass;
 

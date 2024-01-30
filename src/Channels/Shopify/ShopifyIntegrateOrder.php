@@ -4,8 +4,6 @@ namespace App\Channels\Shopify;
 
 use App\BusinessCentral\Model\SaleOrder;
 use App\BusinessCentral\Model\SaleOrderLine;
-use App\Entity\WebOrder;
-use App\Helper\Utils\DatetimeUtils;
 use App\Service\Aggregator\IntegratorParent;
 
 abstract class ShopifyIntegrateOrder extends IntegratorParent
