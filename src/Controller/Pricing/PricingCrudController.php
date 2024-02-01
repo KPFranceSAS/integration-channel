@@ -4,6 +4,7 @@ namespace App\Controller\Pricing;
 
 use App\Controller\Admin\AdminCrudController;
 use App\Controller\Pricing\ImportPricingCrudController;
+use App\Controller\Pricing\PromotionCrudController;
 use App\Entity\Product;
 use App\Entity\SaleChannel;
 use App\Form\ProductSaleChannelType;
@@ -69,6 +70,23 @@ class PricingCrudController extends AdminCrudController
                     ->displayAsLink()
                     ->addCssClass('btn btn-primary')
             );
+
+            $actions->add(
+                Crud::PAGE_EDIT,
+                Action::new('PromotionCrudController', 'Add promotion', 'fa fa-plus')
+                    ->linkToUrl(function(Product $product){
+                       return $this->adminUrlGenerator->setController(PromotionCrudController::class)
+                                ->setAction('addMultiPromotions')
+                                ->set('entityId', null)
+                                ->set('productId', $product->getId())
+                                ->set('saleChannelId', null)
+                        ->generateUrl();
+                    })
+                    ->displayAsLink()
+                    ->addCssClass('btn btn-primary')
+            );
+
+
             $actions->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE);
             return $actions;
         }

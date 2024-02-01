@@ -61,7 +61,7 @@ class Promotion implements \Stringable
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
     #[Assert\GreaterThan(0)]
-    #[Assert\LessThan(50)]
+    #[Assert\LessThan(70)]
     #[Gedmo\Versioned]
     private ?float $percentageAmount = null;
 
@@ -107,7 +107,6 @@ class Promotion implements \Stringable
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     #[Gedmo\Versioned]
     private ?bool $overrided=false;
-
 
        
 
@@ -313,7 +312,6 @@ class Promotion implements \Stringable
                 ->addViolation();
         }
 
-
         if (!$this->productSaleChannel->getPrice()) {
             $context->buildViolation('You cannot add promotions if price is not defined on '.$this->productSaleChannel)
                 ->atPath($path)
@@ -330,8 +328,8 @@ class Promotion implements \Stringable
                         $price = $this->productSaleChannel->getPrice();
                         $discountPrice = $this->getPromotionPrice();
                         $discount = ($price-$discountPrice)/$price;
-                        if ($discount>0.5) {
-                            $context->buildViolation('You do promotion of 50% and more on '.$this->productSaleChannel)
+                        if ($discount>0.7) {
+                            $context->buildViolation('You do promotion of 70% and more on '.$this->productSaleChannel)
                             ->atPath($path)
                             ->addViolation();
                         }
@@ -342,12 +340,14 @@ class Promotion implements \Stringable
             if ($this->overrided === true) {
             } else {
                 if ($this->getPromotionPrice() && $this->getPromotionPrice() < ((100 + ProductSaleChannel::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {
-                    $context->buildViolation('You do promotion on final price '.$this->getPromotionPrice().' where result have only '.ProductSaleChannel::TX_MARGIN.'% more than product cost ('.$this->getProduct()->getUnitCost().')')
+                    $context->buildViolation('You do promotion on final price '.$this->getPromotionPrice().$this->getSaleChannel()->getCurrencyCode().' where result have only '.ProductSaleChannel::TX_MARGIN.'% more than product cost ('.$this->getProduct()->getUnitCost().'EUR) on '.$this->productSaleChannel)
                                 ->atPath($path)
                                 ->addViolation();
                 }
             }
         }
+       
+        
 
 
         if ($this->frequency == self::FREQUENCY_TIMETOTIME) {

@@ -1,8 +1,5 @@
 # Patxira
 
-## User Documentation
-[User documentation](docs/user.md)
-
 
 ## Technologies
 php>=7.4, mysql8, symfony5.4, php cli, node 14, yarn

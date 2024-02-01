@@ -1,46 +1,54 @@
-####### INTEGRATION #######
+############################ PATXIRA  #######################################
 
 #### BUILD REPORT ####
-45 */2 * * * php /home/prod/integration/bin/console app:amz-full-maj-report-updates -vvv --env=prod
-*/20 * * * * php /home/prod/integration/bin/console app:amz-check-invoiced -vvv --env=prod
-30 8 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
-30 12 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
-30 18 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
-30 2 * * * php /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
-20 2 * * * php /home/prod/integration/bin/console app:amz-store-daily-stocks -vvv --env=prod
-35 * * * * php /home/prod/integration/bin/console app:amz-import-stock -vvv --env=prod
-0 9 * * * php /home/prod/integration/bin/console app:amz-send-alert-fba --env=prod
-
-### PRICING ####
-* * * * * php /home/prod/integration/bin/console app:run-import-pricings -vvv --env=prod
-* * * * * php /home/prod/integration/bin/console app:store-history-pricings -vvv --env=prod
-30 11 * * * php /home/prod/integration/bin/console app:pim-product-integration-from-pim -vvv --env=prod
-2 * * * * php /home/prod/integration/bin/console app:channel-export-pricings -vvv --env=prod
-32 * * * * php /home/prod/integration/bin/console app:channel-export-pricings -vvv --env=prod
-
+30 5 * * * php8.1 /home/prod/integration/bin/console app:amz-full-maj-report-updates -vvv --env=prod
+50 6 * * * php8.1 /home/prod/integration/bin/console app:amz-create-json-files -vvv --env=prod
+20 5 * * * php8.1 /home/prod/integration/bin/console app:amz-check-invoiced -vvv --env=prod
+45 21 * * * php8.1 /home/prod/integration/bin/console app:amz-import-financial -vvv --env=prod
+45 7,12,16 * * * php8.1 /home/prod/integration/bin/console app:amz-import-stock -vvv --env=prod
+0 9 * * * php8.1 /home/prod/integration/bin/console app:amz-send-alert-fba --env=prod
+55 5 * * * php8.1 /home/prod/integration/bin/console app:amz-check-removal -vvv --env=prod
+### SAVE PRICING ####
+*/5 * * * * php8.1 /home/prod/integration/bin/console app:run-import-pricings -vvv --env=prod
+*/20 * * * * php8.1 /home/prod/integration/bin/console app:store-history-pricings -vvv --env=prod
+## EXPORT PRICING ###
+39 * * * * php8.1 /home/prod/integration/bin/console app:update-prices-all -vvv --env=prod
+### EXPORT PRODUCT ####
+55 19 * * * php8.1 /home/prod/integration/bin/console app:sync-marketplace-assignments -vvv --env=prod
+55 3 * * * php8.1 /home/prod/integration/bin/console app:update-products-all -vvv --env=prod
 ### INTEGRATION ORDER ###
-1 * * * * php /home/prod/integration/bin/console app:integrate-orders-all -vvv --env=prod
-31 * * * * php /home/prod/integration/bin/console app:integrate-orders-all -vvv --env=prod
-
+1,31 * * * * php8.1 /home/prod/integration/bin/console app:integrate-orders-all -vvv --env=prod
+### STORE ERROR ###
+5 * * * * php8.1 /home/prod/integration/bin/console app:store-errors-logs 3 -vvv --env=prod
 ### REINTEGRATION WITH ERROR
-30 19 * * * php /home/prod/integration/bin/console app:integrate-orders-all 1 -vvv --env=prod
-30 7 * * * php /home/prod/integration/bin/console app:integrate-orders-all 1 -vvv --env=prod
-
+30 7 * * * php8.1 /home/prod/integration/bin/console app:integrate-orders-all 1 -vvv --env=prod
 ### UPDATE STATUS ORDER ###
-3 * * * * php /home/prod/integration/bin/console app:update-status-orders-all -vvv --env=prod
-33 * * * * php /home/prod/integration/bin/console app:update-status-orders-all -vvv --env=prod
-
+32 * * * * php8.1 /home/prod/integration/bin/console app:update-status-orders-all -vvv --env=prod
+### UPDATE DELIVERY ORDER ###
+10 8,19 * * * php8.1 /home/prod/integration/bin/console app:update-delivery-orders-all -vvv --env=prod
 ### UPDATE STOCK LEVEL ###
-4 * * * * php /home/prod/integration/bin/console app:update-stocks-all -vvv --env=prod
-34 * * * * php /home/prod/integration/bin/console app:update-stocks-all -vvv --env=prod
+8 * * * * php8.1 /home/prod/integration/bin/console app:update-stocks-all -vvv --env=prod
+### CHECK SKUS WITH BC
+50 7 * * * php8.1 /home/prod/integration/bin/console app:pim-product-integration-from-pim -vvv --env=prod
+15 11 * * * php8.1 /home/prod/integration/bin/console app:check-stocks-all -vvv --env=prod
+58 7 * * * php8.1 /home/prod/integration/bin/console app:check-product-logistic  -vvv
 
-### ALIEXPRESS                       
+### MIRAKL
+# Accept order automatically
+*/15 * * * * php8.1 /home/prod/integration/bin/console app:accept-orders-leroymerlin -vvv --env=prod
+*/15 * * * * php8.1 /home/prod/integration/bin/console app:accept-orders-boulanger -vvv --env=prod
+*/15 * * * * php8.1 /home/prod/integration/bin/console app:accept-orders-mediamarkt -vvv --env=prod
+*/15 * * * * php8.1 /home/prod/integration/bin/console app:accept-orders-fnacfr -vvv --env=prod
+*/15 * * * * php8.1 /home/prod/integration/bin/console app:accept-orders-dartyfr -vvv --env=prod
+
+### ALIEXPRESS
 # Check Cancelation online
-30 * * * * php /home/prod/integration/bin/console app:aliexpress-cancel-orders -vvv --env=prod
+15 * * * * php8.1 /home/prod/integration/bin/console app:aliexpress-cancel-orders -vvv --env=prod
 
-### FITBITEXPRESS ####
+### ARISE
 # Check Cancelation online
-30 * * * * php /home/prod/integration/bin/console app:fitbitexpress-cancel-orders -vvv --env=prod
+17 * * * * php8.1 /home/prod/integration/bin/console app:arise-gadget-cancel-orders -vvv --env=prod
+18 * * * * php8.1 /home/prod/integration/bin/console app:arise-amazfit-cancel-orders -vvv --env=prod
+19 * * * * php8.1 /home/prod/integration/bin/console app:arise-sonos-cancel-orders -vvv --env=prod
 
-####### END INTEGRATION #######
-
+############################ END  PATXIRA  #######################################

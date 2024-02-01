@@ -9,7 +9,7 @@
 
 {% block main %}
 	<div class="nav-tabs-custom form-tabs">
-		<ul class="nav nav-tabs">
+		<ul class="nav nav-tabs mb-4">
 			<li class="nav-item">
 				<a class="nav-link active" href="#ea_container_form" id="ea_tab_form" data-bs-toggle="tab">
 					<i class="fa fa-fw fa-fas fa-barcode"></i>Pricing
@@ -57,13 +57,16 @@
 				{{ form_end(edit_form) }}
 			</div>
 			<div class="tab-pane " id="ea_container_promotions">
+
+
+
 				{% for productSaleChannel in entity.instance.productSaleChannels %}
 					{% set url = ea_url()
                     .setController('App\\Controller\\Pricing\\PromotionCrudController')
-                    .setAction('new')
+                    .setAction('addMultiPromotions')
                     .set('entityId', null)
-                    .set('productSaleChannelId', productSaleChannel.id)
-                    .includeReferrer() 
+                    .set('productId', entity.instance.id)
+					.set('saleChannelId', productSaleChannel.saleChannel.id)
                     %}
 					<div class="mt-5">
 						<div class="row">

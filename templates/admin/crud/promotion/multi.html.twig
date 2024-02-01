@@ -1,0 +1,33 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+
+
+{% block body_id 'ea-edit-' %}
+ {% block body_class 'ea-edit ea-edit-' %}
+    {% block content_title %}
+    Add multi promotions
+{% endblock %}
+
+
+        {% block main %}
+        {% if errors|length >0 %}
+        <div class="mb-3">
+            <div class="alert alert-danger">
+                    {{errors|join('<br/>')|raw}}
+            </div>
+       </div>
+        {% endif %}
+
+        <div data-controller="promotions" >
+            {% block form %}
+                {{ form_start(form) }}
+                <div class='row'>
+                {{ form_row(form.products) }}
+               {{ form_rest(form) }}
+                </div>
+  
+            {{ form_end(form) }}
+             {% endblock form %}
+            </div>
+        {% endblock %}
+        

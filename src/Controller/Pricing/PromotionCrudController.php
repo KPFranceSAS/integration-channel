@@ -4,17 +4,23 @@ namespace App\Controller\Pricing;
 
 use App\Controller\Admin\AdminCrudController;
 use App\Controller\Pricing\ImportPricingCrudController;
+use App\Entity\Product;
 use App\Entity\ProductSaleChannel;
 use App\Entity\Promotion;
+use App\Entity\SaleChannel;
 use App\Filter\ProductFilter;
 use App\Filter\SaleChannelFilter;
+use App\Form\MultiPromotionType;
+use App\Helper\FormClass\MultiPromotion;
 use App\Helper\Utils\DatetimeUtils;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
+use EasyCorp\Bundle\EasyAdminBundle\Exception\ForbiddenActionException;
+use EasyCorp\Bundle\EasyAdminBundle\Exception\InsufficientEntityPermissionException;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -25,6 +31,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\DateTimeFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Security\Permission;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PromotionCrudController extends AdminCrudController
 {
@@ -38,6 +46,7 @@ class PromotionCrudController extends AdminCrudController
         $crud = parent::configureCrud($crud);
         $crud->setFormOptions(['attr' => ['data-controller'=>'promotion']]);
         $crud->setEntityPermission('ROLE_PRICING');
+        $crud->setPageTitle('edit', fn (Promotion $promotion) => 'Edit Promotion ' .$promotion->getProduct()->getSku().' - '.$promotion->getProduct()->getDescription().' on '.$promotion->getSaleChannel()->getName());
         return $crud;
     }
 
@@ -54,98 +63,136 @@ class PromotionCrudController extends AdminCrudController
                 ->displayAsLink()
                 ->addCssClass('btn btn-primary')
         );
+
+        $urlNew = $this->adminUrlGenerator->setController(self::class)->setAction('addMultiPromotions')->generateUrl();
+        $actions->add(
+            Crud::PAGE_INDEX,
+            Action::new('addMultiPromotions', 'Add promotions', 'fa fa-plus')
+            ->linkToUrl($urlNew)
+                ->createAsGlobalAction()
+                ->displayAsLink()
+                ->addCssClass('btn btn-primary')
+        );
         $actions->add(Crud::PAGE_EDIT, Action::DELETE);
+        $actions->remove(Crud::PAGE_INDEX, Action::NEW);
         return $actions;
     }
 
 
-    public function createEntity(string $entityFqcn)
+
+
+    public function addMultiPromotions(AdminContext $context, ValidatorInterface $validator, ManagerRegistry $managerRegistry)
     {
-        $promotion = new Promotion();
-        $requestProductMarketplace = $this->getContext()->getRequest()->get('productSaleChannelId', null);
-        if ($requestProductMarketplace) {
-            $productMarketplace = $this->container
-                                        ->get('doctrine')
-                                        ->getManager()
-                                        ->getRepository(ProductSaleChannel::class)
-                                        ->find($requestProductMarketplace);
-            $promotion->setProductSaleChannel($productMarketplace);
+       
+        if (!$this->isGranted(Permission::EA_EXECUTE_ACTION, ['action' => Action::NEW, 'entity' => null])) {
+            throw new ForbiddenActionException($context);
         }
-   
-        return $promotion;
+
+        if (!$context->getEntity()->isAccessible()) {
+            throw new InsufficientEntityPermissionException($context);
+        }
+
+        $manager = $managerRegistry->getManager();
+        $multipromotion = new MultiPromotion();
+        $requestChannelId = $this->getContext()->getRequest()->get('saleChannelId', null);
+        
+        if ($requestChannelId) {
+            $multipromotion->saleChannels[] = $manager->getRepository(SaleChannel::class)->find($requestChannelId);
+        }
+        
+        $requestProductId = $this->getContext()->getRequest()->get('productId', null);
+        if($requestProductId) {
+            $multipromotion->products[] = $manager->getRepository(Product::class)->find($requestProductId);
+        }
+        $errors = [];
+        $newForm = $this->createForm(MultiPromotionType::class, $multipromotion);
+        $newForm->handleRequest($context->getRequest());
+        if ($newForm->isSubmitted() && $newForm->isValid()) {
+                
+            $promotions=$multipromotion->generatePromotions();
+                
+            foreach($promotions as $promotion) {
+                $errorPromotions = $validator->validate($promotion);
+                if($errorPromotions->count()>0) {
+                    foreach($errorPromotions as $errorPromotion) {
+                        $errors[] = $errorPromotion->getMessage();
+                    }
+                }
+                    
+            }
+            if(count($errors)==0) {
+                foreach($promotions as $promotion) {
+                    $manager->persist($promotion);
+                }
+                $manager->flush();
+                $this->addFlash('success', count($promotions).' have been created.');
+                $url = $this->adminUrlGenerator
+                    ->setController(self::class)
+                    ->setAction(Action::INDEX)
+                    ->generateUrl();
+            
+                return $this->redirect($url);
+            }
+        }
+
+        return $this->render('admin/crud/promotion/multi.html.twig', ['form'=>$newForm, 'errors' => $errors]);
     }
+
+
+
+
+
 
 
     public function configureFields(string $pageName): iterable
     {
-        /**@var User */
-        $user = $this->getUser();
-        $saleChannels = $user->getSaleChannels();
-        $saleChannelsId= [];
-        foreach ($saleChannels as $saleChannel) {
-            $saleChannelsId []= $saleChannel->getId();
-        }
-        return [
-            BooleanField::new('active')->renderAsSwitch(false),
-            TextField::new('productName')
-                ->onlyOnIndex(),
-            TextField::new('saleChannelName')
-                ->onlyOnIndex(),
-            NumberField::new('regularPrice')
-                ->onlyOnIndex(),
-            NumberField::new('promotionPrice')
-                ->onlyOnIndex(),
-            TextField::new('promotionDescriptionType')
-                ->onlyOnIndex(),
-            TextField::new('promotionDescriptionFrequency')
-                ->onlyOnIndex(),
-            AssociationField::new("productSaleChannel")
-                ->setQueryBuilder(
-                    fn (QueryBuilder $queryBuilder) => $queryBuilder->andWhere($queryBuilder->expr()->in('entity.saleChannel', $saleChannelsId))->orderBy('entity.product')
-                )
-                ->setCrudController(ProductSaleChannelCrudController::class)
-                ->autocomplete()
-                ->onlyOnForms(),
-            DateTimeField::new('beginDate')
-                ->setColumns(3),
-            DateTimeField::new('endDate')
-                ->setColumns(3),
-            FormField::addRow(),
-            IntegerField::new('priority')
+        yield BooleanField::new('active')->renderAsSwitch(false);
+        yield TextField::new('productName')->onlyOnIndex();
+        yield TextField::new('saleChannelName')->onlyOnIndex();
+        yield NumberField::new('regularPrice')->onlyOnIndex();
+        yield NumberField::new('promotionPrice')->onlyOnIndex();
+        yield TextField::new('promotionDescriptionType')->onlyOnIndex();
+        yield TextField::new('promotionDescriptionFrequency')->onlyOnIndex();
+        yield DateTimeField::new('beginDate')->setColumns(3);
+        yield DateTimeField::new('endDate') ->setColumns(3);
+        yield FormField::addRow();
+        yield IntegerField::new('priority')
                 ->setFormTypeOptions(
                     [
                         'attr.min'=>0,
-                    "attr.max"=>10
+                        "attr.max"=>10
                     ]
                 )
-                ->setColumns(1),
-            TextField::new('comment')
-                ->setColumns(6),
-            FormField::addRow(),
-            ChoiceField::new('discountType')
-                ->setChoices(
-                    [
-                        'Percentage'=> Promotion::TYPE_PERCENT,
-                        'Fixed price'=>Promotion::TYPE_FIXED
-                     ]
-                )->onlyOnForms()
-                ->setColumns(3)
-                ->setFormTypeOptions(
-                    [
-                        'attr.data-action'=>'change->promotion#toggletype'
-                    ]
-                ),
-            NumberField::new('percentageAmount')
+                ->setColumns(1);
+        yield   TextField::new('comment')->setColumns(6);
+        yield   FormField::addRow();
+        yield  ChoiceField::new('discountType')
+                    ->setChoices(
+                        [
+                            'Percentage'=> Promotion::TYPE_PERCENT,
+                            'Fixed price'=>Promotion::TYPE_FIXED
+                        ]
+                    )->onlyOnForms()
+                    ->setColumns(3)
+                    ->setFormTypeOptions(
+                        [
+                            'attr.data-action'=>'change->promotion#toggletype'
+                        ]
+                    );
+        yield  NumberField::new('percentageAmount')
+                    ->onlyOnForms()
+                    ->setColumns(3);
+        yield  NumberField::new('fixedAmount')
                 ->onlyOnForms()
-                ->setColumns(3),
-            NumberField::new('fixedAmount')
-                ->onlyOnForms()
-                ->setColumns(3),
-            BooleanField::new('overrided')
+                ->setColumns(3);
+        yield   BooleanField::new('overrided')
                 ->renderAsSwitch(false)
-                ->setHelp("Check it if you need to define a price with no consideration of unit cost"),
-            FormField::addRow(),
-            ChoiceField::new('frequency')
+                ->setHelp("Check it if you need to define a price with no consideration of unit cost");
+        yield   DateTimeField::new('createdAt')->onlyOnIndex();
+        yield   DateTimeField::new('updatedAt')->onlyOnIndex();
+        
+        yield  FormField::addRow();
+        yield  ChoiceField::new('frequency')
                 ->setChoices(
                     [
                         'Continuous'=> Promotion::FREQUENCY_CONTINUE,
@@ -159,20 +206,19 @@ class PromotionCrudController extends AdminCrudController
                     [
                         'attr.data-action'=>'change->promotion#togglefrequency'
                     ]
-                ),
-            ChoiceField::new('weekDays')
+                );
+        yield  ChoiceField::new('weekDays')
                 ->setChoices(array_flip(DatetimeUtils::getChoicesWeekDayName()))
                 ->onlyOnForms()
                 ->allowMultipleChoices(true)
                 ->renderExpanded()
-                ->setColumns(2),
-            TimeField::new('beginHour')
+                ->setColumns(2);
+        yield TimeField::new('beginHour')
                 ->onlyOnForms()
-                ->setColumns(1),
-            TimeField::new('endHour')
+                ->setColumns(1);
+        yield  TimeField::new('endHour')
                 ->onlyOnForms()
-                ->setColumns(1),
-        ];
+                ->setColumns(1);
     }
 
 
@@ -183,6 +229,9 @@ class PromotionCrudController extends AdminCrudController
             ->add(SaleChannelFilter::new('saleChannel'))
             ->add(BooleanFilter::new('active'))
             ->add(DateTimeFilter::new('beginDate'))
-            ->add(DateTimeFilter::new('endDate'));
+            ->add(DateTimeFilter::new('endDate'))
+            ->add(DateTimeFilter::new('createdAt'))
+            ->add(DateTimeFilter::new('updatedAt'))
+        ;
     }
 }
