@@ -219,11 +219,8 @@ class AriseClient
         $errno = curl_errno($ch);
         if ($errno) {
             curl_close($ch);
-            if ($errno == 28) {
-                throw new Exception("Arise has some timeout to respond on post CURLE_OPERATION_TIMEDOUT", 0);
-            }
             $this->logger->critical("Curl error line 228 code ".$errno);
-            throw new Exception($errno, 0);
+            throw new Exception("Miravia has some timeout to respond on post CURLE_OPERATION_TIMEDOUT >> code ".$errno, 0);
         } else {
             $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
@@ -307,12 +304,12 @@ class AriseClient
         return $sec . '000';
     }
 
-     public function endWith($haystack, $needle)
-     {
-         $length = strlen((string) $needle);
-         if ($length == 0) {
-             return false;
-         }
-         return (substr((string) $haystack, -$length) === $needle);
-     }
+    public function endWith($haystack, $needle)
+    {
+        $length = strlen((string) $needle);
+        if ($length == 0) {
+            return false;
+        }
+        return (substr((string) $haystack, -$length) === $needle);
+    }
 }

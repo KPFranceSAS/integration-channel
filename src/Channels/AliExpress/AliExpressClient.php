@@ -46,21 +46,20 @@ class AliExpressClient
     }
     
 
-    protected function generateSign($apiName,$params)
+    protected function generateSign($apiName, $params)
     {
         ksort($params);
 
         $stringToBeSigned = '';
-        if(str_contains((string) $apiName, '/')){//rest服务协议
+        if(str_contains((string) $apiName, '/')) {//rest服务协议
             $stringToBeSigned .= $apiName;
         }
-        foreach ($params as $k => $v)
-        {
+        foreach ($params as $k => $v) {
             $stringToBeSigned .= "$k$v";
         }
         unset($k, $v);
 
-        return strtoupper((string) $this->hmac_sha256($stringToBeSigned,$this->secretKey));
+        return strtoupper((string) $this->hmac_sha256($stringToBeSigned, $this->secretKey));
     }
 
     public function hmac_sha256($data, $key)
@@ -199,12 +198,8 @@ class AliExpressClient
         
         $errno = curl_errno($ch);
         if ($errno) {
-            curl_close($ch);
-            if ($errno == 28) {
-                throw new Exception("Arise has some timeout to respond on post CURLE_OPERATION_TIMEDOUT", 0);
-            }
             $this->logger->critical("Curl error line 228 code ".$errno);
-            throw new Exception($errno, 0);
+            throw new Exception("Aliexpress has some timeout to respond on post CURLE_OPERATION_TIMEDOUT >> code ".$errno, 0);
         } else {
             $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
@@ -220,69 +215,58 @@ class AliExpressClient
     public function execute(AliExpressRequest $request, $accessToken = null)
     {
         $sysParams["app_key"] = $this->appkey;
-		$sysParams["sign_method"] = $this->signMethod;
-		$sysParams["timestamp"] = $this->msectime();
+        $sysParams["sign_method"] = $this->signMethod;
+        $sysParams["timestamp"] = $this->msectime();
         $sysParams["method"]=$request->apiName;
         $sysParams["partner_id"] = $this->sdkVersion;
         $sysParams["simplify"] = $request->simplify;
         $sysParams["format"] = $request->format;
 
-        if (null != $accessToken)
-		{
-			$sysParams["session"] = $accessToken;
-		}
+        if (null != $accessToken) {
+            $sysParams["session"] = $accessToken;
+        }
 
-		$apiParams = $request->udfParams;
-		
-		$requestUrl = $this->gatewayUrl;
+        $apiParams = $request->udfParams;
+        
+        $requestUrl = $this->gatewayUrl;
 
-		if($this->endWith($requestUrl,"/"))
-		{
-			$requestUrl = substr((string) $requestUrl, 0, -1);
-		}
+        if($this->endWith($requestUrl, "/")) {
+            $requestUrl = substr((string) $requestUrl, 0, -1);
+        }
 
-//		$requestUrl .= $request->apiName;
-		$requestUrl .= '?';
-		$sysParams["sign"] = $this->generateSign($request->apiName,array_merge($apiParams, $sysParams));
+        //		$requestUrl .= $request->apiName;
+        $requestUrl .= '?';
+        $sysParams["sign"] = $this->generateSign($request->apiName, array_merge($apiParams, $sysParams));
 
-		foreach ($sysParams as $sysParamKey => $sysParamValue)
-		{
-			$requestUrl .= "$sysParamKey=" . urlencode((string) $sysParamValue) . "&";
-		}
+        foreach ($sysParams as $sysParamKey => $sysParamValue) {
+            $requestUrl .= "$sysParamKey=" . urlencode((string) $sysParamValue) . "&";
+        }
 
-		$requestUrl = substr($requestUrl, 0, -1);
-		
-		$resp = '';
+        $requestUrl = substr($requestUrl, 0, -1);
+        
+        $resp = '';
 
-		try
-		{
-			if($request->httpMethod == 'POST')
-			{
-				$resp = $this->curl_post($requestUrl, $apiParams, $request->fileParams,$request->headerParams);
-			}
-			else
-			{
-				$resp = $this->curl_get($requestUrl, $apiParams,$request->headerParams);			
-			}
-		}
-		catch (Exception $e)
-		{
-			$this->logApiError($requestUrl,"HTTP_ERROR_" . $e->getCode(),$e->getMessage());
-			throw $e;
-		}
+        try {
+            if($request->httpMethod == 'POST') {
+                $resp = $this->curl_post($requestUrl, $apiParams, $request->fileParams, $request->headerParams);
+            } else {
+                $resp = $this->curl_get($requestUrl, $apiParams, $request->headerParams);
+            }
+        } catch (Exception $e) {
+            $this->logApiError($requestUrl, "HTTP_ERROR_" . $e->getCode(), $e->getMessage());
+            throw $e;
+        }
 
-		unset($apiParams);
+        unset($apiParams);
 
-		$respObject = json_decode((string) $resp);
-		if(isset($respObject->code) && $respObject->code != "0") 
-		{
-			$this->logApiError($requestUrl, $respObject->code, $respObject->message);
-		} else 
-		{
-			$this->logApiError($requestUrl, '', '');
-			
-		}
-		return $respObject;
+        $respObject = json_decode((string) $resp);
+        if(isset($respObject->code) && $respObject->code != "0") {
+            $this->logApiError($requestUrl, $respObject->code, $respObject->message);
+        } else {
+            $this->logApiError($requestUrl, '', '');
+            
+        }
+        return $respObject;
     }
 
     protected function logApiError($requestUrl, $errorCode, $responseTxt, $type='info')
