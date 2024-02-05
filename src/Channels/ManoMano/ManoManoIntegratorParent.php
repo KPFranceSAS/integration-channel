@@ -134,13 +134,4 @@ abstract class ManoManoIntegratorParent extends IntegratorParent
     }
 
 
-    protected function checkAfterPersist(WebOrder $order, $orderApi)
-    {
-        $accepted = $this->getManoManoApi()->markOrderAsAccepted($orderApi);
-        if ($accepted) {
-            $this->addLogToOrder($order, 'Marked as accepted on '.$this->getChannel());
-        } else {
-            $this->addLogToOrder($order, 'Order already accepted on '.$this->getChannel());
-        }
-    }
 }

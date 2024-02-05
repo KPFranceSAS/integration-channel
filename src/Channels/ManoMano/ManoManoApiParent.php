@@ -63,12 +63,18 @@ abstract class ManoManoApiParent implements ApiInterface
         return $orders;
     }
 
+
+    
+
+    public function getAllOrdersToAccept()
+    {
+        return $this->getOrders(['status' => 'PENDING']);
+    }
+
+
     public function getAllOrdersToSend()
     {
-        $pendings = $this->getOrders(['status' => 'PENDING']);
-        $preparations = $this->getOrders(['status' => 'PREPARATION']);
-        $orders = array_merge($pendings, $preparations);
-        return $orders;
+        return $this->getOrders(['status' => 'PREPARATION']);
     }
 
    
@@ -115,23 +121,37 @@ abstract class ManoManoApiParent implements ApiInterface
 
     public function markOrderAsAccepted($order): bool
     {
-        if($order['status']=='PENDING') {
-            $body = [
+        $body = [
+            [
+                "order_reference" => $order['order_reference'],
+                "seller_contract_id" => (int)$this->contractId,
+            ]
+            ];
+        $reponse =  $this->sendRequest('orders/v1/accept-orders', [], 'POST', json_encode($body));
+        if(!$reponse) {
+            throw new Exception("Error during accept confirmation ".json_encode($reponse));
+        }
+        $this->logger->info('Validated');
+        
+
+        return true;
+    }
+
+
+
+    public function markOrderAsRefused($order): bool
+    {
+        $body = [
                 [
                   "order_reference" => $order['order_reference'],
                   "seller_contract_id" => (int)$this->contractId,
                 ]
-              ];
-            $reponse =  $this->sendRequest('orders/v1/accept-orders', [], 'POST', json_encode($body));
-            if(!$reponse) {
-                throw new Exception("Error during accept confirmation ".json_encode($reponse));
-            }
-            $this->logger->info('Validated');
-        } else {
-            $this->logger->info('Already validated');
+        ];
+        $reponse =  $this->sendRequest('orders/v1/refuse-orders', [], 'POST', json_encode($body));
+        if(!$reponse) {
+                throw new Exception("Error during accept cancellation ".json_encode($reponse));
         }
-        
-
+        $this->logger->info('Refused');
         return true;
     }
 
