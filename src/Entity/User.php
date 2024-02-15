@@ -108,7 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->isPricingManager) {
             $roles[] = 'ROLE_PRICING';
         } else {
-            $this->saleChannels =[];
+            $this->saleChannels =new ArrayCollection();
         }
 
         $this->roles = $roles;

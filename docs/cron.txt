@@ -41,6 +41,12 @@
 */15 * * * * php8.1 /home/prod/integration/bin/console app:accept-orders-fnacfr -vvv --env=prod
 */15 * * * * php8.1 /home/prod/integration/bin/console app:accept-orders-dartyfr -vvv --env=prod
 
+### MANOMANO
+# Accept order automatically
+*/15 * * * * php8.1 /home/prod/integration/bin/console app:accept-orders-manomano-fr -vvv --env=prod
+*/15 * * * * php8.1 /home/prod/integration/bin/console app:accept-orders-manomano-de -vvv --env=prod
+
+
 ### ALIEXPRESS
 # Check Cancelation online
 15 * * * * php8.1 /home/prod/integration/bin/console app:aliexpress-cancel-orders -vvv --env=prod
