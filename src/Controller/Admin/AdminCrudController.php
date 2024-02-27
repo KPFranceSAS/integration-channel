@@ -76,9 +76,9 @@ abstract class AdminCrudController extends AbstractCrudController
 
         return $actions
             ->add(Crud::PAGE_INDEX, $exportIndex)
-            ->update(Crud::PAGE_INDEX, Action::NEW, fn(Action $action) => $action->setIcon('fa fa-plus')->setLabel("Add a new " . $this->getName()))
-            ->update(Crud::PAGE_INDEX, Action::EDIT, fn(Action $action) => $action->setIcon('fa fa-pencil')->setLabel(false))
-            ->update(Crud::PAGE_INDEX, Action::DELETE, fn(Action $action) => $action->setIcon('fa fa-trash')->setLabel(false));
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setIcon('fa fa-plus')->setLabel("Add a new " . $this->getName()))
+            ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->setIcon('fa fa-pencil')->setLabel(false))
+            ->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action->setIcon('fa fa-trash')->setLabel(false));
     }
 
 
@@ -97,7 +97,7 @@ abstract class AdminCrudController extends AbstractCrudController
 
         $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
         $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
-        $pageSize = 1000;
+        $pageSize = 200;
         $currentPage = 1;
         $query = $queryBuilder
             ->setFirstResult(0)
