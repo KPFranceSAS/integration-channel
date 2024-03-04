@@ -2,6 +2,7 @@
 
 namespace App\Command\Pim;
 
+use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\BusinessCentral\Connector\KitPersonalizacionSportConnector;
 use App\BusinessCentral\LogisticClassFinder;
 use App\Entity\Brand;
@@ -37,7 +38,13 @@ class ProductDataIntegrationCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Start retrieve datas from Akeneo');
-        $products = $this->akeneoConnector->getAllProducts();
+
+        $searchBuilder = new SearchBuilder();
+        $searchBuilder
+             ->addFilter('erp_product_type', 'IN', ['goods']);
+
+
+        $products = $this->akeneoConnector->searchProducts($searchBuilder, 'Marketplace');
         $errors = [];
         $messages = [];
 
