@@ -76,7 +76,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     break;
                 case '200260|2228|R03-2003-2007':
                     $flatProduct["ATT_13704"] = $this->getAttributeUnit($product, 'solar_panel_power', 'WATT_CRETE', 0);
-                    $flatProduct['feature_00277_200260|2228|R03-2003-2007'] ='LOV_274678'; // Destination
+                    $flatProduct['feature_00277_200260|2228|R03-2003-2007'] ='LOV_000653'; // Destination
                     break;
                 case  "200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005":
                     $flatProduct['feature_08547_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005'] ='LOV_066641'; // Nom du produit : Station d'énergie

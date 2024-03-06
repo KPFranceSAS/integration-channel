@@ -44,7 +44,7 @@ class ProductDataIntegrationCommand extends Command
              ->addFilter('erp_product_type', 'IN', ['goods']);
 
 
-        $products = $this->akeneoConnector->searchProducts($searchBuilder, 'Marketplace');
+        $products = $this->akeneoConnector->getAllFiltreredProducts($searchBuilder);
         $errors = [];
         $messages = [];
 
