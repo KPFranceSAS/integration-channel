@@ -54,6 +54,8 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             "marketplace_pizza_cooker"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
             "marketplace_pizza_table"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
             "marketplace_pizza_other"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
+            "marketplace_composter_home" =>	"201675|2538|R05-007",
+            
         ];
 
         foreach($equivalences as $pimCategory => $mmCategory) {
@@ -97,6 +99,9 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     break;
                 case  "201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003": // accessoires
                     $flatProduct ['ATT_20510'] =  'LOV_000001'; // Food contact ;
+                    break;
+                case  "201675|2538|R05-007": // composter
+                    $flatProduct ['ATT_21148'] =  'LOV_000002'; // Contain woods ;
                     break;
             };
 
