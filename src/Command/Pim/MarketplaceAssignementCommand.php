@@ -91,7 +91,7 @@ class MarketplaceAssignementCommand extends Command
                             'locale' => null
                         ]
                     ];
-                    $productAssignation = $this->getAttributeSimpleScopable($product, 'marketplaces_assignement');
+
                 }
 
                 $productEnabledOnMarketPlacePim = $this->getAttributeSimpleScopable($product, 'enabled_channel', 'Marketplace');
