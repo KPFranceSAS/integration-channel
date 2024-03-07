@@ -35,14 +35,14 @@ class MarketplaceAssignementCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $saleChannels = $this->getAllSaleChannels();         
+        $saleChannels = $this->getAllSaleChannels();
         $products= $this->akeneoConnector->getAllProducts();
         foreach ($products as $product) {
             $output->writeln('-----------------------------------');
 
             $output->writeln('Check Product '.$product['identifier']);
             $productDb = $this->manager->getRepository(Product::class)->findOneBySku($product['identifier']);
-            if($productDb){
+            if($productDb) {
                 $productAssignation = $this->getAttributeSimpleScopable($product, 'marketplaces_assignement');
                 if(!$productAssignation) {
                     $productAssignation=[];
@@ -51,21 +51,23 @@ class MarketplaceAssignementCommand extends Command
                 $productAssignationBak = json_encode($productAssignation);
                 $output->writeln('Product assignation > '.$productAssignationBak);
 
-                foreach($productDb->getProductSaleChannels() as $productSaleChannel){
+                foreach($productDb->getProductSaleChannels() as $productSaleChannel) {
                     $output->writeln('Check '.$productSaleChannel);
-                    if(in_array($productSaleChannel->getSaleChannel()->getCode(),  $saleChannels)){
+                    if(in_array($productSaleChannel->getSaleChannel()->getCode(), $saleChannels)) {
+                        
                         $codePim = $productSaleChannel->getSaleChannel()->getCodePim();
-                        $key = array_search( $codePim, $productAssignation);
-
-                        if($productSaleChannel->getEnabled()){
-                            if ($key !== false) {
+                       
+                        $key = array_search($codePim, $productAssignation);
+                        $output->writeln('Check '.$codePim ." >> ". $key ? 'true' : 'false');
+                        if($productSaleChannel->getEnabled()) {
+                            if ($key == false) {
                                 $output->writeln('Add '.$codePim);
                                 $productAssignation[]=$codePim;
                             }
-                        }  else {
+                        } else {
                             if ($key !== false) {
-                               $output->writeln('Remove '.$codePim);
-                               unset( $productAssignation[$key]);
+                                $output->writeln('Remove '.$codePim);
+                                unset($productAssignation[$key]);
                             }
                         }
                     } else {
@@ -75,7 +77,7 @@ class MarketplaceAssignementCommand extends Command
 
                 $productAssignation =array_unique($productAssignation);
                 sort($productAssignation);
-
+                $output->writeln('Product nv assignation > '.$productAssignation);
 
                 
                 $updatePim = [];
@@ -96,34 +98,37 @@ class MarketplaceAssignementCommand extends Command
                 $enabledOnMArketplace = count($productAssignation) > 0;
 
                 if($productEnabledOnMarketPlacePim!==$enabledOnMArketplace) {
-                        $updatePim['enabled_channel']=[
-                            [
-                                'data' => $enabledOnMArketplace,
-                                'scope'=>  'Marketplace',
-                                'locale' => null
-                            ]
-                            ];
-                    }
-                }
-
-
-
-
-                if(count($updatePim)>0) {
-                    $this->akeneoConnector->updateProductParent($product['identifier'], $product['parent'], $updatePim);
+                    $updatePim['enabled_channel']=[
+                        [
+                            'data' => $enabledOnMArketplace,
+                            'scope'=>  'Marketplace',
+                            'locale' => null
+                        ]
+                        ];
+                        $output->writeln('Change to update '.$enabledOnMArketplace ? 'true' : 'false');
                 }
             }
+
+
+
+
+            if(count($updatePim)>0) {
+                $output->writeln('Update pim '.$product['identifier'].' >>> '. $product['parent']);
+                $this->akeneoConnector->updateProductParent($product['identifier'], $product['parent'], $updatePim);
+            }
+        }
         return Command::SUCCESS;
     }
 
 
 
-    protected function getAllSaleChannels(){
+    protected function getAllSaleChannels()
+    {
         $saleChannels = [];
         $integrationChannels = $this->manager->getRepository(IntegrationChannel::class)->findBy(['active'=>true]);
-        foreach($integrationChannels as $integrationChannel){
-            foreach($integrationChannel->getSaleChannels() as $saleChannel){
-                if($saleChannel->getCodePim()){
+        foreach($integrationChannels as $integrationChannel) {
+            foreach($integrationChannel->getSaleChannels() as $saleChannel) {
+                if($saleChannel->getCodePim()) {
                     $saleChannels[$saleChannel->getCodePim()] = $saleChannel->getCode();
                 }
             }
