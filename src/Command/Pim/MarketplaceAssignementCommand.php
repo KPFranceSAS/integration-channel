@@ -107,15 +107,17 @@ class MarketplaceAssignementCommand extends Command
                         ];
                         $output->writeln('Change to update '.$enabledOnMArketplace ? 'true' : 'false');
                 }
+
+                if(count($updatePim)>0) {
+                    $output->writeln('Update pim '.$product['identifier'].' >>> '. $product['parent']);
+                    $this->akeneoConnector->updateProductParent($product['identifier'], $product['parent'], $updatePim);
+                }
             }
 
 
 
 
-            if(count($updatePim)>0) {
-                $output->writeln('Update pim '.$product['identifier'].' >>> '. $product['parent']);
-                $this->akeneoConnector->updateProductParent($product['identifier'], $product['parent'], $updatePim);
-            }
+           
         }
         return Command::SUCCESS;
     }
