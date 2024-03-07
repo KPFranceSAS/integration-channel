@@ -327,7 +327,9 @@ abstract class AriseApiParent implements ApiInterface
         } else {
             foreach ($result->result->data->pack_order_list as $packOrderList) {
                 foreach ($packOrderList->order_item_list as $packItemList) {
-                    return $packItemList->package_id;
+                    if (property_exists($packItemList, "package_id") && strlen((string) $packItemList->package_id)>0) {
+                        return $packItemList->package_id;
+                    }
                 }
             }
             throw new Exception('No package id '. json_encode($result));

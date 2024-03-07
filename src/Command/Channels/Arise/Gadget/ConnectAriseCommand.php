@@ -21,7 +21,7 @@ class ConnectAriseCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->printLabel();
+        dd($this->ariseApi->getOrder('3670066644146'));
         return Command::SUCCESS;
     }
 
