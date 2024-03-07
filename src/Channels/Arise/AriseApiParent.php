@@ -323,7 +323,7 @@ abstract class AriseApiParent implements ApiInterface
         
         $result = $this->client->execute($request);
         if (property_exists($result->result, 'error_msg')) {
-            throw new Exception('Problem on pack creation '. $result->result->error_msg);
+            throw new Exception('Exception Problem on pack creation '. $result->result->error_msg);
         } else {
             foreach ($result->result->data->pack_order_list as $packOrderList) {
                 foreach ($packOrderList->order_item_list as $packItemList) {
@@ -332,7 +332,7 @@ abstract class AriseApiParent implements ApiInterface
                     }
                 }
             }
-            throw new Exception('No package id '. json_encode($result));
+            throw new Exception('Exception No package id '. json_encode($result));
         }
     }
 

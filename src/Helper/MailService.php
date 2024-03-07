@@ -95,7 +95,8 @@ class MailService
             'Error connecting to the API',
             'Error class',
             "InternalError",
-            'SQLSTATE'
+            'SQLSTATE',
+            'Exception'
         ];
         if (s($titre)->containsAny($stringForbiddens)) {
             return true;
