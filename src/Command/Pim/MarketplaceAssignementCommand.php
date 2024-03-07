@@ -77,7 +77,7 @@ class MarketplaceAssignementCommand extends Command
 
                 $productAssignation =array_unique($productAssignation);
                 sort($productAssignation);
-                $output->writeln('Product nv assignation > '.$productAssignation);
+                $output->writeln('Product nv assignation > '.json_encode($productAssignation));
 
                 
                 $updatePim = [];
