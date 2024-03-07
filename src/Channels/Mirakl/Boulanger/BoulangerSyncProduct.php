@@ -160,31 +160,33 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     {
 
         $flatProduct['CENTRALE_PIZZA_GRILL/contenu_du_carton/notice']= 'Oui';
-        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/nombre_de_personnes']='24 personnes et +';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/nombre_de_personnes']='De 6 à 8 personnes';
         $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/diametre_de-des_pizza_s']='40 cm';
         $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/energie']='Gaz';
         $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/thermostat_reglable']='Oui';
         $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/temperature_maximum_de_cuisson']='500°C';
-        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/rapidite_de_montee_en_temperature']='Moins de 5 minutes';
+        $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/rapidite_de_montee_en_temperature']='15 minutes';
       
         $flatProduct['CENTRALE_PIZZA_GRILL/cuisson/temps_de_cuisson']='1 min';
+
         $flatProduct['CENTRALE_PIZZA_GRILL/equipement/nombre_de_plaques']='1 pierre';
-      
-        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/thermometre']='Oui';
+        $flatProduct['CENTRALE_PIZZA_GRILL/equipement/thermometre']='Non';
         $flatProduct['CENTRALE_PIZZA_GRILL/equipement/minuteur']='Non';
         $flatProduct['CENTRALE_PIZZA_GRILL/equipement/signal_sonore_de_fin_de_cuisson']='Non';
       
         $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/de_la_plaque']='Pierre réfractaire';
         $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/de_la_coque']='Acier inoxydable';
         $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/coloris']='Noir';
+        $flatProduct['CENTRALE_PIZZA_GRILL/matiere_et_coloris/matiere_de_la_cavite']='Inox';
+        
       
         $flatProduct['CENTRALE_PIZZA_GRILL/facilite_de_nettoyage/plaque_amovible']='Oui';
         $flatProduct['CENTRALE_PIZZA_GRILL/agencement/mobilite']='Portable';
-        $flatProduct['CENTRALE_PIZZA_GRILL/agencement/poignees_de_transport']='Oui';
+        $flatProduct['CENTRALE_PIZZA_GRILL/agencement/poignees_de_transport']='Non';
         $flatProduct['CENTRALE_PIZZA_GRILL/securite/poignee_froide']='Non';
-        $flatProduct['CENTRALE_PIZZA_GRILL/securite/parois_froides']='Oui';
+        $flatProduct['CENTRALE_PIZZA_GRILL/securite/parois_froides']='Non';
         $flatProduct['CENTRALE_PIZZA_GRILL/services_inclus/fabrique_en']='Chine';
-        $flatProduct['CENTRALE_PIZZA_GRILL/caracteristiques_generales/fonction']='Appareil multifonction';
+        $flatProduct['CENTRALE_PIZZA_GRILL/caracteristiques_generales/fonction']='Four à pizza';
 
         $flatProduct['CENTRALE_PIZZA_GRILL/dimensions/hauteur_produit']=$this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0);
         $flatProduct['CENTRALE_PIZZA_GRILL/dimensions/profondeur_produit']= $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
