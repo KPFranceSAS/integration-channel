@@ -55,6 +55,8 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
             "marketplace_pizza_table"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
             "marketplace_pizza_other"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
             "marketplace_composter_home" =>	"201675|2538|R05-007",
+            'marketplace_garden_spa_home_lawn_mowers' => "201526|ROBOT_TONDEUSE|TONDEUSE_ET_ROBOT_TONDEUSE|R09-005-004",
+            'marketplace_powered_cooler' => '206339|2450|R09-007'
             
         ];
 
@@ -102,6 +104,9 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     break;
                 case  "201675|2538|R05-007": // composter
                     $flatProduct ['ATT_21148'] =  'LOV_000002'; // Contain woods ;
+                    break;
+                case "201526|ROBOT_TONDEUSE|TONDEUSE_ET_ROBOT_TONDEUSE|R09-005-004": //lawn motor
+                    $flatProduct ['ATT_15344'] =  'LOV_000001'; // Lawn motor ;
                     break;
             };
 

@@ -154,7 +154,8 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             "marketplace_pizza_cooker"	=>19639,
             "marketplace_pizza_table"	=>19639,
             "marketplace_pizza_other"=>19639,
-            "marketplace_composter_home" => 19800
+            "marketplace_composter_home" => 19800,
+            'marketplace_garden_spa_home_lawn_mowers' => 19952,
         ];
 
 
