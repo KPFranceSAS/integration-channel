@@ -108,7 +108,8 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             "marketplace_camera_stands" => "N-300351",
             "marketplace_camera_light" => 	"N-300351",
             "marketplace_camera_selfie"	=> "N-300351",
-            "marketplace_camera_tripod"	=> "N-300351"
+            "marketplace_camera_tripod"	=> "N-300351",
+            'marketplace_powered_cooler' => '10343'
         ];
 
         foreach($equivalences as $pimCategory => $mmCategory) {
@@ -125,6 +126,11 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             switch($flatProduct['category']) {
                 case '30061':
                     $flatProduct ['PRODUCT_TYPE'] = "solar panel";
+                    break;
+                case '10343':
+                    $flatProduct ['PRODUCT_TYPE_10343'] = "26296";
+                    $flatProduct ['SPORT_6'] = "655";
+                    $flatProduct ['SIZE_10'] = "Z132_33L";
                     break;
                 case '30060':
                     $flatProduct ['PRODUCT_TYPE'] = "power bank";
