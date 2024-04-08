@@ -76,6 +76,10 @@ class ProductSaleChannel implements \Stringable
     #[ORM\OneToMany(targetEntity: ProductSaleChannelHistory::class, mappedBy: 'productSaleChannel', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private \Doctrine\Common\Collections\Collection $productSaleChannelHistories;
 
+    #[ORM\Column(nullable: true)]
+    #[Gedmo\Versioned]
+    private ?bool $enabledFbm = false;
+
 
     public function getSalePriceForNow()
     {
@@ -323,7 +327,7 @@ class ProductSaleChannel implements \Stringable
     }
 
 
-     #[Assert\Callback]
+    #[Assert\Callback]
     public function validate(ExecutionContextInterface $context, $payload)
     {
         if ($this->price && $this->price < ((100 + self::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {
@@ -433,6 +437,24 @@ class ProductSaleChannel implements \Stringable
                 $productSaleChannelHistory->setProductSaleChannel(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEnabledFbm(): ?bool
+    {
+        return $this->enabledFbm;
+    }
+
+
+    public function isEnabledFbm(): ?bool
+    {
+        return $this->enabledFbm;
+    }
+
+    public function setEnabledFbm(?bool $enabledFbm): static
+    {
+        $this->enabledFbm = $enabledFbm;
 
         return $this;
     }

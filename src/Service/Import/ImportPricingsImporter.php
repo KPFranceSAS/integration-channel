@@ -110,7 +110,7 @@ class ImportPricingsImporter
         $saleChannelDbs = $this->getSaleChannelsPricing();
 
       
-        $attributes= ['enabled', 'price'];
+        $attributes= ['enabled', 'price', 'enabledFbm'];
         foreach ($line as $column=> $value) {
             foreach ($attributes as $attribute) {
                 if (u($column)->endsWith('-'.$attribute) && strlen((string) $value)> 0) {
@@ -137,7 +137,7 @@ class ImportPricingsImporter
 
                     $productSaleChannel =  $productDb->getProductSaleChannelByCode($channelCode);
                     if ($productSaleChannel) {
-                        $valueFormatted = $attribute == 'enabled' ? (bool)$value : floatval(str_replace(',', '.', (string) $value));
+                        $valueFormatted = $attribute == 'price' ? floatval(str_replace(',', '.', (string) $value)) : (bool)$value;
                         $productSaleChannel->{'set'.ucfirst($attribute)}($valueFormatted);
                         $this->addLog($importPricing, 'Put on channel '.$channelCode." ".$column." to value ".$value);
                     } else {

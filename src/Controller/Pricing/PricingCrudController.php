@@ -58,48 +58,48 @@ class PricingCrudController extends AdminCrudController
 
 
 
-        public function configureActions(Actions $actions): Actions
-        {
-            $actions = parent::configureActions($actions);
-            $url = $this->adminUrlGenerator->setController(ImportPricingCrudController::class)->setAction('importPricings')->generateUrl();
-            $actions->add(
-                Crud::PAGE_INDEX,
-                Action::new('addPricings', 'Import pricings', 'fa fa-upload')
-                    ->linkToUrl($url)
-                    ->createAsGlobalAction()
-                    ->displayAsLink()
-                    ->addCssClass('btn btn-primary')
-            );
+    public function configureActions(Actions $actions): Actions
+    {
+        $actions = parent::configureActions($actions);
+        $url = $this->adminUrlGenerator->setController(ImportPricingCrudController::class)->setAction('importPricings')->generateUrl();
+        $actions->add(
+            Crud::PAGE_INDEX,
+            Action::new('addPricings', 'Import pricings', 'fa fa-upload')
+                ->linkToUrl($url)
+                ->createAsGlobalAction()
+                ->displayAsLink()
+                ->addCssClass('btn btn-primary')
+        );
 
-            $actions->add(
-                Crud::PAGE_EDIT,
-                Action::new('PromotionCrudController', 'Add promotion', 'fa fa-plus')
-                    ->linkToUrl(function(Product $product){
-                       return $this->adminUrlGenerator->setController(PromotionCrudController::class)
-                                ->setAction('addMultiPromotions')
-                                ->set('entityId', null)
-                                ->set('productId', $product->getId())
-                                ->set('saleChannelId', null)
-                        ->generateUrl();
-                    })
-                    ->displayAsLink()
-                    ->addCssClass('btn btn-primary')
-            );
-
-
-            $actions->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE);
-            return $actions;
-        }
+        $actions->add(
+            Crud::PAGE_EDIT,
+            Action::new('PromotionCrudController', 'Add promotion', 'fa fa-plus')
+                ->linkToUrl(function (Product $product) {
+                    return $this->adminUrlGenerator->setController(PromotionCrudController::class)
+                             ->setAction('addMultiPromotions')
+                             ->set('entityId', null)
+                             ->set('productId', $product->getId())
+                             ->set('saleChannelId', null)
+                     ->generateUrl();
+                })
+                ->displayAsLink()
+                ->addCssClass('btn btn-primary')
+        );
 
 
+        $actions->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE);
+        return $actions;
+    }
 
-        public function configureFilters(Filters $filters): Filters
-        {
-            return $filters
-                ->add(EntityFilter::new('brand'))
-                ->add(EntityFilter::new('category'))
-                ->add(TextFilter::new('sku'));
-        }
+
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(EntityFilter::new('brand'))
+            ->add(EntityFilter::new('category'))
+            ->add(TextFilter::new('sku'));
+    }
 
 
     public function configureFields(string $pageName): iterable
@@ -163,6 +163,7 @@ class PricingCrudController extends AdminCrudController
             $header[]=$saleChannel->getCode().'-price';
             $header[]=$saleChannel->getCode().'-promoprice';
             $header[]=$saleChannel->getCode().'-promodescription';
+            $header[]=$saleChannel->getCode().'-enabledFbm';
         }
         $writer = $this->createWriterArray($header, $directory . $fileName);
 
@@ -183,6 +184,7 @@ class PricingCrudController extends AdminCrudController
                     $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promoprice'] =  $promotion->getPromotionPrice();
                     $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promodescription'] =  $promotion->getPromotionDescriptionFrequency();
                 }
+                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-enabledFbm']=(int)$productSaleChannel->getEnabledFbm();
             }
             $singleRowData = WriterEntityFactory::createRowFromArray($productArray);
             $writer->addRow($singleRowData);
