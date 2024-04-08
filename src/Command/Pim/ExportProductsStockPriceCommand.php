@@ -49,7 +49,7 @@ class ExportProductsStockPriceCommand extends Command
             $header = ['sku', 'stock-laroca', 'stock-3pluk'];
             foreach ($saleChannels as $saleChannel) {
                 $code = $saleChannel->getCode().'-';
-                array_push($header, $code.'enabled', $code.'price', $code.'promoprice');
+                array_push($header, $code.'enabled', $code.'price', $code.'promoprice', $code.'enabledFbm');
             }
             $csv->insertOne($header);
             $this->logger->info("start export ".count($products)." products on ".count($saleChannels)." sale channels");
@@ -88,6 +88,7 @@ class ExportProductsStockPriceCommand extends Command
             } else {
                 $productArray[$code.'enabled']= 0;
             }
+            $productArray[$code.'enabledFm']= (int) $productMarketplace->getEnabledFbm() ;
         }
 
         return $productArray;

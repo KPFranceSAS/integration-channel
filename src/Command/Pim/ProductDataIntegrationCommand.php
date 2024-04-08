@@ -58,24 +58,25 @@ class ProductDataIntegrationCommand extends Command
                 'sku' => $sku
             ]);
 
-           
 
-            if (!$productDb) {
-                $output->writeln('Do no exists in Patxira '.$sku);
-                $itemBc = $this->getBusinessCentralProduct($sku);
-                if ($itemBc) {
+
+            $itemBc = $this->getBusinessCentralProduct($sku);
+
+            if (!$itemBc) {
+                $output->writeln('Do no exists in Business central '.$sku);
+                $errors[] = "Product with SKU ".$sku." exists in PIM but not in Business central. Please correct product in PIM to Business central SKU.";
+                if ($productDb) {
+                    $errors[] = "Product with SKU ".$sku." exists in Patxira but not in Business central. Please correct product in Patxira to Business central SKU.";
+                }
+            } else {
+                if (!$productDb) {
+                    $output->writeln('Do no exists in Patxira '.$sku);
+                   
                     $productDb = new Product();
                     $productDb->setSku($sku);
                     $productDb->setDescription($itemBc["displayName"]);
-                    if (array_key_exists("ean", $product['values'])) {
-                        $ean = $product['values']['ean'][0]['data'];
-                        if($ean!=$productDb->getEan()) {
-                            $productDb->setEan($ean);
-                        }
-                    }
-
-                    
-
+                        
+    
                     $this->manager->persist($productDb);
                     $this->manager->flush();
 
@@ -85,23 +86,33 @@ class ProductDataIntegrationCommand extends Command
                         $saleChannel->addProductSaleChannel($productSaleChannel);
                     }
                     $this->manager->flush();
-
-                   
+    
                     if (array_key_exists("brand", $product['values'])) {
                         $brand = $this->getBrand($product['values']['brand'][0]['data']);
                         if ($brand) {
                             $brand->addProduct($productDb);
                         }
-                    }
+                    } 
+                       
                     $this->manager->flush();
                     $output->writeln('Product creation >> ' . $sku);
-                 
+                    
                     $messages[] = "Product with SKU ".$sku." has been added to Patxira. You need to enable it on Marketplace.";
+                   
                 } else {
-                    $output->writeln('Do no exists in Business central '.$sku);
-                    $errors[] = "Product with SKU ".$sku." exists in PIM but not in Business central. Please correct product in PIM to Business central SKU.";
+                   
+    
+                    $productDb->setActive($product['enabled']);
+                    if (array_key_exists("brand", $product['values'])) {
+                        $brand = $this->getBrand($product['values']['brand'][0]['data']);
+                        if ($brand) {
+                            $brand->addProduct($productDb);
+                        }
+                    }   
                 }
-            } else {
+
+
+
                 if (array_key_exists("ean", $product['values'])) {
                     $ean = $product['values']['ean'][0]['data'];
                     if($ean!=$productDb->getEan()) {
@@ -109,23 +120,22 @@ class ProductDataIntegrationCommand extends Command
                     }
                 }
 
-                if (array_key_exists("brand", $product['values'])) {
-                    $brand = $this->getBrand($product['values']['brand'][0]['data']);
-                    if ($brand) {
-                        $brand->addProduct($productDb);
-                    }
+                $productDb->setDescription($itemBc["displayName"]);    
+
+
+                if ((int)$itemBc['HazmatClass']==9) {
+                    $productDb->setDangerousGood(true);
+                } else {
+                    $productDb->setDangerousGood(false);
                 }
 
-                $productDb->setActive($product['enabled']);
-
+                if($i%50 == 0) {
+                    $this->manager->flush();
+                    $this->manager->clear();
+                    $saleChannels = $this->manager->getRepository(SaleChannel::class)->findAll();
+                }
+                $i++;
             }
-
-            if($i%50 == 0) {
-                $this->manager->flush();
-                $this->manager->clear();
-                $saleChannels = $this->manager->getRepository(SaleChannel::class)->findAll();
-            }
-            $i++;
         }
 
         $this->manager->flush();
