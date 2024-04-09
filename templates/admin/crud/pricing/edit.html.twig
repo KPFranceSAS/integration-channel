@@ -40,7 +40,6 @@
 							<th scope="col">Sale Channel</th>
 							<th scope="col">Enabled</th>
 							<th scope="col">Price</th>
-							<th scope="col">Switch FBM</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -50,7 +49,6 @@
 								<td data-label="Sale channel">{{productSaleChannel.vars.data.SaleChannelName}}</td>
 								<td data-label="Enabled" class="enabledProductSaleChannels">{{ form_widget(productSaleChannel.enabled) }}{{ form_errors(productSaleChannel.enabled) }}</td>
 								<td data-label="Price" class="priceProductSaleChannels">{{ form_widget(productSaleChannel.price) }}{{ form_errors(productSaleChannel.price) }}</td>
-								<td data-label="Switch FBM" class="priceProductSaleChannels">{{ form_widget(productSaleChannel.enabledFbm) }}{{ form_errors(productSaleChannel.enabledFbm) }}</td>
 							</tr>
 						{% endfor %}
 					</tbody>

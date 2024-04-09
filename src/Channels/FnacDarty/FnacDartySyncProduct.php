@@ -74,7 +74,6 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
             "marketplace_projector_screen"	=>"401400008",
             "marketplace_projector_stand"	=>"401400002",
             "marketplace_projector_adapters"=>	"401400002",
-            "marketplace_accessories_other"	=>"401400002",
             "marketplace_garden_spa_home"	=>"2000600112",
             "marketplace_solar_panel_energy_travel"	=>"800400201",
             "marketplace_generator_energy_travel"	=>"800400324",
@@ -82,18 +81,21 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
             "marketplace_smart_lock_accesories"=>	"1000300012",
             'marketplace_solar_panel_mobile' =>	"800400201",
             'marketplace_camera_waterproof_accessories'  => "400300015",
-           'marketplace_camera_battery' => "400300015",
-           'marketplace_camera_selfie'  => "400300015",
-           'marketplace_camera_charger' => "400300015",
-           'marketplace_camera_stands'  => "400300001",
-           'marketplace_camera_light'   => "400300015",
-           'marketplace_camera_tripod'  => "400300001",
-           'marketplace_camera_accessories' => "400300015",
-           'marketplace_camera_video' =>   "400800004",
+            'marketplace_camera_battery' => "400300015",
+            'marketplace_camera_selfie'  => "400300015",
+            'marketplace_camera_charger' => "400300015",
+            'marketplace_camera_stands'  => "400300001",
+            'marketplace_camera_light'   => "400300015",
+            'marketplace_camera_tripod'  => "400300001",
+            'marketplace_camera_accessories' => "400300015",
+            'marketplace_camera_video' =>   "400800004",
             'marketplace_hair_care_health_personal_care' =>	"1700200006",
             'marketplace_turntable' =>		'402300004'	,
             'marketplace_video_3D'	 =>	'401300009'	 ,
-            'marketplace_accessories_other'	 =>	 '401400002'
+            'marketplace_accessories_other'	 =>	 '401400002',
+            "marketplace_composter_home"  => '2000500301',
+            'marketplace_garden_spa_home_lawn_mowers' => "2000500520",
+           
         ];
 
 
