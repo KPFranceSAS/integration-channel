@@ -183,6 +183,7 @@ class ProductCrudController extends AdminCrudController
             ->add(EntityFilter::new('logisticClass'))
             ->add(TextFilter::new('sku'))
             ->add(BooleanFilter::new('dangerousGood'))
+            ->add(BooleanFilter::new('enabledFbm'))
             ->add(BooleanFilter::new('freeShipping'));
     }
 }
