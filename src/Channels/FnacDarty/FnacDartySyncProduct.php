@@ -31,11 +31,13 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
         $descriptionFinal = $this->getAttributeSimple($product, 'description', $this->getLocalePim());
         $flatProduct['AdditionalDescription'] =$descriptionFinal ? substr((string) $descriptionFinal, 0, 4000) : null;
 
-        $flatProduct["IMAGE|1505-1"] = $this->getAttributeSimple($product, 'image_url_1');
+        $attributeImageLoc = $this->getAttributeSimple($product, 'image_url_loc_1', 'fr_FR');
+        $flatProduct["IMAGE|1505-1"] = $attributeImageLoc ? $attributeImageLoc : $this->getAttributeSimple($product, 'image_url_1');
 
         for ($i = 2; $i <= 4;$i++) {
             $j=$i-1;
-            $flatProduct["IMAGE|3-".$j] = $this->getAttributeSimple($product, 'image_url_'.$i);
+            $attributeImageLoc = $this->getAttributeSimple($product, 'image_url_loc_'.$i, 'fr_FR');
+            $flatProduct["IMAGE|3-".$j] = $attributeImageLoc ? $attributeImageLoc : $this->getAttributeSimple($product, 'image_url_'.$i);
         }
 
         $codeCm = $this->getCodeMarketplaceInList('lkp_Linear_Size_unit', "cm");
