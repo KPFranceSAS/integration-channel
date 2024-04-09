@@ -95,7 +95,7 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
             'marketplace_accessories_other'	 =>	 '401400002',
             "marketplace_composter_home"  => '2000500301',
             'marketplace_garden_spa_home_lawn_mowers' => "2000500520",
-           
+            "marketplace_turntable_accessories" => "402400012"
         ];
 
 
