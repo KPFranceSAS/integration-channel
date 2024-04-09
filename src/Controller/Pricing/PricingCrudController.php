@@ -163,7 +163,6 @@ class PricingCrudController extends AdminCrudController
             $header[]=$saleChannel->getCode().'-price';
             $header[]=$saleChannel->getCode().'-promoprice';
             $header[]=$saleChannel->getCode().'-promodescription';
-            $header[]=$saleChannel->getCode().'-enabledFbm';
         }
         $writer = $this->createWriterArray($header, $directory . $fileName);
 
@@ -184,7 +183,7 @@ class PricingCrudController extends AdminCrudController
                     $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promoprice'] =  $promotion->getPromotionPrice();
                     $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promodescription'] =  $promotion->getPromotionDescriptionFrequency();
                 }
-                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-enabledFbm']=(int)$productSaleChannel->getEnabledFbm();
+                
             }
             $singleRowData = WriterEntityFactory::createRowFromArray($productArray);
             $writer->addRow($singleRowData);

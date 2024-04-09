@@ -43,15 +43,26 @@ class ProductCrudController extends AdminCrudController
 
        
 
-        $shippingFreeBatch = Action::new('shippingFree', 'Free Shipping')
+        $shippingFreeBatch = Action::new('shippingFreeBatch', 'Free Shipping')
             ->addCssClass('btn btn-primary')
-            ->linkToCrudAction('shippingFree');
+            ->linkToCrudAction('shippingFreeBatch');
             $actions->addBatchAction($shippingFreeBatch);
 
         $shippingNotFreeBatch = Action::new('shippingNotFreeBatch', 'Paid Shipping', )
-            ->addCssClass('btn btn-primary')
+            ->addCssClass('btn btn-secondary')
             ->linkToCrudAction('shippingNotFreeBatch');
             $actions->addBatchAction($shippingNotFreeBatch);
+
+
+        $shippingFbmBatch = Action::new('shippingFbmBatch', 'Activate FBM')
+            ->addCssClass('btn btn-primary')
+            ->linkToCrudAction('shippingFbmBatch');
+            $actions->addBatchAction($shippingFbmBatch);
+
+        $shippingNotFbmBatch = Action::new('shippingNotFbmBatch', 'Desactivate FBM', )
+            ->addCssClass('btn btn-secondary')
+            ->linkToCrudAction('shippingNotFbmBatch');
+            $actions->addBatchAction($shippingNotFbmBatch);
             
         return $actions->disable(Action::NEW, Action::BATCH_DELETE);
     }
@@ -85,7 +96,7 @@ class ProductCrudController extends AdminCrudController
 
 
 
-    public function shippingFree(
+    public function shippingFreeBatch(
         BatchActionDto $batchActionDto,
         ManagerRegistry $managerRegistry
     ) {
@@ -105,6 +116,45 @@ class ProductCrudController extends AdminCrudController
 
 
 
+    public function shippingNotFbmBatch(
+        BatchActionDto $batchActionDto,
+        ManagerRegistry $managerRegistry
+    ) {
+        $entityManager = $managerRegistry->getManagerForClass($batchActionDto->getEntityFqcn());
+        $updates = 0;
+        foreach ($batchActionDto->getEntityIds() as $id) {
+            $product = $entityManager->find($batchActionDto->getEntityFqcn(), $id);
+            if ($product->getEnabledFbm() !== false) {
+                $product->setEnabledFbm(false);
+                $updates++;
+            }
+        }
+        $entityManager->flush();
+        $this->addFlash('info', $updates . " products have been updated");
+        return $this->redirect($batchActionDto->getReferrerUrl());
+    }
+
+
+
+    public function shippingFbmBatch(
+        BatchActionDto $batchActionDto,
+        ManagerRegistry $managerRegistry
+    ) {
+        $entityManager = $managerRegistry->getManagerForClass($batchActionDto->getEntityFqcn());
+        $updates = 0;
+        foreach ($batchActionDto->getEntityIds() as $id) {
+            $product = $entityManager->find($batchActionDto->getEntityFqcn(), $id);
+            if ($product->getEnabledFbm() !== true) {
+                $product->setEnabledFbm(true);
+                $updates++;
+            }
+        }
+        $entityManager->flush();
+        $this->addFlash('info', $updates . " products have been updated");
+        return $this->redirect($batchActionDto->getReferrerUrl());
+    }
+
+
 
 
     public function configureFields(string $pageName): iterable
@@ -119,6 +169,7 @@ class ProductCrudController extends AdminCrudController
             BooleanField::new('active')->setDisabled(),
             BooleanField::new('dangerousGood')->renderAsSwitch(true),
             BooleanField::new('freeShipping')->renderAsSwitch(true),
+            BooleanField::new('enabledFbm')->renderAsSwitch(true)->setHelp('Enables the shipping in Amazon from La Roca'),
             DateTimeField::new('createdAt', "Created at")
         ];
     }

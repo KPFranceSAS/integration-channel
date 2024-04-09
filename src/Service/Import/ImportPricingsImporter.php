@@ -110,7 +110,7 @@ class ImportPricingsImporter
         $saleChannelDbs = $this->getSaleChannelsPricing();
 
       
-        $attributes= ['enabled', 'price', 'enabledFbm'];
+        $attributes= ['enabled', 'price'];
         foreach ($line as $column=> $value) {
             foreach ($attributes as $attribute) {
                 if (u($column)->endsWith('-'.$attribute) && strlen((string) $value)> 0) {

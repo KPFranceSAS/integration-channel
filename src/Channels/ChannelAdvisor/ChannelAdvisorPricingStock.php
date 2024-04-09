@@ -52,10 +52,10 @@ class ChannelAdvisorPricingStock extends PriceStockParent
 
     public function sendStocksPrices(array $products, array $saleChannels)
     {
-        $header = ['sku', 'stock_laroca', 'logistic_class',  'ecotax'];
+        $header = ['sku', 'stock_laroca','stock_fbm', 'logistic_class',  'ecotax'];
         foreach ($saleChannels as $saleChannel) {
             $code = $saleChannel->getCode().'-';
-            array_push($header, $code.'enabled', $code.'price', $code.'promoprice',$code.'fbm');
+            array_push($header, $code.'enabled', $code.'price', $code.'promoprice');
         }
 
         $skus = [];
@@ -101,7 +101,7 @@ class ChannelAdvisorPricingStock extends PriceStockParent
         $productArray = array_fill_keys($header, null);
         $productArray['sku'] = $product->getSku();
         $productArray['stock_laroca'] = $this->productStockFinder->getFinalStockProductWarehouse($product->getSku());
-
+        $productArray['stock_fbm'] = $product->getEnabledFbm() ? $productArray['stock_laroca'] : 0;
         if($product->isFreeShipping()) {
             $logisticClass= 'FREE';
         } else {
@@ -122,15 +122,8 @@ class ChannelAdvisorPricingStock extends PriceStockParent
                 if ($promotion) {
                     $productArray[$code.'promoprice']= $promotion->getPromotionPrice() ;
                 }
-
-                if ($productMarketplace->getEnabledFbm()) {
-                    $productArray[$code.'fbm']= $productArray['stock_laroca'];
-                } else {
-                    $productArray[$code.'fbm']= 0;
-                }
             } else {
                 $productArray[$code.'enabled']= 0;
-                $productArray[$code.'fbm']= 0;
             }
         }
 

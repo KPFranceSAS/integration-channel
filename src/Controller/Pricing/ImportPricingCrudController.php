@@ -81,7 +81,7 @@ class ImportPricingCrudController extends AdminCrudController
                         ->createAsGlobalAction()
                         ->linkToCrudAction('importPricings')
                 )
-            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn(Action $action) => $action->setIcon('fa fa-eye')->setLabel(""));
+            ->update(Crud::PAGE_INDEX, Action::DETAIL, fn (Action $action) => $action->setIcon('fa fa-eye')->setLabel(""));
     }
 
 
@@ -103,7 +103,6 @@ class ImportPricingCrudController extends AdminCrudController
             $lines = [ 'sku' ];
             foreach ($user->getSaleChannels() as $saleChannel) {
                 $lines[]=$saleChannel->getCode().'-enabled';
-                $lines[]=$saleChannel->getCode().'-enabledFbm';
                 $lines[]=$saleChannel->getCode().'-price';
             }
         } else {

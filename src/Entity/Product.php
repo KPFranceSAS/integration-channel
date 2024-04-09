@@ -51,6 +51,10 @@ class Product implements \Stringable
     #[Assert\NotNull]
     private ?\App\Entity\Brand $brand = null;
 
+
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
+    private ?bool $enabledFbm = false;
+
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_product'])]
     private ?string $fnsku = null;
@@ -266,9 +270,9 @@ class Product implements \Stringable
     #[ORM\OneToMany(targetEntity: ProductCorrelation::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private \Doctrine\Common\Collections\Collection $productCorrelations;
 
-     /**
-     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\ProductStockDaily>
-     */
+    /**
+    * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\ProductStockDaily>
+    */
     #[ORM\OneToMany(targetEntity: ProductStockDaily::class, mappedBy: 'product', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private \Doctrine\Common\Collections\Collection $productStockDailys;
 
@@ -1268,6 +1272,25 @@ class Product implements \Stringable
     public function setEan(?string $ean): self
     {
         $this->ean = $ean;
+
+        return $this;
+    }
+
+
+    public function getEnabledFbm(): ?bool
+    {
+        return $this->enabledFbm;
+    }
+
+
+    public function isEnabledFbm(): ?bool
+    {
+        return $this->enabledFbm;
+    }
+
+    public function setEnabledFbm(?bool $enabledFbm): static
+    {
+        $this->enabledFbm = $enabledFbm;
 
         return $this;
     }
