@@ -74,6 +74,9 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             "marketplace_pizza_cooker"	 =>	"6001",
             "marketplace_pizza_table"	 =>	"6001",
             "marketplace_pizza_other"	 =>	"6001",
+            "marketplace_composter_home"  => '8011',
+            'marketplace_garden_spa_home_lawn_mowers' => "7201",
+            
         ];
 
         foreach($equivalences as $pimCategory => $mmCategory) {
@@ -108,10 +111,23 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
                     $flatProduct = $this->addInfoPizza($product, $flatProduct);
     
                     break;
+                case '7201':
+                    $flatProduct = $this->addInfoRobotTondeuse($product, $flatProduct);
+    
+                 break;
+                    case '8011':
+                        $flatProduct = $this->addInfoComposteur($product, $flatProduct);
+        
+                        break;
+
+                    
                 case "6001":
                     $flatProduct = $this->addInfoAccesoriesPizza($product, $flatProduct);
     
                     break;
+
+
+
             };
             
 
@@ -125,13 +141,71 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     }
 
 
+    public function addInfoRobotTondeuse(array $product, array $flatProduct): array
+    {
 
-   
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/produit']='Tondeuse robot';
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/alimentation']='Batterie';
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/type_de_chargement']='Base de recharge (automatique)';
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/autonomie_en_heure']='1,0 h';
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/temps_de_charge_en_heure']='1,0 h';
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/surface_couverte_m2']='500 m²';
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/niveau_sonore']='58 dB';
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/coloris']='Gris';
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_specifique/procede']='Robot tondeuse connecté sans fil périphérique';
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_specifique/hauteurs_de_coupe' ]='2 à 7,6 cm';
+            $flatProduct['CENTRALE_TONDEUSE_GAZON/services_inclus/fabrique_en'] = 'Chine';
+        
+        return $flatProduct;
+    }
+
+
+
+
+    public function addInfoComposteur(array $product, array $flatProduct): array
+    {
+
+            $flatProduct['CENTRALE_POUBELLE/composition/type_de_produit']='Composteur de cuisine'; 
+            $flatProduct['CENTRALE_POUBELLE/composition/mecanisme_de_la_poubelle']='Automatique'; 
+            $flatProduct['CENTRALE_POUBELLE/composition/ouverture_pedale']='Non'; 
+            $flatProduct['CENTRALE_POUBELLE/composition/matiere_du_corps']='Acier inoxydable'; 
+            $flatProduct['CENTRALE_POUBELLE/composition/matiere_du_couvercle']='Polypropylène'; 
+            $flatProduct['CENTRALE_POUBELLE/composition/nombre_de_bac']='1'; 
+            $flatProduct['CENTRALE_POUBELLE/composition/capacite_de_chaque_bac']='30'; 
+            $flatProduct['CENTRALE_POUBELLE/composition/coloris']=$this->getAttributeChoice($product, "color", "fr_FR"); 
+            $flatProduct['CENTRALE_POUBELLE/dimensions/hauteur_cm']=$this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
+            $flatProduct['CENTRALE_POUBELLE/dimensions/largeur_cm']= $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0); 
+            $flatProduct['CENTRALE_POUBELLE/dimensions/profondeur_cm']=$this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0); 
+            $flatProduct['CENTRALE_POUBELLE/services_inclus/fabrique_en']='Chine'; 
+            $flatProduct['CENTRALE_POUBELLE/dimensions/capacite_l']='30'; 
+        
+        return $flatProduct;
+    }
+    
 
     public function addInfoAccesoriesPizza(array $product, array $flatProduct): array
     {
 
-        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/type_de_produit'] = '';
+        $equivalences = [
+            'marketplace_pizza_peel' =>	"Pelle à pizza",
+            "marketplace_pizza_cutter" =>	"Roue pour découper",
+            "marketplace_pizza_brush"	 =>	"Brosse",
+            "marketplace_pizza_scale"	 =>	"Balance",
+            "marketplace_pizza_roller"	 =>	"Rouleau à pizza",
+            "marketplace_pizza_apparel"	 =>	"Vêtement",
+            "marketplace_pizza_stone"	 =>	"Pierre à pizza",
+            "marketplace_pizza_cooker"	 =>	"Poële",
+            "marketplace_pizza_table"	 =>	"Table",
+            "marketplace_pizza_other"	 =>	"Autre",
+        ];
+
+        foreach($equivalences as $pimCategory => $mmCategory) {
+            if(in_array($pimCategory, $product['categories'])) {
+                $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/type_de_produit'] = $mmCategory;
+                break;
+            }
+        }
+
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/compatible_avec' ] ='';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/collection_accessoires'] ='';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/usage'] ='';
@@ -259,12 +333,13 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     public function addInfoSolarPanel(array $product, array $flatProduct): array
     {
         $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/type"] = "Panneau solaire";
+        $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/coloris"] = "Noir";
         $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/caracteristiques_generales/alimentation"] = "Secteur";
         $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/connectivite/technologie"] = "Wifi";
         $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/compatible_assistant_vocal/compatible_google_assistant"] = "Non";
         $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/compatible_assistant_vocal/compatible_alexa"] = "Non";
         $flatProduct["CENTRALE_CHAUFFAGE_CONNECTE/services_inclus/fabrique_en"] = "Chine";
-    
+        
         return $flatProduct;
     }
 
@@ -319,6 +394,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $flatProduct['CENTRALE_BLENDER/caracteristiques_generales/type_produit']='Blender chauffant';
         $flatProduct['CENTRALE_BLENDER/services_inclus/fabrique_en']='Chine';
         $flatProduct['CENTRALE_BLENDER/caracteristiques_generales/couleur']='Blanc';
+        $flatProduct['CENTRALE_BLENDER/facettes_blender/coloris']='Blanc';
 
         return $flatProduct;
     }
@@ -366,6 +442,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $flatProduct['CENTRALE_FRITEUSE/entretien/filtres']='métallique et charbon';
         $flatProduct['CENTRALE_FRITEUSE/entretien/filtration_de_l_huile']='nettoyage facile';
         $flatProduct['CENTRALE_FRITEUSE/services_inclus/fabrique_en']='Chine';
+        $flatProduct['CENTRALE_FRITEUSE/services_inclus/coloris']='Blanc';
         $flatProduct['CENTRALE_FRITEUSE/dimensions/largeur_produit']=25;
         $flatProduct['CENTRALE_FRITEUSE/dimensions/hauteur_produit']=33;
         $flatProduct['CENTRALE_FRITEUSE/dimensions/profondeur_produit']=30;
