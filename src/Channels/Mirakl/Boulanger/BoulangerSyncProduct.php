@@ -206,9 +206,9 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             }
         }
 
-        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/compatible_avec' ] ='';
-        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/collection_accessoires'] ='';
-        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/usage'] ='';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/compatible_avec' ] ='Four à Pizza Witt';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/collection_accessoires'] ='Four à Pizza Witt';
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/usage'] ='Cuisson pizza';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/matiere_de_l_accessoire' ] ='';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/compatibilite_de_l_accessoire/modele_1'] ='';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/precautions_d_utilisation_du_produit/conseil_de_securite' ] ='Produit non concerné';
