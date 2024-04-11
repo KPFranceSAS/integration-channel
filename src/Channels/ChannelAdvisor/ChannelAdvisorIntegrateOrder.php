@@ -147,7 +147,7 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
             $orderBC->shippingPostalAddress->state = substr((string) $orderApi->BillingStateOrProvinceName, 0, 30);
         }
 
-        $orderBC->email = $orderApi->BuyerEmailAddress;
+        $orderBC->email = $orderApi->BuyerEmailAddress!='--'? $orderApi->BuyerEmailAddress : null;
         $orderBC->phoneNumber = $orderApi->BillingDaytimePhone;
         $orderBC->externalDocumentNumber = $orderApi->SiteOrderID;
 

@@ -62,8 +62,16 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
             "marketplace_camera_tripod"	 => "FET_FRA_1186",
             "marketplace_audio_protection"	=> "FET_FRA_1536",
             'marketplace_audio_tv_wall' => "FET_FRA_1421",
-            "marketplace_turntable" => "FET_FRA_1131"
+            "marketplace_turntable" => "FET_FRA_1131",
+            "marketplace_composter_home"  => 'FET_FRA_1375',
+            'marketplace_garden_spa_home_lawn_mowers' => "FET_FRA_1490",
+            "marketplace_turntable_accessories" => "FET_FRA_1224",
+            "marketplace_powered_cooler" => "FET_FRA_1450"
         ];
+
+
+        
+
 
         foreach($equivalences as $pimCategory => $mmCategory) {
             if(in_array($pimCategory, $product['categories'])) {
