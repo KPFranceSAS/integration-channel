@@ -234,7 +234,7 @@ abstract class MiraklApiParent implements ApiInterface
     }
 
 
-    public const PAGINATION = 50;
+    public const PAGINATION = 100;
 
     
 
