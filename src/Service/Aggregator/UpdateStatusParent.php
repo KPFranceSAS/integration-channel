@@ -171,10 +171,10 @@ abstract class UpdateStatusParent
                         $order->setTrackingCode($tracking);
                         $postUpdateStatus = $this->postUpdateStatusDelivery($order, $invoice, $tracking);
                     } else {
-                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
-                        $tracking =  DhlGetTracking::getTrackingExternalWeb($statusSaleOrder['ShipmentNo']);
+                        $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not stored on shipment document '. $statusSaleOrder['ShipmentNo'].' / tracking is still '.$tracking);
+                        $tracking =  $this->trackingAggregator->findShippyProTracking($statusSaleOrder['ShipmentNo']);
                         if (!$tracking) {
-                            $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet retrieved from DHL for expedition '. $statusSaleOrder['ShipmentNo']);
+                            $this->addOnlyLogToOrderIfNotExists($order, 'Tracking number is not yet accessible on shippy pro  '. $statusSaleOrder['ShipmentNo']);
                         } else {
                             $this->addOnlyLogToOrderIfNotExists($order, 'Order was fulfilled by DHL with tracking number ' . $tracking);
                             $order->setTrackingUrl(DhlGetTracking::getTrackingUrlBase($tracking));

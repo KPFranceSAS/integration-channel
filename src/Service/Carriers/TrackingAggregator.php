@@ -40,7 +40,10 @@ class TrackingAggregator
     }
 
 
-
+    public function findShippyProTracking($shipmentNumber): ?string
+    {
+        return $this->shippyProTracking->findTracking($shipmentNumber);
+    }
 
 
     public function getFormattedSteps($carrier, $codeTracking, $zipCode=null): ?array

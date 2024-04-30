@@ -2,6 +2,7 @@
 
 namespace App\Service\Carriers;
 
+use DateInterval;
 use DateTime;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
@@ -14,6 +15,32 @@ class ShippyProTracking
 
     public function __construct(private readonly LoggerInterface $logger, private $shippyProKey)
     {
+    }
+
+
+
+    public function findTracking($shipmentNumber)
+    {
+
+        $dateTime = new DateTime();
+        $dateEnd = $dateTime->format('U');
+        $dateTime->sub(new DateInterval('P6M'));
+        $dateStart = $dateTime->format('U');
+
+        $result = $this->sendRequest(
+            "GetShippedOrders",
+            [
+                'TransactionID'=>$shipmentNumber,
+                'DateMin' => $dateStart,
+                'DateMax' => $dateEnd,
+            ]
+        );
+
+        if($result['Result']=='OK' && $result['Total']>0) {
+            $firstTransaction = reset($result['Orders']);
+            return $firstTransaction['tracking_code'];
+        }
+        return null;
     }
 
 
