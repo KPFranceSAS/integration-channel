@@ -114,11 +114,6 @@ abstract class UpdateStatusParent
         try {
             if ($order->isFulfiledBySeller()) {
                 $this->updateStatusSaleOrderFulfiledBySeller($order);
-                if($order->getCarrierService() == WebOrder::CARRIER_DHL) {
-                    $this->logLine('>>> Wait 5s');
-                    sleep(5);
-                }
-               
             } else {
                 $this->updateStatusSaleOrderFulfiledByExternal($order);
             }
