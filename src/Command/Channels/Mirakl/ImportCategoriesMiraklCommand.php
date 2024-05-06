@@ -18,12 +18,11 @@ class ImportCategoriesMiraklCommand extends Command
 {
     public function __construct(
         private readonly DecathlonApi $decathlonApi,
-        private readonly FnacFrApi $fnacDarty,
+        private readonly FnacFrApi $fnacDartyApi,
         private readonly BoulangerApi $boulangerApi,
         private readonly LeroyMerlinApi $leroymerlinApi,
         private readonly MediaMarktApi $mediamarktApi,
         private readonly ManagerRegistry $managerRegistry,
-
     ) {
         parent::__construct();
         $this->manager = $this->managerRegistry->getManager();
@@ -38,8 +37,8 @@ class ImportCategoriesMiraklCommand extends Command
 
         $channels =  ['decathlon', 'fnacDarty', 'boulanger', 'leroymerlin', 'mediamarkt'];
 
-        foreach($channels as $channel){
-           $output->writeln('Start '.$channel);
+        foreach($channels as $channel) {
+            $output->writeln('Start '.$channel);
 
             $this->manageChannel($channel);
         }
@@ -47,10 +46,11 @@ class ImportCategoriesMiraklCommand extends Command
         return Command::SUCCESS;
     }
 
-    public function manageChannel($channel){
+    public function manageChannel($channel)
+    {
         $indexedCategories =[];
         $marketplaceCategories = $this->manager->getRepository(MarketplaceCategory::class)->findByMarketplace($channel);
-        foreach($marketplaceCategories as $marketplaceCAtgeory){
+        foreach($marketplaceCategories as $marketplaceCAtgeory) {
             $indexedCategories[$marketplaceCAtgeory->getCode()] = $marketplaceCAtgeory;
         }
         
@@ -63,7 +63,7 @@ class ImportCategoriesMiraklCommand extends Command
                 $productTypeCat->setCode($categoryMirakl['code']);
                 $productTypeCat->setMarketplace($channel);
                 $this->manager->persist($productTypeCat);
-            }  else {
+            } else {
                 $productTypeCat = $indexedCategories[$categoryMirakl['code']];
             }
 
