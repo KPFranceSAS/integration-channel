@@ -33,9 +33,11 @@ use App\Entity\Category;
 use App\Entity\ImportPricing;
 use App\Entity\IntegrationChannel;
 use App\Entity\LogisticClass;
+use App\Entity\MarketplaceCategory;
 use App\Entity\OrderLog;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
+use App\Entity\ProductTypeCategorizacion;
 use App\Entity\Promotion;
 use App\Entity\SaleChannel;
 use App\Entity\User;
@@ -179,9 +181,14 @@ class DashboardController extends AbstractDashboardController
                         Brand::class
                     )->setPermission('ROLE_ADMIN'),
                     MenuItem::linkToCrud(
-                        'Category',
+                        'Product Type',
                         'fas fa-sitemap',
-                        Category::class
+                        ProductTypeCategorizacion::class
+                    )->setPermission('ROLE_ADMIN'),
+                    MenuItem::linkToCrud(
+                        'Marketplace Category',
+                        'fas fa-sitemap',
+                        MarketplaceCategory::class
                     )->setPermission('ROLE_ADMIN'),
                     MenuItem::linkToCrud(
                         'Logistic class',

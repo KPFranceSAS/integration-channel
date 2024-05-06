@@ -289,6 +289,8 @@ class Product implements \Stringable
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::BOOLEAN, nullable: true)]
     private ?bool $freeShipping = false;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $productType = null;
 
 
 
@@ -1342,5 +1344,18 @@ class Product implements \Stringable
         return $this;
     }
 
+    public function getProductType(): ?string
+    {
+        return $this->productType;
+    }
+
+    public function setProductType(?string $productType): static
+    {
+        $this->productType = $productType;
+
+        return $this;
+    }
+
+    
 
 }

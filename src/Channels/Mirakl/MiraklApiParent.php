@@ -348,6 +348,55 @@ abstract class MiraklApiParent implements ApiInterface
 
 
 
+    public function getCategorieChoices(){
+        $categoryIndexed = [];
+        $parentCode= [];
+
+        $categories = $this->sendRequest('hierarchies');
+        foreach($categories->hierarchies as $hierarchy){
+            $categoryIndexed[$hierarchy->code] = $hierarchy;
+            if(strlen($hierarchy->parent_code)>0){
+                $parentCode[]=$hierarchy->parent_code;
+            }
+        }
+
+        
+        $finalCategories = [];
+        foreach($categories->hierarchies as $hierarchy){
+            if(!in_array($hierarchy->code, $parentCode)){
+                $this->logger->info("LAst level ".$hierarchy->code);
+                $categorie = [
+                    'code' => $hierarchy->code,
+                    'label' => $hierarchy->label,
+                ];
+
+                $path = [];
+                
+                $categoryCheck = $hierarchy;
+                while($categoryCheck){
+                    $this->logger->info("Add path ".$categoryCheck->label);
+                    $path[] = $categoryCheck->label;
+                    if(strlen($categoryCheck->parent_code)>0){
+                        $categoryCheck = $categoryIndexed[$categoryCheck->parent_code] ;
+                    } else {
+                        $categoryCheck=false;
+                    }
+                }
+                $pathArray = array_reverse($path);
+                $categorie ['path'] = implode(' > ', $pathArray);
+                $finalCategories[ $categorie['path']] = $categorie;
+                $this->logger->info("finish ".$categorie['path']);
+            }
+           
+        }
+
+        ksort($finalCategories);
+
+        return $finalCategories;
+    }
+
+
+
 
 
     public function sendRequest($endPoint, $queryParams = [], $method = 'GET', $form = null)

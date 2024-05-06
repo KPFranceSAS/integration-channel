@@ -4,6 +4,7 @@ namespace App\Controller\Configuration;
 
 use App\Controller\Admin\AdminCrudController;
 use App\Entity\Product;
+use App\Entity\ProductTypeCategorizacion;
 use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -15,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 
@@ -163,7 +165,7 @@ class ProductCrudController extends AdminCrudController
             TextField::new('sku')->setDisabled(),
             TextField::new('ean')->setDisabled(),
             AssociationField::new('brand'),
-            AssociationField::new('category'),
+            TextField::new('productType'),
             AssociationField::new('logisticClass'),
             TextField::new('description', 'Product name'),
             BooleanField::new('active')->setDisabled(),
@@ -179,11 +181,32 @@ class ProductCrudController extends AdminCrudController
     {
         return $filters
             ->add(EntityFilter::new('brand'))
-            ->add(EntityFilter::new('category'))
             ->add(EntityFilter::new('logisticClass'))
             ->add(TextFilter::new('sku'))
+            ->add(ChoiceFilter::new('productType', "Product Type")->canSelectMultiple(true)->setChoices($this->getProductTypes()))
             ->add(BooleanFilter::new('dangerousGood'))
             ->add(BooleanFilter::new('enabledFbm'))
             ->add(BooleanFilter::new('freeShipping'));
+    }
+
+
+    public function getProductTypes()
+    {
+        $channels = $this->container->get('doctrine')
+                    ->getManager()
+                    ->getRepository(ProductTypeCategorizacion::class)
+                    ->findBy(
+                        [
+                        
+                     ],
+                        [
+                            'pimProductType'=>'ASC'
+                        ]
+                    );
+        $channelArray=[];
+        foreach ($channels as $channel) {
+            $channelArray[$channel->getPimProductType().' - '.$channel->getPimProductLabel()] = $channel->getPimProductType();
+        }
+        return $channelArray;
     }
 }

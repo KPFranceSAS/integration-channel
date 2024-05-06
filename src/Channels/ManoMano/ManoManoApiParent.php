@@ -218,4 +218,90 @@ abstract class ManoManoApiParent implements ApiInterface
         $request = new Request($method, $url, $headers, $body);
         return $client->sendRequest($request);
     }
+
+
+
+
+    public function getCategorieChoices(){
+        $categoryIndexed = [];
+
+        $repsonse = $this->sendRequest('api/v1/products/categories');
+
+        $categories =  json_decode((string)  $repsonse->getBody(), true);
+        foreach($categories['content'] as $children0){
+            $categoryIndexed[$children0['id']] = $children0;
+            $this->logger->info('Level 0 '.$children0['level'].' > '.$children0['name'].' '.$children0['id']);
+
+            foreach($children0['children'] as $children1){
+                $categoryIndexed[$children1['id']] = $children1;
+                $this->logger->info('Level 1 '.$children1['level'].' > '.$children1['name'].' '.$children1['id']);
+
+                foreach($children1['children'] as $children2){
+                    $categoryIndexed[$children2['id']] = $children2;
+                    $this->logger->info('Level 2 '.$children2['level'].' > '.$children2['name'].' '.$children2['id']);
+
+                    foreach($children2['children'] as $children3){
+                        $categoryIndexed[$children3['id']] = $children3;
+                        $this->logger->info('Level 3 '.$children3['level'].' > '.$children3['name'].' '.$children3['id']);
+
+                        foreach($children3['children'] as $children4){
+                            
+                            $this->logger->info('Level 4 '.$children4['level'].' > '.$children4['name'].' '.$children4['id']);
+                            $categoryIndexed[$children4['id']] = $children4;
+
+
+                            foreach($children4['children'] as $children5){
+                            
+                                $this->logger->info('Level 5 '.$children5['level'].' > '.$children5['name'].' '.$children5['id']);
+                                $categoryIndexed[$children5['id']] = $children5;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+ 
+       
+        
+        $finalCategories = [];
+       
+        foreach($categoryIndexed as $categoryIndex){
+                if($categoryIndex['finalNode']){
+                    $this->logger->info("LAst level ".$categoryIndex['id']);
+                    $categorie = [
+                        'code' => $categoryIndex['id'],
+                        'label' => $categoryIndex['names']["en_GB"],
+                    ];
+               
+              
+
+                $path = [];
+                
+                $categoryCheck = $categoryIndex;
+                while($categoryCheck){
+                    $this->logger->info("Add path ".$categoryCheck['names']["en_GB"]);
+                    $path[] =$categoryCheck['names']["en_GB"];
+                    if(array_key_exists($categoryCheck['parentId'], $categoryIndexed)){
+                        $categoryCheck = $categoryIndexed[$categoryCheck['parentId']] ;
+                    } else {
+                        $categoryCheck=false;
+                    }
+                }
+                $pathArray = array_reverse($path);
+                $categorie ['path'] = implode(' > ', $pathArray);
+                $finalCategories[ $categorie['path']] = $categorie;
+                $this->logger->info("finish ".$categorie['path']);
+            }
+           
+        }
+
+        ksort($finalCategories);
+        
+       
+        return $finalCategories;
+    }
+
+
+
 }
