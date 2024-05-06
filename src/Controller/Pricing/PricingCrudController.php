@@ -5,8 +5,12 @@ namespace App\Controller\Pricing;
 use App\Controller\Admin\AdminCrudController;
 use App\Controller\Pricing\ImportPricingCrudController;
 use App\Controller\Pricing\PromotionCrudController;
+use App\Entity\MarketplaceCategory;
 use App\Entity\Product;
+use App\Entity\ProductTypeCategorizacion;
 use App\Entity\SaleChannel;
+use App\Filter\SaleChannelEnabledFilter;
+use App\Filter\SaleChannelFilter;
 use App\Form\ProductSaleChannelType;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\CSV\Writer;
@@ -97,7 +101,7 @@ class PricingCrudController extends AdminCrudController
     {
         return $filters
             ->add(EntityFilter::new('brand'))
-            ->add(EntityFilter::new('category'))
+            ->add(SaleChannelEnabledFilter::new('enabledOn', 'Enabled on'))
             ->add(TextFilter::new('sku'));
     }
 
@@ -108,7 +112,7 @@ class PricingCrudController extends AdminCrudController
             return [
                 TextField::new('sku'),
                 AssociationField::new('brand'),
-                AssociationField::new('category'),
+                TextField::new('productType'),
                 TextField::new('description', 'Product name'),
                 NumberField::new('unitCost', 'Unit cost €')->setDisabled(),
             ];
@@ -156,37 +160,76 @@ class PricingCrudController extends AdminCrudController
         $fileName = u('Export_' . $this->getName() . '_' . date('Ymd_His'))->snake() . '.csv';
         $fields = $this->getFieldsExport();
 
-        $saleChannels = $this->container->get('doctrine')->getManager()->getRepository(SaleChannel::class)->findAll();
-        $header = ['sku', 'unitCost'];
+        
+        $manager =     $this->container->get('doctrine')->getManager();
+        
+        $saleChannels =  $manager->getRepository(SaleChannel::class)->findAll();
+
+
+
+        $productTypes =  $manager->getRepository(ProductTypeCategorizacion::class)->findAll();
+
+        $productIndexed = [];
+        $channels =['decathlon', 'leroymerlin', 'fnacDarty', 'mediamarkt', 'manomano', 'boulanger', 'amazon', 'cdiscount'];
+
+        foreach($productTypes as $productType){
+            $indexedCategory = [];
+            foreach($channels as $channel){
+                $indexedCategory [$channel] = '';
+                if($productType->{'get'.ucfirst($channel).'Category'}()){
+                    $categoryChannel = $manager->getRepository(MarketplaceCategory::class)->findOneBy(
+                        ['marketplace'=>$channel, 'code' =>$productType->{'get'.ucfirst($channel).'Category'}() ]
+                    );
+                    if($categoryChannel){
+                        $indexedCategory [$channel] = $categoryChannel->getPath();
+                    }
+                }
+                
+            }
+            $productIndexed[$productType->getPimProductType()] = $indexedCategory;
+        }
+
+
+
+        $header = ['sku', 'unitCost', 'productType'];
+       
         foreach ($saleChannels as $saleChannel) {
             $header[]=$saleChannel->getCode().'-enabled';
             $header[]=$saleChannel->getCode().'-price';
             $header[]=$saleChannel->getCode().'-promoprice';
             $header[]=$saleChannel->getCode().'-promodescription';
+           
         }
+        array_push($header, ...$channels);
         $writer = $this->createWriterArray($header, $directory . $fileName);
 
         $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
         $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
+        
+        
+        $pageSize = 200;
+        $currentPage = 1;
+        $query = $queryBuilder
+            ->setFirstResult(0)
+            ->setMaxResults(null)
+            ->getQuery();
+        
+        
         $results = $queryBuilder->getQuery()->getResult();
 
-        
+        $batchs = [];
         foreach ($results as $result) {
-            $productArray = array_fill_keys($header, null);
-            $productArray['sku'] = $result->getSku();
-            $productArray['unitCost'] = $result->getUnitCost();
-            foreach ($result->getProductSaleChannels() as $productSaleChannel) {
-                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-enabled']=(int)$productSaleChannel->getEnabled();
-                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-price']= $productSaleChannel->getPrice() ?: '';
-                $promotion = $productSaleChannel->getBestPromotionForNow();
-                if ($promotion) {
-                    $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promoprice'] =  $promotion->getPromotionPrice();
-                    $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promodescription'] =  $promotion->getPromotionDescriptionFrequency();
+            $this->addDataToFinal($result, $writer, $header, $channels, $productIndexed );
+            $batchs[] = $result;
+
+            if(count($batchs) % $pageSize == 0){
+                foreach ($batchs as $batch) {
+                    $this->container->get('doctrine')->getManager()->detach($batch);
                 }
-                
+                unset($batchs);
+                $this->container->get('doctrine')->getManager()->clear();
             }
-            $singleRowData = WriterEntityFactory::createRowFromArray($productArray);
-            $writer->addRow($singleRowData);
+            
         }
         $writer->close();
         $logger->info('Finish ');
@@ -199,4 +242,33 @@ class PricingCrudController extends AdminCrudController
         );
         return $response;
     }
+
+
+    public function addDataToFinal(Product $result, Writer $writer, array $header, $channels, $productIndexed){
+        $productArray = array_fill_keys($header, null);
+        $productArray['sku'] = $result->getSku();
+        $productArray['unitCost'] = $result->getUnitCost();
+        $productArray['productType'] = $result->getProductType();
+
+        foreach($channels as $channel){
+            if(array_key_exists($result->getProductType(), $productIndexed)){
+                $productArray[$channel] = $productIndexed[$result->getProductType()][$channel];
+            }
+        }
+
+        foreach ($result->getProductSaleChannels() as $productSaleChannel) {
+            $productArray[$productSaleChannel->getSaleChannel()->getCode().'-enabled']=(int)$productSaleChannel->getEnabled();
+            $productArray[$productSaleChannel->getSaleChannel()->getCode().'-price']= $productSaleChannel->getPrice() ?: '';
+            $promotion = $productSaleChannel->getBestPromotionForNow();
+            if ($promotion) {
+                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promoprice'] =  $promotion->getPromotionPrice();
+                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promodescription'] =  $promotion->getPromotionDescriptionFrequency();
+            }
+            
+        }
+        $singleRowData = WriterEntityFactory::createRowFromArray($productArray);
+        $writer->addRow($singleRowData);
+    }
+
+
 }

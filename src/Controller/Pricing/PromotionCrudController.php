@@ -5,7 +5,6 @@ namespace App\Controller\Pricing;
 use App\Controller\Admin\AdminCrudController;
 use App\Controller\Pricing\ImportPricingCrudController;
 use App\Entity\Product;
-use App\Entity\ProductSaleChannel;
 use App\Entity\Promotion;
 use App\Entity\SaleChannel;
 use App\Filter\ProductFilter;
