@@ -55,6 +55,30 @@ class ProductTypeCategorizacion
     #[ORM\Column]
     private ?bool $existInPim = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductDecathlon = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductLeroymerlin = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductBoulanger = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductFnacDarty = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductMediamarkt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductManomano = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductAmazon = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductCdiscount = null;
+
 
     public function __construct()
     {
@@ -63,6 +87,56 @@ class ProductTypeCategorizacion
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+
+
+    public function getHtmlCell($category,  $nb){
+
+        $class= $category && strlen($category)>0 ? 'fas fa-check' : 'fas fa-times';
+        if ($nb > 0 && $category && strlen($category) > 0) {
+            $classNb = 'badge-success'; 
+        } elseif ($nb > 0) {
+            $classNb = 'badge-danger';
+        } else {
+            $classNb = 'badge-secondary';
+        }
+
+        
+        return  '<i class="'.$class.'"></i> <span class="badge '.$classNb.'">'. $nb.'</span>';
+    }
+
+
+    public function getDecathlon(){
+        return $this->getHtmlCell($this->decathlonCategory, $this->nbProductDecathlon);
+    }
+
+    public function getLeroymerlin(){
+        return $this->getHtmlCell($this->leroymerlinCategory, $this->nbProductLeroymerlin);
+    }
+
+    public function getBoulanger(){
+        return $this->getHtmlCell($this->boulangerCategory, $this->nbProductBoulanger);
+    }
+
+    public function getFnacDarty(){
+        return $this->getHtmlCell($this->fnacDartyCategory, $this->nbProductFnacDarty);
+    }
+
+    public function getMediamarkt(){
+        return $this->getHtmlCell($this->mediamarktCategory, $this->nbProductMediamarkt);
+    }
+
+    public function getManomano(){
+        return $this->getHtmlCell($this->manomanoCategory, $this->nbProductManomano);
+    }
+
+    public function getAmazon(){
+        return $this->getHtmlCell($this->amazonCategory, $this->nbProductAmazon);
+    }
+
+    public function getCdiscount(){
+        return $this->getHtmlCell($this->cdiscountCategory, $this->nbProductCdiscount);
     }
 
     public function getPimProductType(): ?string
@@ -205,6 +279,102 @@ class ProductTypeCategorizacion
     public function setExistInPim(bool $existInPim): static
     {
         $this->existInPim = $existInPim;
+
+        return $this;
+    }
+
+    public function getNbProductDecathlon(): ?int
+    {
+        return $this->nbProductDecathlon;
+    }
+
+    public function setNbProductDecathlon(?int $nbProductDecathlon): static
+    {
+        $this->nbProductDecathlon = $nbProductDecathlon;
+
+        return $this;
+    }
+
+    public function getNbProductLeroymerlin(): ?int
+    {
+        return $this->nbProductLeroymerlin;
+    }
+
+    public function setNbProductLeroymerlin(?int $nbProductLeroymerlin): static
+    {
+        $this->nbProductLeroymerlin = $nbProductLeroymerlin;
+
+        return $this;
+    }
+
+    public function getNbProductBoulanger(): ?int
+    {
+        return $this->nbProductBoulanger;
+    }
+
+    public function setNbProductBoulanger(?int $nbProductBoulanger): static
+    {
+        $this->nbProductBoulanger = $nbProductBoulanger;
+
+        return $this;
+    }
+
+    public function getNbProductFnacDarty(): ?int
+    {
+        return $this->nbProductFnacDarty;
+    }
+
+    public function setNbProductFnacDarty(?int $nbProductFnacDarty): static
+    {
+        $this->nbProductFnacDarty = $nbProductFnacDarty;
+
+        return $this;
+    }
+
+    public function getNbProductMediamarkt(): ?int
+    {
+        return $this->nbProductMediamarkt;
+    }
+
+    public function setNbProductMediamarkt(?int $nbProductMediamarkt): static
+    {
+        $this->nbProductMediamarkt = $nbProductMediamarkt;
+
+        return $this;
+    }
+
+    public function getNbProductManomano(): ?int
+    {
+        return $this->nbProductManomano;
+    }
+
+    public function setNbProductManomano(?int $nbProductManomano): static
+    {
+        $this->nbProductManomano = $nbProductManomano;
+
+        return $this;
+    }
+
+    public function getNbProductAmazon(): ?int
+    {
+        return $this->nbProductAmazon;
+    }
+
+    public function setNbProductAmazon(?int $nbProductAmazon): static
+    {
+        $this->nbProductAmazon = $nbProductAmazon;
+
+        return $this;
+    }
+
+    public function getNbProductCdiscount(): ?int
+    {
+        return $this->nbProductCdiscount;
+    }
+
+    public function setNbProductCdiscount(?int $nbProductCdiscount): static
+    {
+        $this->nbProductCdiscount = $nbProductCdiscount;
 
         return $this;
     }

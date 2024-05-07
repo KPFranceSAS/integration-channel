@@ -11,12 +11,14 @@ use App\Channels\Mirakl\MediaMarkt\MediaMarktApi;
 use App\Controller\Admin\AdminCrudController;
 use App\Entity\MarketplaceCategory;
 use App\Entity\ProductTypeCategorizacion;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class ProductTypeCategoryCrudController extends AdminCrudController
@@ -50,6 +52,34 @@ class ProductTypeCategoryCrudController extends AdminCrudController
 
 
 
+    protected function getFieldsExport(): FieldCollection
+    {
+       return  FieldCollection::new([
+            TextField::new('pimProductType', 'Code'),
+            TextField::new('pimProductLabel', 'Name'),
+            IntegerField::new('countProducts', 'Nb Products'),
+            BooleanField::new('existInPim', 'Exist in PIM'),
+            TextField::new('decathlonCategory', 'Decathlon'),
+            NumberField::new('nbProductDecathlon', 'Nb decathlon'),
+            TextField::new('leroymerlinCategory', 'Leroy merlin'),
+            NumberField::new('nbProductLeroymerlin', 'Nb Leroymerlin'),
+            TextField::new('boulangerCategory', 'Boulanger'),
+            NumberField::new('nbProductBoulanger', 'Nb boulanger'),
+            TextField::new('fnacDartyCategory', 'fnacDarty'),
+            NumberField::new('nbProductFnacDarty', 'Nb fnacDarty'),
+            TextField::new('mediamarktCategory', 'Mediamarkt'),
+            NumberField::new('nbProductMediamarkt', 'Nb Mediamarkt'),
+            TextField::new('manomanoCategory', 'Manomano'),
+            NumberField::new('nbProductManomano', 'Nb Manomano'),
+            TextField::new('amazonCategory', 'Amazon'),
+            NumberField::new('nbProductAmazon', 'Nb Amazon'),
+            TextField::new('cdiscountCategory', 'Cdiscount'),
+            NumberField::new('nbProductCdiscount', 'Nb Cdiscount'),
+        ]);
+    }
+
+
+
     public function configureFields(string $pageName): iterable
     {
         $fields = [
@@ -60,19 +90,21 @@ class ProductTypeCategoryCrudController extends AdminCrudController
         ];
 
         if($pageName == 'index'){
-            $fields[] = TextField::new('decathlonCategory', 'Decathlon');
-            $fields[] =    TextField::new('leroymerlinCategory', 'Leroymerlin');
-            $fields[] =   TextField::new('boulangerCategory', 'Boulanger');
-            $fields[] =   TextField::new('fnacDartyCategory', 'FnacDarty');
-            $fields[] =   TextField::new('mediamarktCategory', 'Mediamarkt');
-            $fields[] =  TextField::new('manomanoCategory', 'Manomano');
+            $fields[] = TextField::new('decathlon', 'Decathlon')->renderAsHtml(true);
+            $fields[] = TextField::new('leroymerlin', 'Leroymerlin')->renderAsHtml(true);
+            $fields[] = TextField::new('boulanger', 'Boulanger')->renderAsHtml(true);
+            $fields[] = TextField::new('fnacDarty', 'FnacDarty')->renderAsHtml(true);
+            $fields[] = TextField::new('mediamarkt', 'Mediamarkt')->renderAsHtml(true);
+            $fields[] = TextField::new('manomano', 'Manomano')->renderAsHtml(true);
+           /* $fields[] = TextField::new('amazon', 'Amazon')->renderAsHtml(true);
+            $fields[] = TextField::new('cdiscount', 'Cdiscount')->renderAsHtml(true);*/
         } else {
 
             $channels =[
                 'decathlon',
-                'fnacDarty',
-                'boulanger',
                 'leroymerlin',
+                'boulanger',
+                'fnacDarty',
                 'mediamarkt',
                 'manomano'
             ];

@@ -3,6 +3,7 @@
 namespace App\Command\Pim;
 
 use App\Entity\Product;
+use App\Entity\ProductSaleChannel;
 use App\Entity\ProductTypeCategorizacion;
 use App\Service\Pim\AkeneoConnector;
 use Doctrine\Persistence\ManagerRegistry;
@@ -53,6 +54,52 @@ class ImportProductTypeIntegration extends Command
 
             $productTypeCat->setPimProductLabel($this->getLabel($productTypePim));
             $productTypeCat->setCountProducts($this->getCountProductsWithType($productTypePim['code']));
+
+
+            $parameters = [
+                'nbProductDecathlon' => [
+                    'decathlon_de', 
+                    "decathlon_it",
+                    "decathlon_es",
+                    "decathlon_fr"
+                ],
+                'nbProductLeroymerlin' => [
+                    'leroy_merlin_kp_it_005', 
+                    "leroy_merlin_kp_es_002",
+                    "leroy_merlin_kp_fr_001",
+                ],
+                'nbProductBoulanger' => [
+                    'boulanger_kp_fr'
+                ],
+                'nbProductFnacDarty' => [
+                    'darty_fr_kp', 'fnac_fr_kp'
+                ],
+                'nbProductMediamarkt' => [
+                    'mediamarkt_es_gi'
+                ],
+                'nbProductManomano' => [
+                    'manomano_it', 
+                    "manomano_es",
+                    "manomano_de",
+                    "manomano_fr"
+                ],
+                'nbProductAmazon' => [
+                    'amazon_es_gi', 
+                    "amazon_fr_kp",
+                    "amazon_es_kp",
+                    "amazon_uk_kp",
+                    'amazon_it_kp', 
+                    "amazon_de_kp",
+        
+                ],
+                'nbProductCdiscount' => [
+                    'cdiscount_kp_fr'
+                ],
+            ];
+            
+            foreach($parameters as $function => $channels){
+                $productTypeCat->{'set'.ucfirst($function)}($this->getCountProductsPerMarketplaceWithType($productTypePim['code'], $channels));
+            }
         }
 
 
@@ -79,6 +126,27 @@ class ImportProductTypeIntegration extends Command
 
         $count = $queryBuilder->getQuery()->getSingleScalarResult();
 
+        return $count;
+    }
+
+
+
+
+    public function getCountProductsPerMarketplaceWithType(string $productTypePimCode, array $saleChannelCodes)
+    {
+        $queryBuilder = $this->manager->createQueryBuilder();
+
+
+        $queryBuilder->select('COUNT(DISTINCT(pscd.id))')
+                ->from(ProductSaleChannel::class, 'psc')
+                ->leftJoin('psc.product', 'pscd')
+                ->leftJoin('psc.saleChannel', 'pscc')
+                ->where('pscd.productType = :productType')
+                ->andWhere('psc.enabled = 1')
+                ->andWhere($queryBuilder->expr()->in('pscc.code', $saleChannelCodes))
+                ->setParameter('productType', $productTypePimCode)
+                ;
+        $count = $queryBuilder->getQuery()->getSingleScalarResult();
         return $count;
     }
 
