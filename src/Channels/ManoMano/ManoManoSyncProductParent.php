@@ -6,6 +6,7 @@ use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
+use App\Entity\ProductTypeCategorizacion;
 use App\Entity\SaleChannel;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
@@ -29,6 +30,8 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
     protected $priceStockAggregator;
 
     protected $projectDir;
+
+    protected $categories=[];
 
 
     public function __construct(
@@ -68,6 +71,16 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         $saleChannels = $this->manager->getRepository(SaleChannel::class)->findBy([
             'integrationChannel' => $integrationChannel
         ]);
+
+
+        $productCategorizations = $this->manager->getRepository(ProductTypeCategorizacion::class)->findAll();
+
+
+        foreach($productCategorizations as $productCategorization){
+            if(strlen($productCategorization->getManomanoCategory())>0){
+                $this->categories[$productCategorization->getPimProductType()]=(int)$productCategorization->getManomanoCategory();
+            }
+        }
         
 
         foreach ($products as $product) {
@@ -134,43 +147,13 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             "unit_count_type" => '',
         ];
 
-        $equivalences = [
-            "marketplace_solar_panel_energy_travel"	=>21255,
-            "marketplace_solar_panel_mobile"	=>21255,
-            "marketplace_generator_energy_travel"	=>22185,
-            "marketplace_garden_spa_home"	=>20008,
-            "markerplace_blender"	=>20597,
-            "marketplace_air_fryer"	=>20562,
-            "marketplace_smart_lock"	=>21503,
-            "marketplace_smart_lock_accesories"=>	21503,
-            "marketplace_travel_oven"	=>19639,
-            "marketplace_pizza_peel"	=>19639,
-            "marketplace_pizza_cutter"=>	19639,
-            "marketplace_pizza_brush"	=>19639,
-            "marketplace_pizza_scale"	=>19639,
-            "marketplace_pizza_roller"=>	19639,
-            "marketplace_pizza_apparel"	=>19639,
-            "marketplace_pizza_stone"	=>19639,
-            "marketplace_pizza_cooker"	=>19639,
-            "marketplace_pizza_table"	=>19639,
-            "marketplace_pizza_other"=>19639,
-            "marketplace_composter_home" => 19800,
-            'marketplace_garden_spa_home_lawn_mowers' => 19952,
-        ];
-
-
-
-
-
-
-        foreach($equivalences as $pimCategory => $mmCategory) {
-            if(in_array($pimCategory, $product['categories'])) {
-                $flatProduct['mm_category_id'] = $mmCategory;
-                $flatProduct['merchant_category'] = $this->getCategorieName($pimCategory, $this->getLocale());
-                break;
+        $productType = $this->getAttributeSimple($product, 'product_type');
+        if($productType ){
+            if(array_key_exists($productType, $this->categories)){
+                $flatProduct['mm_category_id'] = $this->categories[$productType];
             }
+            $flatProduct['merchant_category'] = $this->getAttributeChoice($product, 'product_type', $this->getLocale());
         }
-        
 
 
         $valueGarantee =  $this->getAttributeChoice($product, 'manufacturer_guarantee', $this->getLocale());
