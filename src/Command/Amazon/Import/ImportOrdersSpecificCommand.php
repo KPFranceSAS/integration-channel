@@ -20,9 +20,9 @@ class ImportOrdersSpecificCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $dateImport = DateTime::createFromFormat("Y-m-d", $input->getArgument('dateDebut'));
-        $dateImport = DateTime::createFromFormat("Y-m-d", $input->getArgument('dateFin'));
-        $this->amzApiImportOrder->createReportAndImport($dateImport);
+        $dateStartImport = DateTime::createFromFormat("Y-m-d", $input->getArgument('dateDebut'));
+        $dateEndImport = DateTime::createFromFormat("Y-m-d", $input->getArgument('dateFin'));
+        $this->amzApiImportOrder->createReportAndImportStartEnd($dateStartImport, $dateEndImport);
         return Command::SUCCESS;
     }
 
