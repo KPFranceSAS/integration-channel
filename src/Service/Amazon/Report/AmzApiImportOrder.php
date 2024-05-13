@@ -27,7 +27,7 @@ class AmzApiImportOrder extends AmzApiImport
         try {
             $badStatus = [AmzApi::STATUS_REPORT_CANCELLED, AmzApi::STATUS_REPORT_FATAL];
             $this->logger->info('Report creation ' . $this->getName());
-            $report = $this->amzApi->createReport($dateTimeStart, $dateTimeEnd, AmzApi::TYPE_REPORT_LAST_UPDATE_ORDERS);
+            $report = $this->amzApi->createReportStartEnd($dateTimeStart, $dateTimeEnd, AmzApi::TYPE_REPORT_LAST_UPDATE_ORDERS);
             $this->logger->info('Report processing ReportId = ' . $report->getReportId());
             for ($i = 0; $i < 30; $i++) {
                 $j = ($i + 1) * self::WAITING_TIME;
