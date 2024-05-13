@@ -33,7 +33,7 @@ class AmzApiImportProduct
         $this->manager = $manager->getManager();
     }
 
-    final public const WAITING_TIME = 20;
+    final public const WAITING_TIME = 60;
 
 
     public function updateProducts()
@@ -103,8 +103,11 @@ class AmzApiImportProduct
         ];
         foreach ($marketplaces as $marketplace) {
             $datasReport =  $this->getContentFromReportMarketplace($dateTimeStart, $marketplace);
-            $this->logger->info("Data marketplace $marketplace >>>>" . count($datasReport));
-            $datas[$marketplace] = $datasReport;
+            if(is_array($datasReport)) {
+                $this->logger->info("Data marketplace $marketplace >>>>" . count($datasReport));
+                $datas[$marketplace] = $datasReport;
+          
+            }
             sleep(self::WAITING_TIME);
         }
 
