@@ -136,7 +136,7 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
            
             $offer = [
                 'sku' =>$product->getSku(),
-                "min_quantity" => "",
+                "min_quantity" => 1,
                 "quantity"=>  $quantity > 0 ? $quantity : 0,
                 "shipping_time" => in_array($product->getSku(), ['ANK-PCK-7', 'ANK-PCK-8', 'ANK-PCK-9','ANK-PCK-10']) ? "10#20" : "3#5",
                 "carrier" =>  'DHL Parcel',

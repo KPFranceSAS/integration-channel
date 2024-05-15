@@ -1,0 +1,10 @@
+{% set classIn  = (category and category|length>0) ? 'fas fa-check' : 'fas fa-times' %}
+{% if  nb > 0 and category and category|length > 0  %}
+        {% set classNb = 'badge-success' %}
+{% elseif nb > 0 %}
+     {% set classNb = 'badge-danger' %}
+{% else %}
+       {% set classNb = 'badge-secondary' %}
+{% endif %}   
+<i class="{{classIn}}"></i> <span class="badge {{classNb}}"> {{nb}}</span> 
+{% if category and category|length > 0  %}<!--a href="{{ path('admin', {crudAction: 'seeRequired', crudControllerFqcn : 'App\\Controller\\Configuration\\ProductTypeCategoryCrudController', channel: channel, category: category}) }}"><i class="fas fa-question-circle"></i></a-->{% endif %}

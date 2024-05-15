@@ -79,6 +79,36 @@ class ProductTypeCategorizacion
     #[ORM\Column(nullable: true)]
     private ?int $nbProductCdiscount = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $amazonFrCategory = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $amazonDeCategory = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $amazonEsCategory = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $amazonItCategory = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $amazonUkCategory = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductAmazonEs = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductAmazonFr = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductAmazonDe = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductAmazonUk = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductAmazonIt = null;
+
 
     public function __construct()
     {
@@ -91,53 +121,7 @@ class ProductTypeCategorizacion
 
 
 
-    public function getHtmlCell($category,  $nb){
-
-        $class= $category && strlen($category)>0 ? 'fas fa-check' : 'fas fa-times';
-        if ($nb > 0 && $category && strlen($category) > 0) {
-            $classNb = 'badge-success'; 
-        } elseif ($nb > 0) {
-            $classNb = 'badge-danger';
-        } else {
-            $classNb = 'badge-secondary';
-        }
-
-        
-        return  '<i class="'.$class.'"></i> <span class="badge '.$classNb.'">'. $nb.'</span>';
-    }
-
-
-    public function getDecathlon(){
-        return $this->getHtmlCell($this->decathlonCategory, $this->nbProductDecathlon);
-    }
-
-    public function getLeroymerlin(){
-        return $this->getHtmlCell($this->leroymerlinCategory, $this->nbProductLeroymerlin);
-    }
-
-    public function getBoulanger(){
-        return $this->getHtmlCell($this->boulangerCategory, $this->nbProductBoulanger);
-    }
-
-    public function getFnacDarty(){
-        return $this->getHtmlCell($this->fnacDartyCategory, $this->nbProductFnacDarty);
-    }
-
-    public function getMediamarkt(){
-        return $this->getHtmlCell($this->mediamarktCategory, $this->nbProductMediamarkt);
-    }
-
-    public function getManomano(){
-        return $this->getHtmlCell($this->manomanoCategory, $this->nbProductManomano);
-    }
-
-    public function getAmazon(){
-        return $this->getHtmlCell($this->amazonCategory, $this->nbProductAmazon);
-    }
-
-    public function getCdiscount(){
-        return $this->getHtmlCell($this->cdiscountCategory, $this->nbProductCdiscount);
-    }
+    
 
     public function getPimProductType(): ?string
     {
@@ -375,6 +359,126 @@ class ProductTypeCategorizacion
     public function setNbProductCdiscount(?int $nbProductCdiscount): static
     {
         $this->nbProductCdiscount = $nbProductCdiscount;
+
+        return $this;
+    }
+
+    public function getAmazonFrCategory(): ?string
+    {
+        return $this->amazonFrCategory;
+    }
+
+    public function setAmazonFrCategory(?string $amazonFrCategory): static
+    {
+        $this->amazonFrCategory = $amazonFrCategory;
+
+        return $this;
+    }
+
+    public function getAmazonDeCategory(): ?string
+    {
+        return $this->amazonDeCategory;
+    }
+
+    public function setAmazonDeCategory(?string $amazonDeCategory): static
+    {
+        $this->amazonDeCategory = $amazonDeCategory;
+
+        return $this;
+    }
+
+    public function getAmazonEsCategory(): ?string
+    {
+        return $this->amazonEsCategory;
+    }
+
+    public function setAmazonEsCategory(?string $amazonEsCategory): static
+    {
+        $this->amazonEsCategory = $amazonEsCategory;
+
+        return $this;
+    }
+
+    public function getAmazonItCategory(): ?string
+    {
+        return $this->amazonItCategory;
+    }
+
+    public function setAmazonItCategory(?string $amazonItCategory): static
+    {
+        $this->amazonItCategory = $amazonItCategory;
+
+        return $this;
+    }
+
+    public function getAmazonUkCategory(): ?string
+    {
+        return $this->amazonUkCategory;
+    }
+
+    public function setAmazonUkCategory(?string $amazonUkCategory): static
+    {
+        $this->amazonUkCategory = $amazonUkCategory;
+
+        return $this;
+    }
+
+    public function getNbProductAmazonEs(): ?int
+    {
+        return $this->nbProductAmazonEs;
+    }
+
+    public function setNbProductAmazonEs(?int $nbProductAmazonEs): static
+    {
+        $this->nbProductAmazonEs = $nbProductAmazonEs;
+
+        return $this;
+    }
+
+    public function getNbProductAmazonFr(): ?int
+    {
+        return $this->nbProductAmazonFr;
+    }
+
+    public function setNbProductAmazonFr(?int $nbProductAmazonFr): static
+    {
+        $this->nbProductAmazonFr = $nbProductAmazonFr;
+
+        return $this;
+    }
+
+    public function getNbProductAmazonDe(): ?int
+    {
+        return $this->nbProductAmazonDe;
+    }
+
+    public function setNbProductAmazonDe(?int $nbProductAmazonDe): static
+    {
+        $this->nbProductAmazonDe = $nbProductAmazonDe;
+
+        return $this;
+    }
+
+    public function getNbProductAmazonUk(): ?int
+    {
+        return $this->nbProductAmazonUk;
+    }
+
+    public function setNbProductAmazonUk(?int $nbProductAmazonUk): static
+    {
+        $this->nbProductAmazonUk = $nbProductAmazonUk;
+
+        return $this;
+    }
+
+    public function getNbProductAmazonIt(): ?int
+    {
+        return $this->nbProductAmazonIt;
+    }
+
+    public function setNbProductAmazonIt(?int $nbProductAmazonIt): static
+    {
+        $this->nbProductAmazonIt = $nbProductAmazonIt;
 
         return $this;
     }

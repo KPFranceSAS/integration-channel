@@ -25,11 +25,10 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
         $flatProduct["brandName"] = $this->getCodeMarketplaceInList('brandName', $this->getAttributeChoice($product, "brand", "en_GB"));
 
         $flatProduct["color"] = $this->getCodeMarketplaceInList('color', $this->getAttributeChoice($product, "color_generic", "en_GB"));
-        $flatProduct["CHARACTERISTIC_575"] = $this->getCodeMarketplaceInList('values-575', $this->getAttributeUnit($product, 'product_width', 'CENTIMETER', 0).' cm');
-        $flatProduct["CHARACTERISTIC_398"] = $this->getCodeMarketplaceInList('values-398', $this->getAttributeUnit($product, 'product_width', 'CENTIMETER', 0).' cm');
-        $flatProduct["CHARACTERISTIC_569"] = $this->getCodeMarketplaceInList('values-569', $this->getAttributeUnit($product, 'product_height', 'CENTIMETER', 0).' cm');
-
-        $flatProduct["CHARACTERISTIC_590"] = $this->getCodeMarketplaceInList('values-590', $this->getAttributeUnit($product, 'product_weight', 'CENTIMETER', 0).' kg');
+        $flatProduct["CHARACTERISTIC_575"] = $this->getCodeMarketplaceInList('values-575', $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0).' cm');
+        $flatProduct["CHARACTERISTIC_398"] = $this->getCodeMarketplaceInList('values-398', $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0).' cm');
+        $flatProduct["CHARACTERISTIC_569"] = $this->getCodeMarketplaceInList('values-569', $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0).' cm');
+        $flatProduct["CHARACTERISTIC_590"] = $this->getCodeMarketplaceInList('values-590', $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0).' kg');
 
 
         

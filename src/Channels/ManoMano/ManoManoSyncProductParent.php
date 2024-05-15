@@ -76,8 +76,8 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         $productCategorizations = $this->manager->getRepository(ProductTypeCategorizacion::class)->findAll();
 
 
-        foreach($productCategorizations as $productCategorization){
-            if(strlen($productCategorization->getManomanoCategory())>0){
+        foreach($productCategorizations as $productCategorization) {
+            if(strlen($productCategorization->getManomanoCategory())>0) {
                 $this->categories[$productCategorization->getPimProductType()]=(int)$productCategorization->getManomanoCategory();
             }
         }
@@ -140,16 +140,13 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             'ean' => $this->getAttributeSimple($product, 'ean'),
             'sku_manufacturer' => $product['identifier'],
             'mm_category_id' => null,
-            'product_url' => "",
-            'min_quantity' => "",
-            'Sample_SKU' => "",
-            'Unit_count' => "",
-            "unit_count_type" => '',
+            'merchant_category'=> null,
+            'min_quantity' => 1,
         ];
 
         $productType = $this->getAttributeSimple($product, 'product_type');
-        if($productType ){
-            if(array_key_exists($productType, $this->categories)){
+        if($productType) {
+            if(array_key_exists($productType, $this->categories)) {
                 $flatProduct['mm_category_id'] = $this->categories[$productType];
             }
             $flatProduct['merchant_category'] = $this->getAttributeChoice($product, 'product_type', $this->getLocale());
@@ -158,7 +155,8 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
         $valueGarantee =  $this->getAttributeChoice($product, 'manufacturer_guarantee', $this->getLocale());
         if ($valueGarantee) {
-            $flatProduct['ManufacturerWarrantyTime'] = (int)$valueGarantee;
+            $flatProduct['warranty'] = (int)$valueGarantee;
+            $flatProduct['warranty_unit'] = 'year';
         }
 
 
@@ -185,6 +183,10 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             ],
             "manufacturer" => [
                 "field" => "brand",
+                "type" => "choice",
+            ],
+            "colour_name" => [
+                "field" => "color_generic",
                 "type" => "choice",
             ],
             "length" => [
@@ -222,8 +224,14 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 "convertUnit" => 'kg',
                 'round' => 2
             ],
+
+
             
          ];
+
+
+        
+
 
         foreach ($fieldsToConvert as $fieldMirakl => $fieldPim) {
             if ($fieldPim['type']=='unit') {
@@ -233,8 +241,14 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                     $flatProduct[$fieldMirakl.'_unit'] = $fieldPim['convertUnit'];
                 }
             } elseif ($fieldPim['type']=='choice') {
-                $flatProduct[$fieldMirakl] = $this->getAttributeChoice($product, $fieldPim['field'], $this->getLocale());
+                $flatProduct[$fieldMirakl] = $this->getAttributeChoice($product, $fieldPim['field'], 'en_GB');
             }
+        }
+
+
+        $country = $this->getAttributeChoice($product, 'country_origin', "en_GB");
+        if($country){
+            $flatProduct["origin"] = 'Made in '.$country; 
         }
 
 

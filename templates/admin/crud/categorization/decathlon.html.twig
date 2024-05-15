@@ -1,0 +1,98 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Decathlon {% endblock %}
+{% block main %}
+
+	Generation export for
+	{{category.label}}
+
+{%  set comments = {
+    'ProductIdentifier' : 'Attribute PIM identifier',
+    'mainTitle' : 'Attribute PIM  erp_name',
+    'brandName' :  'Attribute PIM brand',
+    'ean_codes' : 'Attribute PIM ean'
+    'color' : 'Attribute PIM color_generic',
+    'main_image' : 'Attribute PIM image_url_1',
+    'image_2' : 'Attribute PIM image_url_2',
+    'image_3' : 'Attribute PIM image_url_3',
+    'image_4' : 'Attribute PIM image_url_4',
+    'image_5' : 'Attribute PIM image_url_5',
+    'image_6' : 'Attribute PIM image_url_6',
+    'image_7' : 'Attribute PIM image_url_7',
+    'CHARACTERISTIC_575' : 'Attribute pim product_width',
+    'CHARACTERISTIC_575' : 'Attribute pim product_width',
+    'CHARACTERISTIC_575' : 'Attribute pim product_width',
+    'CHARACTERISTIC_575' : 'Attribute pim product_width',
+
+ } %}
+{% set attributesLocales = { 'productTitle' : 'article_name',
+            'webcatchline' : 'short_description',
+            'longDescription' : 'description',
+            'storageAdvice' : 'storage_advice',
+            'video1' : 'howto_video_url_1'
+            } %}
+{% set locales = [
+            'en_GB',
+            'de_DE',
+            'it_IT',
+            'fr_FR',
+            'es_ES'
+        ] %}
+{% for key, attributesLocale in attributesLocales %}
+    {% for locale in locales %}
+        {% set keyLocale = key ~ '-' ~ locale %}
+        {% set comments = comments|merge({ (keyLocale) : 'Attribute PIM ' ~ attributesLocale ~ '-' ~ locale}) %}
+    {% endfor %}
+{% endfor %}
+
+
+	<table class="table datagrid ">
+		<thead>
+			<tr>
+				<th>
+					Code
+				</th>
+				<th>
+					Label
+				</th>
+
+				<th>
+					Require
+				</th>
+				<th>
+					Type
+				</th>
+                <th>
+					Commment
+				</th>
+
+			</tr>
+		</thead>
+		<tbody>
+			{% for attribute in fields.attributes %}
+
+				<tr>
+					<td>
+						{{ attribute.code}}
+					</td>
+					<td>
+						{{ attribute.label}}
+					</td>
+					<td>
+						{{ attribute.required ? 'x'  : ''}}
+					</td>
+					<td>
+						{{ attribute.type}}
+					</td>
+                    <td>
+						{% if attribute.code in comments|keys %}
+                            {{comments[attribute.code ]}}
+                        {% endif %}
+					</td>
+
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+{% endblock %}

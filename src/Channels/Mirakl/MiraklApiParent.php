@@ -404,7 +404,7 @@ abstract class MiraklApiParent implements ApiInterface
     {
         $parameters = [
             'query' => $queryParams,
-            'debug' => true,
+            'debug' => false,
             'headers' => [
                     "Authorization"=>$this->clientKey
                     ]

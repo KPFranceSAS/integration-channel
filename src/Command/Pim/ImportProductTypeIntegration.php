@@ -83,14 +83,21 @@ class ImportProductTypeIntegration extends Command
                     "manomano_de",
                     "manomano_fr"
                 ],
-                'nbProductAmazon' => [
+                'nbProductAmazonEs' => [
                     'amazon_es_gi', 
-                    "amazon_fr_kp",
                     "amazon_es_kp",
-                    "amazon_uk_kp",
-                    'amazon_it_kp', 
+                ],
+                'nbProductAmazonFr' => [
+                    "amazon_fr_kp",
+                ],
+                'nbProductAmazonDe' => [
                     "amazon_de_kp",
-        
+                ],
+                'nbProductAmazonIt' => [
+                    'amazon_it_kp', 
+                ],
+                'nbProductAmazonUk' => [
+                    "amazon_uk_kp",
                 ],
                 'nbProductCdiscount' => [
                     'cdiscount_kp_fr'
