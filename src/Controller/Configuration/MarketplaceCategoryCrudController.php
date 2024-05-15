@@ -58,7 +58,12 @@ class MarketplaceCategoryCrudController extends AdminCrudController
                     'boulanger'=>'boulanger',
                     'leroymerlin'=>'leroymerlin',
                     'mediamarkt'=>'mediamarkt',
-                    'manomano'=>'manomano'
+                    'manomano'=>'manomano',
+                    'amazonEs' => 'amazonEs',
+                    'amazonDe' => 'amazonDe',
+                    'amazonFr' => 'amazonFr',
+                    'amazonUk' => 'amazonUk',
+                    'amazonIt' => 'amazonIt',
                 ];
 
 
