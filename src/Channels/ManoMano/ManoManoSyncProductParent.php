@@ -77,7 +77,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
 
         foreach($productCategorizations as $productCategorization) {
-            if(strlen($productCategorization->getManomanoCategory())>0) {
+            if($productCategorization->getManomanoCategory() && strlen($productCategorization->getManomanoCategory())>0) {
                 $this->categories[$productCategorization->getPimProductType()]=(int)$productCategorization->getManomanoCategory();
             }
         }

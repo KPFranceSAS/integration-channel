@@ -2,7 +2,6 @@
 
 namespace App\Channels\Mirakl\Decathlon;
 
-use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\Channels\Mirakl\MiraklSyncProductParent;
 use App\Entity\IntegrationChannel;
 use League\HTMLToMarkdown\HtmlConverter;
@@ -29,9 +28,6 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
         $flatProduct["CHARACTERISTIC_398"] = $this->getCodeMarketplaceInList('values-398', $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0).' cm');
         $flatProduct["CHARACTERISTIC_569"] = $this->getCodeMarketplaceInList('values-569', $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0).' cm');
         $flatProduct["CHARACTERISTIC_590"] = $this->getCodeMarketplaceInList('values-590', $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0).' kg');
-
-
-        
         
 
         for ($i = 2; $i <= 7;$i++) {
@@ -80,81 +76,36 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             }
         }
 
+        $flatProduct['category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'product_type'), 'decathlon');
 
-        $equivalences = [
-            "marketplace_solar_panel_energy_travel"=>	"30061",
-            "marketplace_generator_energy_travel"=>	"30060",
-            "marketplace_garden_spa_home"=>"N-1148912",
-            "marketplace_video_projectors_video"=>	"10309",
-            
-            "marketplace_accessories_video"=>"N-300351",
-            "marketplace_camera_video"=> "30041",
-            "marketplace_travel_oven"=>"10346",
-            'marketplace_pizza_peel' =>	"10346",
-            "marketplace_pizza_cutter" =>	"10346",
-            "marketplace_pizza_brush"	 =>	"10346",
-            "marketplace_pizza_scale"	 =>	"10346",
-            "marketplace_pizza_roller"	 =>	"10346",
-            "marketplace_pizza_apparel"	 =>	"10346",
-            "marketplace_pizza_stone"	 =>	"10346",
-            "marketplace_pizza_cooker"	 =>	"10346",
-            "marketplace_pizza_table"	 =>	"10346",
-            "marketplace_pizza_other"	 =>	"10346",
-            "marketplace_camera_accessories" => "N-300351",
-            "marketplace_camera_battery"=>	"30059",
-            "marketplace_camera_waterproof_accessories"=>"40014",
-            "marketplace_camera_charger"=>"N-300581",
-            "marketplace_camera_stands" => "N-300351",
-            "marketplace_camera_light" => 	"N-300351",
-            "marketplace_camera_selfie"	=> "N-300351",
-            "marketplace_camera_tripod"	=> "N-300351",
-            'marketplace_powered_cooler' => '10343'
-        ];
-
-        foreach($equivalences as $pimCategory => $mmCategory) {
-            if(in_array($pimCategory, $product['categories'])) {
-                $flatProduct['category'] = $mmCategory;
+        
+        switch($flatProduct['category']) {
+            case '30061':
+                $flatProduct ['PRODUCT_TYPE'] = "solar panel";
                 break;
-            }
-        }
-
-       
-
-
-        if(array_key_exists('category', $flatProduct)) {
-            switch($flatProduct['category']) {
-                case '30061':
-                    $flatProduct ['PRODUCT_TYPE'] = "solar panel";
-                    break;
-                case '10343':
-                    $flatProduct ['PRODUCT_TYPE_10343'] = "26296";
-                    $flatProduct ['SPORT_6'] = "655";
-                    $flatProduct ['SIZE_10'] = "Z132_33L";
-                    break;
-                case '30060':
-                    $flatProduct ['PRODUCT_TYPE'] = "power bank";
-                    break;
-                case 'N-1148912':
-                    $flatProduct ['PRODUCT_TYPE'] = "aspirateur piscine";
-                    $flatProduct ['SPORT_69'] = "50";
-                    break;
-                case '10309':
-                    $flatProduct ['PRODUCT_TYPE'] = "26258";
-                    $flatProduct ['SPORT_6'] = "191";
-                    break;
-                case '30041':
-                    $flatProduct ['PRODUCT_TYPE'] = "25201";
-                    break;
-                case '10346':
-                    $flatProduct ['SPORT_6'] = "331";
-                    break;
-            };
-            
-
-           
-        } else {
-            $this->logger->info('Product not categorized');
-        }
+            case '10343':
+                $flatProduct ['PRODUCT_TYPE_10343'] = "26296";
+                $flatProduct ['SPORT_6'] = "655";
+                $flatProduct ['SIZE_10'] = "Z132_33L";
+                break;
+            case '30060':
+                $flatProduct ['PRODUCT_TYPE'] = "power bank";
+                break;
+            case 'N-1148912':
+                $flatProduct ['PRODUCT_TYPE'] = "aspirateur piscine";
+                $flatProduct ['SPORT_69'] = "50";
+                break;
+            case '10309':
+                $flatProduct ['PRODUCT_TYPE'] = "26258";
+                $flatProduct ['SPORT_6'] = "191";
+                break;
+            case '30041':
+                $flatProduct ['PRODUCT_TYPE'] = "25201";
+                break;
+            case '10346':
+                $flatProduct ['SPORT_6'] = "331";
+                break;
+        };
 
      
         return $flatProduct;

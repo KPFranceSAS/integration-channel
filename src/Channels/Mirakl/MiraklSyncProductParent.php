@@ -6,6 +6,7 @@ use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Channels\Mirakl\MiraklApiParent;
 use App\Entity\IntegrationChannel;
+use App\Entity\ProductTypeCategorizacion;
 use App\Helper\MailService;
 use App\Helper\Utils\StringUtils;
 use App\Service\Aggregator\ApiAggregator;
@@ -27,6 +28,8 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
     protected $projectDir;
 
     protected $manager;
+
+    protected $productTypes=[];
 
 
     public function __construct(
@@ -50,8 +53,8 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
         $integrationChannel = $this->manager->getRepository(IntegrationChannel::class)->findOneByCode($this->getChannel());
         $saleChannelsCode = [];
-        foreach($integrationChannel->getSaleChannels() as $saleChannel){
-            if($saleChannel->getCodePim()){
+        foreach($integrationChannel->getSaleChannels() as $saleChannel) {
+            if($saleChannel->getCodePim()) {
                 $saleChannelsCode[] = $saleChannel->getCodePim();
             }
         }
@@ -83,9 +86,43 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
     }
 
 
-    public function syncProducts()
+
+
+    private function initializeCategories()
     {
-        /** @var  array $products */
+        $productCategorizations = $this->manager->getRepository(ProductTypeCategorizacion::class)->findAll();
+        foreach($productCategorizations as $productCategorization) {
+            $this->productTypes[$productCategorization->getPimProductType()]=$productCategorization;
+        }
+
+    }
+
+    public function getCategoryNode($productType, $marketplace)
+    {
+        if(!$this->productTypes) {
+            $this->initializeCategories();
+        }
+        if(is_null($productType)) {
+            return null;
+        }
+
+        if(!array_key_exists($productType, $this->productTypes)) {
+            return '';
+        }
+
+        $productTypeCat = $this->productTypes[$productType]->{'get'.ucfirst($marketplace).'Category'}();
+
+        if($productTypeCat && strlen($productTypeCat)> 0) {
+            return $productTypeCat;
+        } else {
+            return null;
+        }
+
+    }
+
+
+    public function syncProducts()
+    {        /** @var  array $products */
         $products = $this->getProductsEnabledOnChannel();
         $productToArrays=[];
         $finalHeader = [];
@@ -99,6 +136,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
             }
             $productToArrays[]= $productToArray;
         }
+        
         $this->sendProducts($productToArrays, $finalHeader);
     }
 
@@ -182,7 +220,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
     protected function getCodeMarketplaceInList($attributeList, $attributeValue=null)
     {
-        if($attributeValue){
+        if($attributeValue) {
             $valuesAttributes = $this->getAllValuesForAttribute($attributeList);
             foreach ($valuesAttributes->values as $valuesAttribute) {
                 if (StringUtils::compareString($valuesAttribute->label, $attributeValue)) {
