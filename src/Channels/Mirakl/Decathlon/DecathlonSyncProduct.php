@@ -84,7 +84,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
         $flatProduct['category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'product_type'), 'decathlon');
 
         
-        /*switch($flatProduct['category']) {
+        switch($flatProduct['category']) {
             case '30061':
                 $flatProduct ['PRODUCT_TYPE'] = "solar panel";
                 break;
@@ -97,7 +97,6 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 $flatProduct ['PRODUCT_TYPE'] = "power bank";
                 break;
             case 'N-1148912':
-                $flatProduct ['PRODUCT_TYPE'] = "aspirateur piscine";
                 $flatProduct ['SPORT_69'] = "50";
                 break;
             case '10309':
@@ -110,7 +109,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             case '10346':
                 $flatProduct ['SPORT_6'] = "331";
                 break;
-        };*/
+        };
 
      
         return $flatProduct;
