@@ -106,7 +106,14 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             case '30041':
                 $flatProduct ['PRODUCT_TYPE'] = "25201";
                 break;
+                
+            case '10352':
+                $flatProduct ['PRODUCT_TYPE_10352'] = "26291";
+                $flatProduct ['SPORT_6'] = "331";
+                break;
+            
             case '10346':
+            case '10353':
                 $flatProduct ['SPORT_6'] = "331";
                 break;
         };
