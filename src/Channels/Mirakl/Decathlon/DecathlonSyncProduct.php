@@ -23,7 +23,12 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
 
         $flatProduct["brandName"] = $this->getCodeMarketplaceInList('brandName', $this->getAttributeChoice($product, "brand", "en_GB"));
 
-        $flatProduct["color"] = $this->getCodeMarketplaceInList('color', $this->getAttributeChoice($product, "color_generic", "en_GB"));
+        $colorPim = $this->getAttributeChoice($product, "color_generic", "en_GB"); 
+        $colorPimGeneric = $colorPim ?? 'Black';
+
+        $flatProduct["color"] = $this->getCodeMarketplaceInList('color', $colorPimGeneric);
+        $flatProduct["Gender_2"] = '13'; // no gender
+       
         $flatProduct["CHARACTERISTIC_575"] = $this->getCodeMarketplaceInList('values-575', $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0).' cm');
         $flatProduct["CHARACTERISTIC_398"] = $this->getCodeMarketplaceInList('values-398', $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0).' cm');
         $flatProduct["CHARACTERISTIC_569"] = $this->getCodeMarketplaceInList('values-569', $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0).' cm');
@@ -79,7 +84,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
         $flatProduct['category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'product_type'), 'decathlon');
 
         
-        switch($flatProduct['category']) {
+        /*switch($flatProduct['category']) {
             case '30061':
                 $flatProduct ['PRODUCT_TYPE'] = "solar panel";
                 break;
@@ -105,7 +110,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             case '10346':
                 $flatProduct ['SPORT_6'] = "331";
                 break;
-        };
+        };*/
 
      
         return $flatProduct;
