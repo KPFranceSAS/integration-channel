@@ -223,8 +223,10 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
         if($attributeValue) {
             $valuesAttributes = $this->getAllValuesForAttribute($attributeList);
             foreach ($valuesAttributes->values as $valuesAttribute) {
-                if (StringUtils::compareString($valuesAttribute->label, $attributeValue)) {
-                    return $valuesAttribute->code;
+                if($valuesAttribute->label) {
+                    if (StringUtils::compareString($valuesAttribute->label, $attributeValue)) {
+                        return $valuesAttribute->code;
+                    }
                 }
             }
         }
