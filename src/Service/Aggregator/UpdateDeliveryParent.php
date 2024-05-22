@@ -86,8 +86,8 @@ abstract class UpdateDeliveryParent
                 $this->logLine('>>> Update sale Order '.$orderToSend->getChannel().' '. $orderToSend->getExternalNumber());
                 $this->updateDeliverySaleOrder($orderToSend);
                 if($orderToSend->getCarrierService() == WebOrder::CARRIER_DHL) {
-                    $this->logLine('>>> Wait 6s');
-                    sleep(6);
+                    /*$this->logLine('>>> Wait 6s');
+                    /sleep(6);*/
                 }
                
             }
@@ -130,7 +130,17 @@ abstract class UpdateDeliveryParent
                 }
             } else {
                 $this->logger->info('Not yet delivered ');
+                if($webOrder->getNbDaysSinceCreation() > WebOrder::TIMING_COMPLETE){
+                    $messageDelivery = 'Weborder has no delivery information. Order will be automatically marked as complete after '.$webOrder->getNbDaysSinceCreation().' days';
+                    $this->logger->info($messageDelivery);
+                    $webOrder->addLog($messageDelivery);
+                    $webOrder->setStatus(WebOrder::STATE_COMPLETE);
+                }
+    
             }
+
+           
+
         } catch (Exception $e) {
             $message =  mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
             $this->addErrorToOrder($webOrder, $webOrder->getExternalNumber() . ' >> ' . $message);
@@ -153,4 +163,6 @@ abstract class UpdateDeliveryParent
 
         return $trackingCode ? $this->trackingAggregator->checkIfDelivered($webOrder->getCarrierService(), $trackingCode, $zipCode) : null;
     }
+
+
 }

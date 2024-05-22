@@ -39,6 +39,7 @@ class WebOrder implements \Stringable
     final public const  TIMING_INTEGRATION = 24;
     final public const  TIMING_SHIPPING = 30;
     final public const  TIMING_DELIVERY = 192;
+    final public const  TIMING_COMPLETE = 30;
 
     final public const  FULFILLED_BY_EXTERNAL = 'EXTERNALLY MANAGED';
     final public const  FULFILLED_BY_SELLER = 'OWN MANAGED';
@@ -161,6 +162,13 @@ class WebOrder implements \Stringable
     }
 
 
+
+    public function getNbDaysSinceCreation()
+    {
+        $now = new DateTime();
+        $interval = $now->diff($this->createdAt, true);
+        return $interval->days;
+    }
     
     
 
