@@ -5,21 +5,25 @@ namespace App\Controller\Pricing;
 use App\Controller\Admin\AdminCrudController;
 use App\Controller\Pricing\ImportPricingCrudController;
 use App\Controller\Pricing\PromotionCrudController;
+use App\Entity\IntegrationChannel;
 use App\Entity\MarketplaceCategory;
 use App\Entity\Product;
 use App\Entity\ProductTypeCategorizacion;
 use App\Entity\SaleChannel;
 use App\Filter\SaleChannelEnabledFilter;
-use App\Filter\SaleChannelFilter;
 use App\Form\ProductSaleChannelType;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Writer\CSV\Writer;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
-use EasyCorp\Bundle\EasyAdminBundle\Factory\EntityFactory;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Factory\FilterFactory;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
@@ -58,6 +62,14 @@ class PricingCrudController extends AdminCrudController
         $crud->overrideTemplate('crud/edit', 'admin/crud/pricing/edit.html.twig');
         $crud->setEntityPermission('ROLE_PRICING');
         return $crud;
+    }
+
+
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        $qb = $this->entityRepository->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
+        //$qb->andWhere('entity.active = 1');
+        return $qb;
     }
 
 
