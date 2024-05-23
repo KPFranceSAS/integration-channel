@@ -99,9 +99,10 @@ abstract class FnacDartyIntegratorParent extends IntegratorParent
         }
 
 
-        $orderBC->phoneNumber = array_key_exists('phone', $orderApi['shipping_address']) &&  is_string($orderApi['shipping_address']['phone']) ? $orderApi['shipping_address']['phone'] : null;
-        if(!$orderBC->phoneNumber) {
-            $orderBC->phoneNumber = array_key_exists('mobile', $orderApi['shipping_address']) &&  is_string($orderApi['shipping_address']['mobile']) ? $orderApi['shipping_address']['mobile'] : null;
+        if(array_key_exists('mobile', $orderApi['shipping_address']) &&  is_string($orderApi['shipping_address']['mobile']) && strlen($orderApi['shipping_address']['mobile'])>0) {
+            $orderBC->phoneNumber = $orderApi['shipping_address']['mobile'];
+        } else {
+            $orderBC->phoneNumber = array_key_exists('phone', $orderApi['shipping_address']) &&  is_string($orderApi['shipping_address']['phone']) ? $orderApi['shipping_address']['phone'] : null;
         }
 
 
@@ -146,6 +147,7 @@ abstract class FnacDartyIntegratorParent extends IntegratorParent
 
     abstract protected function getExternalNumber($orderApi);
    
+
 
   
 
