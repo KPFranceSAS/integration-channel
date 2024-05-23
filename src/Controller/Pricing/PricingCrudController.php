@@ -206,7 +206,6 @@ class PricingCrudController extends AdminCrudController
             ->setMaxResults(null)
             ->getQuery()->getResult();
 
-        $batchs = [];
         foreach ($results as $result) {
             $this->addDataToFinal($result, $writer, $header);            
         }
@@ -294,8 +293,6 @@ class PricingCrudController extends AdminCrudController
                 ->getResult();       
 
         foreach ($results as $result) {
-            $this->addDataToFinal($result, $writer, $header, $channels, $productIndexed );
-
             $productArray = array_fill_keys($header, null);
             $productArray['sku'] = $result->getSku();
             $productArray['productType'] = $result->getProductType();
