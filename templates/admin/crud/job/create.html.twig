@@ -1,0 +1,15 @@
+{% extends '@!EasyAdmin/layout.html.twig' %}
+
+{% block body_id 'ea-edit-' %}
+{% block body_class 'ea-edit ea-edit-' %}
+{% block content_title %}
+	{{job.jobType}}
+{% endblock %}
+{% block main %}
+
+	{% block new_form %}
+		{{ form(form) }}
+    {% endblock new_form %}
+
+
+{% endblock %}

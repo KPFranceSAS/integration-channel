@@ -91,7 +91,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     $flatProduct['feature_22088_200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005']= 'LOV_211666'; // Description du produit| Groupe électrogène|
                     $flatProduct['ATT_20185']= 'LOV_000001'; // Régulation électronique du voltage
                     break;
-                case  "201697|2043|R09-018-004":
+                case  "201697|2043|R09-018-004": // robot
                     $flatProduct ['feature_08547_201697|2043|R09-018-004'] = 'LOV_207112';
                     break;
                 case  "205634|1024|R1001-1002-1004": // blender

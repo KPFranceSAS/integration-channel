@@ -1,0 +1,20 @@
+{% if   entity.instance.status == constant('App\\Entity\\Job::Status_Finished') %}
+	{% set classColor = 'success' %}
+	{% set value = 'Imported' %}
+{% elseif  entity.instance.status == constant('App\\Entity\\Job::Status_Cancelled') %}
+	{% set classColor = 'warning' %}
+	{% set value = 'Cancelled' %}
+{% elseif  entity.instance.status == constant('App\\Entity\\Job::Status_Processing') %}
+	{% set classColor = 'primary' %}
+	{% set  value = 'Processing' %}
+{% elseif  entity.instance.status == constant('App\\Entity\\Job::Status_Created') %}
+	{% set classColor = 'secondary' %}
+	{% set  value = 'Waiting processing' %}
+{% else %}
+	{% set classColor = 'secondary' %}
+	{% set value = 'Other' %}
+{% endif %}
+
+<span class="badge badge-{{classColor}}">
+		{{value}}
+</span>

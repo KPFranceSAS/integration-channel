@@ -32,6 +32,7 @@ use App\Entity\Brand;
 use App\Entity\Category;
 use App\Entity\ImportPricing;
 use App\Entity\IntegrationChannel;
+use App\Entity\Job;
 use App\Entity\LogisticClass;
 use App\Entity\MarketplaceCategory;
 use App\Entity\OrderLog;
@@ -166,6 +167,11 @@ class DashboardController extends AbstractDashboardController
                         'Sales channel',
                         'fas fa-store-alt',
                         SaleChannel::class
+                    ),
+                    MenuItem::linkToCrud(
+                        'Job',
+                        'fas fa-tasks',
+                        Job::class
                     ),
                 ])->setPermission('ROLE_PRICING'),
             MenuItem::subMenu('Configuration', 'fas fa-cogs')
