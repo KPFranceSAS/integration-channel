@@ -64,7 +64,19 @@ class PricingCrudController extends AdminCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $actions = parent::configureActions($actions);
+        $exportPriceIndex = Action::new('exportPrice', 'Export prices')
+        ->setIcon('fa fa-download')
+        ->linkToCrudAction('exportPrice')
+        ->setCssClass('btn btn-primary')
+        ->createAsGlobalAction();
+
+        $exportCategoryIndex = Action::new('exportCategory', 'Export category')
+        ->setIcon('fa fa-download')
+        ->linkToCrudAction('exportCategory')
+        ->setCssClass('btn btn-primary')
+        ->createAsGlobalAction();
+
+    
         $url = $this->adminUrlGenerator->setController(ImportPricingCrudController::class)->setAction('importPricings')->generateUrl();
         $actions->add(
             Crud::PAGE_INDEX,
@@ -73,9 +85,7 @@ class PricingCrudController extends AdminCrudController
                 ->createAsGlobalAction()
                 ->displayAsLink()
                 ->addCssClass('btn btn-primary')
-        );
-
-        $actions->add(
+        )->add(
             Crud::PAGE_EDIT,
             Action::new('PromotionCrudController', 'Add promotion', 'fa fa-plus')
                 ->linkToUrl(function (Product $product) {
@@ -88,11 +98,16 @@ class PricingCrudController extends AdminCrudController
                 })
                 ->displayAsLink()
                 ->addCssClass('btn btn-primary')
-        );
+        )
+        ->add(Crud::PAGE_INDEX, $exportPriceIndex)
+        ->add(Crud::PAGE_INDEX, $exportCategoryIndex)
+        ->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE)
+        ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->setIcon('fa fa-pencil')->setLabel(false));
 
 
-        $actions->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE);
+
         return $actions;
+
     }
 
 
@@ -149,23 +164,86 @@ class PricingCrudController extends AdminCrudController
     }
 
 
-    public function export(
+    public function exportPrice(
         FilterFactory $filterFactory,
         AdminContext $context,
-        EntityFactory $entityFactory,
         ParameterBagInterface $params,
         LoggerInterface $logger
     ) {
         $directory = $params->get('kernel.project_dir') . '/var/export/';
         $fileName = u('Export_' . $this->getName() . '_' . date('Ymd_His'))->snake() . '.csv';
         $fields = $this->getFieldsExport();
-
-        
         $manager =     $this->container->get('doctrine')->getManager();
         
         $saleChannels =  $manager->getRepository(SaleChannel::class)->findAll();
 
+        $header = ['sku', 'unitCost'];
+       
+        foreach ($saleChannels as $saleChannel) {
+            $header[]=$saleChannel->getCode().'-enabled';
+            $header[]=$saleChannel->getCode().'-price';
+            $header[]=$saleChannel->getCode().'-promoprice';
+            $header[]=$saleChannel->getCode().'-promodescription';
+           
+        }
+        $writer = $this->createWriterArray($header, $directory . $fileName);
 
+        $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
+        $results = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters)
+            ->setFirstResult(0)
+            ->setMaxResults(null)
+            ->getQuery()->getResult();
+
+        $batchs = [];
+        foreach ($results as $result) {
+            $this->addDataToFinal($result, $writer, $header);            
+        }
+        $writer->close();
+        $logger->info('Finish ');
+
+        $response = new BinaryFileResponse($directory . $fileName);
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->setContentDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            $fileName
+        );
+        return $response;
+    }
+
+
+    public function addDataToFinal(Product $result, Writer $writer, array $header){
+        $productArray = array_fill_keys($header, null);
+        $productArray['sku'] = $result->getSku();
+        $productArray['unitCost'] = $result->getUnitCost();
+
+
+        foreach ($result->getProductSaleChannels() as $productSaleChannel) {
+            $productArray[$productSaleChannel->getSaleChannel()->getCode().'-enabled']=(int)$productSaleChannel->getEnabled();
+            $productArray[$productSaleChannel->getSaleChannel()->getCode().'-price']= $productSaleChannel->getPrice() ?: '';
+            $promotion = $productSaleChannel->getBestPromotionForNow();
+            if ($promotion) {
+                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promoprice'] =  $promotion->getPromotionPrice();
+                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promodescription'] =  $promotion->getPromotionDescriptionFrequency();
+            }
+            
+        }
+        $singleRowData = WriterEntityFactory::createRowFromArray($productArray);
+        $writer->addRow($singleRowData);
+    }
+
+
+
+    public function exportCategory(
+        FilterFactory $filterFactory,
+        AdminContext $context,
+        ParameterBagInterface $params,
+        LoggerInterface $logger
+    ) {
+        $directory = $params->get('kernel.project_dir') . '/var/export/';
+        $fileName = u('Export_category_' . $this->getName() . '_' . date('Ymd_His'))->snake() . '.csv';
+        $fields = $this->getFieldsExport();
+        
+        $manager =     $this->container->get('doctrine')->getManager();
 
         $productTypes =  $manager->getRepository(ProductTypeCategorizacion::class)->findAll();
 
@@ -191,45 +269,33 @@ class PricingCrudController extends AdminCrudController
 
 
 
-        $header = ['sku', 'unitCost', 'productType'];
+        $header = ['sku', 'productType'];
        
-        foreach ($saleChannels as $saleChannel) {
-            $header[]=$saleChannel->getCode().'-enabled';
-            $header[]=$saleChannel->getCode().'-price';
-            $header[]=$saleChannel->getCode().'-promoprice';
-            $header[]=$saleChannel->getCode().'-promodescription';
-           
-        }
         array_push($header, ...$channels);
         $writer = $this->createWriterArray($header, $directory . $fileName);
 
         $filters = $filterFactory->create($context->getCrud()->getFiltersConfig(), $fields, $context->getEntity());
-        $queryBuilder = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters);
-        
-        
-        $pageSize = 200;
-        $currentPage = 1;
-        $query = $queryBuilder
-            ->setFirstResult(0)
-            ->setMaxResults(null)
-            ->getQuery();
-        
-        
-        $results = $queryBuilder->getQuery()->getResult();
+        $results = $this->createIndexQueryBuilder($context->getSearch(), $context->getEntity(), $fields, $filters)
+                ->setFirstResult(0)
+                ->setMaxResults(null)
+                ->getQuery()
+                ->getResult();       
 
-        $batchs = [];
         foreach ($results as $result) {
             $this->addDataToFinal($result, $writer, $header, $channels, $productIndexed );
-            $batchs[] = $result;
 
-            if(count($batchs) % $pageSize == 0){
-                foreach ($batchs as $batch) {
-                    $this->container->get('doctrine')->getManager()->detach($batch);
+            $productArray = array_fill_keys($header, null);
+            $productArray['sku'] = $result->getSku();
+            $productArray['productType'] = $result->getProductType();
+
+            foreach($channels as $channel){
+                if(array_key_exists($result->getProductType(), $productIndexed)){
+                    $productArray[$channel] = $productIndexed[$result->getProductType()][$channel];
                 }
-                unset($batchs);
-                $this->container->get('doctrine')->getManager()->clear();
             }
-            
+
+            $singleRowData = WriterEntityFactory::createRowFromArray($productArray);
+            $writer->addRow($singleRowData);           
         }
         $writer->close();
         $logger->info('Finish ');
@@ -244,31 +310,9 @@ class PricingCrudController extends AdminCrudController
     }
 
 
-    public function addDataToFinal(Product $result, Writer $writer, array $header, $channels, $productIndexed){
-        $productArray = array_fill_keys($header, null);
-        $productArray['sku'] = $result->getSku();
-        $productArray['unitCost'] = $result->getUnitCost();
-        $productArray['productType'] = $result->getProductType();
 
-        foreach($channels as $channel){
-            if(array_key_exists($result->getProductType(), $productIndexed)){
-                $productArray[$channel] = $productIndexed[$result->getProductType()][$channel];
-            }
-        }
 
-        foreach ($result->getProductSaleChannels() as $productSaleChannel) {
-            $productArray[$productSaleChannel->getSaleChannel()->getCode().'-enabled']=(int)$productSaleChannel->getEnabled();
-            $productArray[$productSaleChannel->getSaleChannel()->getCode().'-price']= $productSaleChannel->getPrice() ?: '';
-            $promotion = $productSaleChannel->getBestPromotionForNow();
-            if ($promotion) {
-                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promoprice'] =  $promotion->getPromotionPrice();
-                $productArray[$productSaleChannel->getSaleChannel()->getCode().'-promodescription'] =  $promotion->getPromotionDescriptionFrequency();
-            }
-            
-        }
-        $singleRowData = WriterEntityFactory::createRowFromArray($productArray);
-        $writer->addRow($singleRowData);
-    }
+    
 
 
 }
