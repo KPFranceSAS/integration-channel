@@ -109,6 +109,18 @@ class ProductDataIntegrationCommand extends Command
                             $brand->addProduct($productDb);
                         }
                     }   
+
+
+                    if($productDb->getActive()===false){
+
+                        foreach ($productDb->getProductSaleChannels() as $saleChannel) {
+                            if($saleChannel->getEnabled()){
+                                $output->writeln('Disabled sale channels '.$saleChannel);
+                                $saleChannel->setEnabled(false);
+                            }
+                            
+                        }
+                    }
                 }
 
 

@@ -68,7 +68,7 @@ class PricingCrudController extends AdminCrudController
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         $qb = $this->entityRepository->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
-        //$qb->andWhere('entity.active = 1');
+        $qb->andWhere('entity.active = 1');
         return $qb;
     }
 
