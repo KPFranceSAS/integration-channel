@@ -51,7 +51,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
         /** @var  array $products */
         $products = $this->getProductsEnabledOnChannel();
         $productToArrays=[];
-        $base = ['sku', 'categories' ,'enabled' ,'family', 'parent','created','updated', 'amazon_es_node','amazon_fr_node', 'amazon_uk_node', 'amazon_de_node', 'amazon_it_node' ];
+        $base = ['sku', 'categories' ,'enabled' ,'family', 'parent','created','updated','amazon_product_type', 'amazon_es_node','amazon_fr_node', 'amazon_uk_node', 'amazon_de_node', 'amazon_it_node' ];
         $header = [];
         foreach ($products as $product) {
             $productToArray = $this->flatProduct($product);
@@ -124,6 +124,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
             'parent' => $product['parent'],
             'created' => $product['created'],
             'updated' => $product['updated'],
+            'amazon_product_type' => $this->getAmazonNode($productType, 'amazon'),
             'amazon_es_node' => $this->getAmazonNode($productType, 'amazonEs'),
             'amazon_fr_node' => $this->getAmazonNode($productType, 'amazonFr'),
             'amazon_uk_node' => $this->getAmazonNode($productType, 'amazonUk'),

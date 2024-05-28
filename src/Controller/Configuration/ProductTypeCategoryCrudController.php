@@ -10,6 +10,7 @@ use App\Channels\Mirakl\Decathlon\DecathlonApi;
 use App\Channels\Mirakl\LeroyMerlin\LeroyMerlinApi;
 use App\Channels\Mirakl\MediaMarkt\MediaMarktApi;
 use App\Controller\Admin\AdminCrudController;
+use App\Entity\AmazonProductType;
 use App\Entity\MarketplaceCategory;
 use App\Entity\ProductTypeCategorizacion;
 use Doctrine\Persistence\ManagerRegistry;
@@ -96,6 +97,7 @@ class ProductTypeCategoryCrudController extends AdminCrudController
             NumberField::new('nbProductMediamarkt', 'Nb Mediamarkt'),
             TextField::new('manomanoCategory', 'manomano'),
             NumberField::new('nbProductManomano', 'Nb Manomano'),
+            TextField::new('amazonCategory', 'amazonProductType'),
             TextField::new('amazonEsCategory', 'amazonEs'),
             NumberField::new('nbProductAmazonEs', 'Nb Amazon Es'),
             TextField::new('amazonFrCategory', 'amazonFr'),
@@ -127,6 +129,7 @@ class ProductTypeCategoryCrudController extends AdminCrudController
             $fields[] = TextField::new('fnacDarty', 'FnacDarty')->setTemplatePath('admin/fields/categorization/fnacDarty.html.twig');
             $fields[] = TextField::new('mediamarkt', 'Mediamarkt')->setTemplatePath('admin/fields/categorization/mediamarkt.html.twig');
             $fields[] = TextField::new('manomano', 'Manomano')->setTemplatePath('admin/fields/categorization/manomano.html.twig');
+            $fields[] = TextField::new('amazonCategory', 'amazonProductType');
             $fields[] = TextField::new('amazonEs', 'amazonEs')->setTemplatePath('admin/fields/categorization/amazonEs.html.twig');
             $fields[] = TextField::new('amazonFr', 'amazonFr')->setTemplatePath('admin/fields/categorization/amazonFr.html.twig');
             $fields[] = TextField::new('amazonDe', 'amazonDe')->setTemplatePath('admin/fields/categorization/amazonDe.html.twig');
@@ -159,6 +162,15 @@ class ProductTypeCategoryCrudController extends AdminCrudController
                 $fields[] = ChoiceField::new($channel.'Category')->setChoices($choices);
                 
             }
+
+
+            $choices = [];
+            $marketplaceCategories = $this->container->get('doctrine')->getManager()->getRepository(AmazonProductType::class)->findBy([], ['label'=>'ASC']);
+            foreach($marketplaceCategories as $marketplaceCategory){
+                $choices [$marketplaceCategory->getLabel()] =$marketplaceCategory->getCode();
+            }
+
+            $fields[] = ChoiceField::new('amazonCategory')->setChoices($choices);
 
 
 
