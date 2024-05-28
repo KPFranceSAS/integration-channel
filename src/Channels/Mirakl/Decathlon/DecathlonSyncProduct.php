@@ -23,7 +23,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
 
         $flatProduct["brandName"] = $this->getCodeMarketplaceInList('brandName', $this->getAttributeChoice($product, "brand", "en_GB"));
 
-        $colorPim = $this->getAttributeChoice($product, "color_generic", "en_GB"); 
+        $colorPim = $this->getAttributeChoice($product, "color_generic", "en_GB");
         $colorPimGeneric = $colorPim ?? 'Black';
 
         $flatProduct["color"] = $this->getCodeMarketplaceInList('color', $colorPimGeneric);
@@ -34,6 +34,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
         $flatProduct["CHARACTERISTIC_569"] = $this->getCodeMarketplaceInList('values-569', $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0).' cm');
         $flatProduct["CHARACTERISTIC_590"] = $this->getCodeMarketplaceInList('values-590', $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0).' kg');
         
+        $flatProduct["CHARACTERISTIC_395"] = $this->getCodeMarketplaceInList('values-395', $this->getAttributeChoice($product, "main_material", "en_GB"));
 
         for ($i = 2; $i <= 7;$i++) {
             $flatProduct['image_'.$i] = $this->getAttributeSimple($product, 'image_url_'.$i);
@@ -81,7 +82,7 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             }
         }
 
-        $flatProduct['category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'product_type'), 'decathlon');
+        $flatProduct['category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'decathlon');
 
         
         switch($flatProduct['category']) {
@@ -112,6 +113,10 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
                 $flatProduct ['SPORT_6'] = "331";
                 break;
             
+            case 'N-1000002120':
+                $flatProduct ['PRODUCT_TYPE'] = "11106";
+                $flatProduct ['SPORT_174'] = "655";                      
+                break;
             case '10346':
             case '10353':
                 $flatProduct ['SPORT_6'] = "331";

@@ -114,7 +114,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
     {
         $this->logger->info('Flat product '.$product['identifier']);
 
-        $productType = $this->getAttributeSimple($product, 'product_type');
+        $productType = $this->getAttributeSimple($product, 'mkp_product_type');
 
         $flatProduct = [
             'sku' => $product['identifier'],

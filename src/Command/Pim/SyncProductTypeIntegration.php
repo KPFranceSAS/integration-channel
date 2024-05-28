@@ -33,7 +33,7 @@ class SyncProductTypeIntegration extends Command
                 'sku' => $product['identifier']
             ]);
             if ($productDb) {
-                $productType = array_key_exists("product_type", $product['values']) ? $product['values']['product_type'][0]['data'] : null;
+                $productType = array_key_exists("mkp_product_type", $product['values']) ? $product['values']['mkp_product_type'][0]['data'] : null;
 
                 if($productType!=$productDb->getProductType()){
                     $output->writeln('Product ' . $product['identifier']. " updated to ".$productType);

@@ -37,7 +37,7 @@ class ImportProductTypeIntegration extends Command
         foreach($productTypes as $productType) {
             $productTypesIndexed[$productType->getPimProductType()]=$productType;
         }
-        $productTypePims = $this->akeneoConnector->getAllOptionsAttribute('product_type');
+        $productTypePims = $this->akeneoConnector->getAllOptionsAttribute('mkp_product_type');
 
         $productTypesPimCodes=[];
 

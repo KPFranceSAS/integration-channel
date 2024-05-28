@@ -21,9 +21,7 @@ class JobProcessCommand extends Command
         private readonly PriceAggregator $priceAggregator,
         private readonly PriceStockAggregator $priceStockAggregator,
         private readonly ManagerRegistry $managerRegistry,
-        
-        )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -33,27 +31,30 @@ class JobProcessCommand extends Command
 
         $manager = $this->managerRegistry->getManager();
         $jobs = $manager->getRepository(Job::class)->findByStatus(Job::Status_Processing);
-        if(count($jobs)>0){
+        if(count($jobs)>0) {
             $output->writeln('Already processing');
             return Command::SUCCESS;
         }
 
         $jobToProcesss = $manager->getRepository(Job::class)->findByStatus(Job::Status_Created);
-        if(count($jobToProcesss)>0){
-            $job=reset($jobToProcesss);
-            $job->setStartDate(new DateTime());
-            $job->setStatus(Job::Status_Processing);
+        if(count($jobToProcesss)>0) {
+            foreach($jobs as $job) {
+                $job->setStatus(Job::Status_Processing);
+            }
             $manager->flush();
-            if($job->getJobType()==Job::Type_Sync_Products){
-                try {
-                    $productUpdater = $this->productSyncAggregator->getProductSync($job->getChannel()->getCode());
-                    $productUpdater->syncProducts();
-                } catch (Exception $e){
-                    
+            foreach($jobs as $job) {
+                $job->setStartDate(new DateTime());
+                if($job->getJobType()==Job::Type_Sync_Products) {
+                    try {
+                        $productUpdater = $this->productSyncAggregator->getProductSync($job->getChannel()->getCode());
+                        $productUpdater->syncProducts();
+                    } catch (Exception $e) {
+                        
+                    }
+                    $job->setEndDate(new DateTime());
+                    $job->setStatus(Job::Status_Finished);
+                    $manager->flush();
                 }
-                $job->setEndDate(new DateTime());
-                $job->setStatus(Job::Status_Finished);
-                $manager->flush();
             }
         } else {
             $output->writeln('No jobs');

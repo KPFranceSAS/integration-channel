@@ -144,12 +144,12 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             'min_quantity' => 1,
         ];
 
-        $productType = $this->getAttributeSimple($product, 'product_type');
+        $productType = $this->getAttributeSimple($product, 'mkp_product_type');
         if($productType) {
             if(array_key_exists($productType, $this->categories)) {
                 $flatProduct['mm_category_id'] = $this->categories[$productType];
             }
-            $flatProduct['merchant_category'] = $this->getAttributeChoice($product, 'product_type', $this->getLocale());
+            $flatProduct['merchant_category'] = $this->getAttributeChoice($product, 'mkp_product_type', $this->getLocale());
         }
 
 

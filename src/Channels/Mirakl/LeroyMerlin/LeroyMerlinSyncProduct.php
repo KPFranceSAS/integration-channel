@@ -68,7 +68,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         }
 
 
-       // $flatProduct['product_category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'product_type'), 'leroymerlin');
+       // $flatProduct['product_category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'leroymerlin');
        
 
 
