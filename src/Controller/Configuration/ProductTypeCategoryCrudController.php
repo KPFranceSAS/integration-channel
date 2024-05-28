@@ -170,7 +170,7 @@ class ProductTypeCategoryCrudController extends AdminCrudController
                 $choices [$marketplaceCategory->getLabel()] =$marketplaceCategory->getCode();
             }
 
-            $fields[] = ChoiceField::new('amazonCategory')->setChoices($choices);
+            $fields[] = ChoiceField::new('amazonCategory', 'Amzon product type')->setChoices($choices);
 
 
 
