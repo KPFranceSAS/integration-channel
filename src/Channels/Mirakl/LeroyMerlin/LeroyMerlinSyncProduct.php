@@ -73,7 +73,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     break;
                     case "201908|2354|R10-007-009": //smart lock
                         $flatProduct ['feature_00277_201908|2354|R10-007-009'] =  'LOV_042526'; // Destonation ;
-                        $flatProduct ['feature_00277_201908|2354|R10-007-009'] =  'LOV_230961'; // TYpe of product ;
+                        $flatProduct ['feature_22088_201908|2354|R10-007-009'] =  'LOV_230961'; // TYpe of product ;
                         break;
 
                    
