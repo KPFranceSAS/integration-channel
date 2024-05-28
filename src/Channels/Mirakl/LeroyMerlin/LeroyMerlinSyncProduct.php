@@ -25,59 +25,19 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
 
         $flatProduct["feature_06575_brand"] = $this->getCodeMarketplaceInList('ATT_06575', $this->getAttributeChoice($product, "brand", "en_GB"));
 
-        /*$equivalences = [
-            "marketplace_solar_panel_mobile"=>"200260|2228|R03-2003-2007",
-            "marketplace_solar_panel_energy_travel"=>"200264|2231|R03-2003-2008",
-            "marketplace_generator_energy_travel"=>"200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005",
-            "marketplace_garden_spa_home"=>"201697|2043|R09-018-004",
-            "marketplace_cutting_machines_art_crafts"=>"200595|IMPRIMANTE_3D|MACHINES_ET_MATERIEL_D_ATELIER|R04-005",
-            "markerplace_blender"=>"205634|1024|R1001-1002-1004",
-            "marketplace_air_fryer"=>"206283|2056|R1001-1002",
-            "marketplace_computers_components_accessories"=>"200377|CPL_ET_ROUTEUR_WIFI|RESEAU_INFORMATIQUE_ET_TELEPHONIE|R03-008",
-            "marketplace_router_wireless"=>"200377|CPL_ET_ROUTEUR_WIFI|RESEAU_INFORMATIQUE_ET_TELEPHONIE|R03-008",
-            "marketplace_accessories_home"=>"200727|NIVEAU_LASER|OUTILS_DE_MESURE_ET_DE_TRACAGE|R04-003-007",
-            "marketplace_smart_lock"=>"201931|SERRURE_ELECTRIQUE|SERRURE_ET_CYLINDRE_DE_SERRURE|R10-007-009",
-            "marketplace_vacuums_floorcare"=>"200550|2045|R04-010-001",
-            "marketplace_accessories_car_motorbike"=>"202727|PIECES_DETACHEES_POUR_TONDEUSE|TONDEUSE_ET_ROBOT_TONDEUSE|R09-005-004",
-            "marketplace_accessories_phone"=>"200372|CHARGEUR_DE_TELEPHONE|CABLE_ET_CHARGEUR_DE_TELEPHONE|R03-008-005",
-            "marketplace_lightning_home"=>"202358|AMPOULE_CONNECTEE|AMPOULE_CONNECTEE_ET_INTELLIGENTE|R13-003-004",
-            "marketplace_accessories_computers"=>"200474|TOURNEVIS|TOURNEVIS_ET_ACCESSOIRES|R04-003-001",
-            "marketplace_camera_video"=>"200401|CAMERA_DE_SURVEILLANCE|VIDEOSURVEILLANCE|R03-001-003",
-            "marketplace_travel_oven" => "201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007",
-            'marketplace_pizza_peel' =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
-            "marketplace_pizza_cutter" =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
-            "marketplace_pizza_brush"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
-            "marketplace_pizza_scale"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
-            "marketplace_pizza_roller"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
-            "marketplace_pizza_apparel"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
-            "marketplace_pizza_stone"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
-            "marketplace_pizza_cooker"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
-            "marketplace_pizza_table"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
-            "marketplace_pizza_other"	 =>	"201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003",
-            "marketplace_composter_home" =>	"201675|2538|R05-007",
-            'marketplace_garden_spa_home_lawn_mowers' => "201526|ROBOT_TONDEUSE|TONDEUSE_ET_ROBOT_TONDEUSE|R09-005-004",
-            'marketplace_powered_cooler' => '206339|2450|R09-007'
-            
-        ];
-
-        foreach($equivalences as $pimCategory => $mmCategory) {
-            if(in_array($pimCategory, $product['categories'])) {
-                $flatProduct['product_category'] = $mmCategory;
-                break;
-            }
-        }*/
-
-
+        
        $flatProduct['product_category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'leroymerlin');
        
-
+       $flatProduct ['ATT_21148'] =  'LOV_000002';
 
         if(array_key_exists('product_category', $flatProduct)) {
             switch($flatProduct['product_category']) {
 
-                case "206556|2547|R1001-2010" : // prineter
-                    $flatProduct['feature_22088_206556|2547|R1001-2010'] ="LOV_283859"; // LOV_283859
+
+                case "202599|2480|R15-2012"  : // desk
+                    $flatProduct ['ATT_21148'] =  'LOV_000001'; // Contain woods ;
                     break;
+
 
                 case '200264|2231|R03-2003-2008':
                     $flatProduct["ATT_13704"] = $this->getAttributeUnit($product, 'solar_panel_power', 'WATT_CRETE', 0);
@@ -101,18 +61,12 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     break;
                 case  "205634|1024|R1001-1002-1004": // blender
                     $flatProduct ['ATT_00056'] = $this->getAttributeUnit($product, 'liquid_capacity', 'LITER', 1); // blender ;
-                    $flatProduct ['ATT_21148'] =  'LOV_000002'; // Contain woods ;
                     break;
                 case  "201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007": // pizza
                     $flatProduct ['ATT_20510'] =  'LOV_000001'; // Food contact ;
-                    $flatProduct ['ATT_21148'] =  'LOV_000002'; // Contain woods ;
                     break;
                 case  "201516|ACCESSOIRE_POUR_CUISINER|BARBECUE|R09-007-003": // accessoires
                     $flatProduct ['ATT_20510'] =  'LOV_000001'; // Food contact ;
-                    break;
-                case  "201675|2538|R05-007": // composter
-                case  "205016|2393|R05-007-2016": // bbq
-                    $flatProduct ['ATT_21148'] =  'LOV_000002'; // Contain woods ;
                     break;
                 case "201526|ROBOT_TONDEUSE|TONDEUSE_ET_ROBOT_TONDEUSE|R09-005-004": //lawn motor
                     $flatProduct ['ATT_15344'] =  'LOV_000001'; // Lawn motor ;
