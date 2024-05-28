@@ -25,7 +25,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
 
         $flatProduct["feature_06575_brand"] = $this->getCodeMarketplaceInList('ATT_06575', $this->getAttributeChoice($product, "brand", "en_GB"));
 
-        $equivalences = [
+        /*$equivalences = [
             "marketplace_solar_panel_mobile"=>"200260|2228|R03-2003-2007",
             "marketplace_solar_panel_energy_travel"=>"200264|2231|R03-2003-2008",
             "marketplace_generator_energy_travel"=>"200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005",
@@ -65,10 +65,10 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                 $flatProduct['product_category'] = $mmCategory;
                 break;
             }
-        }
+        }*/
 
 
-       // $flatProduct['product_category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'leroymerlin');
+       $flatProduct['product_category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'leroymerlin');
        
 
 
