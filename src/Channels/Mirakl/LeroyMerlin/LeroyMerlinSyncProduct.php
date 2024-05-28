@@ -71,8 +71,12 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                 case "201526|ROBOT_TONDEUSE|TONDEUSE_ET_ROBOT_TONDEUSE|R09-005-004": //lawn motor
                     $flatProduct ['ATT_15344'] =  'LOV_000001'; // Lawn motor ;
                     break;
+                    case "201908|2354|R10-007-009": //smart lock
+                        $flatProduct ['feature_00277_201908|2354|R10-007-009'] =  'LOV_042526'; // Destonation ;
+                        $flatProduct ['feature_00277_201908|2354|R10-007-009'] =  'LOV_230961'; // TYpe of product ;
+                        break;
 
-                    
+                   
                 
             };
 
@@ -80,7 +84,9 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                 '201825|ROSACE_DE_FONCTION|POIGNEE_DE_PORTE|R10-007-004',
                 "200474|TOURNEVIS|TOURNEVIS_ET_ACCESSOIRES|R04-003-001",
                 "201675|2538|R05-007",
+                "205016|2393|R05-007-2016",
                 "205634|1024|R1001-1002-1004",
+                "202383|PLAFONNIER|PLAFONNIER|R13-001-003",
                 '201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007'
                 ])) {
                 $flatProduct['ATT_21148'] ='LOV_000002';// Contain woods ;
