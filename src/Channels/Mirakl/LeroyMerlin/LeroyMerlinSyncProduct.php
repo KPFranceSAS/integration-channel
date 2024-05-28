@@ -74,6 +74,11 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
 
         if(array_key_exists('product_category', $flatProduct)) {
             switch($flatProduct['product_category']) {
+
+                case "206556|2547|R1001-2010" : // prineter
+                    $flatProduct['feature_22088_206556|2547|R1001-2010'] ="LOV_283859"; // LOV_283859
+                    break;
+
                 case '200264|2231|R03-2003-2008':
                     $flatProduct["ATT_13704"] = $this->getAttributeUnit($product, 'solar_panel_power', 'WATT_CRETE', 0);
                     $flatProduct['feature_00277_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ="LOV_257736"; // power station
@@ -96,6 +101,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     break;
                 case  "205634|1024|R1001-1002-1004": // blender
                     $flatProduct ['ATT_00056'] = $this->getAttributeUnit($product, 'liquid_capacity', 'LITER', 1); // blender ;
+                    $flatProduct ['ATT_21148'] =  'LOV_000002'; // Contain woods ;
                     break;
                 case  "201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007": // pizza
                     $flatProduct ['ATT_20510'] =  'LOV_000001'; // Food contact ;
@@ -105,11 +111,15 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     $flatProduct ['ATT_20510'] =  'LOV_000001'; // Food contact ;
                     break;
                 case  "201675|2538|R05-007": // composter
+                case  "205016|2393|R05-007-2016": // bbq
                     $flatProduct ['ATT_21148'] =  'LOV_000002'; // Contain woods ;
                     break;
                 case "201526|ROBOT_TONDEUSE|TONDEUSE_ET_ROBOT_TONDEUSE|R09-005-004": //lawn motor
                     $flatProduct ['ATT_15344'] =  'LOV_000001'; // Lawn motor ;
                     break;
+
+                    
+                
             };
 
             if(in_array($flatProduct['product_category'], [
