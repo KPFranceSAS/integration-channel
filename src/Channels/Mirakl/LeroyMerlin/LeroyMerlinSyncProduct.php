@@ -28,17 +28,17 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         
        $flatProduct['product_category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'leroymerlin');
        
-       $flatProduct ['ATT_21148'] =  'LOV_000002';
+
 
         if(array_key_exists('product_category', $flatProduct)) {
             switch($flatProduct['product_category']) {
 
-
+                case "206556|2547|R1001-2010" : // prineter
+                    $flatProduct['feature_22088_206556|2547|R1001-2010'] ="LOV_283859"; // LOV_283859
+                    break;
                 case "202599|2480|R15-2012"  : // desk
                     $flatProduct ['ATT_21148'] =  'LOV_000001'; // Contain woods ;
                     break;
-
-
                 case '200264|2231|R03-2003-2008':
                     $flatProduct["ATT_13704"] = $this->getAttributeUnit($product, 'solar_panel_power', 'WATT_CRETE', 0);
                     $flatProduct['feature_00277_200259|PANNEAU_SOLAIRE|ACCESSOIRE_DE_MOTORISATION_DE_PORTAIL|R03-006-002'] ="LOV_257736"; // power station
@@ -75,6 +75,18 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     
                 
             };
+
+            if(in_array($flatProduct['product_category'], [
+                '201825|ROSACE_DE_FONCTION|POIGNEE_DE_PORTE|R10-007-004',
+                "200474|TOURNEVIS|TOURNEVIS_ET_ACCESSOIRES|R04-003-001",
+                "201675|2538|R05-007",
+                "205634|1024|R1001-1002-1004",
+                '201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007'
+                ])) {
+                $flatProduct['ATT_21148'] ='LOV_000002';// Contain woods ;
+            } 
+
+
 
             if(in_array($flatProduct['product_category'], [
                     '200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005',
