@@ -135,11 +135,10 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
             $flatProduct["PROD_FEAT_16148"] = "10";
         } elseif($flatProduct['CATEGORY']=='FET_FRA_1304'){ //HOUSEHOLD APPLIANCES > COOKWARE > KNIVES
             $flatProduct["PROD_FEAT_15043__ES_ES"] = "Acero inoxidable";
-        }
-
-        
-
-
+        }  elseif($flatProduct['CATEGORY']=='FET_FRA_1490'){ //GARDEN AND OUTDOOR > GARDEN TOOLS > LAWN MOWER
+            $flatProduct["PROD_FEAT_11921__ES_ES"] = '20mm to 65mm';
+            $flatProduct["PROD_FEAT_15779"] = '0';
+        } 
 
 
         return $flatProduct;
