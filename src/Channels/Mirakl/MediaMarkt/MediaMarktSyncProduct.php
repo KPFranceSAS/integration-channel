@@ -60,8 +60,8 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $flatProduct["PROD_FEAT_11470__ES_ES"] =  $contentBox ? strip_tags(str_replace('</li>', ', </li>', (string) $contentBox)) :'<li>1 x '.$this->getAttributeSimple($product, "article_name", 'es_ES').'</li>';
 
 
-        $flatProduct["PROD_FEAT_10812__ES_ES"] = $this->getAttributeChoice($product, "main_material", "es_ES");
-        $codeMaterial = $this->getCodeMarketplaceInList('LOV_FEAT_Color_basic', $this->getAttributeChoice($product, "main_material", "en_GB"));
+        $flatProduct["PROD_FEAT_11514__ES_ES"] = $this->getAttributeChoice($product, "main_material", "es_ES");
+        $codeMaterial = $this->getCodeMarketplaceInList('LOV_FEAT_Material', $this->getAttributeChoice($product, "main_material", "en_GB"));
         $flatProduct["PROD_FEAT_16149"] = $codeMaterial ? $codeMaterial : "60";
 
 
