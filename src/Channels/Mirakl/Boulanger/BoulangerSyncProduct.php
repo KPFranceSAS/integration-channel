@@ -2,6 +2,7 @@
 
 namespace App\Channels\Mirakl\Boulanger;
 
+use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\Channels\Mirakl\MiraklSyncProductParent;
 use App\Entity\IntegrationChannel;
 
@@ -20,11 +21,20 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         ];
 
         $flatProduct["SKU_MARCHAND"] = $product['identifier'];
-        $flatProduct["REF_COM"]  = substr((string) $this->getAttributeSimple($product, 'short_article_name', 'fr_FR'), 0, 40);
-        $flatProduct["ACCROCHE"] = substr((string) $this->getAttributeSimple($product, 'article_name', 'fr_FR'), 0, 95);
+
+        $brandName = $this->getAttributeChoice($product, "brand", "en_GB");
+
+        $shortName = (string)$this->getAttributeSimple($product, 'short_article_name', 'fr_FR');
+        $articleName = (string)$this->getAttributeSimple($product, 'article_name', 'fr_FR');
+        if(strlen($shortName)==0){
+            $flatProduct["REF_COM"]  = trim(str_replace($brandName, '', $articleName));
+        } 
+
+        $flatProduct["REF_COM"]  = substr($shortName, 0, 40);
+        $flatProduct["ACCROCHE"] = substr( $articleName, 0, 95);
         $flatProduct["PARTNUMBER"]  = $this->getAttributeSimple($product, 'ean');
         
-        $flatProduct["MARQUE"] = $this->getCodeMarketplaceInList('LISTE_MARQUE', $this->getAttributeChoice($product, "brand", "en_GB"));
+        $flatProduct["MARQUE"] = $this->getCodeMarketplaceInList('LISTE_MARQUE', $brandName);
 
 
         $descriptionRich = $this->getAttributeSimple($product, 'description_enrichie', 'fr_FR');
@@ -83,6 +93,11 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
                     $flatProduct = $this->addInfoRobotTondeuse($product, $flatProduct);
     
                  break;
+                 case '42249':
+                    $flatProduct = $this->addInfoGamingChair($product, $flatProduct);
+    
+                 break;
+                 
                     case '8011':
                         $flatProduct = $this->addInfoComposteur($product, $flatProduct);
         
@@ -128,6 +143,27 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     }
 
 
+    public function addInfoGamingChair(array $product, array $flatProduct): array
+    {
+
+            $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/type']="Siège gamer";
+            $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/utilisation']='Multisupport';
+            $flatProduct['CCENTRALE_SIEGE_GAMER/caracteristiques_generales/coloris']='Noir';
+            $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/matiere']='Simili cuir';
+            $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/matiere_du_cadre']='Métal';
+            $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/style']='Sur pied';
+            $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/poids_maximum_recommande_du_pilote']='130kg';
+            $flatProduct['CENTRALE_SIEGE_GAMER/services_inclus/fabrique_en']='Chine';
+            $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/type_d_accoudoirs']='3D';
+            $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/rocking_chair']='Sans';
+            $flatProduct['CENTRALE_SIEGE_GAMER/montage/livre_monte']='Non';
+            $flatProduct['CENTRALE_SIEGE_GAMER/montage/a_monter_soi-meme']='Oui';
+
+            
+        return $flatProduct;
+    }
+    
+
 
 
     public function addInfoComposteur(array $product, array $flatProduct): array
@@ -153,7 +189,8 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
     public function addInfoAccesoriesPizza(array $product, array $flatProduct): array
     {
-        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/type_de_produit'] = $this->getAttributeSimple($product, 'mkp_product_type', 'fr_FR');
+
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/type_de_produit'] = $this->getAttributeChoice($product, 'mkp_product_type', 'fr_FR');
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/compatible_avec' ] ='Four à Pizza Witt';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/collection_accessoires'] ='Four à Pizza Witt';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/usage'] ='Cuisson pizza';
