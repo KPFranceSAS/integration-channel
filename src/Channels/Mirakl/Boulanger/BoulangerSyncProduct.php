@@ -52,7 +52,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $flatProduct["POIDS_NET"] = $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0);
         
 
-        $flatProduct['CATEGORY'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'boulanger');
+        $flatProduct['CATEGORIE'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'boulanger');
 
         if(array_key_exists('CATEGORIE', $flatProduct)) {
             switch($flatProduct['CATEGORIE']) {
