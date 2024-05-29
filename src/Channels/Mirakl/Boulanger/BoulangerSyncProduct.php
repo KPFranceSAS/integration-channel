@@ -27,7 +27,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $shortName = (string)$this->getAttributeSimple($product, 'short_article_name', 'fr_FR');
         $articleName = (string)$this->getAttributeSimple($product, 'article_name', 'fr_FR');
         if(strlen($shortName)==0){
-            $flatProduct["REF_COM"]  = trim(str_replace($brandName, '', $articleName));
+            $shortName  = trim(str_replace($brandName, '', $articleName));
         } 
 
         $flatProduct["REF_COM"]  = substr($shortName, 0, 40);
@@ -66,6 +66,9 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
         if(array_key_exists('CATEGORIE', $flatProduct)) {
             switch($flatProduct['CATEGORIE']) {
+                case '42249':
+                    $flatProduct = $this->addInfoGamingChair($product, $flatProduct);
+                 break;
                 case '603':
                     $flatProduct = $this->addInfoPowerStation($product, $flatProduct);
                     break;
@@ -83,34 +86,19 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
                     break;
                 case '8004':
                     $flatProduct = $this->addInfoFryer($product, $flatProduct);
-
                     break;
                 case '30602':
                     $flatProduct = $this->addInfoPizza($product, $flatProduct);
-    
                     break;
                 case '7201':
                     $flatProduct = $this->addInfoRobotTondeuse($product, $flatProduct);
-    
                  break;
-                 case '42249':
-                    $flatProduct = $this->addInfoGamingChair($product, $flatProduct);
-    
-                 break;
-                 
                     case '8011':
                         $flatProduct = $this->addInfoComposteur($product, $flatProduct);
-        
                         break;
-
-                    
                 case "6001":
                     $flatProduct = $this->addInfoAccesoriesPizza($product, $flatProduct);
-    
                     break;
-
-
-
             };
             
 
@@ -148,7 +136,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
             $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/type']="Siège gamer";
             $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/utilisation']='Multisupport';
-            $flatProduct['CCENTRALE_SIEGE_GAMER/caracteristiques_generales/coloris']='Noir';
+            $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/coloris']='Noir';
             $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/matiere']='Simili cuir';
             $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/matiere_du_cadre']='Métal';
             $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/style']='Sur pied';
@@ -157,6 +145,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/type_d_accoudoirs']='3D';
             $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/rocking_chair']='Sans';
             $flatProduct['CENTRALE_SIEGE_GAMER/montage/livre_monte']='Non';
+            $flatProduct['CENTRALE_SIEGE_GAMER/montage/montage_rapide']='Oui';
             $flatProduct['CENTRALE_SIEGE_GAMER/montage/a_monter_soi-meme']='Oui';
 
             
