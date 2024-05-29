@@ -126,10 +126,20 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $flatProduct["PROD_FEAT_15635"] =  "50";
         $flatProduct["PROD_FEAT_10061__ES_ES"] = $this->getAttributeSimple($product, "playback_speed_turntable");
         
-        //audiocamera
-        if($flatProduct['CATEGORY']=='FET_FRA_1431'){
+        //specific
+        if($flatProduct['CATEGORY']=='FET_FRA_1431'){ // SMART HOME IP CAMERAS
             $flatProduct["PROD_FEAT_16517"] = "40";
+        } elseif($flatProduct['CATEGORY']=='FET_FRA_2033'){ //SMART HOME > SMART HOME > DOORBELLS
+            $flatProduct["PROD_FEAT_16517"] = "60";
+        } elseif($flatProduct['CATEGORY']=='FET_FRA_1444'){ //HOUSEHOLD APPLIANCES > COOKWARE > PANS
+            $flatProduct["PROD_FEAT_16148"] = "10";
+        } elseif($flatProduct['CATEGORY']=='FET_FRA_1304'){ //HOUSEHOLD APPLIANCES > COOKWARE > KNIVES
+            $flatProduct["PROD_FEAT_15043__ES_ES"] = "Acero inoxidable";
         }
+
+        
+
+
 
 
         return $flatProduct;
