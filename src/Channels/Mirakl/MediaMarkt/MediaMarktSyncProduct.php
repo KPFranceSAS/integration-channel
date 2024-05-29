@@ -25,16 +25,6 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
 
         $flatProduct['CATEGORY'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'mediamarkt');
         $flatProduct['PROD_FEAT_10990__ES_ES'] =$this->getAttributeChoice($product, 'mkp_product_type', $this->getLocale());
-
-        $productType = $this->getAttributeSimple($product, 'mkp_product_type');
-        if($productType) {
-            if(array_key_exists($productType, $this->categories)&&) {
-                $flatProduct['mm_category_id'] = $this->categories[$productType];
-            }
-            $flatProduct['merchant_category'] = $this->getAttributeChoice($product, 'mkp_product_type', $this->getLocale());
-        }
-
-
         
         // text
        
