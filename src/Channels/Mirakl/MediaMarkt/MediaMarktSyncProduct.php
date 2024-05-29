@@ -121,8 +121,10 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $flatProduct["PROD_FEAT_15635"] =  "50";
         $flatProduct["PROD_FEAT_10061__ES_ES"] = $this->getAttributeSimple($product, "playback_speed_turntable");
         
-        
-
+        //audiocamera
+        if($flatProduct['CATEGORY']=='FET_FRA_1431'){
+            $flatProduct["ROD_FEAT_16517"] = "40";
+        }
 
 
         return $flatProduct;
