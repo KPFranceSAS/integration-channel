@@ -2,7 +2,6 @@
 
 namespace App\Channels\Mirakl\Boulanger;
 
-use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\Channels\Mirakl\MiraklSyncProductParent;
 use App\Entity\IntegrationChannel;
 
@@ -53,38 +52,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $flatProduct["POIDS_NET"] = $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0);
         
 
-
-
-        $equivalences = [
-            "marketplace_generator_energy_travel"=>	"603",
-            "marketplace_solar_panel_mobile" => "31809",
-            "marketplace_solar_panel_energy_travel"=>	"31809",
-            "marketplace_garden_spa_home"=>	"7205",
-            "marketplace_smart_lock" =>"2402",
-            "markerplace_blender"=>	"5603",
-            "marketplace_air_fryer" =>	"8004",
-            "marketplace_travel_oven" => "30602",
-            'marketplace_pizza_peel' =>	"6001",
-            "marketplace_pizza_cutter" =>	"6001",
-            "marketplace_pizza_brush"	 =>	"6001",
-            "marketplace_pizza_scale"	 =>	"6001",
-            "marketplace_pizza_roller"	 =>	"6001",
-            "marketplace_pizza_apparel"	 =>	"6001",
-            "marketplace_pizza_stone"	 =>	"6001",
-            "marketplace_pizza_cooker"	 =>	"6001",
-            "marketplace_pizza_table"	 =>	"6001",
-            "marketplace_pizza_other"	 =>	"6001",
-            "marketplace_composter_home"  => '8011',
-            'marketplace_garden_spa_home_lawn_mowers' => "7201",
-            
-        ];
-
-        foreach($equivalences as $pimCategory => $mmCategory) {
-            if(in_array($pimCategory, $product['categories'])) {
-                $flatProduct['CATEGORIE'] = $mmCategory;
-                break;
-            }
-        }
+        $flatProduct['CATEGORY'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'boulanger');
 
         if(array_key_exists('CATEGORIE', $flatProduct)) {
             switch($flatProduct['CATEGORIE']) {
@@ -185,27 +153,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
     public function addInfoAccesoriesPizza(array $product, array $flatProduct): array
     {
-
-        $equivalences = [
-            'marketplace_pizza_peel' =>	"Pelle à pizza",
-            "marketplace_pizza_cutter" =>	"Roue pour découper",
-            "marketplace_pizza_brush"	 =>	"Brosse",
-            "marketplace_pizza_scale"	 =>	"Balance",
-            "marketplace_pizza_roller"	 =>	"Rouleau à pizza",
-            "marketplace_pizza_apparel"	 =>	"Vêtement",
-            "marketplace_pizza_stone"	 =>	"Pierre à pizza",
-            "marketplace_pizza_cooker"	 =>	"Poële",
-            "marketplace_pizza_table"	 =>	"Table",
-            "marketplace_pizza_other"	 =>	"Autre",
-        ];
-
-        foreach($equivalences as $pimCategory => $mmCategory) {
-            if(in_array($pimCategory, $product['categories'])) {
-                $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/type_de_produit'] = $mmCategory;
-                break;
-            }
-        }
-
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/type_de_produit'] = $this->getAttributeSimple($product, 'mkp_product_type', 'fr_FR');
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/compatible_avec' ] ='Four à Pizza Witt';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/collection_accessoires'] ='Four à Pizza Witt';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/usage'] ='Cuisson pizza';

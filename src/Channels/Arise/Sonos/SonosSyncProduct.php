@@ -12,7 +12,6 @@ class SonosSyncProduct extends AriseSyncProductParent
     {
         $searchBuilder = new SearchBuilder();
         $searchBuilder
-            ->addFilter('arise_category_id', 'NOT EMPTY')
             ->addFilter('brand', 'NOT EMPTY')
             ->addFilter('marketplaces_assignement', 'IN', ['arise_sonos_es_gi'])
             ->addFilter('enabled_channel', '=', true, ['scope' => 'Marketplace'])
