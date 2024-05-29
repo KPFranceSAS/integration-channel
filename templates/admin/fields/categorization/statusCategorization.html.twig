@@ -6,5 +6,16 @@
 {% else %}
        {% set classNb = 'badge-secondary' %}
 {% endif %}   
-<i class="{{classIn}}"></i> <span class="badge {{classNb}}"> {{nb}}</span> 
-{% if category and category|length > 0  %}<!--a href="{{ path('admin', {crudAction: 'seeRequired', crudControllerFqcn : 'App\\Controller\\Configuration\\ProductTypeCategoryCrudController', channel: channel, category: category}) }}"><i class="fas fa-question-circle"></i></a-->{% endif %}
+
+
+<div class="popover__ext" style="width:35px!important"><i class="{{classIn}}"></i> <span class="badge {{classNb}}"> {{nb}}</span> 
+</div>
+{% if category and category|length > 0  %}
+<div class="popover__wrapper"><i class="fas fa-info-circle popover__title"></i>
+  <div class="popover__content">
+    <div class="popover__message">
+        Category code {{category}}
+    </div>
+  </div>
+</div>
+{% endif %}
