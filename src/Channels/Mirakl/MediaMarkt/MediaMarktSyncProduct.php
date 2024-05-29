@@ -109,7 +109,7 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         
         // pizza
         $flatProduct["PROD_FEAT_13500"] = $this->getAttributeSimple($product, "size_grilling");
-        $flatProduct["PROD_FEAT_11514__ES_ES"] = $this->getAttributeSimple($product, "finish_type");
+        
         
         // video
         $flatProduct["PROD_FEAT_13747__ES_ES"] = $this->getAttributeSimple($product, "image_rate");
