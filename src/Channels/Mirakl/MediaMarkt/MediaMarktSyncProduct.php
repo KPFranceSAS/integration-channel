@@ -57,7 +57,12 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $flatProduct["PROD_FEAT_10812__ES_ES"] = $colorName ?: $this->getAttributeChoice($product, "color_generic", "es_ES");
         $flatProduct["PROD_FEAT_00003"] = $this->getCodeMarketplaceInList('LOV_FEAT_Color_basic', $this->getAttributeChoice($product, "color_generic", "en_GB"));
         $contentBox= $this->getAttributeSimple($product, "in_the_box", "es_ES");
-        $flatProduct["PROD_FEAT_11470__ES_ES"] =  $contentBox ? strip_tags(str_replace('</li>', ', </li>', (string) $contentBox)) :'';
+        $flatProduct["PROD_FEAT_11470__ES_ES"] =  $contentBox ? strip_tags(str_replace('</li>', ', </li>', (string) $contentBox)) :'<li>1 x '.$this->getAttributeSimple($product, "article_name", 'es_ES').'</li>';
+
+
+        $flatProduct["PROD_FEAT_10812__ES_ES"] = $this->getAttributeChoice($product, "main_material", "es_ES");
+        $codeMaterial = $this->getCodeMarketplaceInList('LOV_FEAT_Color_basic', $this->getAttributeChoice($product, "main_material", "en_GB"));
+        $flatProduct["PROD_FEAT_16149"] = $codeMaterial ? $codeMaterial : "60";
 
 
         // power
@@ -123,7 +128,7 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         
         //audiocamera
         if($flatProduct['CATEGORY']=='FET_FRA_1431'){
-            $flatProduct["ROD_FEAT_16517"] = "40";
+            $flatProduct["PROD_FEAT_16517"] = "40";
         }
 
 
