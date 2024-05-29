@@ -23,64 +23,16 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
         $flatProduct["BRAND"] = $this->getCodeMarketplaceInList('LOV_MP_BRAND_NAME', $this->getAttributeChoice($product, "brand", "en_GB"));
 
 
+        $flatProduct['CATEGORY'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'mediamarkt');
+        $flatProduct['PROD_FEAT_10990__ES_ES'] =$this->getAttributeChoice($product, 'mkp_product_type', $this->getLocale());
 
-        $equivalences = [
-            'marketplace_soundbar'=>'FET_FRA_1060',
-            'marketplace_homespeaker'=>'FET_FRA_1047',
-            'marketplace_portablespeaker'=>'FET_FRA_1046',
-            'marketplace_receiver'=>'FET_FRA_1043',
-            'marketplace_video_projectors_video'=>'FET_FRA_1105',
-            'marketplace_accessories_other'=>'FET_FRA_1143',
-            'marketplace_projector_stand'=>'FET_FRA_1639',
-            'marketplace_projector_adapters'=>'FET_FRA_1640',
-            'marketplace_smart_lock'=>'FET_FRA_1471',
-            'marketplace_hair_care_health_personal_care'=>'FET_FRA_1030',
-            'marketplace_cutting_machines_art_crafts'=>'FET_FRA_2023',
-            'marketplace_accessories_audio' => 'FET_FRA_1224',
-            'marketplace_accessories_video' => 'FET_FRA_1143',
-            "marketplace_camera_video" =>"FET_FRA_1614",
-            "marketplace_generator_energy_travel" =>"FET_FRA_2022",
-            "marketplace_solar_panel_energy_travel"	=> "FET_FRA_2013",
-            "marketplace_travel_oven" => "FET_FRA_1349",
-            'marketplace_pizza_peel' =>	"FET_FRA_1443",
-            "marketplace_pizza_cutter" =>	"FET_FRA_1443",
-            "marketplace_pizza_brush"	 =>	"FET_FRA_1443",
-            "marketplace_pizza_scale"	 =>	"FET_FRA_1063",
-            "marketplace_pizza_roller"	 =>	"FET_FRA_1443",
-            "marketplace_pizza_apparel"	 =>	"FET_FRA_1443",
-            "marketplace_pizza_stone"	 =>	"FET_FRA_1324",
-            "marketplace_pizza_cooker"	 =>	"FET_FRA_1443",
-            "marketplace_pizza_table"	 =>	"FET_FRA_1443",
-            "marketplace_pizza_other"	 =>	"FET_FRA_1349",
-            "marketplace_garden_spa_home" => "FET_FRA_1650",
-            "marketplace_gaming_chair" => "FET_FRA_1382",
-            'marketplace_projector_screen' => 'FET_FRA_1456',
-            "marketplace_camera_accessories" => "FET_FRA_1200",
-            "marketplace_camera_stands"	=> "FET_FRA_1419",
-            "marketplace_camera_light" => "FET_FRA_1662",
-            "marketplace_camera_selfie" => "FET_FRA_1188",
-            "marketplace_camera_tripod"	 => "FET_FRA_1186",
-            "marketplace_audio_protection"	=> "FET_FRA_1536",
-            'marketplace_audio_tv_wall' => "FET_FRA_1421",
-            "marketplace_turntable" => "FET_FRA_1131",
-            "marketplace_composter_home"  => 'FET_FRA_1375',
-            'marketplace_garden_spa_home_lawn_mowers' => "FET_FRA_1490",
-            "marketplace_turntable_accessories" => "FET_FRA_1224",
-            "marketplace_powered_cooler" => "FET_FRA_1450"
-        ];
-
-
-        
-
-
-        foreach($equivalences as $pimCategory => $mmCategory) {
-            if(in_array($pimCategory, $product['categories'])) {
-                $flatProduct['CATEGORY'] = $mmCategory;
-                $flatProduct['PROD_FEAT_10990__ES_ES'] = $this->getCategorieName($pimCategory, 'es_ES');
-                break;
+        $productType = $this->getAttributeSimple($product, 'mkp_product_type');
+        if($productType) {
+            if(array_key_exists($productType, $this->categories)&&) {
+                $flatProduct['mm_category_id'] = $this->categories[$productType];
             }
+            $flatProduct['merchant_category'] = $this->getAttributeChoice($product, 'mkp_product_type', $this->getLocale());
         }
-
 
 
         
