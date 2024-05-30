@@ -327,6 +327,15 @@ abstract class ProductSyncParent
             "KILOWATT" => 1000,
             "MEGAWATT" => 1_000_000,
 
+            "MILLISECOND" => 0.001,
+            "SECOND" => 1,
+            "MINUTE" => 60,
+            "HOUR" => 3600,
+            "DAY" => 86400,
+            "WEEK" => 604800,
+            "MONTH" => 2628000,
+            "YEAR" => 31536000,
+
 
         ];
 
