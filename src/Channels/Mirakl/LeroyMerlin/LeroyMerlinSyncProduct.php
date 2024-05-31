@@ -71,6 +71,10 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                 case "201526|ROBOT_TONDEUSE|TONDEUSE_ET_ROBOT_TONDEUSE|R09-005-004": //lawn motor
                     $flatProduct ['ATT_15344'] =  'LOV_000001'; // Lawn motor ;
                     break;
+                    case "200648|2534|R03-002-010": //chargeur
+                        $flatProduct ['feature_22088_200648|2534|R03-002-010'] =  'LOV_049538'; // chargeur ;
+                        break;
+                    
                     case "201908|2354|R10-007-009": //smart lock
                         $flatProduct ['feature_00277_201908|2354|R10-007-009'] =  'LOV_042526'; // Destonation ;
                         $flatProduct ['feature_22088_201908|2354|R10-007-009'] =  'LOV_230961'; // TYpe of product ;
