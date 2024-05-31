@@ -198,6 +198,10 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 "field" => "color_generic",
                 "type" => "choice",
             ],
+            "colour" => [
+                "field" => "color_generic",
+                "type" => "choice",
+            ],
             "battery_life"=>[
                 "field" => 'battery_lifetime',
                 "type" => "unit",
@@ -277,12 +281,17 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             
          ];
 
-         if($flatProduct['mm_category_id'] ==19952 ){
+        if($flatProduct['mm_category_id'] ==19952) { // tondeuse
             $flatProduct['coverage']=800;
             $flatProduct['coverage_unit']="m²";
             $flatProduct['working_width_/_diameter']=200;
             $flatProduct['working_width_/_diameter_unit']="m";
-         }
+        } elseif($flatProduct['mm_category_id'] ==20344) { // chaise
+            $flatProduct['style']="Modern";
+        } elseif($flatProduct['mm_category_id'] ==20344) { // bold
+            $flatProduct['centre-to-centre_distance']=45;
+            $flatProduct['centre-to-centre_distance_unit']="mm";
+        }
 
         
 
@@ -290,7 +299,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         foreach ($fieldsToConvert as $fieldMirakl => $fieldPim) {
             if ($fieldPim['type']=='unit') {
                 $valueConverted = $this->getAttributeUnit($product, $fieldPim['field'], $fieldPim['unit'], $fieldPim['round']);
-                if($valueConverted){
+                if($valueConverted) {
                     $flatProduct[$fieldMirakl] = $valueConverted;
                     if ($fieldMirakl !='DisplayWeight') {
                         $flatProduct[$fieldMirakl.'_unit'] = $fieldPim['convertUnit'];
