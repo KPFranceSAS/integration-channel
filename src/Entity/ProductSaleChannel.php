@@ -78,6 +78,13 @@ class ProductSaleChannel implements \Stringable
 
 
 
+    public function getDiscountPrice(){
+        $now = new DateTime('now');
+        $promotion = $this->getBestPromotionForDate($now);
+        return $promotion ? $promotion->getPromotionPrice().' ['.$promotion->getComment().']' : '-';
+    }
+
+
     public function getSalePriceForNow()
     {
         $now = new DateTime('now');

@@ -38,6 +38,7 @@ use App\Entity\MarketplaceCategory;
 use App\Entity\OrderLog;
 use App\Entity\Product;
 use App\Entity\ProductCorrelation;
+use App\Entity\ProductSaleChannel;
 use App\Entity\ProductTypeCategorizacion;
 use App\Entity\Promotion;
 use App\Entity\SaleChannel;
@@ -152,7 +153,11 @@ class DashboardController extends AbstractDashboardController
                         'fas fa-barcode',
                         Product::class
                     )->setController(PricingCrudController::class),
-                    
+                    MenuItem::linkToCrud(
+                        'Products on channel',
+                        'fas fa-money-bill-alt',
+                        ProductSaleChannel::class
+                    ),
                     MenuItem::linkToCrud(
                         'Promotion',
                         'fas fa-percentage',
