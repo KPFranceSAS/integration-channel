@@ -128,7 +128,7 @@ class ProductSaleChannelCrudController extends AdminCrudController
                         "comparison" => "=",
                         "value" => $product->getProduct()->getId()
                     ],
-                    "saleChannel"> [
+                    "saleChannel" => [
                         "comparison" => "=",
                         "value" => $product->getSaleChannel()->getId()
                     ],
