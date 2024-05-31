@@ -108,7 +108,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         }
         
 
-        $locales = ['fr', 'es', 'it'];
+        $locales = ['fr', 'es', 'it', 'pt'];
 
         foreach ($locales as $locale) {
             $localePim = $locale.'_'.strtoupper($locale);
