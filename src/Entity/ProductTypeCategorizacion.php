@@ -109,6 +109,12 @@ class ProductTypeCategorizacion
     #[ORM\Column(nullable: true)]
     private ?int $nbProductAmazonIt = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $miraviaCategory = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductMiravia = null;
+
 
     public function __construct()
     {
@@ -479,6 +485,30 @@ class ProductTypeCategorizacion
     public function setNbProductAmazonIt(?int $nbProductAmazonIt): static
     {
         $this->nbProductAmazonIt = $nbProductAmazonIt;
+
+        return $this;
+    }
+
+    public function getMiraviaCategory(): ?string
+    {
+        return $this->miraviaCategory;
+    }
+
+    public function setMiraviaCategory(?string $miraviaCategory): static
+    {
+        $this->miraviaCategory = $miraviaCategory;
+
+        return $this;
+    }
+
+    public function getNbProductMiravia(): ?int
+    {
+        return $this->nbProductMiravia;
+    }
+
+    public function setNbProductMiravia(?int $nbProductMiravia): static
+    {
+        $this->nbProductMiravia = $nbProductMiravia;
 
         return $this;
     }

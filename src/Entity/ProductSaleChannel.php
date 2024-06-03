@@ -9,6 +9,7 @@ use App\Helper\Traits\TraitTimeUpdated;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -75,6 +76,15 @@ class ProductSaleChannel implements \Stringable
      */
     #[ORM\OneToMany(targetEntity: ProductSaleChannelHistory::class, mappedBy: 'productSaleChannel', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private \Doctrine\Common\Collections\Collection $productSaleChannelHistories;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $availableFrom = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $published = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $reason = null;
 
 
 
@@ -441,6 +451,42 @@ class ProductSaleChannel implements \Stringable
                 $productSaleChannelHistory->setProductSaleChannel(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAvailableFrom(): ?\DateTimeInterface
+    {
+        return $this->availableFrom;
+    }
+
+    public function setAvailableFrom(?\DateTimeInterface $availableFrom): static
+    {
+        $this->availableFrom = $availableFrom;
+
+        return $this;
+    }
+
+    public function isPublished(): ?bool
+    {
+        return $this->published;
+    }
+
+    public function setPublished(?bool $published): static
+    {
+        $this->published = $published;
+
+        return $this;
+    }
+
+    public function getReason(): ?string
+    {
+        return $this->reason;
+    }
+
+    public function setReason(?string $reason): static
+    {
+        $this->reason = $reason;
 
         return $this;
     }

@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\ProductSaleChannel;
 use App\Form\PromotionType;
+use DateTime;
+use Doctrine\DBAL\Types\DateTimeType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -46,6 +48,7 @@ class ProductSaleChannelType extends AbstractType
         $form
             ->add('enabled', CheckboxType::class, ['disabled'=>!$enabled])
             ->add('price', MoneyType::class, ['currency'=>$productMarketplace->getSaleChannel()->getCurrencyCode(), 'disabled'=>!$enabled])
+            ->add('availableFrom', DateTimeType::class, ['disabled'=>!$enabled])
         ;
 
     }

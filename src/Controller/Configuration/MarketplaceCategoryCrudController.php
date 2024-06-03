@@ -53,17 +53,21 @@ class MarketplaceCategoryCrudController extends AdminCrudController
 
     public function configureFilters(Filters $filters): Filters
     {
-        $channels =['decathlon'=>'decathlon',
-                    'fnacdarty'=>'fnacDarty',
-                    'boulanger'=>'boulanger',
-                    'leroymerlin'=>'leroymerlin',
-                    'mediamarkt'=>'mediamarkt',
-                    'manomano'=>'manomano',
+        $channels =[
                     'amazonEs' => 'amazonEs',
                     'amazonDe' => 'amazonDe',
                     'amazonFr' => 'amazonFr',
                     'amazonUk' => 'amazonUk',
                     'amazonIt' => 'amazonIt',
+                    'cdiscount' => 'cdiscount',
+                    'decathlon'=>'decathlon',
+                    'fnacdarty'=>'fnacDarty',
+                    'boulanger'=>'boulanger',
+                    'leroymerlin'=>'leroymerlin',
+                    'mediamarkt'=>'mediamarkt',
+                    'manomano'=>'manomano',
+                    'miravia'=>'miravia',
+                    
                 ];
 
 
