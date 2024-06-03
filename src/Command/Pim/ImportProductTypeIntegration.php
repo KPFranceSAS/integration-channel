@@ -102,6 +102,11 @@ class ImportProductTypeIntegration extends Command
                 'nbProductCdiscount' => [
                     'cdiscount_kp_fr'
                 ],
+                'nbProductMiravia' => [
+                    'arise_sonos_es_gi',
+                    'arise_amazfit_es_gi',
+                    'arise_es_gi'
+                ],
             ];
             
             foreach($parameters as $function => $channels){
