@@ -21,6 +21,7 @@ class ImportProductTypeIntegration extends Command
         parent::__construct();
     }
 
+    /** @var \Doctrine\ORM\EntityManagerInterface */
     private $manager;
 
 

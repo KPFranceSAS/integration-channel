@@ -3,17 +3,24 @@
 namespace App\Channels\Mirakl;
 
 use App\Service\Aggregator\ApiInterface;
+use DateInterval;
+use DateTime;
 use Exception;
 use GuzzleHttp\Client;
 use Mirakl\Core\Domain\Collection\DocumentCollection;
 use Mirakl\Core\Domain\Document;
+use Mirakl\Core\Domain\FileWrapper;
 use Mirakl\MCI\Common\Domain\Product\ProductImportTracking;
 use Mirakl\MCI\Shop\Client\ShopApiClient;
+use Mirakl\MCI\Shop\Request\Product\DownloadProductImportTransformationErrorReportRequest;
 use Mirakl\MCI\Shop\Request\Product\ProductImportRequest;
+use Mirakl\MCI\Shop\Request\Product\ProductImportStatusesRequest;
 use Mirakl\MMP\Common\Domain\Order\Accept\AcceptOrderLine;
 use Mirakl\MMP\OperatorShop\Request\Message\GetThreadDetailsRequest;
 use Mirakl\MMP\OperatorShop\Request\Message\GetThreadsRequest;
 use Mirakl\MMP\Shop\Request\Offer\GetOffersRequest;
+use Mirakl\MMP\Shop\Request\Offer\Importer\OfferImportErrorReportRequest;
+use Mirakl\MMP\Shop\Request\Offer\Importer\OffersImportsRequest;
 use Mirakl\MMP\Shop\Request\Offer\UpdateOffersRequest;
 use Mirakl\MMP\Shop\Request\Order\Accept\AcceptOrderRequest;
 use Mirakl\MMP\Shop\Request\Order\Document\UploadOrdersDocumentsRequest;
@@ -321,6 +328,97 @@ abstract class MiraklApiParent implements ApiInterface
         ];
         return $this->sendRequest('products/attributes', $params);
     }
+
+
+   
+
+
+     /**
+     
+     */
+    public function getReportErrorOffer($id):array{
+        $request = new OfferImportErrorReportRequest($id);  
+        $result = $this->client->getOffersImportErrorReport($request);
+        $file = $result->getFile();
+        $errors = [];
+        $header = null;
+        while (!$file->eof()) {
+            if(!$header){
+                $header=$file->fgetcsv();
+            } else {
+                $errors[]=array_combine($header, $file->fgetcsv());
+            }
+        }
+        return $errors;
+    }
+
+
+
+
+
+     /**
+     
+     */
+    public function getReportErrorProduct($id):array{
+        $request = new DownloadProductImportTransformationErrorReportRequest($id);
+        $result = $this->client->downloadProductImportTransformationErrorReport($request);
+        return $this->transformResultFileInArray($result);
+    }
+
+
+
+
+    public function transformResultFileInArray(FileWrapper $fielWrapper){
+        $file = $fielWrapper->getFile();
+        $contents = [];
+        $header = null;
+        while (!$file->eof()) {
+            if(!$header){
+                $header=$file->fgetcsv();
+            } else {
+                $contents[]=array_combine($header, $file->fgetcsv());
+            }
+        }
+        return $contents;
+    }
+
+
+
+ /**
+     * @return Mirakl\MMP\OperatorShop\Domain\Offer\Importer\OfferImport[]
+     */
+    public function getLastOfferImports():array{
+        $request = new OffersImportsRequest();
+        $request->setStatus('COMPLETE');
+        return $this->client->getOffersImports($request)->getCollection()->getItems();
+    }
+
+    public function getLastProductImports():array{
+        $request = new ProductImportStatusesRequest();    
+        $now = new DateTime();
+        $now->sub(new DateInterval('PT12H'));
+        $request->setLastRequestDate($now);  
+        return $this->client->getProductImportStatuses($request)->getItems();
+    }
+
+
+    public function getLastProductImport(){
+        $lastImports = $this->getLastProductImports();
+        $toReturn = null;
+        foreach($lastImports as $lastImport){
+            if(!$toReturn || ($toReturn->getDateCreated()<$lastImport->getDateCreated())){
+                $toReturn=$lastImport;
+            }
+        }
+        return $toReturn;
+
+
+    }
+
+
+
+    
+
 
 
     public function getAllAttributes()

@@ -20,10 +20,20 @@ class ConnectLeroyMerlinCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        dd($this->leroyMerlinApi->getOffers());
-       
-
+        $imports = $this->leroyMerlinApi->getLastOfferImports();
+        foreach($imports as $import){
+            if($import->getLinesInError()>0){
+                $errosFiles= $this->leroyMerlinApi->getReportErrorOffer($import->getImportId());
+                $errors = [];
+                foreach($errosFiles as $errosFile){
+                    $errors[$errosFile['sku']]=$errosFile['error-message'];
+                }
+                dd($errors);
+            } else {
+                return [];
+            }
+        }
+        
         return Command::SUCCESS;
     }
 
