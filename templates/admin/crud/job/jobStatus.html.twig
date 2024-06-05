@@ -10,6 +10,10 @@
 {% elseif  entity.instance.status == constant('App\\Entity\\Job::Status_Created') %}
 	{% set classColor = 'secondary' %}
 	{% set  value = 'Waiting processing' %}
+{% elseif  entity.instance.status == constant('App\\Entity\\Job::Status_Error') %}
+	{% set classColor = 'danger' %}
+	{% set  value = 'Error' %}
+{% else %}
 {% else %}
 	{% set classColor = 'secondary' %}
 	{% set value = 'Other' %}

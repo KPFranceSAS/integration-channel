@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Helper\Traits\TraitTimeUpdated;
 use App\Repository\JobRepository;
+use DateTime;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -129,4 +130,15 @@ class Job
 
         return $this;
     }
+
+
+    public function getExecutionTime(){
+        $currentTime = new DateTime();
+        $interval = $currentTime->diff($this->startDate);
+        return  ($interval->days * 24 * 60 * 60) + 
+                                                ($interval->h * 60 * 60) + 
+                                                ($interval->i * 60) + 
+                                                $interval->s;
+    }
+
 }

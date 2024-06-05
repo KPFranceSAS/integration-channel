@@ -28,31 +28,40 @@ class JobProcessCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
+        $output->writeln('Start processing');
         $manager = $this->managerRegistry->getManager();
         $jobs = $manager->getRepository(Job::class)->findByStatus(Job::Status_Processing);
         if(count($jobs)>0) {
             $output->writeln('Already processing');
+            foreach($jobs as $job){
+                if($job->getExecutionTime()>600){
+                    $job->setStatus(Job::Status_Error);
+                    $job->setEndDate(new DateTime());
+                }
+            }
             return Command::SUCCESS;
+        } else {
+            $output->writeln('No job running');
         }
 
         $jobToProcesss = $manager->getRepository(Job::class)->findByStatus(Job::Status_Created);
+        $output->writeln('Nb jobs '.count($jobToProcesss));
         if(count($jobToProcesss)>0) {
-            foreach($jobs as $job) {
-                $job->setStatus(Job::Status_Processing);
+            foreach($jobToProcesss as $jobToProcess) {
+                $jobToProcess->setStatus(Job::Status_Processing);
             }
             $manager->flush();
-            foreach($jobs as $job) {
-                $job->setStartDate(new DateTime());
-                if($job->getJobType()==Job::Type_Sync_Products) {
+            foreach($jobToProcesss as $jobToProcess) {
+                $jobToProcess->setStartDate(new DateTime());
+                if($jobToProcess->getJobType()==Job::Type_Sync_Products) {
                     try {
-                        $productUpdater = $this->productSyncAggregator->getProductSync($job->getChannel()->getCode());
+                        $productUpdater = $this->productSyncAggregator->getProductSync($jobToProcess->getChannel()->getCode());
                         $productUpdater->syncProducts();
-                        $job->setStatus(Job::Status_Finished);
+                        $jobToProcess->setStatus(Job::Status_Finished);
                     } catch (Exception $e) {
-                        $job->setStatus(Job::Status_Error);
+                        $jobToProcess->setStatus(Job::Status_Error);
                     }
-                    $job->setEndDate(new DateTime());
+                    $jobToProcess->setEndDate(new DateTime());
                    
                     $manager->flush();
                 }
