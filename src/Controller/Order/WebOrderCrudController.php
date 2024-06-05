@@ -388,7 +388,7 @@ class WebOrderCrudController extends AdminCrudController
         } else {
             $this->addFlash('danger', "Web Order " . $webOrder->getExternalNumber() . " can't be synced with ERP " . $webOrder->getOrderErrors());
         }
-        return $this->redirect($context->getReferrer());
+        return $this->redirect($this->adminUrlGenerator->setController(self::class)->setAction(Crud::PAGE_DETAIL)->setEntityId($webOrder->getId)->generateUrl());
     }
 
 

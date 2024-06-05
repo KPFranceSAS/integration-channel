@@ -88,6 +88,7 @@ services:
             $amzAwsSecret  : '%env(resolve:AMZ_AWS_SECRET)%'
             $amzArn  : '%env(resolve:AMZ_ARN)%'
             $amzRefreshToken  : '%env(resolve:AMZ_REFRESH_TOKEN)%'
+            $amzSellerId  : '%env(resolve:AMZ_SELLER_ID)%'
 
             $akeneoUrl  : '%env(resolve:AKENEO_URL)%'
             $akeneoClientId  : '%env(resolve:AKENEO_CLIENT_ID)%'

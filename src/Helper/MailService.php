@@ -96,7 +96,8 @@ class MailService
             'Error class',
             "InternalError",
             'SQLSTATE',
-            'Exception'
+            'Exception',
+            'Malformed UTF-8 characters, possibly incorrectly encoded'
         ];
         if (s($titre)->containsAny($stringForbiddens)) {
             return true;

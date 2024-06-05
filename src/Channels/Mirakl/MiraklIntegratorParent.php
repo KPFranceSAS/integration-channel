@@ -86,7 +86,7 @@ abstract class MiraklIntegratorParent extends IntegratorParent
             
             $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode = $orderApi['customer'][$miraklVal.'_address']["country"];
 
-            if (array_key_exists('state', $orderApi['customer'][$miraklVal.'_address'])) {
+            if (array_key_exists('state', $orderApi['customer'][$miraklVal.'_address']) && $orderBC->{$bcVal . "PostalAddress"}->countryLetterCode != 'FR') {
                 $orderBC->{$bcVal . "PostalAddress"}->state = substr((string) $orderApi['customer'][$miraklVal.'_address']['state'], 0, 30);
             }
         }

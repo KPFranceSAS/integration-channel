@@ -45,7 +45,7 @@ class AmzApi
 
     private $accessToken;
 
-    public function __construct(private readonly LoggerInterface $logger, private readonly string $amzLwaId, private readonly string $amzLwaSecret, private readonly string $amzAwsId, private readonly string $amzAwsSecret, private readonly string $amzArn, private readonly string $amzRefreshToken)
+    public function __construct(private readonly LoggerInterface $logger, private readonly string $amzLwaId, private readonly string $amzLwaSecret, private readonly string $amzAwsId, private readonly string $amzAwsSecret, private readonly string $amzArn, private readonly string $amzRefreshToken, private readonly string $amzSellerId)
     {
         $factory = new Psr17Factory();
         $client = new Curl($factory);
@@ -372,12 +372,12 @@ class AmzApi
                 $asin,
                 [$marketplace]
             );
-            if ($response->valid()) {
-                $reponseSummary = $response->getSummaries();
-                foreach ($reponseSummary as $summary) {
-                    return $summary;
-                }
+        
+            $reponseSummary = $response->getSummaries();
+            foreach ($reponseSummary as $summary) {
+                return $summary;
             }
+
         }
         return null;
     }
@@ -465,4 +465,22 @@ class AmzApi
             Marketplace::fromCountry('GB')->id(),
         ];
     }
+
+
+
+    public function getListingForSku($sku, $marketplace){
+            $response = $this->sdk->listingsItems()->getListingsItem(
+                $this->getAccessToken(),
+                Regions::EUROPE, 
+                $this->amzSellerId, 
+                $sku, 
+                [$marketplace],
+                null,
+                ['offers', 'summaries', 'issues','fulfillmentAvailability']
+            );
+            return $response;
+    }
+
+
+
 }
