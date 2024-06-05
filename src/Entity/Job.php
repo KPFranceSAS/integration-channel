@@ -16,6 +16,7 @@ class Job
     final public const Status_Processing = 1;
     final public const Status_Finished = 2;
     final public const Status_Cancelled = 3;
+    final public const Status_Error = 3;
 
     final public const Type_Sync_Products = 'Sync products';
     final public const Type_Sync_Prices = 'Sync prices';

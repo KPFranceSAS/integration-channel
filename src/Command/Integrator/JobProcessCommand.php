@@ -48,11 +48,12 @@ class JobProcessCommand extends Command
                     try {
                         $productUpdater = $this->productSyncAggregator->getProductSync($job->getChannel()->getCode());
                         $productUpdater->syncProducts();
+                        $job->setStatus(Job::Status_Finished);
                     } catch (Exception $e) {
-                        
+                        $job->setStatus(Job::Status_Error);
                     }
                     $job->setEndDate(new DateTime());
-                    $job->setStatus(Job::Status_Finished);
+                   
                     $manager->flush();
                 }
             }
