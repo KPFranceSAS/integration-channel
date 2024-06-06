@@ -48,8 +48,16 @@ abstract class ManoManoOfferStatusParent
             if(array_key_exists($offerManomano["sku"], $products)) {
                
                 $published = $offerManomano["offer_is_online"];
-                $reason = $published==false ? implode(',', $offerManomano['errors']) : null;
-
+                $reason = null;
+                if($published==false){
+                    if(count($offerManomano['errors'])>0){
+                        $reason = implode(',', $offerManomano['errors']);
+                    } elseif($offerManomano['stock']==0) {
+                        $reason = 'Out of stock';
+                    } else {
+                        $reason = 'Unknown';
+                    }
+                }
                 
 
                 $productChannel = $products[$offerManomano["sku"]];
