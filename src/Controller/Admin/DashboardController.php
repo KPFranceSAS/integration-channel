@@ -44,6 +44,7 @@ use App\Entity\Promotion;
 use App\Entity\SaleChannel;
 use App\Entity\User;
 use App\Entity\WebOrder;
+use Doctrine\Persistence\ManagerRegistry;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -59,16 +60,20 @@ class DashboardController extends AbstractDashboardController
 {
     protected $adminContext;
 
-    public function __construct(AdminContextProvider $adminContext)
+    protected $manager;
+
+    public function __construct(AdminContextProvider $adminContext, ManagerRegistry $managerRegistry)
     {
         $this->adminContext = $adminContext;
+        $this->manager = $managerRegistry->getManager();
     }
 
     #[Route(path: '/', name: 'admin')]
     public function index(): Response
     {
         $menu= $this->adminContext->getContext()->getMainMenu();
-        return $this->render('admin/dashboard.html.twig', ["menu"=>$menu]);
+        $publications = $this->getStatusPublication();
+        return $this->render('admin/dashboard.html.twig', ["menu"=>$menu, 'publications' => $publications]);
     }
 
 
@@ -76,6 +81,73 @@ class DashboardController extends AbstractDashboardController
     public function help(): Response
     {
         return $this->render('help/user.html.twig');
+    }
+
+
+
+    protected function getStatusPublication(){
+        $saleChannels = $this->getAllSaleChannels();
+        $datas = [];
+        foreach($saleChannels as $saleChannel){
+
+            $nbProducts = $this->getNbOffersEnabledOnSaleChannel($saleChannel->getId());
+            $nbProductPublisheds = $this->getNbOffersPublishedOnSaleChannel($saleChannel->getId());
+
+            $datas[] = [
+                'code' => $saleChannel->getCode(),
+                'id' => $saleChannel->getId(),
+                'nbProducts' => $nbProducts,
+                'nbProductPublisheds' => $nbProductPublisheds,
+                'nbProductUnpublisheds' => $nbProducts - $nbProductPublisheds,
+            ];
+        }
+        
+        return $datas;
+
+    }
+
+    protected function getAllSaleChannels(){
+        $queryBuilder = $this->manager->createQueryBuilder();
+        $channels=['CHANNELADVISOR','DECATHLON', 'LEROYMERLIN','BOULANGER','MEDIAMARKT', 'MANOMANO_FR','MANOMANO_DE'];
+
+        $queryBuilder->select('p')
+            ->from(SaleChannel::class, 'p')
+            ->leftJoin('p.integrationChannel', 'integrationChannel')
+            ->where($queryBuilder->expr()->in('integrationChannel.code', $channels))
+            ->andWhere($queryBuilder->expr()->notIn('p.code', ['cdiscount_kp_fr', 'amazon_es_gi']))
+            ->addOrderBy('p.code', 'ASC');
+            
+        return $queryBuilder->getQuery()->getResult();
+    }
+
+
+
+    protected function getNbOffersPublishedOnSaleChannel($channelId){
+        $queryBuilder = $this->manager->createQueryBuilder();
+
+        $queryBuilder->select('COUNT(p.id)')
+            ->from(ProductSaleChannel::class, 'p')
+            ->leftJoin('p.saleChannel', 'salechannel')
+            ->where('p.enabled = 1')
+            ->andWhere('p.published = 1')
+            ->andWhere('salechannel = :channelId')
+            ->setParameter('channelId', $channelId);
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
+    }
+
+
+    protected function getNbOffersEnabledOnSaleChannel($channelId){
+        $queryBuilder = $this->manager->createQueryBuilder();
+
+        $queryBuilder->select('COUNT(p.id)')
+            ->from(ProductSaleChannel::class, 'p')
+            ->leftJoin('p.saleChannel', 'salechannel')
+            ->where('p.enabled = 1')
+            ->andWhere('salechannel = :channelId')
+            ->setParameter('channelId', $channelId);
+
+        return $queryBuilder->getQuery()->getSingleScalarResult();
     }
 
     public function configureDashboard(): Dashboard
@@ -146,7 +218,7 @@ class DashboardController extends AbstractDashboardController
                     //MenuItem::linkToCrud('FBA Returns', 'fas fa-exchange-alt', FbaReturn::class),
                 ])
                 ->setPermission('ROLE_AMAZON'),
-            MenuItem::subMenu('Pricing', 'fas fa-money-bill')
+            MenuItem::subMenu('Marketplaces', 'fas fa-money-bill')
                 ->setSubItems([
                     MenuItem::linkToCrud(
                         'Prices',
@@ -179,6 +251,16 @@ class DashboardController extends AbstractDashboardController
                         Job::class
                     ),
                 ])->setPermission('ROLE_PRICING'),
+                MenuItem::linkToCrud(
+                    'Product Type',
+                    'fas fa-sitemap',
+                    ProductTypeCategorizacion::class
+                )->setPermission('ROLE_PRICING'),
+                MenuItem::linkToCrud(
+                    'Marketplace Category',
+                    'fas fa-sitemap',
+                    MarketplaceCategory::class
+                )->setPermission('ROLE_PRICING'),
             MenuItem::subMenu('Configuration', 'fas fa-cogs')
                 ->setSubItems([
                     MenuItem::linkToCrud(
@@ -191,16 +273,7 @@ class DashboardController extends AbstractDashboardController
                         'far fa-registered',
                         Brand::class
                     )->setPermission('ROLE_ADMIN'),
-                    MenuItem::linkToCrud(
-                        'Product Type',
-                        'fas fa-sitemap',
-                        ProductTypeCategorizacion::class
-                    )->setPermission('ROLE_ADMIN'),
-                    MenuItem::linkToCrud(
-                        'Marketplace Category',
-                        'fas fa-sitemap',
-                        MarketplaceCategory::class
-                    )->setPermission('ROLE_ADMIN'),
+
                     MenuItem::linkToCrud(
                         'Logistic class',
                         'fas fa-shipping-fast',
