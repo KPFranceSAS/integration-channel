@@ -110,12 +110,12 @@ class DashboardController extends AbstractDashboardController
 
     protected function getAllSaleChannels(){
         $queryBuilder = $this->manager->createQueryBuilder();
-        $channels=['CHANNELADVISOR','DECATHLON', 'LEROYMERLIN','BOULANGER','MEDIAMARKT', 'MANOMANO_FR','MANOMANO_DE'];
-
+       
         $queryBuilder->select('p')
             ->from(SaleChannel::class, 'p')
             ->leftJoin('p.integrationChannel', 'integrationChannel')
-            ->where($queryBuilder->expr()->in('integrationChannel.code', $channels))
+            ->where('integrationChannel.active = 1')
+            ->andWhere('integrationChannel.productSync = 1')
             ->andWhere($queryBuilder->expr()->notIn('p.code', ['cdiscount_kp_fr', 'amazon_es_gi']))
             ->addOrderBy('p.code', 'ASC');
             
