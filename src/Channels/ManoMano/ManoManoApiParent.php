@@ -177,10 +177,26 @@ abstract class ManoManoApiParent implements ApiInterface
 
     public function getAllOffers()
     {
+        
+        $activeOffers = $this->getOffers("true");
+        $this->logger->info("count active ".count($activeOffers));
+        $unactiveOffers = $this->getOffers("false");
+        $this->logger->info("count unactive ".count($unactiveOffers));
+        return array_merge($activeOffers, $unactiveOffers);
+    }
+
+
+
+
+
+
+
+    public function getOffers($active)
+    {
         $offset = 1;
         $offers = [];
         $continue = true;
-        $params = ['seller_contract_id' => (int)$this->contractId];
+        $params = ['seller_contract_id' => (int)$this->contractId, 'offer_online' => (string)$active];
         while ($continue) {
             $params ['page'] = $offset;
             $reponse =  $this->sendRequest('api/v1/offer-information/offers', $params);
@@ -200,6 +216,14 @@ abstract class ManoManoApiParent implements ApiInterface
 
 
 
+
+
+
+    
+
+
+
+
     public function sendRequest($endPoint, $queryParams = [], $method = 'GET', $body = null)
     {
         $client = new Client();
@@ -215,6 +239,7 @@ abstract class ManoManoApiParent implements ApiInterface
             }
             $url.='?'.implode('&', $urlSegments);
         }
+        $this->logger->info('Request '.$url);
         $request = new Request($method, $url, $headers, $body);
         return $client->sendRequest($request);
     }

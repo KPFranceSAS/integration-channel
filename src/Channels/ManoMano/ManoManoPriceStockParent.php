@@ -106,7 +106,7 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
 
         $offerManomanos = $this->getManoManoApi()->getAllOffers();
         foreach($offerManomanos as $offerManomano) {
-            if(!in_array($offerManomano['sku'], $skusIntegrated)) {
+            if(!in_array($offerManomano['sku'], $skusIntegrated) && $offerManomano['offer_is_online']=true) {
                 $items[]=[
                     'sku' => $offerManomano['sku'],
                     "stock" => [
