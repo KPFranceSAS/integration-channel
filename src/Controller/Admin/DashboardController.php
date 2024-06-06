@@ -99,6 +99,8 @@ class DashboardController extends AbstractDashboardController
                 'nbProducts' => $nbProducts,
                 'nbProductPublisheds' => $nbProductPublisheds,
                 'nbProductUnpublisheds' => $nbProducts - $nbProductPublisheds,
+                "rateProductPublisheds" => $nbProducts > 0 ? round($nbProductPublisheds*100/$nbProducts , 2) : '-',
+                "rateProductUnpublisheds" => $nbProducts > 0 ? round(($nbProducts - $nbProductPublisheds)*100/$nbProducts , 2) : '-'
             ];
         }
         

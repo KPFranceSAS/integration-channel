@@ -58,12 +58,8 @@
 											<th>
 												Published offers
 											</th>
-
 											<th>
 												Unpublished offers
-											</th>
-											<th>
-												Enabled offers
 											</th>
 										</tr>
 									</thead>
@@ -71,7 +67,22 @@
 										{% for publication in publications %}
 											<tr>
 												<td>
+												{% set paramsUrlAll =
+														{ 
+															"enabled" : 1,
+															"saleChannel" : {
+																"comparison" : "=",
+																"value" : [publication.id]
+															},
+														} %}
+
+													<a  href="{{ ea_url()
+														.setController('App\\Controller\\Pricing\\ProductSaleChannelCrudController')
+														.setAction('index')
+														.set('filters', paramsUrlAll)
+													}}">
 													{{ publication.code}}
+													</a>
 												</td>
 												<td>
 
@@ -90,7 +101,7 @@
 														.setAction('index')
 														.set('filters', paramsUrlPublished)
 													}}">
-													{{ publication.nbProductPublisheds}}
+													{{ publication.nbProductPublisheds}} / {{ publication.nbProducts}} ({{publication.rateProductPublisheds}}%) 
 													</a>
 												</td>
 												<td>
@@ -109,29 +120,11 @@
 														.setAction('index')
 														.set('filters', paramsUrlUnpublished)
 													}}">
-													{{ publication.nbProductUnpublisheds}}
+													{{ publication.nbProductUnpublisheds}} / {{ publication.nbProducts}} ({{publication.rateProductUnpublisheds}}%)
 													</a>
 			
 												</td>
-												<td>
-													{% set paramsUrlAll =
-														{ 
-															"enabled" : 1,
-															"saleChannel" : {
-																"comparison" : "=",
-																"value" : [publication.id]
-															},
-														} %}
-
-													<a  href="{{ ea_url()
-														.setController('App\\Controller\\Pricing\\ProductSaleChannelCrudController')
-														.setAction('index')
-														.set('filters', paramsUrlAll)
-													}}">
-													{{ publication.nbProducts}}
-													</a>
-					
-												</td>
+												
 											</tr>
 										{% endfor %}
 									</tbody>
