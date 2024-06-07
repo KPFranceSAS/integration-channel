@@ -85,10 +85,11 @@ class DashboardController extends AbstractDashboardController
 
 
 
-    protected function getStatusPublication(){
+    protected function getStatusPublication()
+    {
         $saleChannels = $this->getAllSaleChannels();
         $datas = [];
-        foreach($saleChannels as $saleChannel){
+        foreach($saleChannels as $saleChannel) {
 
             $nbProducts = $this->getNbOffersEnabledOnSaleChannel($saleChannel->getId());
             $nbProductPublisheds = $this->getNbOffersPublishedOnSaleChannel($saleChannel->getId());
@@ -99,8 +100,8 @@ class DashboardController extends AbstractDashboardController
                 'nbProducts' => $nbProducts,
                 'nbProductPublisheds' => $nbProductPublisheds,
                 'nbProductUnpublisheds' => $nbProducts - $nbProductPublisheds,
-                "rateProductPublisheds" => $nbProducts > 0 ? round($nbProductPublisheds*100/$nbProducts , 2) : '-',
-                "rateProductUnpublisheds" => $nbProducts > 0 ? round(($nbProducts - $nbProductPublisheds)*100/$nbProducts , 2) : '-'
+                "rateProductPublisheds" => $nbProducts > 0 ? round($nbProductPublisheds*100/$nbProducts, 2) : '-',
+                "rateProductUnpublisheds" => $nbProducts > 0 ? round(($nbProducts - $nbProductPublisheds)*100/$nbProducts, 2) : '-'
             ];
         }
         
@@ -108,7 +109,8 @@ class DashboardController extends AbstractDashboardController
 
     }
 
-    protected function getAllSaleChannels(){
+    protected function getAllSaleChannels()
+    {
         $queryBuilder = $this->manager->createQueryBuilder();
        
         $queryBuilder->select('p')
@@ -124,7 +126,8 @@ class DashboardController extends AbstractDashboardController
 
 
 
-    protected function getNbOffersPublishedOnSaleChannel($channelId){
+    protected function getNbOffersPublishedOnSaleChannel($channelId)
+    {
         $queryBuilder = $this->manager->createQueryBuilder();
 
         $queryBuilder->select('COUNT(p.id)')
@@ -139,7 +142,8 @@ class DashboardController extends AbstractDashboardController
     }
 
 
-    protected function getNbOffersEnabledOnSaleChannel($channelId){
+    protected function getNbOffersEnabledOnSaleChannel($channelId)
+    {
         $queryBuilder = $this->manager->createQueryBuilder();
 
         $queryBuilder->select('COUNT(p.id)')
@@ -252,17 +256,18 @@ class DashboardController extends AbstractDashboardController
                         'fas fa-tasks',
                         Job::class
                     ),
+                    MenuItem::linkToCrud(
+                        'Product Type',
+                        'fas fa-sitemap',
+                        ProductTypeCategorizacion::class
+                    ),
+                    MenuItem::linkToCrud(
+                        'Marketplace Category',
+                        'fas fa-sitemap',
+                        MarketplaceCategory::class
+                    ),
                 ])->setPermission('ROLE_PRICING'),
-                MenuItem::linkToCrud(
-                    'Product Type',
-                    'fas fa-sitemap',
-                    ProductTypeCategorizacion::class
-                )->setPermission('ROLE_PRICING'),
-                MenuItem::linkToCrud(
-                    'Marketplace Category',
-                    'fas fa-sitemap',
-                    MarketplaceCategory::class
-                )->setPermission('ROLE_PRICING'),
+                
             MenuItem::subMenu('Configuration', 'fas fa-cogs')
                 ->setSubItems([
                     MenuItem::linkToCrud(

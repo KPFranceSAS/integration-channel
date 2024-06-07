@@ -39,7 +39,7 @@ class ImportPricing
     private $content = [];
 
     #[ORM\ManyToOne(targetEntity: User::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete:"SET NULL")]
     private ?\App\Entity\User $user = null;
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::INTEGER)]
@@ -66,7 +66,7 @@ class ImportPricing
 
     public function getUsername(): ?string
     {
-        return $this->user ? $this->user->getUserIdentifier() : null;
+        return $this->user ? $this->user->getUserIdentifier() : "User deleted";
     }
 
 

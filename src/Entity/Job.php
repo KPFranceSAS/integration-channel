@@ -33,6 +33,7 @@ class Job
     private ?int $status = self::Status_Created;
 
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: true, onDelete:"SET NULL")]
     private ?User $user = null;
 
     #[ORM\Column(length: 255)]
