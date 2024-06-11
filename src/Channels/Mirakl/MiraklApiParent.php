@@ -272,12 +272,19 @@ abstract class MiraklApiParent implements ApiInterface
 
     public function markOrderAsFulfill($orderId, $carrierCode, $carrierName, $carrierUrl, $trackingNumber):bool
     {
-        $request = new UpdateOrderTrackingInfoRequest($orderId, [
-                'carrier_code' => $carrierCode,
-                'carrier_name' => $carrierName,
-                'carrier_url' => $carrierUrl,
-                'tracking_number' => $trackingNumber,
-             ]);
+
+        $params = [
+            'carrier_name' => $carrierName,
+            'carrier_url' => $carrierUrl,
+            'tracking_number' => $trackingNumber,
+        ];
+
+        if($carrierCode){
+            $params['carrier_code'] = $carrierCode;
+        }
+
+
+        $request = new UpdateOrderTrackingInfoRequest($orderId, $params);
         $result = $this->client->updateOrderTrackingInfo($request);
 
 

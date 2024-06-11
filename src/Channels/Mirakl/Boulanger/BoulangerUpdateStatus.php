@@ -21,8 +21,6 @@ class BoulangerUpdateStatus extends MiraklUpdateStatusParent
             return "DHL";
         } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "UPS";
-        } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
-            return "SCH";
         }
         return null;
     }
@@ -35,8 +33,8 @@ class BoulangerUpdateStatus extends MiraklUpdateStatusParent
         } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "UPS";
         } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
-            return "Schenker";
+            return "DB Schenker";
         }
-        return null;
+        return $carrierCode;
     }
 }

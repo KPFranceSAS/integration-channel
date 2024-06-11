@@ -21,8 +21,6 @@ class MediaMarktUpdateStatus extends MiraklUpdateStatusParent
             return "DHLPES";
         } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "UPS";
-        } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
-            return "DBS";
         } elseif ($carrierCode ==  WebOrder::CARRIER_CORREOSEXP) {
             return "CORREX_ES";
         }
@@ -41,6 +39,6 @@ class MediaMarktUpdateStatus extends MiraklUpdateStatusParent
         } elseif ($carrierCode ==  WebOrder::CARRIER_CORREOSEXP) {
             return "Correos Express";
         }
-        return null;
+        return $carrierCode;
     }
 }

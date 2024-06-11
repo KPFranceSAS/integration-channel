@@ -21,8 +21,6 @@ class LeroyMerlinUpdateStatus extends MiraklUpdateStatusParent
             return "ES_DHL_Parcel";
         } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "ES_UPS";
-        } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
-            return "FR_DBSCHENKER";
         }
         return null;
     }
@@ -37,6 +35,6 @@ class LeroyMerlinUpdateStatus extends MiraklUpdateStatusParent
         } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
             return "DB Schenker";
         }
-        return null;
+        return $carrierCode;
     }
 }

@@ -20,15 +20,7 @@ abstract class MiraklUpdateStatusParent extends UpdateStatusParent
         $codeCarrier = $this->getCodeCarrier($order->getCarrierService());
         $nameCarrier = $this->getNameCarrier($order->getCarrierService());
             
-        if (!$codeCarrier || !$nameCarrier) {
-            $this->addLogToOrder($order, 'Carrier code is not setup for channel ' . $order->getCarrierService());
-            return false;
-        }
-
-
         $orderApi=$order->getOrderContent();
-
-
 
         $result = $this->getMiraklApi()->markOrderAsFulfill(
             $orderApi['id'],
