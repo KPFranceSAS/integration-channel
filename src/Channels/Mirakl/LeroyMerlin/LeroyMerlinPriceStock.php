@@ -2,6 +2,7 @@
 
 namespace App\Channels\Mirakl\LeroyMerlin;
 
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Channels\Mirakl\MiraklPriceStockParent;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
@@ -37,8 +38,38 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
                 ['code'=>"vat-lmes" , 'value' => "Standard"],
                 ['code'=>"vat-lmit", 'value' =>"Standard"],
                 ['code'=>"shipment-origin" , 'value' => "ES"],
+
             ]
         ];
+
+
+
+
+
+        $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
+
+        $itemBc = $businessCentralConnector->getItemByNumber($product->getSku());
+        if($itemBc) {
+            $ecotaxes =  $this->productTaxFinder->getEcoTaxForItem(
+                $itemBc,
+                BusinessCentralConnector::KP_FRANCE,
+                'FR'
+            );
+
+            if($ecotaxes > 0){
+                $offer['offer_additional_fields'][]=[
+                    'code'=>"eco_contributions", 'value' => [
+                        'eco_contribution_amount' => $ecotaxes,
+                        'epr_category_code' => 'FR-DEEE',
+                        'producer_id' => 'FR025147_058UN1'
+                    ]
+                ];
+            }
+        } 
+
+
+
+
         $channelsActive = [];
 
         foreach ($saleChannels as $saleChannel) {
