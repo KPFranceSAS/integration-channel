@@ -28,6 +28,7 @@ use App\Controller\Order\WebOrderCrudController;
 use App\Controller\Pricing\PricingCrudController;
 use App\Entity\AmazonFinancialEvent;
 use App\Entity\AmazonRemoval;
+use App\Entity\AmazonReturn;
 use App\Entity\Brand;
 use App\Entity\Category;
 use App\Entity\ImportPricing;
@@ -221,7 +222,7 @@ class DashboardController extends AbstractDashboardController
                         ->setController(StockCrudController::class),
                     MenuItem::linkToCrud('Fees', 'fas fa-money-bill-alt', AmazonFinancialEvent::class),
                     MenuItem::linkToCrud('FBA Removal', 'fas fa-exchange-alt', AmazonRemoval::class),
-                    //MenuItem::linkToCrud('FBA Returns', 'fas fa-exchange-alt', FbaReturn::class),
+                    MenuItem::linkToCrud('FBA Returns', 'fas fa-exchange-alt', AmazonReturn::class),
                 ])
                 ->setPermission('ROLE_AMAZON'),
             MenuItem::subMenu('Marketplaces', 'fas fa-money-bill')

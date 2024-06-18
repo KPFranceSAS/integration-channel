@@ -6,7 +6,7 @@ use App\Entity\WebOrder;
 
 trait TraitServiceLog
 {
-    protected function addLogToOrder(WebOrder $webOrder, string $message)
+    protected function addLogToOrder($webOrder, string $message)
     {
         $webOrder->addLog($message);
         $this->logger->info($message);
@@ -14,14 +14,14 @@ trait TraitServiceLog
 
 
 
-    protected function addErrorToOrder(WebOrder $webOrder, string $message)
+    protected function addErrorToOrder($webOrder, string $message)
     {
         $webOrder->addError($message);
         $this->addError($webOrder . ' > ' . $message);
     }
 
 
-    protected function addOnlyLogToOrderIfNotExists(WebOrder $webOrder, string $message)
+    protected function addOnlyLogToOrderIfNotExists($webOrder, string $message)
     {
         if ($webOrder->haveNoLogWithMessage($message)) {
             $this->addLogToOrder($webOrder, $message);
@@ -31,7 +31,7 @@ trait TraitServiceLog
     }
 
 
-    protected function addOnlyErrorToOrderIfNotExists(WebOrder $webOrder, string $message)
+    protected function addOnlyErrorToOrderIfNotExists($webOrder, string $message)
     {
         if ($webOrder->haveNoLogWithMessage($message)) {
             $this->addErrorToOrder($webOrder, $message);

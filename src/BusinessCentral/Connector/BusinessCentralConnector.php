@@ -658,6 +658,19 @@ abstract class BusinessCentralConnector
     }
 
 
+     /**
+     * Sale order
+     */
+
+     public function updateSaleReturnOrder(string $id, string $etag, array $order): ?array
+     {
+         return $this->doPatchRequest(
+             self::EP_SALES_RETURNS . "('" . $id . "')",
+             $etag,
+             $order
+         );
+     }
+
 
     /**
     * Sale return order
@@ -671,13 +684,40 @@ abstract class BusinessCentralConnector
     }
 
 
+    /**
+    * Sale return order
+    */
+    public function getAllSaleReturnOrderLines($filters): ?array
+    {
+        return $this->getElementsByArray(
+            self::EP_SALES_RETURNS_LINE,
+            $filters,
+            true
+        );
+    }
+
+
+
+    /**
+    * Sale return order
+    */
+    public function getAllLedgerEntries($filters): ?array
+    {
+        return $this->getElementsByArray(
+            'itemLedgerEntries',
+            $filters,
+            true
+        );
+    }
+
+
 
 
 
 
     public function getSaleReturnByNumber(string $number): ?array
     {
-        return $this->getSaleReturnBy("number eq '$number'");
+        return $this->getSaleReturnBy("no eq '$number'");
     }
 
     public function getSaleReturnBy(string $condition): ?array

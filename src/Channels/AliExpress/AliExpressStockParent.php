@@ -23,6 +23,7 @@ abstract class AliExpressStockParent extends StockParent
     {
         $products = $this->getAliExpressApi()->getAllActiveProducts();
         foreach ($products as $product) {
+            
             $this->sendStock($product);
         }
     }
@@ -47,6 +48,7 @@ abstract class AliExpressStockParent extends StockParent
                 $stockBC = 0;
                 $this->logger->info('Sku ' . $skuCode  . ' should be desactivated');
             }
+            
             
             $this->getAliExpressApi()->updateStockLevel($product->product_id, $skuCode, $stockBC);
         }

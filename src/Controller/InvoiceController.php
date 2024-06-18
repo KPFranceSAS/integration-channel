@@ -155,7 +155,7 @@ class InvoiceController extends AbstractController
                 ->andWhere('w.purchaseDate <= :date_end')
                 ->setParameter('date_start', $invoice->getDateStartString())
                 ->setParameter('date_end', $invoice->getDateEndString())
-                ->setParameter('channel', [IntegrationChannel::CHANNEL_AMAZFIT_ARISE, IntegrationChannel::CHANNEL_ARISE, IntegrationChannel::CHANNEL_SONOS_ARISE])
+                ->setParameter('channel', [IntegrationChannel::CHANNEL_AMAZFIT_ARISE, IntegrationChannel::CHANNEL_ARISE, IntegrationChannel::CHANNEL_SONOS_ARISE, IntegrationChannel::CHANNEL_IMOU_ARISE])
                 ->setParameter('externalNumber', $invoice->externalNumber);
 
 

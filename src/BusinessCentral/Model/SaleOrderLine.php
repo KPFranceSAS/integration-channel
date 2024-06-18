@@ -23,6 +23,8 @@ class SaleOrderLine
 
     public $lineDetails;
 
+    public $shipmentDate;
+
     public $description;
 
     public $unitOfMeasure;

@@ -28,6 +28,7 @@ class AriseOrderCrudController extends WebOrderCrudController
             [
                 IntegrationChannel::CHANNEL_AMAZFIT_ARISE,
                 IntegrationChannel::CHANNEL_SONOS_ARISE,
+                IntegrationChannel::CHANNEL_IMOU_ARISE,
                 IntegrationChannel::CHANNEL_ARISE
             ]
         );
@@ -49,6 +50,7 @@ class AriseOrderCrudController extends WebOrderCrudController
             IntegrationChannel::CHANNEL_AMAZFIT_ARISE => IntegrationChannel::CHANNEL_AMAZFIT_ARISE,
             IntegrationChannel::CHANNEL_ARISE => IntegrationChannel::CHANNEL_ARISE,
             IntegrationChannel::CHANNEL_SONOS_ARISE => IntegrationChannel::CHANNEL_SONOS_ARISE,
+            IntegrationChannel::CHANNEL_IMOU_ARISE => IntegrationChannel::CHANNEL_IMOU_ARISE,
         ];
     }
 

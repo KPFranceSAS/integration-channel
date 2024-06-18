@@ -356,7 +356,7 @@ class WebOrder implements \Stringable
             IntegrationChannel::CHANNEL_FLASHLED => 'https://testflashled.myshopify.com/admin/orders/' . $order['id'],
             IntegrationChannel::CHANNEL_PAXUK => 'https://paxlabsuk.myshopify.com/admin/orders/' . $order['id'],
             IntegrationChannel::CHANNEL_FITBITCORPORATE => 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'],
-            IntegrationChannel::CHANNEL_AMAZFIT_ARISE, IntegrationChannel::CHANNEL_SONOS_ARISE, IntegrationChannel::CHANNEL_ARISE => 'https://sellercenter.miravia.es/apps/order/detail?tradeOrderId=' . $this->externalNumber,
+            IntegrationChannel::CHANNEL_AMAZFIT_ARISE, IntegrationChannel::CHANNEL_SONOS_ARISE, IntegrationChannel::CHANNEL_ARISE, IntegrationChannel::CHANNEL_IMOU_ARISE => 'https://sellercenter.miravia.es/apps/order/detail?tradeOrderId=' . $this->externalNumber,
             IntegrationChannel::CHANNEL_LEROYMERLIN => 'https://adeo-marketplace.mirakl.net/mmp/shop/order/' . $order['id'],
             IntegrationChannel::CHANNEL_DECATHLON => 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $order['id'],
             IntegrationChannel::CHANNEL_BOULANGER => 'https://merchant.boulanger.com/mmp/shop/order/' . $order['id'],
@@ -472,6 +472,7 @@ class WebOrder implements \Stringable
             IntegrationChannel::CHANNEL_ARISE,
             IntegrationChannel::CHANNEL_SONOS_ARISE,
             IntegrationChannel::CHANNEL_AMAZFIT_ARISE,
+            IntegrationChannel::CHANNEL_IMOU_ARISE,
         ]);
     }
 
@@ -505,6 +506,10 @@ class WebOrder implements \Stringable
             case IntegrationChannel::CHANNEL_SONOS_ARISE:
                 $webOrder = WebOrder::createOneFromArise($orderApi);
                 $webOrder->setChannel(IntegrationChannel::CHANNEL_SONOS_ARISE);
+                return $webOrder;
+            case IntegrationChannel::CHANNEL_IMOU_ARISE:
+                $webOrder = WebOrder::createOneFromArise($orderApi);
+                $webOrder->setChannel(IntegrationChannel::CHANNEL_IMOU_ARISE);
                 return $webOrder;
             
             case IntegrationChannel::CHANNEL_DECATHLON:

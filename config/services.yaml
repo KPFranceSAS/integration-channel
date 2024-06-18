@@ -112,6 +112,10 @@ services:
             $sonosClientSecret : '%env(resolve:SONOS_ARISE_SECRET)%'
             $sonosClientAccessToken : '%env(resolve:SONOS_ARISE_ACCESS_TOKEN)%'
 
+            $imouClientId :  '%env(resolve:IMOU_ARISE_ID)%'
+            $imouClientSecret : '%env(resolve:IMOU_ARISE_SECRET)%'
+            $imouClientAccessToken : '%env(resolve:IMOU_ARISE_ACCESS_TOKEN)%'
+
             $fitbitExpressClientId :  '%env(resolve:FITBIT_EXPRESS_ID)%'
             $fitbitExpressClientSecret : '%env(resolve:FITBIT_EXPRESS_SECRET)%'
             $fitbitExpressClientAccessToken : '%env(resolve:FITBIT_EXPRESS_TOKEN)%'

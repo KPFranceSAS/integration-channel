@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Entity\Product;
+use App\Helper\Traits\TraitLoggable;
 use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
 use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -13,7 +15,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ORM\HasLifecycleCallbacks]
 class AmazonReturn implements \Stringable
 {
+
+    public const STATUS_WAITING = 0;
+
+    public const STATUS_STORED = 1;
+
     use TraitTimeUpdated;
+
+    use TraitLoggable;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,7 +31,7 @@ class AmazonReturn implements \Stringable
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::DATETIME_MUTABLE)]
     #[Groups(['export_order'])]
-    private ?\DateTimeInterface $returnDate = null;
+    private ?DateTimeInterface $returnDate = null;
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255)]
     #[Groups(['export_order'])]
@@ -74,6 +83,15 @@ class AmazonReturn implements \Stringable
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     #[Groups(['export_order'])]
     private ?string $marketplaceName = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $statusIntegration = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $saleReturnDocument = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $locationCode = null;
 
     #[Groups(['export_order'])]
     public function getAmazonOrderIdProductId()
@@ -309,6 +327,42 @@ class AmazonReturn implements \Stringable
     public function setMarketplaceName(?string $marketplaceName): self
     {
         $this->marketplaceName = $marketplaceName;
+
+        return $this;
+    }
+
+    public function getStatusIntegration(): ?int
+    {
+        return $this->statusIntegration;
+    }
+
+    public function setStatusIntegration(?int $statusIntegration): static
+    {
+        $this->statusIntegration = $statusIntegration;
+
+        return $this;
+    }
+
+    public function getSaleReturnDocument(): ?string
+    {
+        return $this->saleReturnDocument;
+    }
+
+    public function setSaleReturnDocument(?string $saleReturnDocument): static
+    {
+        $this->saleReturnDocument = $saleReturnDocument;
+
+        return $this;
+    }
+
+    public function getLocationCode(): ?string
+    {
+        return $this->locationCode;
+    }
+
+    public function setLocationCode(?string $locationCode): static
+    {
+        $this->locationCode = $locationCode;
 
         return $this;
     }

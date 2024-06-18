@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-
 #[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
 #[UniqueEntity('code')]
@@ -24,6 +23,7 @@ class IntegrationChannel implements \Stringable
     final public const CHANNEL_ARISE = 'ARISE';
     final public const CHANNEL_SONOS_ARISE='SONOS_ARISE';
     final public const CHANNEL_AMAZFIT_ARISE='AMAZFIT_ARISE';
+    final public const CHANNEL_IMOU_ARISE='IMOU_ARISE';
     final public const CHANNEL_DECATHLON='DECATHLON';
     final public const CHANNEL_BOULANGER='BOULANGER';
     final public const CHANNEL_LEROYMERLIN='LEROYMERLIN';

@@ -4,12 +4,13 @@ namespace App\BusinessCentral\Model;
 
 class SaleReturnOrder
 {
-
+    public $locationCode;
     public $no;
     public $documentType;
     public $externalDocumentNo;
     public $postingDate;
     public $orderDate;
+    public $currencyCode;
     public $shipmentDate;
     public $documentDate;
     public $sellToCustomerNo;
@@ -17,7 +18,8 @@ class SaleReturnOrder
     public $shipToCode;
     public $correctInvoiceNo;
     public $packageTrackingNo;
-    public $comentSAT;
+
+    public $comentSat;
 
     public function __construct()
     {
