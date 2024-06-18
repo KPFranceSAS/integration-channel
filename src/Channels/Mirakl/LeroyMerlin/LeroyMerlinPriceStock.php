@@ -58,11 +58,11 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
 
             if($ecotaxes > 0){
                 $offer['offer_additional_fields'][]=[
-                    'code'=>"eco-contribution-amount['FR-DEEE']", 
+                    'code'=>"eco-contribution-amount[FR-DEEE]", 
                     'value' => $ecotaxes
                 ];
                 $offer['offer_additional_fields'][]=[
-                    'code'=>"producer-id['FR-DEEE']", 
+                    'code'=>"producer-id[FR-DEEE]", 
                     'value' => 'FR025147_058UN1'
                 ];
             }
