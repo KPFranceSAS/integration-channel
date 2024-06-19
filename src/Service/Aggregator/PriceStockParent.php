@@ -17,36 +17,21 @@ use Psr\Log\LoggerInterface;
 
 abstract class PriceStockParent
 {
-    protected $logger;
+
 
     protected $manager;
 
-    protected $mailer;
-
-    protected $apiAggregator;
-
-    protected $businessCentralAggregator;
-
-    protected $productStockFinder;
-
-    protected $productTaxFinder;
 
     public function __construct(
         ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        BusinessCentralAggregator $businessCentralAggregator,
-        ApiAggregator $apiAggregator,
-        ProductStockFinder $productStockFinder,
-        ProductTaxFinder $productTaxFinder
+        protected LoggerInterface $logger,
+        protected MailService $mailer,
+        protected BusinessCentralAggregator $businessCentralAggregator,
+        protected ApiAggregator $apiAggregator,
+        protected ProductStockFinder $productStockFinder,
+        protected ProductTaxFinder $productTaxFinder
     ) {
-        $this->logger = $logger;
         $this->manager = $manager->getManager();
-        $this->mailer = $mailer;
-        $this->apiAggregator = $apiAggregator;
-        $this->businessCentralAggregator = $businessCentralAggregator;
-        $this->productStockFinder = $productStockFinder;
-        $this->productTaxFinder = $productTaxFinder;
     }
 
     abstract public function sendStocksPrices(array $products, array $saleChannels);

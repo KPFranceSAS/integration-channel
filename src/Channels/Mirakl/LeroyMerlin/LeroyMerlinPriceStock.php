@@ -45,28 +45,20 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
 
 
 
+        $ecotaxes =  $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR');
 
-        $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
 
-        $itemBc = $businessCentralConnector->getItemByNumber($product->getSku());
-        if($itemBc) {
-            $ecotaxes =  $this->productTaxFinder->getEcoTaxForItem(
-                $itemBc,
-                BusinessCentralConnector::KP_FRANCE,
-                'FR'
-            );
-
-            if($ecotaxes > 0){
-                $offer['offer_additional_fields'][]=[
-                    'code'=>"eco-contribution-amount[FR-DEEE]", 
-                    'value' => $ecotaxes
-                ];
-                $offer['offer_additional_fields'][]=[
-                    'code'=>"producer-id[FR-DEEE]", 
-                    'value' => 'FR025147_058UN1'
-                ];
-            }
-        } 
+        if($ecotaxes > 0){
+            $offer['offer_additional_fields'][]=[
+                'code'=>"eco-contribution-amount[FR-DEEE]", 
+                'value' => $ecotaxes
+            ];
+            $offer['offer_additional_fields'][]=[
+                'code'=>"producer-id[FR-DEEE]", 
+                'value' => 'FR025147_058UN1'
+            ];
+        }
+        
 
 
 

@@ -11,4 +11,9 @@ class ManoManoEsPriceStock extends ManoManoPriceStockParent
     {
         return IntegrationChannel::CHANNEL_MANOMANO_ES;
     }
+
+
+    protected function getCountryCode(){
+        return 'ES';
+    }
 }

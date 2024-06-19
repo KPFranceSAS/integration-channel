@@ -60,21 +60,23 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             'FR'
         ): 0;
 
-        if($addtitionalTax >0) {
-            $offer["offer_additional_fields"][] =[
-                                                    'code'=>"eco-contribution-amount[FR-DEEE]",
-                                                    'value' => $addtitionalTax
-                                                ];
-            $offer["offer_additional_fields"][] =[
-                'code'=>"producer-id[FR-DEEE]",
-                'value' => "FR025147_058UN1"
+        $ecotaxes =  $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR');
+
+        if($ecotaxes > 0){
+            $offer['offer_additional_fields'][]=[
+                'code'=>"eco-contribution-amount[FR-DEEE]", 
+                'value' => $ecotaxes
             ];
-            $offer["offer_additional_fields"][] = [
-                                                    'code'=>"ecotax-d3e",
-                                                    'value' => $addtitionalTax
-                                                ];
-    
+            $offer['offer_additional_fields'][]=[
+                'code'=>"producer-id[FR-DEEE]", 
+                'value' => 'FR025147_058UN1'
+            ];
+            $offer['offer_additional_fields'][]=[
+                'code'=>"ecotax-d3e", 
+                'value' => $addtitionalTax
+            ];
         }
+
 
 
         $saleChannel = $saleChannels[0];

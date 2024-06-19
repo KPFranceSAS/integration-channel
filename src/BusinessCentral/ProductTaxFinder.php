@@ -12,7 +12,7 @@ class ProductTaxFinder
 {
     protected $logger;
     protected $businessCentralAggregator;
-    protected $canonDigitals;
+    protected $taxes = [];
 
     public function __construct(
         LoggerInterface $logger,
@@ -87,6 +87,30 @@ class ProductTaxFinder
 
 
 
+    
+
+
+    public function getEcoTax($sku, $company, $country){
+        $key = 'DEEE_'.$sku.'_'.$company.'_'.$country;
+
+        if(!array_key_exists($key, $this->taxes)){
+            $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($company);
+
+            $itemBc = $businessCentralConnector->getItemByNumber($sku->getSku());
+            if($itemBc) {
+                $ecotaxes =  $this->getEcoTaxForItem(
+                    $itemBc,
+                    $company,
+                    $country
+                );
+                $this->taxes[$key] = $ecotaxes;
+            } else {
+                $this->taxes[$key] = 0;
+            }
+        }
+        return  $this->taxes[$key];
+    }
+    
 
 
 

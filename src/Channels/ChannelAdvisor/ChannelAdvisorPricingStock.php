@@ -19,7 +19,6 @@ use stdClass;
 
 class ChannelAdvisorPricingStock extends PriceStockParent
 {
-    protected $logger;
     protected $defaultStorage;
     protected $channelAdvisorStorage;
 
@@ -127,20 +126,7 @@ class ChannelAdvisorPricingStock extends PriceStockParent
             }
         }
 
-        $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
-
-        $itemBc = $businessCentralConnector->getItemByNumber($product->getSku());
-        if($itemBc) {
-            $productArray['ecotax'] =  $this->productTaxFinder->getEcoTaxForItem(
-                $itemBc,
-                BusinessCentralConnector::KP_FRANCE,
-                'FR'
-            );
-        } else {
-            $productArray['ecotax'] = 0;
-        }
-        
-
+        $productArray['ecotax'] =  $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR');
 
         return $productArray;
     }

@@ -19,35 +19,20 @@ use Psr\Log\LoggerInterface;
 
 abstract class StockParent
 {
-    protected $logger;
 
     protected $manager;
 
-    protected $mailer;
-
-    protected $apiAggregator;
-
     protected $integrationChannel;
-
-    protected $businessCentralAggregator;
-
-    protected $productStockFinder;
-
 
     public function __construct(
         ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        BusinessCentralAggregator $businessCentralAggregator,
-        ApiAggregator $apiAggregator,
-        ProductStockFinder $productStockFinder
+        protected LoggerInterface $logger,
+        protected MailService $mailer,
+        protected BusinessCentralAggregator $businessCentralAggregator,
+        protected ApiAggregator $apiAggregator,
+        protected ProductStockFinder $productStockFinder
     ) {
-        $this->logger = $logger;
         $this->manager = $manager->getManager();
-        $this->mailer = $mailer;
-        $this->businessCentralAggregator = $businessCentralAggregator;
-        $this->productStockFinder = $productStockFinder;
-        $this->apiAggregator = $apiAggregator;
     }
 
     abstract public function sendStocks();

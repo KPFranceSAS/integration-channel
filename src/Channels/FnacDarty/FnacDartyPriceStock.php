@@ -96,32 +96,8 @@ abstract class FnacDartyPriceStock extends PriceStockParent
                 'ends_at' => $endDate->format('Y-m-d\TH:i:sP')
             ] ;
         }
-        
 
-
-
-
-
-
-        $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
-
-        $itemBc = $businessCentralConnector->getItemByNumber($product->getSku());
-
-        
-        $addtitionalTax = $itemBc ? $this->productTaxFinder->getEcoTaxForItem(
-            $itemBc,
-            BusinessCentralConnector::KP_FRANCE,
-            'FR'
-        ) : 0;
-
-        if($addtitionalTax >0) {
-            $offer['deee_tax'] =$addtitionalTax;
-        } else {
-            $offer['deee_tax'] = 0;
-        }
-
-            
-
+        $offer['deee_tax'] = $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR');
         return $offer;
     }
 

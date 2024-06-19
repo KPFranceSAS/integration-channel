@@ -3,6 +3,7 @@
 namespace App\Channels\ManoMano;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\BusinessCentral\ProductStockFinder;
 use App\BusinessCentral\ProductTaxFinder;
 use App\Entity\Product;
@@ -35,6 +36,8 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
     }
 
 
+   abstract protected function getCountryCode();
+ 
 
     protected function getLowerChannel()
     {
@@ -142,6 +145,7 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
                 "carrier" =>  'DHL Parcel',
                 "shipping_price_vat_inc" => 0,
                 "use_grid" => 0,
+                "eco_participation" => $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, $this->getCountryCode())
             ];
     
             $promotion = $productMarketplace->getBestPromotionForNow();

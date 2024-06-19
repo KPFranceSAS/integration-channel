@@ -2,6 +2,7 @@
 
 namespace App\Channels\Mirakl\Decathlon;
 
+use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Channels\Mirakl\MiraklPriceStockParent;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
@@ -54,6 +55,22 @@ class DecathlonPriceStock extends MiraklPriceStockParent
         }
 
         $offer["offer_additional_fields"][] = ['code'=>"active-channels", 'value' => implode(',', $channelsActive)];
+
+        $ecotaxes =  $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR');
+
+
+        if($ecotaxes > 0){
+            $offer['offer_additional_fields'][]=[
+                'code'=>"eco-contribution-amount[FR-DEEE]", 
+                'value' => $ecotaxes
+            ];
+            $offer['offer_additional_fields'][]=[
+                'code'=>"producer-id[FR-DEEE]", 
+                'value' => 'FR025147_058UN1'
+            ];
+        }
+
+
 
         return $offer;
     }

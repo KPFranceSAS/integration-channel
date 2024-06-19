@@ -10,27 +10,19 @@ use Psr\Log\LoggerInterface;
 
 abstract class ProductSyncParent
 {
-    protected $logger;
 
     protected $manager;
 
-    protected $mailer;
-
-    protected $apiAggregator;
-
-    protected $akeneoConnector;
-
     protected $errors;
 
-    protected $businessCentralAggregator;
 
 
     public function __construct(
-        LoggerInterface $logger,
-        AkeneoConnector $akeneoConnector,
-        MailService $mailer,
-        BusinessCentralAggregator $businessCentralAggregator,
-        ApiAggregator $apiAggregator
+        protected LoggerInterface $logger,
+        protected AkeneoConnector $akeneoConnector,
+        protected MailService $mailer,
+        protected BusinessCentralAggregator $businessCentralAggregator,
+        protected ApiAggregator $apiAggregator
     ) {
         $this->logger = $logger;
         $this->mailer = $mailer;
