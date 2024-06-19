@@ -96,7 +96,7 @@ class ProductTaxFinder
         if(!array_key_exists($key, $this->taxes)){
             $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($company);
 
-            $itemBc = $businessCentralConnector->getItemByNumber($sku->getSku());
+            $itemBc = $businessCentralConnector->getItemByNumber($sku);
             if($itemBc) {
                 $ecotaxes =  $this->getEcoTaxForItem(
                     $itemBc,
