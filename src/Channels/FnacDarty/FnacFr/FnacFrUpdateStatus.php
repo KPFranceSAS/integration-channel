@@ -21,6 +21,8 @@ class FnacFrUpdateStatus extends FnacDartyUpdateStatusParent
             return "DHL";
         } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
             return "UPS";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
+            return "DBSCHENKERSE";
         }
         return "AUTRE";
     }
