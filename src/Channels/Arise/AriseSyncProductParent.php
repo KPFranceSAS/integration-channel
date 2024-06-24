@@ -3,6 +3,7 @@
 namespace App\Channels\Arise;
 
 use App\Channels\Arise\AriseApiParent;
+use App\Entity\ProductTypeCategorizacion;
 use App\Service\Aggregator\ProductSyncParent;
 use Imagine\Gd\Imagine;
 use Imagine\Image\Box;
@@ -256,14 +257,14 @@ abstract class AriseSyncProductParent extends ProductSyncParent
     }
 
 
-
+    
 
 
 
     protected function getArrayProductGlobal(array $product, $isModel=false)
     {
         return [
-            "PrimaryCategory" => (int) $this->getAttributeSimple($product, 'arise_category_id'),
+            "PrimaryCategory" => (int) $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'miravia'),
             "Attributes" => [
                 'name' => $this->getTitle($product, $this->getLocale(), $isModel),
                 'description' => $this->getDescription($product, $this->getLocale()),

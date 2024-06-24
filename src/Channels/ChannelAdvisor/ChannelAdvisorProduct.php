@@ -23,7 +23,6 @@ class ChannelAdvisorProduct extends ProductSyncParent
 {
     protected $defaultStorage;
     protected $channelAdvisorStorage;
-    protected $manager;
     
     public function __construct(
         AkeneoConnector $akeneoConnector,
@@ -37,8 +36,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
     ) {
         $this->defaultStorage = $defaultStorage;
         $this->channelAdvisorStorage = $channelAdvisorStorage;
-        $this->manager= $managerRegistry->getManager();
-        parent::__construct($logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
+        parent::__construct($managerRegistry,$logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
     }
 
 
@@ -70,39 +68,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
 
 
 
-    private $productTypes;
-
-    private function initializeCategories()
-    {
-        $productCategorizations = $this->manager->getRepository(ProductTypeCategorizacion::class)->findAll();
-        foreach($productCategorizations as $productCategorization) {
-            $this->productTypes[$productCategorization->getPimProductType()]=$productCategorization;
-        }
-
-    }
-
-    public function getAmazonNode($productType, $marketplace)
-    {
-        if(!$this->productTypes) {
-            $this->initializeCategories();
-        }
-        if(is_null($productType)) {
-            return '';
-        }
-
-        if(!array_key_exists($productType, $this->productTypes)) {
-            return '';
-        }
-
-        $productTypeCat = $this->productTypes[$productType]->{'get'.$marketplace.'Category'}();
-
-        if($productTypeCat && strlen($productTypeCat)> 0) {
-            return $productTypeCat;
-        } else {
-            return '';
-        }
-
-    }
+    
 
 
     public function getChannel(): string
@@ -124,13 +90,13 @@ class ChannelAdvisorProduct extends ProductSyncParent
             'parent' => $product['parent'],
             'created' => $product['created'],
             'updated' => $product['updated'],
-            'amazon_product_type' => $this->getAmazonNode($productType, 'amazon'),
-            'amazon_es_node' => $this->getAmazonNode($productType, 'amazonEs'),
-            'amazon_fr_node' => $this->getAmazonNode($productType, 'amazonFr'),
-            'amazon_uk_node' => $this->getAmazonNode($productType, 'amazonUk'),
-            'amazon_de_node' => $this->getAmazonNode($productType, 'amazonDe'),
-            'amazon_it_node' => $this->getAmazonNode($productType, 'amazonIt'),
-            'cdiscount_node' => $this->getAmazonNode($productType, 'cdiscount'),
+            'amazon_product_type' => $this->getCategoryNode($productType, 'amazon'),
+            'amazon_es_node' => $this->getCategoryNode($productType, 'amazonEs'),
+            'amazon_fr_node' => $this->getCategoryNode($productType, 'amazonFr'),
+            'amazon_uk_node' => $this->getCategoryNode($productType, 'amazonUk'),
+            'amazon_de_node' => $this->getCategoryNode($productType, 'amazonDe'),
+            'amazon_it_node' => $this->getCategoryNode($productType, 'amazonIt'),
+            'cdiscount_node' => $this->getCategoryNode($productType, 'cdiscount'),
         ];
 
         foreach ($product['values'] as $attribute => $value) {

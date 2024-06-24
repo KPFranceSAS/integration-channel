@@ -14,7 +14,6 @@ use App\Service\Aggregator\ProductSyncParent;
 use App\Service\Pim\AkeneoConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Csv\Writer;
-use Mirakl\MCI\Shop\Request\Product\ProductImportRequest;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -27,9 +26,6 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
     protected $projectDir;
 
-    protected $manager;
-
-    protected $productTypes=[];
 
 
     public function __construct(
@@ -41,9 +37,8 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
         ApiAggregator $apiAggregator,
         $projectDir
     ) {
-        $this->manager = $manager->getManager();
         $this->projectDir =  $projectDir.'/var/catalogue/'.$this->getLowerChannel().'/';
-        parent::__construct($logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
+        parent::__construct($manager, $logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
     }
 
 
@@ -88,37 +83,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
 
 
-    private function initializeCategories()
-    {
-        $productCategorizations = $this->manager->getRepository(ProductTypeCategorizacion::class)->findAll();
-        foreach($productCategorizations as $productCategorization) {
-            $this->productTypes[$productCategorization->getPimProductType()]=$productCategorization;
-        }
-
-    }
-
-    public function getCategoryNode($productType, $marketplace)
-    {
-        if(!$this->productTypes) {
-            $this->initializeCategories();
-        }
-        if(is_null($productType)) {
-            return null;
-        }
-
-        if(!array_key_exists($productType, $this->productTypes)) {
-            return '';
-        }
-
-        $productTypeCat = $this->productTypes[$productType]->{'get'.ucfirst($marketplace).'Category'}();
-
-        if($productTypeCat && strlen($productTypeCat)> 0) {
-            return $productTypeCat;
-        } else {
-            return null;
-        }
-
-    }
+    
 
 
     public function syncProducts()

@@ -3,9 +3,11 @@
 namespace App\Service\Aggregator;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\Entity\ProductTypeCategorizacion;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Pim\AkeneoConnector;
+use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
 
 abstract class ProductSyncParent
@@ -18,6 +20,7 @@ abstract class ProductSyncParent
 
 
     public function __construct(
+        ManagerRegistry $manager,
         protected LoggerInterface $logger,
         protected AkeneoConnector $akeneoConnector,
         protected MailService $mailer,
@@ -29,6 +32,7 @@ abstract class ProductSyncParent
         $this->akeneoConnector = $akeneoConnector;
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->apiAggregator = $apiAggregator;
+        $this->manager = $manager->getManager();
     }
 
     abstract public function syncProducts();
@@ -36,6 +40,41 @@ abstract class ProductSyncParent
     abstract public function getChannel(): string;
 
     abstract protected function getProductsEnabledOnChannel();
+
+
+    private $productTypes;
+
+    private function initializeCategories()
+    {
+        $productCategorizations = $this->manager->getRepository(ProductTypeCategorizacion::class)->findAll();
+        foreach($productCategorizations as $productCategorization) {
+            $this->productTypes[$productCategorization->getPimProductType()]=$productCategorization;
+        }
+
+    }
+
+    public function getCategoryNode($productType, $marketplace)
+    {
+        if(!$this->productTypes) {
+            $this->initializeCategories();
+        }
+        if(is_null($productType)) {
+            return '';
+        }
+
+        if(!array_key_exists($productType, $this->productTypes)) {
+            return '';
+        }
+
+        $productTypeCat = $this->productTypes[$productType]->{'get'.$marketplace.'Category'}();
+
+        if($productTypeCat && strlen($productTypeCat)> 0) {
+            return $productTypeCat;
+        } else {
+            return '';
+        }
+
+    }
 
 
     public function send()

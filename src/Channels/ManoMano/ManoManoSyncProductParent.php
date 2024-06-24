@@ -12,7 +12,6 @@ use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\PriceStockAggregator;
 use App\Service\Aggregator\ProductSyncParent;
-use App\Service\Carriers\UpsGetTracking;
 use App\Service\Pim\AkeneoConnector;
 use Doctrine\Persistence\ManagerRegistry;
 use League\Csv\Writer;
@@ -31,8 +30,6 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
     protected $projectDir;
 
-    protected $categories=[];
-
 
     public function __construct(
         AkeneoConnector $akeneoConnector,
@@ -46,8 +43,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
     ) {
         $this->projectDir =  $projectDir.'/public/manomano/catalogue/';
         $this->priceStockAggregator = $priceStockAggregator;
-        $this->manager = $manager;
-        parent::__construct($logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
+        parent::__construct($manager, $logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
     }
 
     protected function getLowerChannel()
@@ -139,12 +135,11 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
     {
         $this->logger->info('Flat product '.$product['identifier']);
 
-        $productType = $this->getAttributeSimple($product, 'mkp_product_type');
         $flatProduct = [
             'sku' => $product['identifier'],
             'ean' => $this->getAttributeSimple($product, 'ean'),
             'sku_manufacturer' => $product['identifier'],
-            'mm_category_id' => array_key_exists($productType, $this->categories) ? $this->categories[$productType] : '',
+            'mm_category_id' => $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'manomano'),
             'merchant_category'=> $this->getAttributeChoice($product, 'mkp_product_type', $this->getLocale()),
             'min_quantity' => 1,
             "manufacturer_pdf" => null,

@@ -3,6 +3,7 @@
 namespace App\Channels\Arise;
 
 use App\Channels\Arise\AriseClient;
+use App\Entity\ProductTypeCategorizacion;
 use App\Service\Aggregator\ApiInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -174,6 +175,9 @@ abstract class AriseApiParent implements ApiInterface
 
         return $products;
     }
+
+   
+
 
 
 

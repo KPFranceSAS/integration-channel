@@ -106,7 +106,8 @@ class ImportProductTypeIntegration extends Command
                 'nbProductMiravia' => [
                     'arise_sonos_es_gi',
                     'arise_amazfit_es_gi',
-                    'arise_es_gi'
+                    'arise_es_gi',
+                    'arise_imou_es_gi'
                 ],
             ];
             
