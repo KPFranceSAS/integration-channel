@@ -47,6 +47,7 @@ class ProductSaleChannelType extends AbstractType
         $form = $event->getForm();
         $form
             ->add('enabled', CheckboxType::class, ['disabled'=>!$enabled])
+            ->add('overridePrice', CheckboxType::class, ['disabled'=>!$enabled])
             ->add('price', MoneyType::class, ['currency'=>$productMarketplace->getSaleChannel()->getCurrencyCode(), 'disabled'=>!$enabled])
             //->add('availableFrom', DateTimeType::class, ['disabled'=>!$enabled])
         ;

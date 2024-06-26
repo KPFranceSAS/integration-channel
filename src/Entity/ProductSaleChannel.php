@@ -51,7 +51,6 @@ class ProductSaleChannel implements \Stringable
     private \Doctrine\Common\Collections\Collection $promotions;
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
-    #[Assert\Expression(expression: 'this.getEnabled() == false or (this.getEnabled() === true and value !== null)', message: 'You must specify the value if Enabled is activated')]
     #[Assert\GreaterThanOrEqual(0)]
     #[Gedmo\Versioned]
     private ?float $price = null;
@@ -86,9 +85,14 @@ class ProductSaleChannel implements \Stringable
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $reason = null;
 
+    #[ORM\Column(nullable: true)]
+    #[Gedmo\Versioned]
+    private ?bool $overridePrice = null;
 
 
-    public function getDiscountPrice(){
+
+    public function getDiscountPrice()
+    {
         $now = new DateTime('now');
         $promotion = $this->getBestPromotionForDate($now);
         return $promotion ? $promotion->getPromotionPrice().' ['.$promotion->getComment().']' : '-';
@@ -105,8 +109,29 @@ class ProductSaleChannel implements \Stringable
     public function getSalePrice(DateTime $date)
     {
         $promotion = $this->getBestPromotionForDate($date);
-        return $promotion ? $promotion->getPromotionPrice() : $this->price;
+        return $promotion ? $promotion->getPromotionPrice() : $this->getPriceChannel();
     }
+
+
+
+    public function getPriceChannel()
+    {
+        if($this->overridePrice && $this->price) {
+            return $this->price;
+        } else {
+            return $this->getProductPrice();
+        }
+    }
+
+
+    public function getProductPrice()
+    {
+        $currency =  $this->saleChannel->getCurrencyCode();
+        return $this->product->{'getMsrp'.ucfirst(strtolower($currency))}();
+    }
+
+
+
 
 
     public function getSalePriceDescription(DateTime $date)
@@ -146,6 +171,34 @@ class ProductSaleChannel implements \Stringable
         
         return $bestPromotion;
     }
+
+
+    #[Assert\Callback]
+    public function validate(ExecutionContextInterface $context, $payload)
+    {
+        if ($this->enabled) {
+            
+            if ($this->overridePrice && !$this->price) {
+                $context->buildViolation('You must specify the price if Enabled is activated and overridePrice is activated')
+                ->atPath('price')
+                ->addViolation();
+            }
+
+
+            if (!$this->overridePrice && !$this->getProductPrice()) {
+                $context->buildViolation('No price is defined in BC')
+                ->atPath('enabled')
+                ->addViolation();
+            }
+
+            if ($this->overridePrice && $this->price && $this->price < ((100 + self::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {
+                $context->buildViolation('You do a selling price which is only '.self::TX_MARGIN.'% more than product cost '.$this->getProduct()->getUnitCost().'€')
+                            ->atPath('price')
+                            ->addViolation();
+            }
+        }
+    }
+
 
    
     public function getSaleChannelName()
@@ -228,14 +281,14 @@ class ProductSaleChannel implements \Stringable
         $productSaleHistory = new ProductSaleChannelHistory();
         $productSaleHistory->setEnabled($this->enabled);
         if ($this->enabled) {
-            $productSaleHistory->setRegularPrice($this->price);
+            $productSaleHistory->setRegularPrice($this->getPriceChannel());
             $promotion = $this->getBestPromotionForNow();
             if ($promotion) {
                 $productSaleHistory->setDescription(strlen($promotion->getComment())>0 ? $promotion->getComment() : substr($promotion->getPromotionDescriptionFrequency().' '.$promotion->getPromotionDescriptionType(), 0, 255));
                 $productSaleHistory->setPrice($promotion->getPromotionPrice());
                 $productSaleHistory->setPromotionPrice($promotion->getPromotionPrice());
             } else {
-                $productSaleHistory->setPrice($this->price);
+                $productSaleHistory->setPrice($this->getPriceChannel());
             }
         }
         return $productSaleHistory;
@@ -341,15 +394,7 @@ class ProductSaleChannel implements \Stringable
     }
 
 
-    #[Assert\Callback]
-    public function validate(ExecutionContextInterface $context, $payload)
-    {
-        if ($this->price && $this->price < ((100 + self::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {
-            $context->buildViolation('You do a selling price which is only '.self::TX_MARGIN.'% more than product cost '.$this->getProduct()->getUnitCost().'€')
-                        ->atPath('price')
-                        ->addViolation();
-        }
-    }
+    
 
 
 
@@ -487,6 +532,23 @@ class ProductSaleChannel implements \Stringable
     public function setReason(?string $reason): static
     {
         $this->reason = $reason;
+
+        return $this;
+    }
+
+    public function isOverridePrice(): ?bool
+    {
+        return $this->overridePrice;
+    }
+
+    public function getOverridePrice(): ?bool
+    {
+        return $this->overridePrice;
+    }
+
+    public function setOverridePrice(?bool $overridePrice): static
+    {
+        $this->overridePrice = $overridePrice;
 
         return $this;
     }

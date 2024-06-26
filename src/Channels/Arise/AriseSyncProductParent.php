@@ -120,7 +120,7 @@ abstract class AriseSyncProductParent extends ProductSyncParent
         foreach ($axesVariations as $key => $axeVariation) {
             $i = $key+1;
             $valueVariants["variation".$i] = [
-                                'name'=> $axeVariation ,
+                                'name'=> $this->getTranslationLabel($axeVariation, $this->getLocale()) ,
                                 'hasImage' =>true,
                                 "customize" => true,
                                 "options" => [

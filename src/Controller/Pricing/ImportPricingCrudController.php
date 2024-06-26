@@ -103,6 +103,7 @@ class ImportPricingCrudController extends AdminCrudController
             $lines = [ 'sku' ];
             foreach ($user->getSaleChannels() as $saleChannel) {
                 $lines[]=$saleChannel->getCode().'-enabled';
+                $lines[]=$saleChannel->getCode().'-overrided';
                 $lines[]=$saleChannel->getCode().'-price';
             }
         } else {

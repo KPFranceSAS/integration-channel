@@ -110,7 +110,7 @@ class ImportPricingsImporter
         $saleChannelDbs = $this->getSaleChannelsPricing();
 
       
-        $attributes= ['enabled', 'price'];
+        $attributes= ['enabled', 'price', 'overrided'];
         foreach ($line as $column=> $value) {
             foreach ($attributes as $attribute) {
                 if (u($column)->endsWith('-'.$attribute) && strlen((string) $value)> 0) {
@@ -137,8 +137,13 @@ class ImportPricingsImporter
 
                     $productSaleChannel =  $productDb->getProductSaleChannelByCode($channelCode);
                     if ($productSaleChannel) {
-                        $valueFormatted = $attribute == 'price' ? floatval(str_replace(',', '.', (string) $value)) : (bool)$value;
-                        $productSaleChannel->{'set'.ucfirst($attribute)}($valueFormatted);
+                        if($attribute == 'price'){
+                            $productSaleChannel->setPrice(floatval(str_replace(',', '.', (string) $value)));
+                        } elseif($attribute == 'overrided'){
+                            $productSaleChannel->setOverridePrice((bool)$value);
+                        } elseif($attribute == 'enabled'){
+                            $productSaleChannel->setEnabled((bool)$value);
+                        }
                         $this->addLog($importPricing, 'Put on channel '.$channelCode." ".$column." to value ".$value);
                     } else {
                         $this->addError($importPricing, 'The sale channel '.$channelCode." doesn't link to any product");

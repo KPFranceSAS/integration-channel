@@ -221,7 +221,7 @@ class Promotion implements \Stringable
     {
         return $this->discountType == self::TYPE_FIXED ?
                  $this->fixedAmount :
-                 $this->productSaleChannel->getPrice() -  (($this->productSaleChannel->getPrice()*$this->percentageAmount)/100);
+                 $this->productSaleChannel->getPriceChannel() -  (($this->productSaleChannel->getPriceChannel()*$this->percentageAmount)/100);
     }
 
     public function getCurrency()
@@ -255,7 +255,7 @@ class Promotion implements \Stringable
 
     public function getRegularPrice()
     {
-        return $this->productSaleChannel->getPrice();
+        return $this->productSaleChannel->getPriceChannel();
     }
 
 
@@ -312,20 +312,20 @@ class Promotion implements \Stringable
                 ->addViolation();
         }
 
-        if (!$this->productSaleChannel->getPrice()) {
+        if (!$this->productSaleChannel->getPriceChannel()) {
             $context->buildViolation('You cannot add promotions if price is not defined on '.$this->productSaleChannel)
                 ->atPath($path)
                 ->addViolation();
         } else {
-            if ($this->productSaleChannel->getPrice() < $this->getPromotionPrice()) {
-                $context->buildViolation('Your final price is greater than your normal prices on '.$this->productSaleChannel)
+            if ($this->productSaleChannel->getPriceChannel() <= $this->getPromotionPrice()) {
+                $context->buildViolation('Your final price is greater than or equal to your normal prices on '.$this->productSaleChannel)
                 ->atPath($path)
                 ->addViolation();
             } else {
                 if ($this->overrided === true) {
                 } else {
                     if ($this->isFixedType()) {
-                        $price = $this->productSaleChannel->getPrice();
+                        $price = $this->productSaleChannel->getPriceChannel();
                         $discountPrice = $this->getPromotionPrice();
                         $discount = ($price-$discountPrice)/$price;
                         if ($discount>0.7) {

@@ -40,7 +40,7 @@ abstract class ShopifyPriceParent extends PriceParent
             if($product) {
                 $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
                 if ($productMarketplace->getEnabled()) {
-                    $price =  $productMarketplace->getPrice() ;
+                    $price =  $productMarketplace->getPriceChannel() ;
                     $promotion = $productMarketplace->getBestPromotionForNow();
                     $promotionPrice = $promotion ? $promotion->getPromotionPrice() : null;
                     $this->getShopifyApi()->updateVariantPrice($variant['id'], $price, $promotionPrice);

@@ -80,7 +80,7 @@ class ExportProductsStockPriceCommand extends Command
           
             if ($productMarketplace->getEnabled()) {
                 $productArray[$code.'enabled']= 1 ;
-                $productArray[$code.'price']= $productMarketplace->getPrice() ;
+                $productArray[$code.'price']= $productMarketplace->getPriceChannel() ;
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 if ($promotion) {
                     $productArray[$code.'promoprice']= $promotion->getPromotionPrice() ;

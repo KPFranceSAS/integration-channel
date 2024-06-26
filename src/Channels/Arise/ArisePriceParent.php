@@ -30,7 +30,7 @@ abstract class ArisePriceParent extends PriceParent
             $this->logger->info('Sku ' . $sku->SellerSku  . ' Brand ' . $brand);
             if (array_key_exists($sku->SellerSku, $this->productMarketplaces)) {
                 $productMarketplace = $this->productMarketplaces[$sku->SellerSku];
-                $price =  $productMarketplace->getPrice() ;
+                $price =  $productMarketplace->getPriceChannel() ;
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 $promotionPrice = $promotion ? $promotion->getPromotionPrice() : 0;
                 $this->getAriseApi()->updatePrice($product->item_id, $sku->SkuId, $sku->SellerSku, $price, $promotionPrice);

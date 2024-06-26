@@ -69,11 +69,11 @@ abstract class FnacDartyPriceStock extends PriceStockParent
 
         $saleChannel = $saleChannels[0];
         $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
-        $offer['price'] = $productMarketplace->getPrice();
+        $offer['price'] = $productMarketplace->getPriceChannel();
         $promotion = $productMarketplace->getBestPromotionForNow();
         if ($promotion) {
             if($promotion->isFixedType()) {
-                $valuePromotion = $productMarketplace->getPrice() - $promotion->getFixedAmount();
+                $valuePromotion = $productMarketplace->getPriceChannel() - $promotion->getFixedAmount();
                 $typePromotion = 'fixed';
             } else {
                 $valuePromotion = $promotion->getPercentageAmount();

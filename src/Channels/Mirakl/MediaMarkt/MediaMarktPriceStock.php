@@ -47,7 +47,7 @@ class MediaMarktPriceStock extends MiraklPriceStockParent
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
 
             if ($productMarketplace->getEnabled()) {
-                $offer['price'] = $productMarketplace->getPrice();
+                $offer['price'] = $productMarketplace->getPriceChannel();
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 if($promotion) {
                     $offer['discount'] = [

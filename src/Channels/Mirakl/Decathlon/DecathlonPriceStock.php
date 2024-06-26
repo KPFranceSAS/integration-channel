@@ -40,10 +40,10 @@ class DecathlonPriceStock extends MiraklPriceStockParent
           
             if ($productMarketplace->getEnabled()) {
                 $channelsActive[]=$saleChannel->getCountryCode();
-                $offer['price'] = $productMarketplace->getPrice();
+                $offer['price'] = $productMarketplace->getPriceChannel();
                 $priceChannel = [];
                 $priceChannel ['channel_code'] = $saleChannel->getCountryCode();
-                $priceChannel['unit_origin_price']= $productMarketplace->getPrice() ;
+                $priceChannel['unit_origin_price']= $productMarketplace->getPriceChannel() ;
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 if ($promotion) {
                     $priceChannel['unit_discount_price']= $promotion->getPromotionPrice() ;

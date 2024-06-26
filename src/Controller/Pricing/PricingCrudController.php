@@ -142,6 +142,8 @@ class PricingCrudController extends AdminCrudController
                 TextField::new('productType'),
                 TextField::new('description', 'Product name'),
                 NumberField::new('unitCost', 'Unit cost €')->setDisabled(),
+                NumberField::new('msrpEur', 'Price EUR')->setDisabled(),
+                NumberField::new('msrpGBP', 'Price GBP')->setDisabled(),
             ];
         } elseif ($pageName==Crud::PAGE_NEW) {
             return [
@@ -189,10 +191,11 @@ class PricingCrudController extends AdminCrudController
         
         $saleChannels =  $manager->getRepository(SaleChannel::class)->findAll();
 
-        $header = ['sku', 'unitCost'];
+        $header = ['sku', 'unitCost', 'priceEur', 'priceGbp'];
        
         foreach ($saleChannels as $saleChannel) {
             $header[]=$saleChannel->getCode().'-enabled';
+            $header[]=$saleChannel->getCode().'-overrided';
             $header[]=$saleChannel->getCode().'-price';
             $header[]=$saleChannel->getCode().'-promoprice';
             $header[]=$saleChannel->getCode().'-promodescription';
@@ -226,10 +229,13 @@ class PricingCrudController extends AdminCrudController
         $productArray = array_fill_keys($header, null);
         $productArray['sku'] = $result->getSku();
         $productArray['unitCost'] = $result->getUnitCost();
+        $productArray['priceEur'] = $result->getMsrpEur();
+        $productArray['priceGbp'] = $result->getMsrpGbp();
 
 
         foreach ($result->getProductSaleChannels() as $productSaleChannel) {
             $productArray[$productSaleChannel->getSaleChannel()->getCode().'-enabled']=(int)$productSaleChannel->getEnabled();
+            $productArray[$productSaleChannel->getSaleChannel()->getCode().'-overrided']=(int)$productSaleChannel->getOverridePrice();
             $productArray[$productSaleChannel->getSaleChannel()->getCode().'-price']= $productSaleChannel->getPrice() ?: '';
             $promotion = $productSaleChannel->getBestPromotionForNow();
             if ($promotion) {
@@ -259,7 +265,7 @@ class PricingCrudController extends AdminCrudController
         $productTypes =  $manager->getRepository(ProductTypeCategorizacion::class)->findAll();
 
         $productIndexed = [];
-        $channels =['decathlon', 'leroymerlin', 'fnacDarty', 'mediamarkt', 'manomano', 'boulanger', 'amazon', 'cdiscount'];
+        $channels =['decathlon', 'leroymerlin', 'fnacDarty', 'mediamarkt', 'manomano', 'boulanger', 'amazon', 'cdiscount', 'miravia'];
 
         foreach($productTypes as $productType){
             $indexedCategory = [];

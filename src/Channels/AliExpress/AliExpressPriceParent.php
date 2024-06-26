@@ -37,7 +37,7 @@ abstract class AliExpressPriceParent extends PriceParent
             $this->logger->info('Sku ' . $skuCode);
             if (array_key_exists($skuCode, $this->productMarketplaces)) {
                 $productMarketplace = $this->productMarketplaces[$skuCode];
-                $price =  $productMarketplace->getPrice() ;
+                $price =  $productMarketplace->getPriceChannel() ;
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 $promotionPrice = $promotion ? $promotion->getPromotionPrice() : 0;
                 $this->getAliExpressApi()->updatePrice($product->product_id, $skuCode, $price, $promotionPrice);

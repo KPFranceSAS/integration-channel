@@ -259,9 +259,11 @@ class Product implements \Stringable
 
     
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
+    #[Assert\GreaterThan(value: 0)]
     private ?float $eurPrice = null;
 
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::FLOAT, nullable: true)]
+    #[Assert\GreaterThan(value: 0)]
     private ?float $gbpPrice = null;
 
     /**
@@ -292,6 +294,12 @@ class Product implements \Stringable
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $productType = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $msrpEur = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $msrpGbp = null;
+
 
 
     public function __construct()
@@ -313,7 +321,7 @@ class Product implements \Stringable
     public function getRegularPriceOnMarketplace($marketplace) : ?float
     {
         $productMarketplace = $this->getProductSaleChannelByCode($marketplace);
-        return $productMarketplace->getPrice();
+        return $productMarketplace->getPriceChannel();
     }
 
 
@@ -1352,6 +1360,30 @@ class Product implements \Stringable
     public function setProductType(?string $productType): static
     {
         $this->productType = $productType;
+
+        return $this;
+    }
+
+    public function getMsrpEur(): ?float
+    {
+        return $this->msrpEur;
+    }
+
+    public function setMsrpEur(?float $msrpEur): static
+    {
+        $this->msrpEur = $msrpEur;
+
+        return $this;
+    }
+
+    public function getMsrpGbp(): ?float
+    {
+        return $this->msrpGbp;
+    }
+
+    public function setMsrpGbp(?float $msrpGbp): static
+    {
+        $this->msrpGbp = $msrpGbp;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\BusinessCentral\Connector;
 use Exception;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 abstract class BusinessCentralConnector
 {
@@ -36,6 +37,8 @@ abstract class BusinessCentralConnector
     final public const EP_CUSTOMER_PAYMENTS = "customerPayments";
 
     final public const EP_ITEMS = "items";
+
+    final public const EP_ITEM_PRICES = "SalesPrices";
 
     final public const EP_ITEM_UNITOFMEASURE = "itemUnitOfMeasure";
 
@@ -81,21 +84,25 @@ abstract class BusinessCentralConnector
 
     protected $companyId;
 
+
+    protected $urlBase;
+
     /**
      * Constructor
      */
     public function __construct(
+        HttpClientInterface $client,
         LoggerInterface $logger,
         string $urlBC,
         string $loginBC,
-        string $passwordBC,
-        string $appEnv
+        string $passwordBC
     ) {
         $this->logger = $logger;
-        $this->client = new Client([
-            'base_uri' => $urlBC . '/api/v1.0/',
+        $this->urlBase =  $urlBC . '/api/v1.0/';
+        $this->client = $client->withOptions([
+            'base_uri' =>  $this->urlBase,
             'headers'  => [
-                'User-Agent'    => 'Business Central SDK',
+                'User-Agent'    => 'ProductOnboarding',
                 'Authorization' => "Basic " . base64_encode("$loginBC:$passwordBC"),
             ],
         ]);
@@ -125,31 +132,29 @@ abstract class BusinessCentralConnector
 
     public function doPostRequest(string $endPoint, array $json, array $query = []): ?array
     {
-        if ($this->debugger) {
-            $this->logger->info(json_encode($json));
-        }
+        
 
+        $this->logger->info(json_encode($json));
         $response = $this->client->request(
             'POST',
             self::EP_COMPANIES . '(' . $this->getCompanyId() . ')/' . $endPoint,
             [
                 'query' =>  $query,
                 'json' => $json,
-                'headers' => ['Content-Type' => 'application/json'],
-                'debug' => $this->debugger
+                'headers' => [
+                    'Content-Type' => 'application/json',
+                ],
             ]
         );
 
-        return json_decode((string) $response->getBody()->getContents(), true);
+        return json_decode($response->getContent(), true);
     }
 
 
 
     public function doPatchRequest(string $endPoint, string $etag, array $json, array $query = []): ?array
     {
-        if ($this->debugger) {
-            $this->logger->info(json_encode($json));
-        }
+        $this->logger->info("PATCH >>>>".json_encode($json));
 
         $response = $this->client->request(
             'PATCH',
@@ -161,30 +166,40 @@ abstract class BusinessCentralConnector
                     'Content-Type' => 'application/json',
                     'If-Match' => $etag,
                 ],
-                'debug' => $this->debugger
             ]
         );
 
-        return json_decode((string) $response->getBody()->getContents(), true);
+        return json_decode($response->getContent(), true);
     }
 
 
-    public function doGetRequest(string $endPoint, array $query = [])
+    
+
+    public function doGetRequest(string $endPoint, array $query = [], $headers = null)
     {
+        if(!$headers) {
+            $headers =   [
+                  
+                  'Content-Type' => 'application/json'
+            ];
+        }
+ 
         $endPoint = $endPoint === self::EP_COMPANIES
             ? self::EP_COMPANIES
             : self::EP_COMPANIES . '(' . $this->getCompanyId() . ')/' . $endPoint;
+
+
 
         $response = $this->client->request(
             'GET',
             $endPoint,
             [
                 'query' =>  $query,
-                'headers' => ['Content-Type' => 'application/json'],
-                'debug' => $this->debugger
+                'headers' => $headers
             ]
         );
-        return json_decode((string) $response->getBody()->getContents(), true);
+        
+        return json_decode($response->getContent(), true);
     }
 
 
@@ -193,11 +208,8 @@ abstract class BusinessCentralConnector
         $response = $this->client->request(
             'GET',
             $endPoint,
-            [
-                'debug' => $this->debugger
-            ]
         );
-        return $response->getBody()->getContents();
+        return $response->getContent();
     }
 
 
@@ -206,7 +218,7 @@ abstract class BusinessCentralConnector
         ?string $filters,
         bool $all = false,
         array $paramSupps = []
-    ) {
+    ) : ?array {
         $query = [];
         if ($filters) {
             $query = [
@@ -216,10 +228,38 @@ abstract class BusinessCentralConnector
         foreach ($paramSupps as $keyParam => $valParam) {
             $query[$keyParam] = $valParam;
         }
-        $items =  $this->doGetRequest($type, $query)['value'];
+        
+
+
         if ($all) {
+            $reponse = $this->doGetRequest($type, $query);
+            $items = [];
+            $continue=true;
+            while ($continue) {
+                $items = array_merge($items, $reponse ['value']);
+                if(array_key_exists('@odata.nextLink', $reponse)) {
+
+                    $url = str_replace($this->urlBase, '', $reponse['@odata.nextLink']);
+
+                    $response = $this->client->request(
+                        'GET',
+                        $url,
+                        [
+                            'headers' => [
+                                'Content-Type' => 'application/json'
+                            ],
+                        ]
+                    );
+                    
+                    $reponse = json_decode($response->getContent(), true);
+                } else {
+                    $continue = false;
+                }
+            }
             return $items;
         } else {
+            $reponse = $this->doGetRequest($type, $query);
+            $items =  $reponse ['value'];
             if (count($items) > 0) {
                 return reset($items);
             } else {
@@ -710,7 +750,11 @@ abstract class BusinessCentralConnector
         );
     }
 
-
+    public function getPricesPerGroup($group)
+    {
+        $filter = "SalesType eq 'Customer Price Group' and SalesCode eq '$group'";
+        return $this->getElementsByArray(self::EP_ITEM_PRICES, $filter, true);
+    }
 
 
 

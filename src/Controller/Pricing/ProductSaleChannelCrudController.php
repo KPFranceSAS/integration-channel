@@ -39,7 +39,10 @@ class ProductSaleChannelCrudController extends AdminCrudController
                 AssociationField::new('product')->setDisabled(),
                 AssociationField::new('saleChannel')->setDisabled(),
                 BooleanField::new('enabled'),
-                NumberField::new('price', 'Regular price'),
+                NumberField::new('productPrice', 'Regular price')->setDisabled(),
+                
+                BooleanField::new('overridePrice')->renderAsSwitch(false),
+                NumberField::new('price', 'Specific Price'),
                 
                 TextField::new('discountPrice', 'Discount price')->onlyOnIndex(),
                 BooleanField::new('published', 'Published')->onlyOnIndex()->renderAsSwitch(false),
@@ -57,6 +60,7 @@ class ProductSaleChannelCrudController extends AdminCrudController
             ->add(EntityFilter::new('product'))
             ->add(BrandFilter::new('brand'))
             ->add(BooleanFilter::new('enabled', 'Enabled'))
+            ->add(BooleanFilter::new('overridePrice', 'Price overrided'))
             ->add(BooleanFilter::new('published', 'Published'))
             ->add(EntityFilter::new('saleChannel')->canSelectMultiple(true))
             ;

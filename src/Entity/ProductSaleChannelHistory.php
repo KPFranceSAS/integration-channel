@@ -71,7 +71,7 @@ class ProductSaleChannelHistory
         return match ($this->typeModification) {
             self::TYPE_CREATION => 'Creation',
             self::TYPE_ACTIVATION => 'Activation',
-            self::TYPE_DESACTIVATION => 'Desactiviation',
+            self::TYPE_DESACTIVATION => 'Desactivation',
             self::TYPE_MODIFICATION_REGULAR_PRICE => 'Regular price modification',
             self::TYPE_MODIFICATION_SALE_PRICE => 'Sale price modification',
             self::TYPE_ACTIVATION_PROMOTION => 'Promotion activation',

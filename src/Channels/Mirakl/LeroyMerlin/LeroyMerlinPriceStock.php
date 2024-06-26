@@ -72,10 +72,10 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
                 $codeChannel ='LM'.$saleChannel->getCountryCode();
                 $channelsActive[]=$codeChannel ;
                 $mirakCode= substr((string) $saleChannel->getCode(), -3);
-                $offer['price'] = $productMarketplace->getPrice();
+                $offer['price'] = $productMarketplace->getPriceChannel();
                 $priceChannel = [];
                 $priceChannel ['channel_code'] = $mirakCode;
-                $priceChannel['unit_origin_price']= $productMarketplace->getPrice() ;
+                $priceChannel['unit_origin_price']= $productMarketplace->getPriceChannel() ;
                 $promotion = $productMarketplace->getBestPromotionForNow();
            
                 if ($promotion) {
