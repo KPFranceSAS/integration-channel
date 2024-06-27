@@ -145,7 +145,7 @@ abstract class ManoManoPriceStockParent extends PriceStockParent
                 "carrier" =>  'DHL Parcel',
                 "shipping_price_vat_inc" => 0,
                 "use_grid" => 0,
-                "eco_participation" => $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, $this->getCountryCode())
+                "eco_participation" =>  $product->getEcotax()
             ];
     
             $promotion = $productMarketplace->getBestPromotionForNow();

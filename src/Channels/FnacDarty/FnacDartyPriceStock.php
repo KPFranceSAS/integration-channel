@@ -97,7 +97,7 @@ abstract class FnacDartyPriceStock extends PriceStockParent
             ] ;
         }
 
-        $offer['deee_tax'] = $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR');
+        $offer['deee_tax'] =$product->getEcotax();
         return $offer;
     }
 

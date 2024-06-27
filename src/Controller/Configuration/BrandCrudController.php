@@ -7,6 +7,7 @@ use App\Entity\Brand;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -45,6 +46,7 @@ class BrandCrudController extends AdminCrudController
         return [
             TextField::new('name')->setDisabled(true),
             NumberField::new('stockBuffer')->setRequired(true),
+            AssociationField::new('saleChannels'),
         ];
     }
 }

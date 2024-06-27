@@ -300,6 +300,9 @@ class Product implements \Stringable
     #[ORM\Column(nullable: true)]
     private ?float $msrpGbp = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $ecotax = null;
+
 
 
     public function __construct()
@@ -1384,6 +1387,18 @@ class Product implements \Stringable
     public function setMsrpGbp(?float $msrpGbp): static
     {
         $this->msrpGbp = $msrpGbp;
+
+        return $this;
+    }
+
+    public function getEcotax(): ?float
+    {
+        return $this->ecotax;
+    }
+
+    public function setEcotax(?float $ecotax): static
+    {
+        $this->ecotax = $ecotax;
 
         return $this;
     }

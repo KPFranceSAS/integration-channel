@@ -126,7 +126,7 @@ class ChannelAdvisorPricingStock extends PriceStockParent
             }
         }
 
-        $productArray['ecotax'] =  $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR');
+        $productArray['ecotax'] =  $product->getEcotax();
 
         return $productArray;
     }

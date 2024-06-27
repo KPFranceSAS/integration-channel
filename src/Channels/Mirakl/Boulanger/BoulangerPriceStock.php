@@ -51,16 +51,7 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             ]
         ];
 
-        $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector(BusinessCentralConnector::KP_FRANCE);
-
-        $itemBc = $businessCentralConnector->getItemByNumber($product->getSku());
-        $addtitionalTax = $itemBc ? $this->productTaxFinder->getEcoTaxForItem(
-            $itemBc,
-            BusinessCentralConnector::KP_FRANCE,
-            'FR'
-        ): 0;
-
-        $ecotaxes =  $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR');
+        $ecotaxes =  $product->getEcotax();
 
         if($ecotaxes > 0){
             $offer['offer_additional_fields'][]=[
@@ -73,7 +64,7 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             ];
             $offer['offer_additional_fields'][]=[
                 'code'=>"ecotax-d3e", 
-                'value' => $addtitionalTax
+                'value' => $ecotaxes
             ];
         }
 

@@ -38,9 +38,13 @@ class Brand implements \Stringable
     #[Assert\GreaterThanOrEqual(0)]
     private ?int $stockBuffer=self::DEFAULT_BUFFER;
 
+    #[ORM\ManyToMany(targetEntity: SaleChannel::class, inversedBy: 'brands')]
+    private Collection $saleChannels;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->saleChannels = new ArrayCollection();
     }
 
   
@@ -116,6 +120,30 @@ class Brand implements \Stringable
     public function setStockBuffer(?int $stockBuffer): self
     {
         $this->stockBuffer = $stockBuffer;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, SaleChannel>
+     */
+    public function getSaleChannels(): Collection
+    {
+        return $this->saleChannels;
+    }
+
+    public function addSaleChannel(SaleChannel $saleChannel): static
+    {
+        if (!$this->saleChannels->contains($saleChannel)) {
+            $this->saleChannels->add($saleChannel);
+        }
+
+        return $this;
+    }
+
+    public function removeSaleChannel(SaleChannel $saleChannel): static
+    {
+        $this->saleChannels->removeElement($saleChannel);
 
         return $this;
     }

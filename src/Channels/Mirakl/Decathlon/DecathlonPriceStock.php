@@ -56,7 +56,7 @@ class DecathlonPriceStock extends MiraklPriceStockParent
 
         $offer["offer_additional_fields"][] = ['code'=>"active-channels", 'value' => implode(',', $channelsActive)];
 
-        $ecotaxes =  $this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR');
+        $ecotaxes =   $product->getEcotax();
 
 
         if($ecotaxes > 0){

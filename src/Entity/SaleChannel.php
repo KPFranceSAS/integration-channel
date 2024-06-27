@@ -62,11 +62,15 @@ class SaleChannel implements \Stringable
     #[ORM\Column(type: \Doctrine\DBAL\Types\Types::STRING, length: 255, nullable: true)]
     private ?string $codePim = null;
 
+    #[ORM\ManyToMany(targetEntity: Brand::class, mappedBy: 'saleChannels')]
+    private Collection $brands;
+
     
     public function __construct()
     {
         $this->productSaleChannels = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->brands = new ArrayCollection();
     }
 
 
@@ -251,6 +255,33 @@ class SaleChannel implements \Stringable
     public function setCodePim(?string $codePim): self
     {
         $this->codePim = $codePim;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Brand>
+     */
+    public function getBrands(): Collection
+    {
+        return $this->brands;
+    }
+
+    public function addBrand(Brand $brand): static
+    {
+        if (!$this->brands->contains($brand)) {
+            $this->brands->add($brand);
+            $brand->addSaleChannel($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrand(Brand $brand): static
+    {
+        if ($this->brands->removeElement($brand)) {
+            $brand->removeSaleChannel($this);
+        }
 
         return $this;
     }

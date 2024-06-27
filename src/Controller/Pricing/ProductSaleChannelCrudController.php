@@ -32,24 +32,30 @@ class ProductSaleChannelCrudController extends AdminCrudController
 
 
 
+    public function configureCrud(Crud $crud): Crud
+    {
+        $crud = parent::configureCrud($crud);
+        return $crud->setSearchFields(['product.sku', 'product.description', 'saleChannel.name']);
+    }
+
 
     public function configureFields(string $pageName): iterable
     {
-            return [
-                AssociationField::new('product')->setDisabled(),
-                AssociationField::new('saleChannel')->setDisabled(),
-                BooleanField::new('enabled'),
-                NumberField::new('productPrice', 'Regular price')->setDisabled(),
+        return [
+            AssociationField::new('product')->setDisabled(),
+            AssociationField::new('saleChannel')->setDisabled(),
+            BooleanField::new('enabled'),
+            NumberField::new('productPrice', 'Regular price')->setDisabled(),
                 
-                BooleanField::new('overridePrice')->renderAsSwitch(false),
-                NumberField::new('price', 'Specific Price'),
+            BooleanField::new('overridePrice')->renderAsSwitch(false),
+            NumberField::new('price', 'Specific Price'),
                 
-                TextField::new('discountPrice', 'Discount price')->onlyOnIndex(),
-                BooleanField::new('published', 'Published')->onlyOnIndex()->renderAsSwitch(false),
-                TextField::new('reason', 'Reason')->onlyOnIndex()->renderAsHtml(true),
-                AssociationField::new('promotions')->onlyOnIndex(),
-                DateTimeField::new('updatedAt')->onlyOnIndex(),
-            ];
+            TextField::new('discountPrice', 'Discount price')->onlyOnIndex(),
+            BooleanField::new('published', 'Published')->onlyOnIndex()->renderAsSwitch(false),
+            TextField::new('reason', 'Reason')->onlyOnIndex()->renderAsHtml(true),
+            AssociationField::new('promotions')->onlyOnIndex(),
+            DateTimeField::new('updatedAt')->onlyOnIndex(),
+        ];
         
     }
 
@@ -63,7 +69,7 @@ class ProductSaleChannelCrudController extends AdminCrudController
             ->add(BooleanFilter::new('overridePrice', 'Price overrided'))
             ->add(BooleanFilter::new('published', 'Published'))
             ->add(EntityFilter::new('saleChannel')->canSelectMultiple(true))
-            ;
+        ;
            
     }
 
@@ -96,7 +102,7 @@ class ProductSaleChannelCrudController extends AdminCrudController
 
    
     public function configureActions(Actions $actions): Actions
-    {    
+    {
         $actions = parent::configureActions($actions);
 
 
@@ -126,7 +132,7 @@ class ProductSaleChannelCrudController extends AdminCrudController
         )
         
         
-        ->add(  Crud::PAGE_INDEX, Action::new('seePromotion', false, 'fas fa-percentage')
+        ->add(Crud::PAGE_INDEX, Action::new('seePromotion', false, 'fas fa-percentage')
         ->linkToUrl(function (ProductSaleChannel $product):string {
             return $this->generateUrl('admin', [
                 'crudControllerFqcn' => PromotionCrudController::class,
@@ -154,7 +160,8 @@ class ProductSaleChannelCrudController extends AdminCrudController
                              ->set('saleChannelId', $productSaleChannel->getSaleChannel()->getId())
                              ->set('sort', null)
                      ->generateUrl();
-                })        )
+                })
+        )
         
         ->disable(Action::NEW, Action::DELETE, Action::BATCH_DELETE)
         ->update(Crud::PAGE_INDEX, Action::EDIT, fn (Action $action) => $action->setIcon('fa fa-pencil')->setLabel(false));
