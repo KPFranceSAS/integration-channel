@@ -154,6 +154,14 @@ services:
             $paxUkShopDomain : '%env(resolve:PAX_UK_SHOPDOMAINE)%'
             $paxUkVersion : '%env(resolve:PAX_UK_VERSION)%'
             $paxUkScopes : '%env(resolve:PAX_UK_SCOPES)%'
+
+
+            $reencleToken : '%env(resolve:REENCLE_SHOP_TOKEN)%'
+            $reencleClientId : '%env(resolve:REENCLE_SHOP_CLIENTID)%'
+            $reencleClientSecret : '%env(resolve:REENCLE_SHOP_CLIENTSECRET)%'
+            $reencleShopDomain : '%env(resolve:REENCLE_SHOP_SHOPDOMAINE)%'
+            $reencleVersion : '%env(resolve:REENCLE_SHOP_VERSION)%'
+            $reencleScopes : '%env(resolve:REENCLE_SHOP_SCOPES)%'
           
 
             $decathlonClientUrl :  '%env(resolve:DECATHLON_URL)%'

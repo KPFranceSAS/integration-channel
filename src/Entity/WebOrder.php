@@ -353,6 +353,7 @@ class WebOrder implements \Stringable
             IntegrationChannel::CHANNEL_CHANNELADVISOR => 'https://sellercentral.amazon.fr/orders-v3/order/' . $this->externalNumber,
             IntegrationChannel::CHANNEL_OWLETCARE => 'https://owlet-spain.myshopify.com/admin/orders/' . $order['id'],
             IntegrationChannel::CHANNEL_MINIBATT => 'https://minibattstore.myshopify.com/admin/orders/' . $order['id'],
+            IntegrationChannel::CHANNEL_REENCLE => 'https://4adafb-85.myshopify.com/admin/orders/' . $order['id'],
             IntegrationChannel::CHANNEL_FLASHLED => 'https://testflashled.myshopify.com/admin/orders/' . $order['id'],
             IntegrationChannel::CHANNEL_PAXUK => 'https://paxlabsuk.myshopify.com/admin/orders/' . $order['id'],
             IntegrationChannel::CHANNEL_FITBITCORPORATE => 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'],
@@ -410,6 +411,7 @@ class WebOrder implements \Stringable
             IntegrationChannel::CHANNEL_PAXEU,
             IntegrationChannel::CHANNEL_FLASHLED,
             IntegrationChannel::CHANNEL_MINIBATT,
+            IntegrationChannel::CHANNEL_REENCLE,
             IntegrationChannel::CHANNEL_FITBITCORPORATE,
         ]);
     }
@@ -538,6 +540,9 @@ class WebOrder implements \Stringable
 
             case IntegrationChannel::CHANNEL_MINIBATT:
                 return WebOrder::createOneFromMinibatt($orderApi);
+            
+                case IntegrationChannel::CHANNEL_REENCLE:
+                    return WebOrder::createOneFromReencle($orderApi);    
                 
             case IntegrationChannel::CHANNEL_FITBITCORPORATE:
                 return WebOrder::createOneFromFitbitCorporate($orderApi);
@@ -634,6 +639,18 @@ class WebOrder implements \Stringable
         return $webOrder;
     }
 
+    public static function createOneFromReencle($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromShopify($orderApi);
+        $webOrder->setExternalNumber('RNC-' . $orderApi['order_number']);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_REENCLE);
+        $webOrder->setSubchannel('Reencle.shop');
+        $webOrder->addLog('Retrieved from Reencle.shop');
+        return $webOrder;
+    }
+
+
+    
 
     public static function createOneFromFitbitCorporate($orderApi): WebOrder
     {
