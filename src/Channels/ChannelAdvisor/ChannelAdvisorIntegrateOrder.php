@@ -148,7 +148,18 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
         }
 
         $orderBC->email = $orderApi->BuyerEmailAddress!='--'? $orderApi->BuyerEmailAddress : null;
-        $orderBC->phoneNumber = $orderApi->BillingDaytimePhone;
+
+        if($orderApi->ShippingEveningPhone && strlen($orderApi->ShippingEveningPhone)>0) {
+            $orderBC->phoneNumber = $orderApi->BillingDaytimePhone;
+        } elseif($orderApi->ShippingDaytimePhone && strlen($orderApi->ShippingDaytimePhone)>0) {
+            $orderBC->phoneNumber = $orderApi->ShippingDaytimePhone;
+        } elseif($orderApi->BillingEveningPhone && strlen($orderApi->BillingEveningPhone)>0) {
+            $orderBC->phoneNumber = $orderApi->BillingEveningPhone;
+        } else {
+            $orderBC->phoneNumber = $orderApi->BillingDaytimePhone;
+        }
+
+      
         $orderBC->externalDocumentNumber = $orderApi->SiteOrderID;
 
         if ($orderApi->Currency != 'EUR') {
