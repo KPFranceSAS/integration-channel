@@ -19,24 +19,24 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
         ];
 
 
-        $flatProduct["ATT_00053"] = $this->getAttributeUnit($product, 'product_lenght', 'CENTIMETER', 0);
-        $flatProduct["ATT_00054"] = $this->getAttributeUnit($product, 'product_height', 'CENTIMETER', 0);
-        $flatProduct["ATT_00055"] = $this->getAttributeUnit($product, 'product_width', 'CENTIMETER', 0);
+        $flatProduct["ATT_00053"] = $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0);
+        $flatProduct["ATT_00054"] = $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0);
+        $flatProduct["ATT_00055"] = $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
 
         $flatProduct["feature_06575_brand"] = $this->getCodeMarketplaceInList('ATT_06575', $this->getAttributeChoice($product, "brand", "en_GB"));
 
         
-       $flatProduct['product_category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'leroymerlin');
+        $flatProduct['product_category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'leroymerlin');
        
 
 
         if(array_key_exists('product_category', $flatProduct)) {
             switch($flatProduct['product_category']) {
 
-                case "206556|2547|R1001-2010" : // prineter
+                case "206556|2547|R1001-2010": // prineter
                     $flatProduct['feature_22088_206556|2547|R1001-2010'] ="LOV_283859"; // LOV_283859
                     break;
-                case "202599|2480|R15-2012"  : // desk
+                case "202599|2480|R15-2012": // desk
                     $flatProduct ['ATT_21148'] =  'LOV_000001'; // Contain woods ;
                     break;
                 case '200264|2231|R03-2003-2008':
@@ -71,14 +71,14 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                 case "201526|ROBOT_TONDEUSE|TONDEUSE_ET_ROBOT_TONDEUSE|R09-005-004": //lawn motor
                     $flatProduct ['ATT_15344'] =  'LOV_000001'; // Lawn motor ;
                     break;
-                    case "200648|2534|R03-002-010": //chargeur
-                        $flatProduct ['feature_22088_200648|2534|R03-002-010'] =  'LOV_049538'; // chargeur ;
-                        break;
+                case "200648|2534|R03-002-010": //chargeur
+                    $flatProduct ['feature_22088_200648|2534|R03-002-010'] =  'LOV_049538'; // chargeur ;
+                    break;
                     
-                    case "201908|2354|R10-007-009": //smart lock
-                        $flatProduct ['feature_00277_201908|2354|R10-007-009'] =  'LOV_042526'; // Destonation ;
-                        $flatProduct ['feature_22088_201908|2354|R10-007-009'] =  'LOV_230961'; // TYpe of product ;
-                        break;
+                case "201908|2354|R10-007-009": //smart lock
+                    $flatProduct ['feature_00277_201908|2354|R10-007-009'] =  'LOV_042526'; // Destonation ;
+                    $flatProduct ['feature_22088_201908|2354|R10-007-009'] =  'LOV_230961'; // TYpe of product ;
+                    break;
 
                    
                 
@@ -94,7 +94,7 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                 '201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007'
                 ])) {
                 $flatProduct['ATT_21148'] ='LOV_000002';// Contain woods ;
-            } 
+            }
 
 
 
