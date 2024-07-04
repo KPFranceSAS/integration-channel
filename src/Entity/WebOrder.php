@@ -360,6 +360,7 @@ class WebOrder implements \Stringable
             IntegrationChannel::CHANNEL_AMAZFIT_ARISE, IntegrationChannel::CHANNEL_SONOS_ARISE, IntegrationChannel::CHANNEL_ARISE, IntegrationChannel::CHANNEL_IMOU_ARISE => 'https://sellercenter.miravia.es/apps/order/detail?tradeOrderId=' . $this->externalNumber,
             IntegrationChannel::CHANNEL_LEROYMERLIN => 'https://adeo-marketplace.mirakl.net/mmp/shop/order/' . $order['id'],
             IntegrationChannel::CHANNEL_DECATHLON => 'https://marketplace-decathlon-eu.mirakl.net/mmp/shop/order/' . $order['id'],
+            IntegrationChannel::CHANNEL_WORTEN => 'https://marketplace.worten.pt/mmp/shop/order/' . $order['id'],
             IntegrationChannel::CHANNEL_BOULANGER => 'https://merchant.boulanger.com/mmp/shop/order/' . $order['id'],
             IntegrationChannel::CHANNEL_MEDIAMARKT => 'https://mediamarktsaturn.mirakl.net/mmp/shop/order/' . $order['id'],
             IntegrationChannel::CHANNEL_MANOMANO_DE, IntegrationChannel::CHANNEL_MANOMANO_IT, IntegrationChannel::CHANNEL_MANOMANO_ES, IntegrationChannel::CHANNEL_MANOMANO_FR => 'https://toolbox.manomano.com/orders',
@@ -442,6 +443,7 @@ class WebOrder implements \Stringable
             IntegrationChannel::CHANNEL_DECATHLON,
             IntegrationChannel::CHANNEL_LEROYMERLIN,
             IntegrationChannel::CHANNEL_BOULANGER,
+            IntegrationChannel::CHANNEL_WORTEN,
         ]);
     }
 
@@ -516,6 +518,9 @@ class WebOrder implements \Stringable
             
             case IntegrationChannel::CHANNEL_DECATHLON:
                 return WebOrder::createOneFromDecathlon($orderApi);
+            
+                case IntegrationChannel::CHANNEL_WORTEN:
+                    return WebOrder::createOneFromWorten($orderApi);    
 
             case IntegrationChannel::CHANNEL_LEROYMERLIN:
                 return WebOrder::createOneFromLeroyMerlin($orderApi);
@@ -743,6 +748,15 @@ class WebOrder implements \Stringable
         $webOrder = WebOrder::createOrderFromMirakl($orderApi);
         $webOrder->setSubchannel("Leroy Merlin ".$orderApi['channel']['label']);
         $webOrder->setChannel(IntegrationChannel::CHANNEL_LEROYMERLIN);
+        return $webOrder;
+    }
+
+
+    public static function createOneFromWorten($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromMirakl($orderApi);
+        $webOrder->setSubchannel("Worten ".$orderApi['channel']['label']);
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_WORTEN);
         return $webOrder;
     }
 

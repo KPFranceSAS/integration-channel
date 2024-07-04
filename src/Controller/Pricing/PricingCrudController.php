@@ -265,7 +265,7 @@ class PricingCrudController extends AdminCrudController
         $productTypes =  $manager->getRepository(ProductTypeCategorizacion::class)->findAll();
 
         $productIndexed = [];
-        $channels =['decathlon', 'leroymerlin', 'fnacDarty', 'mediamarkt', 'manomano', 'boulanger', 'amazon', 'cdiscount', 'miravia'];
+        $channels =['decathlon', 'leroymerlin', 'fnacDarty', 'mediamarkt', 'manomano', 'boulanger', 'amazon', 'cdiscount', 'miravia', 'worten'];
 
         foreach($productTypes as $productType){
             $indexedCategory = [];

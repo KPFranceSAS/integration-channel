@@ -109,6 +109,10 @@ class ImportProductTypeIntegration extends Command
                     'arise_es_gi',
                     'arise_imou_es_gi'
                 ],
+                'nbProductWorten' => [
+                    'worten_es_kps', 
+                    "worten_pt_kps",
+                ],
             ];
             
             foreach($parameters as $function => $channels){

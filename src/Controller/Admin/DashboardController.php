@@ -13,7 +13,6 @@ use App\Controller\Order\CdiscountOrderCrudController;
 use App\Controller\Order\DecathlonOrderCrudController;
 use App\Controller\Order\DeliveryOrderCrudController;
 use App\Controller\Order\ErrorOrderCrudController;
-use App\Controller\Order\FitbitCorporateOrderCrudController;
 use App\Controller\Order\FlashledOrderCrudController;
 use App\Controller\Order\FnacDartyOrderCrudController;
 use App\Controller\Order\LateOrderCrudController;
@@ -25,12 +24,12 @@ use App\Controller\Order\OwletCareOrderCrudController;
 use App\Controller\Order\PaxB2COrderCrudController;
 use App\Controller\Order\PreparationOrderCrudController;
 use App\Controller\Order\WebOrderCrudController;
+use App\Controller\Order\WortenOrderCrudController;
 use App\Controller\Pricing\PricingCrudController;
 use App\Entity\AmazonFinancialEvent;
 use App\Entity\AmazonRemoval;
 use App\Entity\AmazonReturn;
 use App\Entity\Brand;
-use App\Entity\Category;
 use App\Entity\ImportPricing;
 use App\Entity\IntegrationChannel;
 use App\Entity\Job;
@@ -61,6 +60,7 @@ class DashboardController extends AbstractDashboardController
 {
     protected $adminContext;
 
+    /**@var EntityManager */
     protected $manager;
 
     public function __construct(AdminContextProvider $adminContext, ManagerRegistry $managerRegistry)
@@ -129,6 +129,7 @@ class DashboardController extends AbstractDashboardController
 
     protected function getNbOffersPublishedOnSaleChannel($channelId)
     {
+        
         $queryBuilder = $this->manager->createQueryBuilder();
 
         $queryBuilder->select('COUNT(p.id)')
@@ -179,8 +180,8 @@ class DashboardController extends AbstractDashboardController
                         ->setController(CdiscountOrderCrudController::class),
                     MenuItem::linkToCrud('Decathlon', 'fas fa-volleyball-ball', WebOrder::class)
                         ->setController(DecathlonOrderCrudController::class),
-                    MenuItem::linkToCrud('Fitbit Corporate', 'fas fa-running', WebOrder::class)
-                        ->setController(FitbitCorporateOrderCrudController::class),
+                    MenuItem::linkToCrud('Worten', 'fas fa-tv', WebOrder::class)
+                        ->setController(WortenOrderCrudController::class),
                     MenuItem::linkToCrud('Fnac Darty', 'fas fa-video', WebOrder::class)
                         ->setController(FnacDartyOrderCrudController::class),
                         

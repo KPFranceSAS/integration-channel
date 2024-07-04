@@ -39,6 +39,7 @@ class IntegrationChannel implements \Stringable
     final public const CHANNEL_FNAC_ES='FNAC_ES';
     final public const CHANNEL_DARTY_FR='DARTY_FR';
     final public const CHANNEL_REENCLE='REENCLE';
+    final public const CHANNEL_WORTEN='WORTEN';
 
     use TraitTimeUpdated;
 

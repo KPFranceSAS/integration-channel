@@ -112,6 +112,8 @@ class ProductTypeCategoryCrudController extends AdminCrudController
             NumberField::new('nbProductManomano', 'Nb Manomano'),
             TextField::new('miraviaCategory', 'miravia'),
             NumberField::new('nbProductMiravia', 'Nb miravia'),
+            TextField::new('wortenCategory', 'worten'),
+            NumberField::new('nbProductWorten', 'Nb worten'),
         ]);
     }
 
@@ -141,6 +143,7 @@ class ProductTypeCategoryCrudController extends AdminCrudController
             $fields[] = TextField::new('mediamarkt', 'Mediamarkt')->setTemplatePath('admin/fields/categorization/mediamarkt.html.twig');
             $fields[] = TextField::new('manomano', 'Manomano')->setTemplatePath('admin/fields/categorization/manomano.html.twig');
             $fields[] = TextField::new('miravia', 'Miravia')->setTemplatePath('admin/fields/categorization/miravia.html.twig');
+            $fields[] = TextField::new('worten', 'Worten')->setTemplatePath('admin/fields/categorization/worten.html.twig');
             
         } else {
 
@@ -165,7 +168,8 @@ class ProductTypeCategoryCrudController extends AdminCrudController
                 'fnacDarty',
                 'mediamarkt',
                 'manomano',
-                 "miravia",         
+                 "miravia", 
+                 'worten'        
             ];
 
             

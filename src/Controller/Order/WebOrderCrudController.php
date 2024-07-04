@@ -254,7 +254,8 @@ class WebOrderCrudController extends AdminCrudController
             'Minibatt.com' => 'Minibatt.com',
             'Owletbaby.es' => 'Owletbaby.es',
             'Uk.pax.com' => 'Uk.pax.com',
-            'Eu.pax.com' => 'Eu.pax.com',
+            'Worten.es' => 'Worten.es',
+            'Worten.pt' => 'Worten.pt',
         ];
     }
 
@@ -345,7 +346,7 @@ class WebOrderCrudController extends AdminCrudController
                 ->setEntityId($webOrder->getId())
                 ->generateUrl());
         }
-        return $this->renderForm('admin/crud/order/changeStatus.html.twig', ['form' => $form, 'entity' => $webOrder]);
+        return $this->render('admin/crud/order/changeStatus.html.twig', ['form' => $form, 'entity' => $webOrder]);
     }
 
 
@@ -369,7 +370,7 @@ class WebOrderCrudController extends AdminCrudController
                 ->setEntityId($webOrder->getId())
                 ->generateUrl());
         }
-        return $this->renderForm('admin/crud/order/changeStatus.html.twig', ['form' => $form, 'entity' => $webOrder]);
+        return $this->render('admin/crud/order/changeStatus.html.twig', ['form' => $form, 'entity' => $webOrder]);
     }
 
 

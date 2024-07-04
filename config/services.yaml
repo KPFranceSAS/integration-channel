@@ -163,6 +163,8 @@ services:
             $reencleVersion : '%env(resolve:REENCLE_SHOP_VERSION)%'
             $reencleScopes : '%env(resolve:REENCLE_SHOP_SCOPES)%'
           
+            $wortenClientUrl :  '%env(resolve:WORTEN_URL)%'
+            $wortenClientKey : '%env(resolve:WORTEN_KEY)%'
 
             $decathlonClientUrl :  '%env(resolve:DECATHLON_URL)%'
             $decathlonClientKey : '%env(resolve:DECATHLON_KEY)%'

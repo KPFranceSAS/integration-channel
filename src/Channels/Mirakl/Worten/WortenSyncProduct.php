@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Channels\Mirakl\LeroyMerlin;
+namespace App\Channels\Mirakl\Worten;
 
 use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\Channels\Mirakl\MiraklSyncProductParent;
 use App\Entity\IntegrationChannel;
 
-class LeroyMerlinSyncProduct extends MiraklSyncProductParent
+class WortenSyncProduct extends MiraklSyncProductParent
 {
 
     protected function flatProduct(array $product):array
@@ -149,6 +149,6 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
 
     public function getChannel(): string
     {
-        return IntegrationChannel::CHANNEL_LEROYMERLIN;
+        return IntegrationChannel::CHANNEL_WORTEN;
     }
 }

@@ -115,6 +115,12 @@ class ProductTypeCategorizacion
     #[ORM\Column(nullable: true)]
     private ?int $nbProductMiravia = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $wortenCategory = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductWorten = null;
+
 
     public function __construct()
     {
@@ -509,6 +515,30 @@ class ProductTypeCategorizacion
     public function setNbProductMiravia(?int $nbProductMiravia): static
     {
         $this->nbProductMiravia = $nbProductMiravia;
+
+        return $this;
+    }
+
+    public function getWortenCategory(): ?string
+    {
+        return $this->wortenCategory;
+    }
+
+    public function setWortenCategory(?string $wortenCategory): static
+    {
+        $this->wortenCategory = $wortenCategory;
+
+        return $this;
+    }
+
+    public function getNbProductWorten(): ?int
+    {
+        return $this->nbProductWorten;
+    }
+
+    public function setNbProductWorten(?int $nbProductWorten): static
+    {
+        $this->nbProductWorten = $nbProductWorten;
 
         return $this;
     }
