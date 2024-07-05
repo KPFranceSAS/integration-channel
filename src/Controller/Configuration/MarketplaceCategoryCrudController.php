@@ -67,7 +67,7 @@ class MarketplaceCategoryCrudController extends AdminCrudController
                     'mediamarkt'=>'mediamarkt',
                     'manomano'=>'manomano',
                     'miravia'=>'miravia',
-                    
+                    'worten'=>'worten',
                 ];
 
 
