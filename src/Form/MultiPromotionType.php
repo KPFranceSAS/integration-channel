@@ -128,7 +128,8 @@ class MultiPromotionType extends AbstractType
             ->add('overrided', CheckboxType::class,  ['row_attr' => [
                 'class'=>'col-md-4 mb-3'
             ],
-            'required' => false
+            'required' => false,
+            "help" => 'Check it if you need to define a price with no consideration of unit cost'
             ])
 
            

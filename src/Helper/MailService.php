@@ -97,6 +97,7 @@ class MailService
             "InternalError",
             'SQLSTATE',
             'Exception',
+            'francecentral.cloudapp.azure.com',
             'Malformed UTF-8 characters, possibly incorrectly encoded'
         ];
         if (s($titre)->containsAny($stringForbiddens)) {

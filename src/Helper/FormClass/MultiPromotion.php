@@ -75,6 +75,7 @@ class MultiPromotion
                 $promotion = new Promotion();
                 $productMarketplace->addPromotion($promotion);
                 $promotion->setBeginDate($this->beginDate);
+                $promotion->setOverrided($this->overrided);
                 $promotion->setEndDate($this->endDate);
                 $promotion->setDiscountType($this->discountType);
                 if ($this->discountType==Promotion::TYPE_PERCENT) {
