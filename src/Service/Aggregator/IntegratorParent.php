@@ -29,14 +29,14 @@ abstract class IntegratorParent
     protected $errors;
 
     public function __construct(
-            protected SaleOrderWeightCalculation $saleOrderWeightCalculation,
-            protected ProductTaxFinder $productTaxFinder, 
-            ManagerRegistry $manager, 
-            protected LoggerInterface $logger, 
-            protected MailService $mailer,
-            protected BusinessCentralAggregator $businessCentralAggregator,
-            protected ApiAggregator $apiAggregator)
-    {
+        protected SaleOrderWeightCalculation $saleOrderWeightCalculation,
+        protected ProductTaxFinder $productTaxFinder,
+        ManagerRegistry $manager,
+        protected LoggerInterface $logger,
+        protected MailService $mailer,
+        protected BusinessCentralAggregator $businessCentralAggregator,
+        protected ApiAggregator $apiAggregator
+    ) {
         $this->manager = $manager->getManager();
     }
 
@@ -252,7 +252,7 @@ abstract class IntegratorParent
 
     public function shouldUseDHLB2B(WebOrder $webOrder, SaleOrder $saleOrder)
     {
-        if(in_array($saleOrder->shippingPostalAddress->countryLetterCode, ['ES', 'PT']) ) {
+        if(in_array($saleOrder->shippingPostalAddress->countryLetterCode, ['ES', 'PT'])) {
             $this->addLogToOrder($webOrder, 'Need to be shipped with B2B services because send to '.$saleOrder->shippingPostalAddress->countryLetterCode);
             return true;
         }
@@ -349,20 +349,26 @@ abstract class IntegratorParent
             $connector = $this->businessCentralAggregator->getBusinessCentralConnector($orderDb->getCompany());
             $orderBc = $connector->getFullSaleOrderByNumber($orderDb->getOrderErp());
 
-            foreach($orderBc['salesOrderLines'] as $saleOrderLine) {
-                if(in_array($saleOrderLine['lineType'], [SaleOrderLine::TYPE_ITEM, 'Producto'])) {
-                    $reservation = [
-                        "QuantityBase" => $saleOrderLine['quantity'],
-                        "CreationDate" => date('Y-m-d'),
-                        "ItemNo" => $saleOrderLine['lineDetails']['number'],
-                        "LocationCode" =>  $orderBc['locationCode'],
-                        "SourceID" => $orderDb->getOrderErp(),
-                        "SourceRefNo"=> $saleOrderLine['sequence'],
-                    ];
-                    $connector->createReservation($reservation);
+            if(in_array($orderBc['locationCode'], [WebOrder::DEPOT_LAROCA])) {
+                $this->addLogToOrder($orderDb, 'Adding reservation on advanced warehouse '.$orderBc['locationCode']);
 
-                    $this->addLogToOrder($orderDb, 'Add reservation for line '.$saleOrderLine['sequence'].' for '.$saleOrderLine['quantity'].' '.$saleOrderLine['lineDetails']['number']);
+                foreach($orderBc['salesOrderLines'] as $saleOrderLine) {
+                    if(in_array($saleOrderLine['lineType'], [SaleOrderLine::TYPE_ITEM, 'Producto'])) {
+                        $reservation = [
+                            "QuantityBase" => $saleOrderLine['quantity'],
+                            "CreationDate" => date('Y-m-d'),
+                            "ItemNo" => $saleOrderLine['lineDetails']['number'],
+                            "LocationCode" =>  $orderBc['locationCode'],
+                            "SourceID" => $orderDb->getOrderErp(),
+                            "SourceRefNo"=> $saleOrderLine['sequence'],
+                        ];
+                        $connector->createReservation($reservation);
+
+                        $this->addLogToOrder($orderDb, 'Add reservation for line '.$saleOrderLine['sequence'].' for '.$saleOrderLine['quantity'].' '.$saleOrderLine['lineDetails']['number']);
+                    }
                 }
+            } else {
+                $this->addLogToOrder($orderDb, 'NO need to make reservation for non advanced warehouse '.$orderBc['locationCode']);
             }
         } catch(Exception $e) {
             $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
