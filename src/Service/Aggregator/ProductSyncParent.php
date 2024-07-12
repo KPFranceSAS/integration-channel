@@ -3,6 +3,7 @@
 namespace App\Service\Aggregator;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\Entity\MarketplaceCategory;
 use App\Entity\ProductTypeCategorizacion;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
@@ -77,6 +78,26 @@ abstract class ProductSyncParent
     }
 
 
+    public function getCategoryName($code, $marketplace): ?MarketplaceCategory
+    {
+        
+        $productTypeCat = $this->manager->getRepository(MarketplaceCategory::class)->findOneBy([
+            'code' => $code,
+            'marketplace' => $marketplace,
+        ]);
+
+        if($productTypeCat) {
+            return $productTypeCat;
+        } else {
+            return null;
+        }
+
+    }
+
+
+
+
+
     public function send()
     {
         try {
@@ -115,6 +136,44 @@ abstract class ProductSyncParent
 
         return $axes;
     }
+
+
+    protected $attributes;
+
+
+
+    protected function initializeAttributes()
+    {
+        if (is_null($this->attributes)) {
+            
+        }
+        return null;
+    }
+
+
+
+    protected function getInitializedAttribute($code)
+    {
+        if (!($this->attributes)) {
+            $attributePims= $this->akeneoConnector->getAllAttributes();
+            $this->attributes= [];
+            foreach($attributePims as $attributePim){
+                $this->attributes[$attributePim['code']] = $attributePim;
+            }
+        }
+        return array_key_exists($code, $this->attributes) ? $this->attributes[$code] : null;
+    }
+
+
+
+
+
+    protected function getAttributeType($code)
+    {
+        $attribute =  $this->getInitializedAttribute($code);
+        return $attribute;
+    }
+
 
 
     protected function getAttributeSimple($productPim, $nameAttribute, $locale=null)
@@ -164,8 +223,8 @@ abstract class ProductSyncParent
 
     protected function getTranslationLabel($nameAttribute, $locale)
     {
-        $attribute = $this->akeneoConnector->getAttribute($nameAttribute);
-        return array_key_exists($locale, $attribute['labels']) ? $attribute['labels'][$locale] : $nameAttribute;
+        $attribute = $this->getInitializedAttribute($nameAttribute);
+        return ($attribute && array_key_exists($locale, $attribute['labels']))? $attribute['labels'][$locale] : $nameAttribute;
     }
 
 
@@ -405,7 +464,19 @@ abstract class ProductSyncParent
     }
     
 
+    protected function getTranslationBoolean($boolean, $locale){
+            $translation = [
+                'es_ES' => ['Sí', 'No'],
+                'de_DE' => ['Ja', 'Nein'],
+                'fr_FR' => ['Oui', 'Non'],
+                'en_GB' => ['Yes', 'No'],
+                'it_IT' => ['Sì', 'No'],
+                'pt_PT' => ['Sim', 'Não'],  
+            ];
 
+            return $boolean ? $translation[$locale][0] : $translation[$locale][1];
+
+    }
 
     protected function getDescription($productPim, $locale)
     {

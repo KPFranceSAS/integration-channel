@@ -150,4 +150,24 @@ class MediaMarktSyncProduct extends MiraklSyncProductParent
     {
         return IntegrationChannel::CHANNEL_MEDIAMARKT;
     }
+
+
+
+    protected function getMarketplaceNode(): string
+    {
+        return 'mediamarkt';
+    }
+
+    
+
+
+
+    public function getLocales(): array
+    {
+        return [
+            'es_ES', 'en_GB'
+        ];
+    }
+
+
 }

@@ -136,6 +136,28 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
 
 
 
+    protected function getMarketplaceNode(): string
+    {
+        return 'decathlon';
+    }
+
+  
+
+
+
+    public function getLocales(): array
+    {
+        return [
+            'en_GB',
+            'de_DE',
+            'it_IT',
+            'fr_FR',
+            'es_ES'
+        ];
+    }
+
+
+
     public function getChannel(): string
     {
         return IntegrationChannel::CHANNEL_DECATHLON;

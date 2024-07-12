@@ -63,6 +63,23 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
 
 
 
+    protected function getMarketplaceNode(): string
+    {
+        return 'fnacDarty';
+    }
+
+
+    public function getLocales(): array
+    {
+        return [
+            'en_GB',
+            'fr_FR',
+        ];
+    }
+
+
+
+
 
 
 

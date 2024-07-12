@@ -38,21 +38,12 @@ class WortenPriceStock extends MiraklPriceStockParent
             ]
         ];
 
-
-              
-
-
-
-
-        $channelsActive = [];
-
-        foreach ($saleChannels as $saleChannel) {
+      foreach ($saleChannels as $saleChannel) {
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
 
             if ($productMarketplace->getEnabled()) {
                 $mirakCode ='WRT_'.$saleChannel->getCountryCode().'_ONLINE';
-                $channelsActive[]=$mirakCode ;
-               
+              
                 $offer['price'] = $productMarketplace->getPriceChannel();
                 $priceChannel = [];
                 $priceChannel ['channel_code'] = $mirakCode;
@@ -66,8 +57,7 @@ class WortenPriceStock extends MiraklPriceStockParent
             }
         }
 
-        $offer["offer_additional_fields"][] = ['code'=>"exclusive-channels", 'value' => implode(',', $channelsActive)];
-
+        
         return $offer;
     }
 

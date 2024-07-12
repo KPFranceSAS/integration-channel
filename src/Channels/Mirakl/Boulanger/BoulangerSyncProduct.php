@@ -10,28 +10,44 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 {
   
 
+
+    protected function getMarketplaceNode(): string
+    {
+        return 'boulanger';
+    }
+
+
+    public function getLocales(): array
+    {
+        return [
+            'en_GB',
+            'fr_FR',
+        ];
+    }
+
+
    
     protected function flatProduct(array $product):array
     {
         $this->logger->info('Flat product '.$product['identifier']);
 
-        $flatProduct = [
-            'REF_UNIV' => $product['identifier'],
-            "TYPE_REF_UNIVERSELLE" => "SKU"
-        ];
+        $flatProduct = [];
 
+
+        $flatProduct["REF_UNIV"] = $product['identifier'];
+        $flatProduct["TYPE_REF_UNIVERSELLE"] =  "SKU";
         $flatProduct["SKU_MARCHAND"] = $product['identifier'];
 
         $brandName = $this->getAttributeChoice($product, "brand", "en_GB");
 
         $shortName = (string)$this->getAttributeSimple($product, 'short_article_name', 'fr_FR');
         $articleName = (string)$this->getAttributeSimple($product, 'article_name', 'fr_FR');
-        if(strlen($shortName)==0){
+        if(strlen($shortName)==0) {
             $shortName  = trim(str_replace($brandName, '', $articleName));
-        } 
+        }
 
         $flatProduct["REF_COM"]  = substr($shortName, 0, 40);
-        $flatProduct["ACCROCHE"] = substr( $articleName, 0, 95);
+        $flatProduct["ACCROCHE"] = substr($articleName, 0, 95);
         $flatProduct["PARTNUMBER"]  = $this->getAttributeSimple($product, 'ean');
         
         $flatProduct["MARQUE"] = $this->getCodeMarketplaceInList('LISTE_MARQUE', $brandName);
@@ -68,7 +84,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
             switch($flatProduct['CATEGORIE']) {
                 case '42249':
                     $flatProduct = $this->addInfoGamingChair($product, $flatProduct);
-                 break;
+                    break;
                 case '603':
                     $flatProduct = $this->addInfoPowerStation($product, $flatProduct);
                     break;
@@ -92,10 +108,10 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
                     break;
                 case '7201':
                     $flatProduct = $this->addInfoRobotTondeuse($product, $flatProduct);
-                 break;
-                    case '8011':
-                        $flatProduct = $this->addInfoComposteur($product, $flatProduct);
-                        break;
+                    break;
+                case '8011':
+                    $flatProduct = $this->addInfoComposteur($product, $flatProduct);
+                    break;
                 case "6001":
                     $flatProduct = $this->addInfoAccesoriesPizza($product, $flatProduct);
                     break;
@@ -115,17 +131,17 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     public function addInfoRobotTondeuse(array $product, array $flatProduct): array
     {
 
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/produit']='Tondeuse robot';
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/alimentation']='Batterie';
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/type_de_chargement']='Base de recharge (automatique)';
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/autonomie_en_heure']='1,0 h';
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/temps_de_charge_en_heure']='1,0 h';
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/surface_couverte_m2']='500 m²';
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/niveau_sonore']='58 dB';
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/coloris']='Gris';
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_specifique/procede']='Robot tondeuse connecté sans fil périphérique';
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_specifique/hauteurs_de_coupe' ]='2 à 7,6 cm';
-            $flatProduct['CENTRALE_TONDEUSE_GAZON/services_inclus/fabrique_en'] = 'Chine';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/produit']='Tondeuse robot';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/alimentation']='Batterie';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/type_de_chargement']='Base de recharge (automatique)';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/autonomie_en_heure']='1,0 h';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/temps_de_charge_en_heure']='1,0 h';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/surface_couverte_m2']='500 m²';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/niveau_sonore']='58 dB';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_generale/coloris']='Gris';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_specifique/procede']='Robot tondeuse connecté sans fil périphérique';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/caracteristique_specifique/hauteurs_de_coupe' ]='2 à 7,6 cm';
+        $flatProduct['CENTRALE_TONDEUSE_GAZON/services_inclus/fabrique_en'] = 'Chine';
         
         return $flatProduct;
     }
@@ -134,19 +150,19 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     public function addInfoGamingChair(array $product, array $flatProduct): array
     {
 
-            $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/type']="Siège gamer";
-            $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/utilisation']='Multisupport';
-            $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/coloris']='Noir';
-            $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/matiere']='Simili cuir';
-            $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/matiere_du_cadre']='Métal';
-            $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/style']='Sur pied';
-            $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/poids_maximum_recommande_du_pilote']='130kg';
-            $flatProduct['CENTRALE_SIEGE_GAMER/services_inclus/fabrique_en']='Chine';
-            $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/type_d_accoudoirs']='3D';
-            $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/rocking_chair']='Sans';
-            $flatProduct['CENTRALE_SIEGE_GAMER/montage/livre_monte']='Non';
-            $flatProduct['CENTRALE_SIEGE_GAMER/montage/montage_rapide']='Oui';
-            $flatProduct['CENTRALE_SIEGE_GAMER/montage/a_monter_soi-meme']='Oui';
+        $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/type']="Siège gamer";
+        $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/utilisation']='Multisupport';
+        $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/coloris']='Noir';
+        $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/matiere']='Simili cuir';
+        $flatProduct['CENTRALE_SIEGE_GAMER/caracteristiques_generales/matiere_du_cadre']='Métal';
+        $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/style']='Sur pied';
+        $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/poids_maximum_recommande_du_pilote']='130kg';
+        $flatProduct['CENTRALE_SIEGE_GAMER/services_inclus/fabrique_en']='Chine';
+        $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/type_d_accoudoirs']='3D';
+        $flatProduct['CENTRALE_SIEGE_GAMER/details_du_siege/rocking_chair']='Sans';
+        $flatProduct['CENTRALE_SIEGE_GAMER/montage/livre_monte']='Non';
+        $flatProduct['CENTRALE_SIEGE_GAMER/montage/montage_rapide']='Oui';
+        $flatProduct['CENTRALE_SIEGE_GAMER/montage/a_monter_soi-meme']='Oui';
 
             
         return $flatProduct;
@@ -158,19 +174,19 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     public function addInfoComposteur(array $product, array $flatProduct): array
     {
 
-            $flatProduct['CENTRALE_POUBELLE/composition/type_de_produit']='Composteur de cuisine'; 
-            $flatProduct['CENTRALE_POUBELLE/composition/mecanisme_de_la_poubelle']='Automatique'; 
-            $flatProduct['CENTRALE_POUBELLE/composition/ouverture_pedale']='Non'; 
-            $flatProduct['CENTRALE_POUBELLE/composition/matiere_du_corps']='Acier inoxydable'; 
-            $flatProduct['CENTRALE_POUBELLE/composition/matiere_du_couvercle']='Polypropylène'; 
-            $flatProduct['CENTRALE_POUBELLE/composition/nombre_de_bac']='1'; 
-            $flatProduct['CENTRALE_POUBELLE/composition/capacite_de_chaque_bac']='30'; 
-            $flatProduct['CENTRALE_POUBELLE/composition/coloris']=$this->getAttributeChoice($product, "color", "fr_FR"); 
-            $flatProduct['CENTRALE_POUBELLE/dimensions/hauteur_cm']=$this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
-            $flatProduct['CENTRALE_POUBELLE/dimensions/largeur_cm']= $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0); 
-            $flatProduct['CENTRALE_POUBELLE/dimensions/profondeur_cm']=$this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0); 
-            $flatProduct['CENTRALE_POUBELLE/services_inclus/fabrique_en']='Chine'; 
-            $flatProduct['CENTRALE_POUBELLE/dimensions/capacite_l']='30'; 
+        $flatProduct['CENTRALE_POUBELLE/composition/type_de_produit']='Composteur de cuisine';
+        $flatProduct['CENTRALE_POUBELLE/composition/mecanisme_de_la_poubelle']='Automatique';
+        $flatProduct['CENTRALE_POUBELLE/composition/ouverture_pedale']='Non';
+        $flatProduct['CENTRALE_POUBELLE/composition/matiere_du_corps']='Acier inoxydable';
+        $flatProduct['CENTRALE_POUBELLE/composition/matiere_du_couvercle']='Polypropylène';
+        $flatProduct['CENTRALE_POUBELLE/composition/nombre_de_bac']='1';
+        $flatProduct['CENTRALE_POUBELLE/composition/capacite_de_chaque_bac']='30';
+        $flatProduct['CENTRALE_POUBELLE/composition/coloris']=$this->getAttributeChoice($product, "color", "fr_FR");
+        $flatProduct['CENTRALE_POUBELLE/dimensions/hauteur_cm']=$this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
+        $flatProduct['CENTRALE_POUBELLE/dimensions/largeur_cm']= $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0);
+        $flatProduct['CENTRALE_POUBELLE/dimensions/profondeur_cm']=$this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0);
+        $flatProduct['CENTRALE_POUBELLE/services_inclus/fabrique_en']='Chine';
+        $flatProduct['CENTRALE_POUBELLE/dimensions/capacite_l']='30';
         
         return $flatProduct;
     }

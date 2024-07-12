@@ -142,9 +142,19 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
     }
 
 
+    protected function getMarketplaceNode(): string
+    {
+        return 'leroymerlin';
+    }
 
+    
 
-
+    public function getLocales(): array
+    {
+        return [
+            'es_ES', 'en_GB', 'fr_FR', 'it_IT', 'pt_PT'
+        ];
+    }
 
 
     public function getChannel(): string

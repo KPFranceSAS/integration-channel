@@ -22,7 +22,9 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
        
     abstract public function getChannel(): string;
 
-    abstract protected function flatProduct(array $product): array;
+    abstract protected function getLocales(): array;
+
+    abstract protected function getMarketplaceNode(): string;
 
     protected $projectDir;
 
@@ -37,7 +39,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
         ApiAggregator $apiAggregator,
         $projectDir
     ) {
-        $this->projectDir =  $projectDir.'/var/catalogue/'.$this->getLowerChannel().'/';
+        $this->projectDir =  $projectDir.'/public/catalogue/'.$this->getLowerChannel().'/';
         parent::__construct($manager, $logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
     }
 
@@ -81,7 +83,97 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
     }
 
 
+    protected function doNotExport():array
+    {
+        return [
+            'msrp',
+            'msrp_ht',
+            'marketplaces_assignement',
+            'platform_b2b_websites',
+            'selling_rating',
+            "image_1"
+        ];
+    }
 
+
+    protected function canBeExport($code):bool
+    {
+        return !in_array($code, $this->doNotExport());
+    }
+
+
+    protected function flatProduct(array $product):array
+    {
+        $this->logger->info('Flat product '.$product['identifier']);
+
+        $flatProduct = [
+            'sku' => $product['identifier'],
+        ];
+        $productType = $this->getAttributeSimple($product, 'mkp_product_type');
+        $categoryCode = $this->getCategoryNode($productType, $this->getMarketplaceNode());
+
+        if($categoryCode) {
+            $flatProduct['category_code'] = $categoryCode;
+            $category = $this->getCategoryName($categoryCode, $this->getMarketplaceNode());
+            if($category) {
+                $flatProduct['category_name'] = $category->getLabel();
+                $flatProduct['category_path'] = $category->getPath();
+            }
+        }
+        foreach ($product['values'] as $attribute => $value) {
+            if($this->canBeExport($attribute)) {
+                $attributePim = $this->getAttributeType($attribute);
+                foreach ($value as $val) {
+                    $nameColumn = $this->getAttributeColumnName($attribute, $val);
+                    $data = $val['data'];
+            
+                    if ($attributePim["type"]=='pim_catalog_simpleselect') {
+                        $flatProduct[$nameColumn] = $data;
+                        foreach($this->getLocales() as $locale) {
+                            $flatProduct[$nameColumn.'-'.$locale] = $this->getTranslationOption($attribute, $data, $locale);
+                        }
+                    } elseif ($attributePim["type"]=='pim_catalog_multiselect') {
+                        $flatProduct[$nameColumn] = implode(',', $data);
+                        foreach($this->getLocales() as $locale) {
+                            $localeAttributes = [];
+                            foreach($data as $dat) {
+                                $localeAttributes[]=$this->getTranslationOption($attribute, $dat, $locale);
+                            }
+                            $flatProduct[$nameColumn.'-'.$locale] =implode(',', $localeAttributes);
+                        }
+                    } elseif($attributePim["type"]=='pim_catalog_metric') {
+                        $flatProduct[$nameColumn] = $data['amount'];
+                        $flatProduct[$nameColumn.'-unit'] = $data['unit'];
+                        $flatProduct[$nameColumn.'-wunit'] = $data['amount'].' '.$data['unit'];
+          
+                        if(array_key_exists($nameColumn, $this->getUnitsFormate())&& $data['amount'] >0) {
+                            $convert = $this->getUnitsFormate()[$nameColumn];
+                            $value =$this->transformUnit($data["unit"], $convert['unit'], $data['amount'], $convert['round']);
+                            $flatProduct[$nameColumn.'-formate'] =  $value;
+                            $flatProduct[$nameColumn.'-formate-unit'] = $convert['unit'];
+                            $flatProduct[$nameColumn.'-formate-wunit'] = $value.' '.$convert['convertUnit'];
+                        }
+                    } elseif($attributePim["type"]=='pim_catalog_boolean') {
+                        $flatProduct[$nameColumn] = (int)$data;
+                        foreach($this->getLocales() as $locale) {
+                            $flatProduct[$nameColumn.'-'.$locale] = $this->getTranslationBoolean($data, $locale);
+                        }
+                    } elseif($attributePim["type"]=='pim_catalog_price_collection') {
+                        foreach ($data as $subData) {
+                            $flatProduct[$nameColumn.'-'.$subData['currency']] = $subData['amount'];
+                        }
+                    } elseif($attributePim["type"]=='pim_catalog_file') {
+                        // do nothing
+                    } else {
+                        $flatProduct[$nameColumn] = $data;
+                    }
+                }
+            }
+            
+        }
+       
+        return $flatProduct;
+    }
 
     
 
@@ -125,13 +217,16 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
             $csv->insertOne(array_values($productArray));
         }
         $csvContent = $csv->toString();
-        $filename = $this->projectDir.'export_products/export_products_'.$this->getLowerChannel().'_'.date('Ymd_His').'.csv';
+        $filename = $this->projectDir.'export_products_'.$this->getLowerChannel().'_'.date('Ymd_His').'.csv';
+        $finalFile = $this->projectDir.'export_products_'.$this->getLowerChannel().'.csv';
         $this->logger->info("start export products locally");
 
         $fs = new Filesystem();
         $fs->appendToFile($filename, $csvContent);
-        $this->logger->info("start export products on Mirakl");
+        $fs->remove($finalFile);
+        $fs->appendToFile($finalFile, $csvContent);
 
+        $this->logger->info("start export products on Mirakl");
         $this->getMiraklApi()->sendProductImports($filename);
     }
 
@@ -211,5 +306,52 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
             $this->attributes[$categoryCode] = $attributesReposne->attributes;
         }
         return $this->attributes[$categoryCode];
+    }
+
+
+    protected function getUnitsFormate(): array
+    {
+        return [
+            "product_lenght" => [
+                "unit" => 'CENTIMETER',
+                "convertUnit" => 'cm' ,
+                'round' => 0
+            ],
+            "product_width" => [
+                "unit" => 'CENTIMETER',
+                "convertUnit" => 'cm' ,
+                'round' => 0
+            ],
+            "product_height" => [
+                "unit" => 'CENTIMETER',
+                "convertUnit" => 'cm',
+                'round' => 0
+            ],
+            "product_weight" => [
+                "unit" => 'KILOGRAM',
+                "convertUnit" => 'kg',
+                'round' => 2
+            ],
+            "package_length" => [
+                "unit" => 'CENTIMETER',
+                "convertUnit" => 'cm' ,
+                'round' => 0
+            ],
+            "package_width" => [
+                "unit" => 'CENTIMETER',
+                "convertUnit" => 'cm' ,
+                'round' => 0
+            ],
+            "package_height" => [
+                "unit" => 'CENTIMETER',
+                "convertUnit" => 'cm',
+                'round' => 0
+            ],
+            "package_weight" => [
+                "unit" => 'KILOGRAM',
+                "convertUnit" => 'kg',
+                'round' => 2
+            ],
+        ];
     }
 }
