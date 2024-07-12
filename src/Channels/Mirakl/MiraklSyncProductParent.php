@@ -231,7 +231,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
     }
 
 
-    private function addProduct(array $product, array $header): array
+    protected function addProduct(array $product, array $header): array
     {
         $productArray = array_fill_keys($header, '');
         
