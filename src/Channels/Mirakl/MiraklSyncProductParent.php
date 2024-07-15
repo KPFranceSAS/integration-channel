@@ -3,18 +3,11 @@
 namespace App\Channels\Mirakl;
 
 use Akeneo\Pim\ApiClient\Search\SearchBuilder;
-use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Channels\Mirakl\MiraklApiParent;
 use App\Entity\IntegrationChannel;
-use App\Entity\ProductTypeCategorizacion;
-use App\Helper\MailService;
 use App\Helper\Utils\StringUtils;
-use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\ProductSyncParent;
-use App\Service\Pim\AkeneoConnector;
-use Doctrine\Persistence\ManagerRegistry;
 use League\Csv\Writer;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 abstract class MiraklSyncProductParent extends ProductSyncParent
@@ -26,25 +19,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
     abstract protected function getMarketplaceNode(): string;
 
-    protected $projectDir;
-
-
-
-    public function __construct(
-        ManagerRegistry $manager,
-        AkeneoConnector $akeneoConnector,
-        LoggerInterface $logger,
-        MailService $mailer,
-        BusinessCentralAggregator $businessCentralAggregator,
-        ApiAggregator $apiAggregator,
-        $projectDir
-    ) {
-        $this->projectDir =  $projectDir.'/public/catalogue/'.$this->getLowerChannel().'/';
-        parent::__construct($manager, $logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
-    }
-
-
-
+    
     protected function getProductsEnabledOnChannel()
     {
 
@@ -72,10 +47,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
 
 
-    protected function getLowerChannel()
-    {
-        return strtolower($this->getChannel());
-    }
+   
 
     protected function getMiraklApi(): MiraklApiParent
     {
@@ -181,6 +153,8 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
     public function syncProducts()
     {        /** @var  array $products */
         $products = $this->getProductsEnabledOnChannel();
+
+        
         $productToArrays=[];
         $finalHeader = [];
         foreach ($products as $product) {
@@ -228,6 +202,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
         $this->logger->info("start export products on Mirakl");
         $this->getMiraklApi()->sendProductImports($filename);
+        
     }
 
 

@@ -21,6 +21,7 @@ abstract class PriceStockParent
 
     protected $manager;
 
+    protected $projectDir;
 
     public function __construct(
         ManagerRegistry $manager,
@@ -29,8 +30,10 @@ abstract class PriceStockParent
         protected BusinessCentralAggregator $businessCentralAggregator,
         protected ApiAggregator $apiAggregator,
         protected ProductStockFinder $productStockFinder,
-        protected ProductTaxFinder $productTaxFinder
+        protected ProductTaxFinder $productTaxFinder,
+        $projectDir
     ) {
+        $this->projectDir =  $projectDir.'/public/catalogue/'.$this->getLowerChannel().'/';
         $this->manager = $manager->getManager();
     }
 
@@ -39,23 +42,38 @@ abstract class PriceStockParent
     abstract public function getChannel(): string;
 
 
+    protected function getLowerChannel()
+    {
+        return strtolower($this->getChannel());
+    }
+
+
+
+    protected function getSaleChannels(){
+        $integrationChannel = $this->manager->getRepository(IntegrationChannel::class)->findBy([
+            'code' => $this->getChannel()
+        ]);
+
+        $saleChannels = $this->manager->getRepository(SaleChannel::class)->findBy([
+            'integrationChannel' => $integrationChannel
+        ]);
+        $this->logger->info('Has '.count($saleChannels).' sale channels enabled');
+
+        return $saleChannels;
+    }
+
+
     public function send()
     {
         try {
-            $integrationChannel = $this->manager->getRepository(IntegrationChannel::class)->findBy([
-                'code' => $this->getChannel()
-            ]);
-
-            $saleChannels = $this->manager->getRepository(SaleChannel::class)->findBy([
-                'integrationChannel' => $integrationChannel
-            ]);
-            $this->logger->info('Has '.count($saleChannels).' sale channels enabled');
-
-            $productFiltered = $this->getFilteredProducts($saleChannels);
+            $productFiltered = $this->getFilteredProducts();
             $this->logger->info('Has '.count($productFiltered).' products enabled');
             if(count($productFiltered)>0) {
-                $this->sendStocksPrices($productFiltered, $saleChannels);
+               return  $this->sendStocksPrices($productFiltered, $this->getSaleChannels());
+            } else {
+                return [];
             }
+
             
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
@@ -70,8 +88,9 @@ abstract class PriceStockParent
         return $this->productStockFinder->getFinalStockProductWarehouse($sku, $depot);
     }
 
-    protected function getFilteredProducts($saleChannels): array
+    protected function getFilteredProducts(): array
     {
+        $saleChannels = $this->getSaleChannels();
         $productsFiltererd=[];
         foreach($saleChannels as $saleChannel) {
             $productMarketplaces = $this->manager->getRepository(ProductSaleChannel::class)->findBy(

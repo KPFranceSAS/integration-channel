@@ -2,7 +2,6 @@
 
 namespace App\Channels\FnacDarty;
 
-use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\Channels\Mirakl\MiraklSyncProductParent;
 
 abstract class FnacDartySyncProduct extends MiraklSyncProductParent

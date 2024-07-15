@@ -19,23 +19,7 @@ use Symfony\Component\Filesystem\Filesystem;
 
 abstract class ManoManoPriceStockParent extends PriceStockParent
 {
-    protected $projectDir;
-
-    public function __construct(
-        ManagerRegistry $manager,
-        LoggerInterface $logger,
-        MailService $mailer,
-        BusinessCentralAggregator $businessCentralAggregator,
-        ApiAggregator $apiAggregator,
-        ProductStockFinder $productStockFinder,
-        ProductTaxFinder $productTaxFinder,
-        $projectDir
-    ) {
-        $this->projectDir =  $projectDir.'/public/manomano/catalogue/';
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator, $productStockFinder, $productTaxFinder);
-    }
-
-
+    
    abstract protected function getCountryCode();
  
 

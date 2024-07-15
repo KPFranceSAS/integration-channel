@@ -8,6 +8,7 @@ use App\Entity\IntegrationChannel;
 use App\Entity\ProductTypeCategorizacion;
 use App\Helper\MailService;
 use App\Service\Aggregator\ApiAggregator;
+use App\Service\Aggregator\PriceStockAggregator;
 use App\Service\Aggregator\ProductSyncParent;
 use App\Service\Pim\AkeneoConnector;
 use Doctrine\Persistence\ManagerRegistry;
@@ -32,11 +33,13 @@ class ChannelAdvisorProduct extends ProductSyncParent
         FilesystemOperator $defaultStorage,
         FilesystemOperator $channelAdvisorStorage,
         BusinessCentralAggregator $businessCentralAggregator,
-        ApiAggregator $apiAggregator
+        ApiAggregator $apiAggregator,
+        PriceStockAggregator $priceStockAggregator,
+        $projectDir
     ) {
         $this->defaultStorage = $defaultStorage;
         $this->channelAdvisorStorage = $channelAdvisorStorage;
-        parent::__construct($managerRegistry,$logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
+        parent::__construct($managerRegistry,$logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator, $priceStockAggregator,  $projectDir);
     }
 
 

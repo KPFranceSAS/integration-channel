@@ -31,11 +31,12 @@ class ChannelAdvisorPricingStock extends PriceStockParent
         ProductStockFinder $productStockFinder,
         ProductTaxFinder $productTaxFinder,
         FilesystemOperator $defaultStorage,
-        FilesystemOperator $channelAdvisorStorage
+        FilesystemOperator $channelAdvisorStorage,
+        $projectDir
     ) {
         $this->defaultStorage = $defaultStorage;
         $this->channelAdvisorStorage = $channelAdvisorStorage;
-        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator, $productStockFinder, $productTaxFinder);
+        parent::__construct($manager, $logger, $mailer, $businessCentralAggregator, $apiAggregator, $productStockFinder, $productTaxFinder, $projectDir);
     }
 
 

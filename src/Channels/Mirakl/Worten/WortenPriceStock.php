@@ -2,7 +2,6 @@
 
 namespace App\Channels\Mirakl\Worten;
 
-use App\BusinessCentral\Connector\BusinessCentralConnector;
 use App\Channels\Mirakl\MiraklPriceStockParent;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;

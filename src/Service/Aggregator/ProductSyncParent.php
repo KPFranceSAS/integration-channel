@@ -19,6 +19,8 @@ abstract class ProductSyncParent
     protected $errors;
 
 
+    protected $projectDir;
+
 
     public function __construct(
         ManagerRegistry $manager,
@@ -26,7 +28,9 @@ abstract class ProductSyncParent
         protected AkeneoConnector $akeneoConnector,
         protected MailService $mailer,
         protected BusinessCentralAggregator $businessCentralAggregator,
-        protected ApiAggregator $apiAggregator
+        protected ApiAggregator $apiAggregator,
+        protected PriceStockAggregator $priceStockAggregator,
+        $projectDir
     ) {
         $this->logger = $logger;
         $this->mailer = $mailer;
@@ -34,6 +38,7 @@ abstract class ProductSyncParent
         $this->businessCentralAggregator = $businessCentralAggregator;
         $this->apiAggregator = $apiAggregator;
         $this->manager = $manager->getManager();
+        $this->projectDir =  $projectDir.'/public/catalogue/'.$this->getLowerChannel().'/';
     }
 
     abstract public function syncProducts();
@@ -45,7 +50,14 @@ abstract class ProductSyncParent
 
     private $productTypes;
 
-    private function initializeCategories()
+
+    protected function getLowerChannel()
+    {
+        return strtolower($this->getChannel());
+    }
+
+
+    protected function initializeCategories()
     {
         $productCategorizations = $this->manager->getRepository(ProductTypeCategorizacion::class)->findAll();
         foreach($productCategorizations as $productCategorization) {
@@ -54,7 +66,7 @@ abstract class ProductSyncParent
 
     }
 
-    public function getCategoryNode($productType, $marketplace)
+    protected function getCategoryNode($productType, $marketplace)
     {
         if(!$this->productTypes) {
             $this->initializeCategories();
@@ -78,7 +90,7 @@ abstract class ProductSyncParent
     }
 
 
-    public function getCategoryName($code, $marketplace): ?MarketplaceCategory
+    protected function getCategoryName($code, $marketplace): ?MarketplaceCategory
     {
         
         $productTypeCat = $this->manager->getRepository(MarketplaceCategory::class)->findOneBy([
@@ -157,7 +169,7 @@ abstract class ProductSyncParent
         if (!($this->attributes)) {
             $attributePims= $this->akeneoConnector->getAllAttributes();
             $this->attributes= [];
-            foreach($attributePims as $attributePim){
+            foreach($attributePims as $attributePim) {
                 $this->attributes[$attributePim['code']] = $attributePim;
             }
         }
@@ -464,17 +476,18 @@ abstract class ProductSyncParent
     }
     
 
-    protected function getTranslationBoolean($boolean, $locale){
-            $translation = [
-                'es_ES' => ['Sí', 'No'],
-                'de_DE' => ['Ja', 'Nein'],
-                'fr_FR' => ['Oui', 'Non'],
-                'en_GB' => ['Yes', 'No'],
-                'it_IT' => ['Sì', 'No'],
-                'pt_PT' => ['Sim', 'Não'],  
-            ];
+    protected function getTranslationBoolean($boolean, $locale)
+    {
+        $translation = [
+            'es_ES' => ['Sí', 'No'],
+            'de_DE' => ['Ja', 'Nein'],
+            'fr_FR' => ['Oui', 'Non'],
+            'en_GB' => ['Yes', 'No'],
+            'it_IT' => ['Sì', 'No'],
+            'pt_PT' => ['Sim', 'Não'],
+        ];
 
-            return $boolean ? $translation[$locale][0] : $translation[$locale][1];
+        return $boolean ? $translation[$locale][0] : $translation[$locale][1];
 
     }
 

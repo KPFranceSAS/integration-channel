@@ -30,6 +30,7 @@ yarn-error.log
 /public/labels/
 /public/products/
 /public/manomano/
+/public/catalogue/
 
 ###> phpstan/phpstan ###
 phpstan.neon

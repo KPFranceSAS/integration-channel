@@ -232,10 +232,10 @@ abstract class MiraklApiParent implements ApiInterface
     }
 
 
-    public function sendProductImports(string $file): ProductImportTracking
+    public function sendProductImports(string $file, $operatorFormat=false): ProductImportTracking
     {
         $request = new ProductImportRequest(new SplFileObject($file));
-        $request->setOperatorFormat(true);
+        $request->setOperatorFormat(false);
         $result = $this->client->importProducts($request);
         return $result;
     }

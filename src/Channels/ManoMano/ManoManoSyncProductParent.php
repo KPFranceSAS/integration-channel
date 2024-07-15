@@ -3,19 +3,12 @@
 namespace App\Channels\ManoMano;
 
 use Akeneo\Pim\ApiClient\Search\SearchBuilder;
-use App\BusinessCentral\Connector\BusinessCentralAggregator;
 use App\Entity\IntegrationChannel;
 use App\Entity\Product;
 use App\Entity\ProductTypeCategorizacion;
 use App\Entity\SaleChannel;
-use App\Helper\MailService;
-use App\Service\Aggregator\ApiAggregator;
-use App\Service\Aggregator\PriceStockAggregator;
 use App\Service\Aggregator\ProductSyncParent;
-use App\Service\Pim\AkeneoConnector;
-use Doctrine\Persistence\ManagerRegistry;
 use League\Csv\Writer;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 abstract class ManoManoSyncProductParent extends ProductSyncParent
@@ -26,26 +19,10 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
     abstract protected function getLocale(): string;
 
-    protected $priceStockAggregator;
-
     protected $projectDir;
 
 
-    public function __construct(
-        AkeneoConnector $akeneoConnector,
-        LoggerInterface $logger,
-        MailService $mailer,
-        BusinessCentralAggregator $businessCentralAggregator,
-        ApiAggregator $apiAggregator,
-        ManagerRegistry $manager,
-        PriceStockAggregator $priceStockAggregator,
-        $projectDir
-    ) {
-        $this->projectDir =  $projectDir.'/public/manomano/catalogue/';
-        $this->priceStockAggregator = $priceStockAggregator;
-        parent::__construct($manager, $logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator);
-    }
-
+   
     protected function getLowerChannel()
     {
         return strtolower($this->getChannel());
