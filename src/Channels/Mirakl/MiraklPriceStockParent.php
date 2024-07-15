@@ -39,11 +39,11 @@ abstract class MiraklPriceStockParent extends PriceStockParent
         }
 
 
-            if(count($offers)>0) {
-                $this->getMiraklApi()->sendOfferImports($offers);
-            } else {
-                $this->logger->info('No offers on '.$this->getChannel());
-            }
+        if(count($offers)>0) {
+            $this->getMiraklApi()->sendOfferImports($offers);
+        } else {
+            $this->logger->info('No offers on '.$this->getChannel());
+        }
 
         
         return $offers;

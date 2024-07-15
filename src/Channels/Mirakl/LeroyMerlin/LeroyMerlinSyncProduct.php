@@ -11,33 +11,21 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
 
     protected function flatProduct(array $product):array
     {
+
+
+        $flatProduct = parent::flatProduct($product);
+
+
         $this->logger->info('Flat product '.$product['identifier']);
-
-        $flatProduct = [
-            'shop_sku' => $product['identifier'],
-            'gtin_EAN13' => $this->getAttributeSimple($product, 'ean'),
-        ];
-
-        $flatProduct["ATT_00256"] = $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0);
-        $flatProduct["ATT_00053"] = $this->getAttributeUnit($product, 'package_lenght', 'CENTIMETER', 0);
-        $flatProduct["ATT_00054"] = $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0);
-        $flatProduct["ATT_00055"] = $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
-
-        $flatProduct["feature_06575_brand"] = $this->getCodeMarketplaceInList('ATT_06575', $this->getAttributeChoice($product, "brand", "en_GB"));
-
-        
-        $flatProduct['product_category'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'leroymerlin');
-       
-
-
-        if(array_key_exists('product_category', $flatProduct)) {
-            switch($flatProduct['product_category']) {
+        if(array_key_exists('category_code', $flatProduct)) {
+            switch($flatProduct['category_code']) {
 
                 case "206556|2547|R1001-2010": // prineter
                     $flatProduct['feature_22088_206556|2547|R1001-2010'] ="LOV_283859"; // LOV_283859
                     break;
                 case "202599|2480|R15-2012": // desk
                     $flatProduct ['ATT_21148'] =  'LOV_000001'; // Contain woods ;
+                    $flatProduct ['LM_contains_wood'] =  'Yes'; // Contain woods ;
                     break;
                 case '200264|2231|R03-2003-2008':
                     $flatProduct["ATT_13704"] = $this->getAttributeUnit($product, 'solar_panel_power', 'WATT_CRETE', 0);
@@ -79,12 +67,9 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                     $flatProduct ['feature_00277_201908|2354|R10-007-009'] =  'LOV_042526'; // Destonation ;
                     $flatProduct ['feature_22088_201908|2354|R10-007-009'] =  'LOV_230961'; // TYpe of product ;
                     break;
-
-                   
-                
             };
 
-            if(in_array($flatProduct['product_category'], [
+            if(in_array($flatProduct['category_code'], [
                 '201825|ROSACE_DE_FONCTION|POIGNEE_DE_PORTE|R10-007-004',
                 "200474|TOURNEVIS|TOURNEVIS_ET_ACCESSOIRES|R04-003-001",
                 "201675|2538|R05-007",
@@ -93,50 +78,52 @@ class LeroyMerlinSyncProduct extends MiraklSyncProductParent
                 "202383|PLAFONNIER|PLAFONNIER|R13-001-003",
                 '201508|FOUR_A_PIZZA|BARBECUE_PLANCHA_ET_CUISINE_D_EXTERIEUR|R09-007'
                 ])) {
+                 $flatProduct ['LM_contains_wood'] =  'No'; // Contain woods ;
                 $flatProduct['ATT_21148'] ='LOV_000002';// Contain woods ;
             }
 
 
 
-            if(in_array($flatProduct['product_category'], [
+            if(in_array($flatProduct['category_code'], [
                     '200589|GROUPE_ELECTROGENE|MACHINES_ET_MATERIEL_D_ATELIER|R04-005',
                     "201931|SERRURE_ELECTRIQUE|SERRURE_ET_CYLINDRE_DE_SERRURE|R10-007-009",
                     "200550|2045|R04-010-001"
                     ])) {
                 $flatProduct['ATT_15344'] ='LOV_000001'; // included battery
+                $flatProduct ['LM_contains_battery'] =  'Yes'; // Contain battery ;
             } else {
                 $flatProduct ['ATT_15344'] = 'LOV_000002';
+                $flatProduct ['LM_contains_battery'] =  'No'; // Contain battery ;
             }
         } else {
             $this->logger->info('Product not categorized');
         }
         
-
+        
         $locales = ['fr', 'es', 'it', 'pt'];
 
         foreach ($locales as $locale) {
             $localePim = $locale.'_'.strtoupper($locale);
             $localeMirakl = $locale.'-'.strtoupper($locale);
-            $flatProduct['i18n_'.$locale.'_12963_title'] = substr((string) $this->getAttributeSimple($product, "article_name", $localePim), 0, 150);
+            $flatProduct['LM_'.$locale.'_title'] = substr((string) $this->getAttributeSimple($product, "article_name", $localePim), 0, 150);
 
             $description = $this->getAttributeSimple($product, "description", $localePim);
             if($description) {
                 $descriptionFormate = str_replace('</p>', '</p><p>&nbsp;</p>', (string) $description);
                 $descriptionFormate = str_replace(['<strong>', '</strong>'], ['<b>', '</b>'], $descriptionFormate);
-                $flatProduct['i18n_'.$locale.'_01022_longdescription'] = substr($descriptionFormate, 0, 5000);
+                $flatProduct['LM_'.$locale.'_longdescription'] = substr($descriptionFormate, 0, 5000);
             }
 
             for ($i = 1; $i <= 5;$i++) {
                 $attributeImageLoc = $this->getAttributeSimple($product, 'image_url_loc_'.$i, $localePim);
-                $keyArray = $locale == 'fr' ? 'media_'.$i : 'media_'.$i.'_'.$localeMirakl;
+                $keyArray = $locale == 'fr' ? 'LM_media_'.$i : 'LM_media_'.$i.'_'.$localeMirakl;
                 $flatProduct[$keyArray] = $attributeImageLoc ?: $this->getAttributeSimple($product, 'image_url_'.$i);
             }
 
-            $keyArrayMedia = $locale == 'fr' ? 'media_instruction' : 'media_instruction_'.$localeMirakl;
+            $keyArrayMedia = $locale == 'fr' ? 'LM_media_instruction' : 'LM_media_instruction_'.$localeMirakl;
             $flatProduct[$keyArrayMedia]  = $this->getAttributeSimple($product, 'user_guide_url', $localePim);
         
         }
-
         
         return $flatProduct;
     }
