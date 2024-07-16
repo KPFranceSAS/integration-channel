@@ -24,8 +24,8 @@ class WortenPriceStock extends MiraklPriceStockParent
             "state_code" => "11",
             "update_delete" => "update",
             "shop_sku" => $product->getSku(),
-            "product_id" => $product->getSku(),
-            "product_id_type" => "SHOP_SKU",
+            "product_id" => $product->getEan(),
+            "product_id_type" => "EAN",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "logistic_class" => $this->defineLogisticClass($product),
         
