@@ -166,6 +166,9 @@ services:
             $wortenClientUrl :  '%env(resolve:WORTEN_URL)%'
             $wortenClientKey : '%env(resolve:WORTEN_KEY)%'
 
+            $pcComponentesClientUrl :  '%env(resolve:PCCOMPONENTES_URL)%'
+            $pcComponentesClientKey : '%env(resolve:PCCOMPONENTES_KEY)%'
+
             $decathlonClientUrl :  '%env(resolve:DECATHLON_URL)%'
             $decathlonClientKey : '%env(resolve:DECATHLON_KEY)%'
 

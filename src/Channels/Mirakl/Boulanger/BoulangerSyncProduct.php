@@ -2,7 +2,6 @@
 
 namespace App\Channels\Mirakl\Boulanger;
 
-use Akeneo\Pim\ApiClient\Search\SearchBuilder;
 use App\Channels\Mirakl\MiraklSyncProductParent;
 use App\Entity\IntegrationChannel;
 

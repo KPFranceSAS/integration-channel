@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Channels\Mirakl\PcComponentes\PcComponentesApi;
 use App\Controller\Configuration\LogisticClassCrudController;
 use App\Controller\Configuration\ProductCrudController;
 use App\Controller\Fba\StockCrudController;
@@ -22,7 +23,9 @@ use App\Controller\Order\MediaMarktOrderCrudController;
 use App\Controller\Order\MinibattOrderCrudController;
 use App\Controller\Order\OwletCareOrderCrudController;
 use App\Controller\Order\PaxB2COrderCrudController;
+use App\Controller\Order\PcComponentesOrderCrudController;
 use App\Controller\Order\PreparationOrderCrudController;
+use App\Controller\Order\ReencleOrderCrudController;
 use App\Controller\Order\WebOrderCrudController;
 use App\Controller\Order\WortenOrderCrudController;
 use App\Controller\Pricing\PricingCrudController;
@@ -180,8 +183,7 @@ class DashboardController extends AbstractDashboardController
                         ->setController(CdiscountOrderCrudController::class),
                     MenuItem::linkToCrud('Decathlon', 'fas fa-volleyball-ball', WebOrder::class)
                         ->setController(DecathlonOrderCrudController::class),
-                    MenuItem::linkToCrud('Worten', 'fas fa-tv', WebOrder::class)
-                        ->setController(WortenOrderCrudController::class),
+                   
                     MenuItem::linkToCrud('Fnac Darty', 'fas fa-video', WebOrder::class)
                         ->setController(FnacDartyOrderCrudController::class),
                         
@@ -191,7 +193,7 @@ class DashboardController extends AbstractDashboardController
                         ->setController(LeroyMerlinOrderCrudController::class),
                     MenuItem::linkToCrud('ManoMano', 'fas fa-screwdriver', WebOrder::class)
                         ->setController(ManoManoOrderCrudController::class),
-                        MenuItem::linkToCrud('MediaMarkt', 'fas fa-certificate', WebOrder::class)
+                    MenuItem::linkToCrud('MediaMarkt', 'fas fa-certificate', WebOrder::class)
                         ->setController(MediaMarktOrderCrudController::class),
                     MenuItem::linkToCrud('Minibatt', 'fas fa-car-battery', WebOrder::class)
                         ->setController(MinibattOrderCrudController::class),
@@ -201,7 +203,12 @@ class DashboardController extends AbstractDashboardController
                         ->setController(OwletCareOrderCrudController::class),
                     MenuItem::linkToCrud('Pax B2C', 'fas fa-cannabis', WebOrder::class)
                         ->setController(PaxB2COrderCrudController::class),
-                    
+                    MenuItem::linkToCrud('PcComponentes', 'fas fa-laptop-house', WebOrder::class)
+                        ->setController(PcComponentesOrderCrudController::class),    
+                    MenuItem::linkToCrud('Reencle', 'far fa-trash-alt', WebOrder::class)
+                        ->setController(ReencleOrderCrudController::class),
+                    MenuItem::linkToCrud('Worten', 'fas fa-tv', WebOrder::class)
+                        ->setController(WortenOrderCrudController::class),
                     
                    
                     MenuItem::section(),
