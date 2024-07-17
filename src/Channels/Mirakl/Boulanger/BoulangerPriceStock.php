@@ -36,8 +36,8 @@ class BoulangerPriceStock extends MiraklPriceStockParent
             "state_code" => "11",
             "update_delete" => "update",
             "shop_sku" => $product->getSku(),
-            "product_id" => $product->getEan(),
-            "product_id_type" => "EAN",
+            "product_id" => $product->getSku(),
+            "product_id_type" => "SHOP_SKU",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "logistic_class" => $this->defineLogisticClass($product),
             "description" => $product->getDescription(),
@@ -53,17 +53,17 @@ class BoulangerPriceStock extends MiraklPriceStockParent
 
         $ecotaxes =  $product->getEcotax();
 
-        if($ecotaxes > 0) {
+        if($ecotaxes > 0){
             $offer['offer_additional_fields'][]=[
-                'code'=>"eco-contribution-amount[FR-DEEE]",
+                'code'=>"eco-contribution-amount[FR-DEEE]", 
                 'value' => $ecotaxes
             ];
             $offer['offer_additional_fields'][]=[
-                'code'=>"producer-id[FR-DEEE]",
+                'code'=>"producer-id[FR-DEEE]", 
                 'value' => 'FR025147_058UN1'
             ];
             $offer['offer_additional_fields'][]=[
-                'code'=>"ecotax-d3e",
+                'code'=>"ecotax-d3e", 
                 'value' => $ecotaxes
             ];
         }
