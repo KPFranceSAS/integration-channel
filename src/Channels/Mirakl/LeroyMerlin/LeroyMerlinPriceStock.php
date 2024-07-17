@@ -26,7 +26,7 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
             "update_delete" => "update",
             "shop_sku" => $product->getSku(),
             "product_id" => $product->getSku(),
-            "product_id_type" => "SHOP_SKU",
+            "product_id_type" => "EAN",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "logistic_class" => $this->defineLogisticClass($product),
         
@@ -43,19 +43,19 @@ class LeroyMerlinPriceStock extends MiraklPriceStockParent
         ];
 
 
-        if($product->getEcotax() > 0){
+        if($product->getEcotax() > 0) {
             $offer['offer_additional_fields'][]=[
-                'code'=>"eco-contribution-amount[FR-DEEE]", 
-                'value' => $product->getEcotax() 
+                'code'=>"eco-contribution-amount[FR-DEEE]",
+                'value' => $product->getEcotax()
             ];
             $offer['offer_additional_fields'][]=[
-                'code'=>"producer-id[FR-DEEE]", 
+                'code'=>"producer-id[FR-DEEE]",
                 'value' => 'FR025147_058UN1'
             ];
 
             $offer['offer_additional_fields'][]=[
-                'code'=>"ecopart-amount", 
-                'value' => $product->getEcotax() 
+                'code'=>"ecopart-amount",
+                'value' => $product->getEcotax()
             ];
         }
         
