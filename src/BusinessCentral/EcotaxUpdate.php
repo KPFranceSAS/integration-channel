@@ -15,24 +15,26 @@ class EcotaxUpdate
     public function __construct(
         private LoggerInterface $logger,
         private ProductTaxFinder $productTaxFinder,
-        private ManagerRegistry $managerRegistry)
-    {
+        private ManagerRegistry $managerRegistry
+    ) {
     }
 
 
 
-    public function updateAllEcotaxes(){
+    public function updateAllEcotaxes()
+    {
         
             
-            $manager = $this->managerRegistry->getManager();
-            $products = $manager->getRepository(Product::class)->findAll();
+        $manager = $this->managerRegistry->getManager();
+        $products = $manager->getRepository(Product::class)->findAll();
 
 
-            foreach($products as $product){
-                $product->setEcotax($this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR'));
-            }
+        foreach($products as $product) {
+            $product->setEcotax($this->productTaxFinder->getEcoTax($product->getSku(), BusinessCentralConnector::KP_FRANCE, 'FR'));
+            $product->setCanonDigital($this->productTaxFinder->getCanonDigital($product->getSku(), BusinessCentralConnector::KIT_PERSONALIZACION_SPORT, 'ES'));
+        }
 
-            $manager->flush();
+        $manager->flush();
 
 
 
@@ -42,7 +44,8 @@ class EcotaxUpdate
     private $prices = [];
    
 
-    private function getPrice($sku, $currency){
+    private function getPrice($sku, $currency)
+    {
         return (array_key_exists($sku, $this->prices[$currency])) ? $this->prices[$currency][$sku] : null;
 
     }
@@ -62,15 +65,15 @@ class EcotaxUpdate
                     $finalPrice =  round($itemPrice['UnitPrice']* $vat, 2);
                 } else {
                     $finalPrice =  round($itemPrice['UnitPrice'], 2);
-                }            
+                }
 
-                if(array_key_exists($itemPrice['ItemNo'], $prices)){
-                    if($prices[$itemPrice['ItemNo']]>$finalPrice){
+                if(array_key_exists($itemPrice['ItemNo'], $prices)) {
+                    if($prices[$itemPrice['ItemNo']]>$finalPrice) {
                         $prices[$itemPrice['ItemNo']]=$finalPrice;
                     }
                 } else {
                     $prices[$itemPrice['ItemNo']]=$finalPrice;
-                }              
+                }
                 
             }
         }

@@ -303,6 +303,9 @@ class Product implements \Stringable
     #[ORM\Column(nullable: true)]
     private ?float $ecotax = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $canonDigital = null;
+
 
 
     public function __construct()
@@ -1399,6 +1402,18 @@ class Product implements \Stringable
     public function setEcotax(?float $ecotax): static
     {
         $this->ecotax = $ecotax;
+
+        return $this;
+    }
+
+    public function getCanonDigital(): ?float
+    {
+        return $this->canonDigital;
+    }
+
+    public function setCanonDigital(?float $canonDigital): static
+    {
+        $this->canonDigital = $canonDigital;
 
         return $this;
     }

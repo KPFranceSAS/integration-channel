@@ -55,6 +55,7 @@ class WebOrder implements \Stringable
     final public const  CARRIER_SENDING = 'SENDING';
     final public const  CARRIER_CORREOSEXP = 'CORREOSEXP';
     final public const  CARRIER_TNT = 'TNT';
+    final public const  CARRIER_CBL = 'CBL';
     
 
     final public const  STATE_ERROR_INVOICE = -2;

@@ -3,6 +3,7 @@
 namespace App\Service\Carriers;
 
 use App\Entity\WebOrder;
+use App\Service\Carriers\CblLogisticTracking;
 use App\Service\Carriers\CorreosExpTracking;
 use App\Service\Carriers\DbSchenkerGetTracking;
 use App\Service\Carriers\DhlGetTracking;
@@ -78,6 +79,7 @@ class TrackingAggregator
             WebOrder::CARRIER_SENDING => SendingGetTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_TNT => TntGetTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_CORREOSEXP => CorreosExpTracking::getTrackingUrlBase($codeTracking),
+            WebOrder::CARRIER_CBL => CblLogisticTracking::getTrackingUrlBase($codeTracking, $zipCode),
             default => null,
         };
     }

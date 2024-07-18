@@ -38,6 +38,8 @@ class MediaMarktUpdateStatus extends MiraklUpdateStatusParent
             return "DB Schenker";
         } elseif ($carrierCode ==  WebOrder::CARRIER_CORREOSEXP) {
             return "Correos Express";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_CBL) {
+            return "CBL Logistic";
         }
         return $carrierCode;
     }

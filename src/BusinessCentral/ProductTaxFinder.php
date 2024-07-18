@@ -87,13 +87,38 @@ class ProductTaxFinder
 
 
 
+
+
+
+    public function getCanonDigital($sku, $company, $country)
+    {
+        $key = 'CANON_'.$sku.'_'.$company.'_'.$country;
+
+        if(!array_key_exists($key, $this->taxes)) {
+            $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($company);
+
+            $itemBc = $businessCentralConnector->getItemByNumber($sku);
+            if($itemBc) {
+                $ecotaxes =  $this->getCanonDigitalForItem(
+                    $itemBc,
+                    $company,
+                    $country
+                );
+                $this->taxes[$key] = $ecotaxes;
+            } else {
+                $this->taxes[$key] = 0;
+            }
+        }
+        return  $this->taxes[$key];
+    }
     
 
 
-    public function getEcoTax($sku, $company, $country){
+    public function getEcoTax($sku, $company, $country)
+    {
         $key = 'DEEE_'.$sku.'_'.$company.'_'.$country;
 
-        if(!array_key_exists($key, $this->taxes)){
+        if(!array_key_exists($key, $this->taxes)) {
             $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($company);
 
             $itemBc = $businessCentralConnector->getItemByNumber($sku);

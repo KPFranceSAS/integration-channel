@@ -15,8 +15,6 @@ class PcComponentesPriceStock extends MiraklPriceStockParent
 
 
 
-   
-
 
     protected function addProduct(Product $product, array $saleChannels): array
     {
@@ -28,12 +26,16 @@ class PcComponentesPriceStock extends MiraklPriceStockParent
             "product_id_type" => "EAN",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "logistic_class" => $this->defineLogisticClass($product),
-        
             "description" => $product->getDescription(),
-            "leadtime_to_ship" => "2",
-            "all_prices" => [],
             "offer_additional_fields" => [
-                
+                [
+                    'code'=>"tipo-iva",
+                    'value' => "21"
+                ],
+                [
+                    'code'=>"canon",
+                    'value' => $product->getCanonDigital()
+                ],
             ]
         ];
 
@@ -41,18 +43,11 @@ class PcComponentesPriceStock extends MiraklPriceStockParent
             $productMarketplace = $product->getProductSaleChannelByCode($saleChannel->getCode());
 
             if ($productMarketplace->getEnabled()) {
-                $mirakCode ='WRT_'.$saleChannel->getCountryCode().'_ONLINE';
-              
                 $offer['price'] = $productMarketplace->getPriceChannel();
-                $priceChannel = [];
-                $priceChannel ['channel_code'] = $mirakCode;
-                $priceChannel['unit_origin_price']= $productMarketplace->getPriceChannel() ;
                 $promotion = $productMarketplace->getBestPromotionForNow();
-           
                 if ($promotion) {
-                    $priceChannel['unit_discount_price']= $promotion->getPromotionPrice() ;
+                    $offer['discount_price']= $promotion->getPromotionPrice() ;
                 }
-                $offer["all_prices"][] = $priceChannel;
             }
         }
 

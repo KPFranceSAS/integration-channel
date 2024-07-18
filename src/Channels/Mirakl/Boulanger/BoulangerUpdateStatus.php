@@ -34,6 +34,8 @@ class BoulangerUpdateStatus extends MiraklUpdateStatusParent
             return "UPS";
         } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
             return "DB Schenker";
+        }  elseif ($carrierCode ==  WebOrder::CARRIER_CBL) {
+            return "CBL Logistic";
         }
         return $carrierCode;
     }
