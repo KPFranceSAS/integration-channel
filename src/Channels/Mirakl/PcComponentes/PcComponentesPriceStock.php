@@ -27,6 +27,7 @@ class PcComponentesPriceStock extends MiraklPriceStockParent
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "logistic_class" => $this->defineLogisticClass($product),
             "description" => $product->getDescription(),
+            "all_prices" => [],
             "offer_additional_fields" => [
                 [
                     'code'=>"tipo-iva",
@@ -44,10 +45,19 @@ class PcComponentesPriceStock extends MiraklPriceStockParent
 
             if ($productMarketplace->getEnabled()) {
                 $offer['price'] = $productMarketplace->getPriceChannel();
+
+                
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 if ($promotion) {
-                    $offer['unit_discount_price']= $promotion->getPromotionPrice() ;
+                    $priceChannel = [];
+                    $priceChannel['unit_origin_price']= $productMarketplace->getPriceChannel() ;
+                    $priceChannel['unit_discount_price']= $promotion->getPromotionPrice() ;
+                    $offer["all_prices"][] = $priceChannel;
+
                 }
+                
+
+               
             }
         }
 
