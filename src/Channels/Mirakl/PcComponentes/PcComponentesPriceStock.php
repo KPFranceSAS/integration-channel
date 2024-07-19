@@ -46,7 +46,7 @@ class PcComponentesPriceStock extends MiraklPriceStockParent
                 $offer['price'] = $productMarketplace->getPriceChannel();
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 if ($promotion) {
-                    $offer['discount_price']= $promotion->getPromotionPrice() ;
+                    $offer['unit_discount_price']= $promotion->getPromotionPrice() ;
                 }
             }
         }

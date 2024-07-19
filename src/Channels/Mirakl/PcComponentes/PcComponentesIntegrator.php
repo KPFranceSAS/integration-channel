@@ -11,9 +11,6 @@ class PcComponentesIntegrator extends MiraklIntegratorParent
 {
     final public const PCCOMPONENTES_ES = 'KP135699';
     final public const PCCOMPONENTES_PT = 'KP135700';
-    /*final public const PCCOMPONENTES_DE = '';
-    final public const PCCOMPONENTES_IT = '';*/
-    final public const PCCOMPONENTES_FR = 'KP135701';
        
 
     public function getChannel()
@@ -27,8 +24,6 @@ class PcComponentesIntegrator extends MiraklIntegratorParent
         $codeChannel = $orderApi['channel']['code'];
         if ($codeChannel == 'WEB_ES') {
             return self::PCCOMPONENTES_ES;
-        } elseif ($codeChannel == 'WEB_FR') {
-            return self::PCCOMPONENTES_FR;
         } elseif ($codeChannel == 'WEB_PT') {
             return self::PCCOMPONENTES_PT;
         } else {
