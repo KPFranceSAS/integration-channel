@@ -26,6 +26,7 @@ class PcComponentesPriceStock extends MiraklPriceStockParent
             "product_id_type" => "EAN",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "logistic_class" => $this->defineLogisticClass($product),
+            "leadtime_to_ship" => "2",
             "description" => $product->getDescription(),
             "all_prices" => [],
             "offer_additional_fields" => [
