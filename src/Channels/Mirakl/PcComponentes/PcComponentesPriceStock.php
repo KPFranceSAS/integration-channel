@@ -38,6 +38,10 @@ class PcComponentesPriceStock extends MiraklPriceStockParent
                     'code'=>"canon",
                     'value' => $product->getCanonDigital()
                 ],
+                [
+                    'code'=>"dev-gratuita",
+                    'value' => true
+                ]
             ]
         ];
 
