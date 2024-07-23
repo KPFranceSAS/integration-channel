@@ -25,7 +25,7 @@
 					{% for line in field.value.Items %}
 						<tr>
 							<td data-label="Sku" class="text-left field-text">
-								{{line.Sku}}
+								{{line.ReferenceSku ? line.ReferenceSku :  line.Sku }}
 							</td>
 							<td data-label="Title" class="text-left field-text">
 								{{line.Title|slice(0,20)}}

@@ -182,7 +182,11 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
         foreach ($orderApi->Items as $line) {
             $saleLine = new SaleOrderLine();
             $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
-            $saleLine->itemId = $this->getProductCorrelationSku($line->Sku, $company);
+
+            $sku = $line->ReferenceSku ?  $line->ReferenceSku : $line->Sku;
+
+
+            $saleLine->itemId = $this->getProductCorrelationSku($sku, $company);
             // calculate price and shipping fees
             $shippingPrice += $line->ShippingPrice;
             $promotionAmount = 0;

@@ -36,6 +36,54 @@
 	</div>
 </div>
 <div class='row'>
+
+
+	<div class="col-xl-6">
+		<div class='row'>
+	
+		{% for menuDto in menu.items %}
+			<div class="col-xl-12">
+				{% if menuDto.hasSubItems %}
+					<div class="card mb-4">
+						<div class="card-body">
+							<div class="row g-0">
+								<div class="col-12 mb-2">
+									<h5>
+										{% if menuDto.icon is not empty %}
+											<i class="menu-icon fa-fw {{ menuDto.icon }}"></i>
+										{% endif %}
+										{{ menuDto.label|raw }}
+									</h5>
+								</div>
+							</div>
+
+							<div class="row g-0 ">
+								{% for item in menuDto.subItems %}
+									{% if item.isMenuSection ==false %}
+										<div class="col-6 col-sm-4 col-md-3 text-center ">
+
+											<a href="{{ item.linkUrl }}" class="btn btn-outline-dark btn-lg d-block" target="{{ item.linkTarget }}" rel="{{ item.linkRel }}" referrerpolicy="origin-when-cross-origin">
+												{% if item.icon is not empty %}
+													<i class="menu-icon fa-fw {{ item.icon }}"></i><br/>
+												{% endif %}
+
+												{{ item.label|raw }}
+
+												{% if item.badge %}
+													<span class="menu-item-badge rounded-pill badge {{ item.badge.cssClass }}" style="{{ item.badge.htmlStyle }}">{{ item.badge.content }}</span>
+												{% endif %}
+											</a>
+										</div>
+									{% endif %}
+								{% endfor %}
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		{% endfor %}
+		</div>
+	</div>
 	<div class="col-xl-6">
 		<div class="card mb-4">
 						<div class="card-body">
@@ -133,56 +181,6 @@
 							</div>
 						
 						</div>
-		</div>
-	</div>
-
-	<div class="col-xl-6">
-		<div class='row'>
-	
-		{% for menuDto in menu.items %}
-			<div class="col-xl-12">
-				{% if menuDto.hasSubItems %}
-					<div class="card mb-4">
-						<div class="card-body">
-							<div class="row g-0">
-								<div class="col-12 mb-2">
-									<h5>
-										{% if menuDto.icon is not empty %}
-											<i class="menu-icon fa-fw {{ menuDto.icon }}"></i>
-										{% endif %}
-										{{ menuDto.label|raw }}
-									</h5>
-								</div>
-							</div>
-
-							<div class="row g-0 ">
-								{% for item in menuDto.subItems %}
-									{% if item.isMenuSection ==false %}
-										<div class="col-6 col-sm-4 col-md-3 text-center ">
-
-											<a href="{{ item.linkUrl }}" class="btn btn-outline-dark btn-lg d-block" target="{{ item.linkTarget }}" rel="{{ item.linkRel }}" referrerpolicy="origin-when-cross-origin">
-												{% if item.icon is not empty %}
-													<i class="menu-icon fa-fw {{ item.icon }}"></i><br/>
-												{% endif %}
-
-												{{ item.label|raw }}
-
-												{% if item.badge %}
-													<span class="menu-item-badge rounded-pill badge {{ item.badge.cssClass }}" style="{{ item.badge.htmlStyle }}">{{ item.badge.content }}</span>
-												{% endif %}
-											</a>
-										</div>
-									{% else %}
-									{#</div>	
-									<div class="row g-0 mt-4">#}
-									{% endif %}
-								{% endfor %}
-							</div>
-						
-					</div>
-				{% endif %}
-			</div>
-		{% endfor %}
 		</div>
 	</div>
 </div>
