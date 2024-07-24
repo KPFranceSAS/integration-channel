@@ -95,6 +95,7 @@ class MailService
             'Error connecting to the API',
             'Error class',
             "InternalError",
+            'error_response',
             'SQLSTATE',
             'Exception',
             'francecentral.cloudapp.azure.com',
