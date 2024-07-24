@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Channels\Mirakl\Worten;
+namespace App\Channels\Mirakl\PcComponentes;
 
 use App\Channels\Mirakl\MiraklSyncProductParent;
 use App\Entity\IntegrationChannel;
