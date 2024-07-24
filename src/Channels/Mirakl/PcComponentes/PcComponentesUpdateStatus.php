@@ -18,7 +18,7 @@ class PcComponentesUpdateStatus extends MiraklUpdateStatusParent
     protected function getCodeCarrier(string $carrierCode): ?string
     {
         if ($carrierCode ==  WebOrder::CARRIER_DHL) {
-            return "dhl";
+            return "dhlparcel-es";
         }
         return null;
     }

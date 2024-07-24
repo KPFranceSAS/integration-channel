@@ -121,6 +121,12 @@ class ProductTypeCategorizacion
     #[ORM\Column(nullable: true)]
     private ?int $nbProductWorten = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $pcComponentesCategory = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductPcComponentes = null;
+
 
     public function __construct()
     {
@@ -539,6 +545,30 @@ class ProductTypeCategorizacion
     public function setNbProductWorten(?int $nbProductWorten): static
     {
         $this->nbProductWorten = $nbProductWorten;
+
+        return $this;
+    }
+
+    public function getPcComponentesCategory(): ?string
+    {
+        return $this->pcComponentesCategory;
+    }
+
+    public function setPcComponentesCategory(?string $pcComponentesCategory): static
+    {
+        $this->pcComponentesCategory = $pcComponentesCategory;
+
+        return $this;
+    }
+
+    public function getNbProductPcComponentes(): ?int
+    {
+        return $this->nbProductPcComponentes;
+    }
+
+    public function setNbProductPcComponentes(?int $nbProductPcComponentes): static
+    {
+        $this->nbProductPcComponentes = $nbProductPcComponentes;
 
         return $this;
     }

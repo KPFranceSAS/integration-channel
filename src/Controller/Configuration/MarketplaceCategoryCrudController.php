@@ -68,6 +68,7 @@ class MarketplaceCategoryCrudController extends AdminCrudController
                     'manomano'=>'manomano',
                     'miravia'=>'miravia',
                     'worten'=>'worten',
+                    'pcComponentes'=>'pcComponentes',
                 ];
 
 

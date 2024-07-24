@@ -7,6 +7,7 @@ use App\Channels\Mirakl\Boulanger\BoulangerApi;
 use App\Channels\Mirakl\Decathlon\DecathlonApi;
 use App\Channels\Mirakl\LeroyMerlin\LeroyMerlinApi;
 use App\Channels\Mirakl\MediaMarkt\MediaMarktApi;
+use App\Channels\Mirakl\PcComponentes\PcComponentesApi;
 use App\Channels\Mirakl\Worten\WortenApi;
 use App\Entity\MarketplaceCategory;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,6 +25,7 @@ class ImportCategoriesMiraklCommand extends Command
         private readonly LeroyMerlinApi $leroymerlinApi,
         private readonly MediaMarktApi $mediamarktApi,
         private readonly WortenApi $wortenApi,
+        private readonly PcComponentesApi $pcComponentesApi,
         private readonly ManagerRegistry $managerRegistry,
     ) {
         parent::__construct();
@@ -37,7 +39,7 @@ class ImportCategoriesMiraklCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $channels =  ['decathlon', 'fnacDarty', 'boulanger', 'leroymerlin', 'mediamarkt', 'worten'];
+        $channels =  ['decathlon', 'fnacDarty', 'boulanger', 'leroymerlin', 'mediamarkt', 'worten', 'pcComponentes'];
 
         foreach($channels as $channel) {
             $output->writeln('Start '.$channel);

@@ -113,6 +113,9 @@ class ImportProductTypeIntegration extends Command
                     'worten_es_kps', 
                     "worten_pt_kps",
                 ],
+                'nbProductPcComponentes' => [
+                    'pccomponentes_es_kps', 
+                ],
             ];
             
             foreach($parameters as $function => $channels){

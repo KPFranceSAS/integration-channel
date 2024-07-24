@@ -114,6 +114,8 @@ class ProductTypeCategoryCrudController extends AdminCrudController
             NumberField::new('nbProductMiravia', 'Nb miravia'),
             TextField::new('wortenCategory', 'worten'),
             NumberField::new('nbProductWorten', 'Nb worten'),
+            TextField::new('pcComponentesCategory', 'pcComponentes'),
+            NumberField::new('nbProductWorten', 'Nb pcComponentes'),
         ]);
     }
 
@@ -144,7 +146,7 @@ class ProductTypeCategoryCrudController extends AdminCrudController
             $fields[] = TextField::new('manomano', 'Manomano')->setTemplatePath('admin/fields/categorization/manomano.html.twig');
             $fields[] = TextField::new('miravia', 'Miravia')->setTemplatePath('admin/fields/categorization/miravia.html.twig');
             $fields[] = TextField::new('worten', 'Worten')->setTemplatePath('admin/fields/categorization/worten.html.twig');
-            
+            $fields[] = TextField::new('pcComponentes', 'PcComponentes')->setTemplatePath('admin/fields/categorization/pcComponentes.html.twig');
         } else {
 
             $choices = [];

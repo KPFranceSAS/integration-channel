@@ -22,7 +22,7 @@ class ConnectAmzCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dump($this->getAmazonExpedition());
+        dump($this->getFinancialEvents());
 
 
 
@@ -73,8 +73,8 @@ GROUP BY afe.transaction_type, afe.amount_type, afe.amount_description
 
     protected function getFinancialEvents()
     {
-        $dateTime = new DateTime('2022-11-01');
-        $dateTimeFin = new DateTime('2022-11-03');
+        $dateTime = new DateTime('2023-11-01');
+        $dateTimeFin = new DateTime('2023-11-03');
         $this->fincancial->getAllFinancials($dateTime, $dateTimeFin);
     }
 }
