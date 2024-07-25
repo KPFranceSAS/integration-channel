@@ -67,6 +67,8 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         $orderBC->billToName = $orderApi['customer']['billing_address']['lastname']." ".$orderApi['customer']['billing_address']['firstname'];
         
 
+        
+
         $valuesAddress = ['selling' => 'billing' , 'shipping'=>'shipping'];
 
         foreach ($valuesAddress as $bcVal => $miraklVal) {
@@ -97,9 +99,11 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         $orderBC->externalDocumentNumber = $this->getExternalNumber($orderApi);
         $orderBC->pricesIncludeTax = true;
 
-        $orderBC->salesLines = $this->getSalesOrderLines($orderApi);
+        $isTaxExcluded = $orderApi['order_tax_mode'] == 'TAX_EXCLUDED';
 
-        $livraisonFees = floatval($orderApi['shipping']['price']);
+        $orderBC->salesLines = $this->getSalesOrderLines($orderApi, $isTaxExcluded);
+
+        $livraisonFees =  $this->getShippingFees($orderApi, $isTaxExcluded);
         // ajout livraison
         $company = $this->getCompanyIntegration($orderApi);
 
@@ -116,13 +120,30 @@ abstract class MiraklIntegratorParent extends IntegratorParent
         return $orderBC;
     }
 
+
+
+
+    protected function getShippingFees($orderApi, $taxExcluded): float
+    {
+        $shippingFees =0;
+        foreach ($orderApi["order_lines"] as $line) {
+            $shippingFees += floatval($line['shipping_price']);
+            if($taxExcluded && array_key_exists('shipping_taxes', $line)){
+                foreach($line['shipping_taxes'] as $shippingTaxe){
+                    $shippingFees += floatval($shippingTaxe['amount']);
+                }
+            }
+        }
+        return $shippingFees;
+    }
+
     
 
 
     abstract protected function getExternalNumber($orderApi);
    
 
-    protected function getSalesOrderLines($orderApi): array
+    protected function getSalesOrderLines($orderApi, $taxExcluded): array
     {
         $saleOrderLines = [];
         $company = $this->getCompanyIntegration($orderApi);
@@ -130,7 +151,14 @@ abstract class MiraklIntegratorParent extends IntegratorParent
             $saleLine = new SaleOrderLine();
             $saleLine->lineType = SaleOrderLine::TYPE_ITEM;
             $saleLine->itemId = $this->getProductCorrelationSku($line['offer']['sku'], $company);
-            $saleLine->unitPrice = floatval($line['price']) / $line['quantity'];
+
+            $price = $line['price'];
+            if($taxExcluded && array_key_exists('taxes', $line)){
+                foreach($line['taxes'] as $lineTaxe){
+                    $price += floatval($lineTaxe['amount']);
+                }
+            }
+            $saleLine->unitPrice = floatval($price) / $line['quantity'];
             $saleLine->quantity = $line['quantity'];
             $saleOrderLines[] = $saleLine;
         }
