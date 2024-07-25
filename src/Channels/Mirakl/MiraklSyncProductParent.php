@@ -307,7 +307,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
                 "convertUnit" => 'kg',
                 'round' => 2
             ],
-            "package_length" => [
+            "package_lenght" => [
                 "unit" => 'CENTIMETER',
                 "convertUnit" => 'cm' ,
                 'round' => 0
