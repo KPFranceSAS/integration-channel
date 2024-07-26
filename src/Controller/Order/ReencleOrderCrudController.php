@@ -22,7 +22,7 @@ class ReencleOrderCrudController extends WebOrderCrudController
     {
         $qb = $this->entityRepository->createQueryBuilder($searchDto, $entityDto, $fields, $filters);
         $qb->andWhere('entity.channel = :channel');
-        $qb->setParameter('channel', IntegrationChannel::CHANNEL_FLASHLED);
+        $qb->setParameter('channel', IntegrationChannel::CHANNEL_REENCLE);
         return $qb;
     }
 
@@ -37,7 +37,7 @@ class ReencleOrderCrudController extends WebOrderCrudController
     public function getChannels()
     {
         return  [
-            IntegrationChannel::CHANNEL_FLASHLED => IntegrationChannel::CHANNEL_FLASHLED,
+            IntegrationChannel::CHANNEL_REENCLE => IntegrationChannel::CHANNEL_REENCLE,
         ];
     }
 
@@ -45,7 +45,7 @@ class ReencleOrderCrudController extends WebOrderCrudController
     public function getMarketplaces()
     {
         return [
-            'Flashled.es' => 'Flashled.es',
+            'Reencle.shop' => 'Reencle.shop',
         ];
     }
 }
