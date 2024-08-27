@@ -140,7 +140,7 @@ abstract class AriseApiParent implements ApiInterface
 
     public function getAllProducts()
     {
-        return $this->getProducts();
+        return $this->getProducts(['filter'=>'all']);
     }
 
 
@@ -175,6 +175,7 @@ abstract class AriseApiParent implements ApiInterface
 
         return $products;
     }
+
 
    
 
