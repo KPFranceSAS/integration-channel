@@ -80,6 +80,7 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
         $flatProduct = [
             'sku' => $product['identifier'],
+            'parent' => $product['parent'],
         ];
         $productType = $this->getAttributeSimple($product, 'mkp_product_type');
         $categoryCode = $this->getCategoryNode($productType, $this->getMarketplaceNode());
@@ -326,6 +327,11 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
                 "unit" => 'KILOGRAM',
                 "convertUnit" => 'kg',
                 'round' => 2
+            ],
+            "nominal_power" => [
+                "unit" => 'WATT',
+                "convertUnit" => 'W',
+                'round' => 0
             ],
         ];
     }
