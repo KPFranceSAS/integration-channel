@@ -17,16 +17,19 @@ class ConnectAriseCommand extends Command
         parent::__construct();
     }
 
+    private $output;
   
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dd($this->ariseApi->getOrder('3670066644146'));
+        $this->output = $output;
+        $this->getProducts();
         return Command::SUCCESS;
     }
 
 
-    protected function printLabel(){
+    protected function printLabel()
+    {
         $pdfLink = $this->ariseApi->getPrintLabel("FP0938511163");
         dump($pdfLink);
         $pdfContent =file_get_contents($pdfLink);
@@ -88,7 +91,14 @@ class ConnectAriseCommand extends Command
     private function getProducts()
     {
         $products = $this->ariseApi->getAllProducts();
-        dump($products);
+        $i=0;
+        foreach($products as $product) {
+            foreach($product->skus as $sku) {
+                $i++;
+                $this->output->writeln($sku->SellerSku. ' > '.$i );
+            }
+        }
+        
     }
 
 
