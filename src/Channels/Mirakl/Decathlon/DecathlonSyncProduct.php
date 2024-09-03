@@ -73,7 +73,8 @@ class DecathlonSyncProduct extends MiraklSyncProductParent
             'de_DE',
             'it_IT',
             'fr_FR',
-            'es_ES'
+            'es_ES',
+            'pt_PT'
         ];
     }
 

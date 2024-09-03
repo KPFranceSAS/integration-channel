@@ -49,23 +49,21 @@ class ProductTypeCategoryCrudController extends AdminCrudController
     public function configureActions(Actions $actions): Actions
     {
         $actions = parent::configureActions($actions);
-        $actions->update(Crud::PAGE_INDEX, Action::DELETE, fn(Action $action) => $action->displayIf(static fn($entity) => $entity && $entity->getCountProducts() == 0 && $entity->isExistInPim()!=true))->disable(Action::BATCH_DELETE);
+        $actions->update(Crud::PAGE_INDEX, Action::DELETE, fn (Action $action) => $action->displayIf(static fn ($entity) => $entity && $entity->getCountProducts() == 0 && $entity->isExistInPim()!=true))->disable(Action::BATCH_DELETE);
         $actions->disable(Action::NEW);
         return $actions;
     }
 
 
     public function seeRequired(
-        Request $request, 
-        ManagerRegistry $managerRegistry, 
+        Request $request,
+        ManagerRegistry $managerRegistry,
         DecathlonApi $decathlonApi,
         ManoManoFrApi $manomanoApi,
         MediaMarktApi $mediamarktApi,
         FnacFrApi $fnacDartyApi,
         LeroyMerlinApi $leroymerlinApi,
-        
-        )
-    {   
+    ) {
 
         $channel=$request->get('channel');
         $category = $request->get('category');
@@ -80,43 +78,43 @@ class ProductTypeCategoryCrudController extends AdminCrudController
 
     protected function getFieldsExport(): FieldCollection
     {
-       return  FieldCollection::new([
-            TextField::new('pimProductType', 'Code'),
-            TextField::new('pimProductLabel', 'Name'),
-            IntegerField::new('countProducts', 'Nb Products'),
-            BooleanField::new('existInPim', 'Exist in PIM'),
-            TextField::new('amazonCategory', 'amazonProductType'),
-            TextField::new('amazonEsCategory', 'amazonEs'),
-            NumberField::new('nbProductAmazonEs', 'Nb Amazon Es'),
-            TextField::new('amazonFrCategory', 'amazonFr'),
-            NumberField::new('nbProductAmazonFr', 'Nb Amazon fr'),
-            TextField::new('amazonDeCategory', 'amazonDe'),
-            NumberField::new('nbProductAmazonDe', 'Nb Amazon De'),
-            TextField::new('amazonUkCategory', 'amazonUk'),
-            NumberField::new('nbProductAmazonUk', 'Nb Amazon Uk'),
-            TextField::new('amazonItCategory', 'amazonIt'),
-            NumberField::new('nbProductAmazonIt', 'Nb Amazon It'),
-            TextField::new('cdiscountCategory', 'cdiscount'),
-            NumberField::new('nbProductCdiscount', 'Nb cdiscount'),
-            TextField::new('decathlonCategory', 'decathlon'),
-            NumberField::new('nbProductDecathlon', 'Nb decathlon'),
-            TextField::new('leroymerlinCategory', 'leroymerlin'),
-            NumberField::new('nbProductLeroymerlin', 'Nb Leroymerlin'),
-            TextField::new('boulangerCategory', 'boulanger'),
-            NumberField::new('nbProductBoulanger', 'Nb boulanger'),
-            TextField::new('fnacDartyCategory', 'fnacDarty'),
-            NumberField::new('nbProductFnacDarty', 'Nb fnacDarty'),
-            TextField::new('mediamarktCategory', 'mediamarkt'),
-            NumberField::new('nbProductMediamarkt', 'Nb Mediamarkt'),
-            TextField::new('manomanoCategory', 'manomano'),
-            NumberField::new('nbProductManomano', 'Nb Manomano'),
-            TextField::new('miraviaCategory', 'miravia'),
-            NumberField::new('nbProductMiravia', 'Nb miravia'),
-            TextField::new('wortenCategory', 'worten'),
-            NumberField::new('nbProductWorten', 'Nb worten'),
-            TextField::new('pcComponentesCategory', 'pcComponentes'),
-            NumberField::new('nbProductWorten', 'Nb pcComponentes'),
-        ]);
+        return  FieldCollection::new([
+             TextField::new('pimProductType', 'Code'),
+             TextField::new('pimProductLabel', 'Name'),
+             IntegerField::new('countProducts', 'Nb Products'),
+             BooleanField::new('existInPim', 'Exist in PIM'),
+             TextField::new('amazonCategory', 'amazonProductType'),
+             TextField::new('amazonEsCategory', 'amazonEs'),
+             NumberField::new('nbProductAmazonEs', 'Nb Amazon Es'),
+             TextField::new('amazonFrCategory', 'amazonFr'),
+             NumberField::new('nbProductAmazonFr', 'Nb Amazon fr'),
+             TextField::new('amazonDeCategory', 'amazonDe'),
+             NumberField::new('nbProductAmazonDe', 'Nb Amazon De'),
+             TextField::new('amazonUkCategory', 'amazonUk'),
+             NumberField::new('nbProductAmazonUk', 'Nb Amazon Uk'),
+             TextField::new('amazonItCategory', 'amazonIt'),
+             NumberField::new('nbProductAmazonIt', 'Nb Amazon It'),
+             TextField::new('cdiscountCategory', 'cdiscount'),
+             NumberField::new('nbProductCdiscount', 'Nb cdiscount'),
+             TextField::new('decathlonCategory', 'decathlon'),
+             NumberField::new('nbProductDecathlon', 'Nb decathlon'),
+             TextField::new('leroymerlinCategory', 'leroymerlin'),
+             NumberField::new('nbProductLeroymerlin', 'Nb Leroymerlin'),
+             TextField::new('boulangerCategory', 'boulanger'),
+             NumberField::new('nbProductBoulanger', 'Nb boulanger'),
+             TextField::new('fnacDartyCategory', 'fnacDarty'),
+             NumberField::new('nbProductFnacDarty', 'Nb fnacDarty'),
+             TextField::new('mediamarktCategory', 'mediamarkt'),
+             NumberField::new('nbProductMediamarkt', 'Nb Mediamarkt'),
+             TextField::new('manomanoCategory', 'manomano'),
+             NumberField::new('nbProductManomano', 'Nb Manomano'),
+             TextField::new('miraviaCategory', 'miravia'),
+             NumberField::new('nbProductMiravia', 'Nb miravia'),
+             TextField::new('wortenCategory', 'worten'),
+             NumberField::new('nbProductWorten', 'Nb worten'),
+             TextField::new('pcComponentesCategory', 'pcComponentes'),
+             NumberField::new('nbProductWorten', 'Nb pcComponentes'),
+         ]);
     }
 
 
@@ -130,7 +128,7 @@ class ProductTypeCategoryCrudController extends AdminCrudController
             BooleanField::new('existInPim', 'Exist in PIM')->renderAsSwitch(false)->onlyOnIndex(),
         ];
 
-        if($pageName == 'index'){
+        if ($pageName == 'index') {
             $fields[] = TextField::new('amazonCategory', 'amazonProductType');
             $fields[] = TextField::new('amazonEs', 'amazonEs')->setTemplatePath('admin/fields/categorization/amazonEs.html.twig');
             $fields[] = TextField::new('amazonFr', 'amazonFr')->setTemplatePath('admin/fields/categorization/amazonFr.html.twig');
@@ -151,7 +149,7 @@ class ProductTypeCategoryCrudController extends AdminCrudController
 
             $choices = [];
             $marketplaceCategories = $this->container->get('doctrine')->getManager()->getRepository(AmazonProductType::class)->findBy([], ['label'=>'ASC']);
-            foreach($marketplaceCategories as $marketplaceCategory){
+            foreach ($marketplaceCategories as $marketplaceCategory) {
                 $choices [$marketplaceCategory->getLabel()] =$marketplaceCategory->getCode();
             }
 
@@ -163,23 +161,24 @@ class ProductTypeCategoryCrudController extends AdminCrudController
                 'amazonUk',
                 'amazonDe',
                 'amazonIt',
-                'cdiscount',     
+                'cdiscount',
                 'decathlon',
                 'leroymerlin',
                 'boulanger',
                 'fnacDarty',
                 'mediamarkt',
                 'manomano',
-                 "miravia", 
-                 'worten'        
+                 "miravia",
+                 'worten',
+                 "pcComponentes"
             ];
 
             
 
-            foreach($channels as $channel){
+            foreach ($channels as $channel) {
                 $choices = [];
                 $marketplaceCategories = $this->container->get('doctrine')->getManager()->getRepository(MarketplaceCategory::class)->findBy(['marketplace'=>$channel], ['path'=>'ASC']);
-                foreach($marketplaceCategories as $marketplaceCategory){
+                foreach ($marketplaceCategories as $marketplaceCategory) {
                     $choices [$marketplaceCategory->getPath().' - ['.$marketplaceCategory->getCode().']'] =$marketplaceCategory->getCode();
                 }
                 $fields[] = ChoiceField::new($channel.'Category')->setChoices($choices);
@@ -196,5 +195,5 @@ class ProductTypeCategoryCrudController extends AdminCrudController
     }
 
 
-    
+
 }
