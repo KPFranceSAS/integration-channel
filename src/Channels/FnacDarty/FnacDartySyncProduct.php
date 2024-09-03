@@ -19,10 +19,11 @@ abstract class FnacDartySyncProduct extends MiraklSyncProductParent
     {
         $this->logger->info('Flat product '.$product['identifier']);
 
-        $flatProduct = [
-            'SKU_PART' => $product['identifier'],
-            'EANs/EAN' => $this->getAttributeSimple($product, 'ean'),
-        ];
+
+        $flatProduct = parent::flatProduct($product);
+
+        $flatProduct['SKU_PART'] = $product['identifier'];
+        $flatProduct['EANs/EAN'] = $this->getAttributeSimple($product, 'ean');
 
         $flatProduct["DisplayName"] = substr((string) $this->getAttributeSimple($product, "article_name", $this->getLocalePim()), 0, 255);
 
