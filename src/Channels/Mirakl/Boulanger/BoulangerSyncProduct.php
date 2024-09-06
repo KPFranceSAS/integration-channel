@@ -84,6 +84,9 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
                 case '42249':
                     $flatProduct = $this->addInfoGamingChair($product, $flatProduct);
                     break;
+                case '8619':
+                    $flatProduct = $this->addInfoSecheCheveux($product, $flatProduct);
+                    break;
                 case '603':
                     $flatProduct = $this->addInfoPowerStation($product, $flatProduct);
                     break;
@@ -130,37 +133,59 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     }
 
 
+
+    public function addInfoSecheCheveux(array $product, array $flatProduct): array
+    {
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/caracteristique_generale/type']="sèche-cheveux classique";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/caracteristique_generale/coloris']=$this->getAttributeChoice($product, "color_generic", "fr_FR");;
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/services_inclus/fabrique_en']=$this->getAttributeChoice($product, "country_origin", "fr_FR");;
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/caracteristique_generale/nombre_de_vitesses_']="2 vitesses";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/caracteristique_generale/nombre_de_temperatures']="3 températures";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/caracteristique_generale/puissance']="1600 W";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/caracteristique_generale/finition_de_coiffage_']="sans";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/facilite_d_utilisation/poids__en_g']=$this->getAttributeUnit($product, 'package_weight', 'GRAM', 0);;
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/facilite_d_utilisation/longueur_du_cordon__cm']="180";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/facilite_d_utilisation/cordon_rotatif_']="Non";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/accessoires/nombre_de_concentrateur']="0";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/accessoires/concentrateur_standard']="Oui";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/accessoires/concentrateur_fin_']="Non";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/accessoires/diffuseur_']="Non";
+        $flatProduct['CENTRALE_SECHE_CHEVEUX/accessoires/ces_accessoires_pour']="réaliser un brushing ou donner de la forme à vos boucles/ondulations";
+
+        return $flatProduct;
+    }
+
     public function addInfoSmartRecorder(array $product, array $flatProduct): array
     {
         
-        $flatProduct['CENTRALE_DICTAPHONE/facettes_dictaphone/mode_d_enregistrement'] ="Sur mémoire interne"; 
-        $flatProduct['CENTRALE_DICTAPHONE/facettes_dictaphone/capacite_d_enregistrement'] ="Moins de 500 heures"; 
-        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/type_de_dictaphone'] ="Numérique"; 
-        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/memoire_interne'] ="16 Go"; 
-        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/duree_d_enregistrement_en_heures'] ="30"; 
-        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/format_d_enregistrement'] ="MP3"; 
-        $flatProduct['CENTRALE_DICTAPHONE/utilisation/ideal_pour'] ="Réunions"; 
-        $flatProduct['CENTRALE_DICTAPHONE/utilisation/declenchement_a_la_voix'] ="Non"; 
-        $flatProduct['CENTRALE_DICTAPHONE/utilisation/reducteur_de_bruit'] ="Oui"; 
-        $flatProduct['CENTRALE_DICTAPHONE/utilisation/ecran_lcd'] ="Non"; 
-        $flatProduct['CENTRALE_DICTAPHONE/utilisation/filetage_pour_trepied'] ="Non"; 
-        $flatProduct['CENTRALE_DICTAPHONE/connexion/bluetooth'] ="Oui"; 
-        $flatProduct['CENTRALE_DICTAPHONE/connexion/wifi'] ="Non"; 
-        $flatProduct['CENTRALE_DICTAPHONE/connectique/prise_ecouteurs'] ="Non"; 
-        $flatProduct['CENTRALE_DICTAPHONE/connectique/prise_micro'] ="Non"; 
-        $flatProduct['CENTRALE_DICTAPHONE/connectique/carte_memoire'] ="Non"; 
-        $flatProduct['CENTRALE_DICTAPHONE/connectique/port_usb'] ="Non"; 
-        $flatProduct['CENTRALE_DICTAPHONE/alimentation/fonctionne_sur'] ="Batterie"; 
-        $flatProduct['CENTRALE_DICTAPHONE/alimentation/autonomie_en_heures'] ="30"; 
-        $flatProduct['CENTRALE_DICTAPHONE/contenu_du_carton/notice'] ="Oui"; 
-        $flatProduct['CENTRALE_DICTAPHONE/contenu_du_carton/cable_usb'] ="Non"; 
-        $flatProduct['CENTRALE_DICTAPHONE/contenu_du_carton/housse'] ="Non"; 
-        $flatProduct['CENTRALE_DICTAPHONE/services_inclus/fabrique_en'] ="Chine"; 
-        $flatProduct['CENTRALE_DICTAPHONE/dimensions/poids_net'] =""; 
+        $flatProduct['CENTRALE_DICTAPHONE/facettes_dictaphone/mode_d_enregistrement'] ="Sur mémoire interne";
+        $flatProduct['CENTRALE_DICTAPHONE/facettes_dictaphone/capacite_d_enregistrement'] ="Moins de 500 heures";
+        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/type_de_dictaphone'] ="Numérique";
+        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/memoire_interne'] ="16 Go";
+        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/duree_d_enregistrement_en_heures'] ="30";
+        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/format_d_enregistrement'] ="MP3";
+        $flatProduct['CENTRALE_DICTAPHONE/utilisation/ideal_pour'] ="Réunions";
+        $flatProduct['CENTRALE_DICTAPHONE/utilisation/declenchement_a_la_voix'] ="Non";
+        $flatProduct['CENTRALE_DICTAPHONE/utilisation/reducteur_de_bruit'] ="Oui";
+        $flatProduct['CENTRALE_DICTAPHONE/utilisation/ecran_lcd'] ="Non";
+        $flatProduct['CENTRALE_DICTAPHONE/utilisation/filetage_pour_trepied'] ="Non";
+        $flatProduct['CENTRALE_DICTAPHONE/connexion/bluetooth'] ="Oui";
+        $flatProduct['CENTRALE_DICTAPHONE/connexion/wifi'] ="Non";
+        $flatProduct['CENTRALE_DICTAPHONE/connectique/prise_ecouteurs'] ="Non";
+        $flatProduct['CENTRALE_DICTAPHONE/connectique/prise_micro'] ="Non";
+        $flatProduct['CENTRALE_DICTAPHONE/connectique/carte_memoire'] ="Non concerné";
+        $flatProduct['CENTRALE_DICTAPHONE/connectique/port_usb'] ="Non";
+        $flatProduct['CENTRALE_DICTAPHONE/alimentation/fonctionne_sur'] ="Batterie";
+        $flatProduct['CENTRALE_DICTAPHONE/alimentation/autonomie_en_heures'] ="30";
+        $flatProduct['CENTRALE_DICTAPHONE/contenu_du_carton/notice'] ="Oui";
+        $flatProduct['CENTRALE_DICTAPHONE/contenu_du_carton/cable_usb'] ="Non";
+        $flatProduct['CENTRALE_DICTAPHONE/contenu_du_carton/housse'] ="Non";
+        $flatProduct['CENTRALE_DICTAPHONE/services_inclus/fabrique_en'] ="Chine";
+        $flatProduct['CENTRALE_DICTAPHONE/dimensions/poids_net'] =$this->getAttributeUnit($product, 'package_weight', 'GRAM', 0);
 
-    return $flatProduct;
+        return $flatProduct;
 
-}
+    }
 
     public function addInfoRobotTondeuse(array $product, array $flatProduct): array
     {
@@ -299,8 +324,8 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     public function addInfoHomeSecurity(array $product, array $flatProduct): array
     {
         
-         $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/type_de_produit"] = "Serrure";
-         $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/usage"] = "Déverrouiller ou verrouiller votre porte avec Smartphone";
+        $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/type_de_produit"] = "Serrure";
+        $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/usage"] = "Déverrouiller ou verrouiller votre porte avec Smartphone";
         $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/mode_d_installation"] = "Non concerné";
         $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/installation"] = "Le Smart Lock Cylinder de Bold est conçu pour une installation facile, s'intégrant parfaitement à votre système de verrouillage existant.";
         $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/coloris"] = "Gris";
