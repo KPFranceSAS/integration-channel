@@ -59,16 +59,17 @@ class MarketplaceCategoryCrudController extends AdminCrudController
                     'amazonFr' => 'amazonFr',
                     'amazonUk' => 'amazonUk',
                     'amazonIt' => 'amazonIt',
+                    'boulanger'=>'boulanger',
+                    'carrefourEs' => 'carrefourEs',
                     'cdiscount' => 'cdiscount',
                     'decathlon'=>'decathlon',
                     'fnacdarty'=>'fnacDarty',
-                    'boulanger'=>'boulanger',
                     'leroymerlin'=>'leroymerlin',
-                    'mediamarkt'=>'mediamarkt',
                     'manomano'=>'manomano',
+                    'mediamarkt'=>'mediamarkt',
                     'miravia'=>'miravia',
-                    'worten'=>'worten',
                     'pcComponentes'=>'pcComponentes',
+                    'worten'=>'worten',
                 ];
 
 
