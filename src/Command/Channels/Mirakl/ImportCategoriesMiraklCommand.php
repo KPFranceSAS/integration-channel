@@ -2,8 +2,10 @@
 
 namespace App\Command\Channels\Mirakl;
 
+use AmazonPHP\SellingPartner\Model\VendorShipments\CarrierDetails;
 use App\Channels\FnacDarty\FnacFr\FnacFrApi;
 use App\Channels\Mirakl\Boulanger\BoulangerApi;
+use App\Channels\Mirakl\CarrefourEs\CarrefourEsApi;
 use App\Channels\Mirakl\Decathlon\DecathlonApi;
 use App\Channels\Mirakl\LeroyMerlin\LeroyMerlinApi;
 use App\Channels\Mirakl\MediaMarkt\MediaMarktApi;
@@ -26,6 +28,7 @@ class ImportCategoriesMiraklCommand extends Command
         private readonly MediaMarktApi $mediamarktApi,
         private readonly WortenApi $wortenApi,
         private readonly PcComponentesApi $pcComponentesApi,
+        private readonly CarrefourEsApi $carrefourEsApi,
         private readonly ManagerRegistry $managerRegistry,
     ) {
         parent::__construct();
@@ -39,7 +42,7 @@ class ImportCategoriesMiraklCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
-        $channels =  ['decathlon', 'fnacDarty', 'boulanger', 'leroymerlin', 'mediamarkt', 'worten', 'pcComponentes'];
+        $channels =  ['decathlon', 'fnacDarty', 'boulanger', 'leroymerlin', 'mediamarkt', 'worten', 'pcComponentes', 'carrefourEs'];
 
         foreach($channels as $channel) {
             $output->writeln('Start '.$channel);

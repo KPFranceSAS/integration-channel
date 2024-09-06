@@ -135,11 +135,12 @@ class ProductTypeCategoryCrudController extends AdminCrudController
             $fields[] = TextField::new('amazonDe', 'amazonDe')->setTemplatePath('admin/fields/categorization/amazonDe.html.twig');
             $fields[] = TextField::new('amazonUk', 'amazonUk')->setTemplatePath('admin/fields/categorization/amazonUk.html.twig');
             $fields[] = TextField::new('amazonIt', 'amazonIt')->setTemplatePath('admin/fields/categorization/amazonIt.html.twig');
+            $fields[] = TextField::new('boulanger', 'Boulanger')->setTemplatePath('admin/fields/categorization/boulanger.html.twig');
+            $fields[] = TextField::new('carrefourEs', 'CarrefourEs')->setTemplatePath('admin/fields/categorization/carrefourEs.html.twig');
             $fields[] = TextField::new('cdiscount', 'Cdiscount')->setTemplatePath('admin/fields/categorization/cdiscount.html.twig');
             $fields[] = TextField::new('decathlon', 'Decathlon')->setTemplatePath('admin/fields/categorization/decathlon.html.twig');
-            $fields[] = TextField::new('leroymerlin', 'Leroymerlin')->setTemplatePath('admin/fields/categorization/leroymerlin.html.twig');
-            $fields[] = TextField::new('boulanger', 'Boulanger')->setTemplatePath('admin/fields/categorization/boulanger.html.twig');
             $fields[] = TextField::new('fnacDarty', 'FnacDarty')->setTemplatePath('admin/fields/categorization/fnacDarty.html.twig');
+            $fields[] = TextField::new('leroymerlin', 'Leroymerlin')->setTemplatePath('admin/fields/categorization/leroymerlin.html.twig');
             $fields[] = TextField::new('mediamarkt', 'Mediamarkt')->setTemplatePath('admin/fields/categorization/mediamarkt.html.twig');
             $fields[] = TextField::new('manomano', 'Manomano')->setTemplatePath('admin/fields/categorization/manomano.html.twig');
             $fields[] = TextField::new('miravia', 'Miravia')->setTemplatePath('admin/fields/categorization/miravia.html.twig');
@@ -161,16 +162,17 @@ class ProductTypeCategoryCrudController extends AdminCrudController
                 'amazonUk',
                 'amazonDe',
                 'amazonIt',
+                'boulanger',
+                'carrefourEs',
                 'cdiscount',
                 'decathlon',
-                'leroymerlin',
-                'boulanger',
                 'fnacDarty',
-                'mediamarkt',
+                'leroymerlin',
                 'manomano',
-                 "miravia",
-                 'worten',
-                 "pcComponentes"
+                'mediamarkt',
+                "miravia",
+                "pcComponentes",
+                'worten'
             ];
 
             

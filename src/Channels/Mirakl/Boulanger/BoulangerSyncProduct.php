@@ -25,7 +25,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     }
 
 
-   
+
     protected function flatProduct(array $product):array
     {
         $this->logger->info('Flat product '.$product['identifier']);
@@ -41,14 +41,14 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
         $shortName = (string)$this->getAttributeSimple($product, 'short_article_name', 'fr_FR');
         $articleName = (string)$this->getAttributeSimple($product, 'article_name', 'fr_FR');
-        if(strlen($shortName)==0) {
+        if (strlen($shortName)==0) {
             $shortName  = trim(str_replace($brandName, '', $articleName));
         }
 
         $flatProduct["REF_COM"]  = substr($shortName, 0, 40);
         $flatProduct["ACCROCHE"] = substr($articleName, 0, 95);
         $flatProduct["PARTNUMBER"]  = $this->getAttributeSimple($product, 'ean');
-        
+
         $flatProduct["MARQUE"] = $this->getCodeMarketplaceInList('LISTE_MARQUE', $brandName);
 
 
@@ -75,12 +75,12 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $flatProduct["HAUTEUR_PRODUIT"] = $this->getAttributeUnit($product, 'package_height', 'CENTIMETER', 0);
         $flatProduct["PROFONDEUR"] = $this->getAttributeUnit($product, 'package_width', 'CENTIMETER', 0);
         $flatProduct["POIDS_NET"] = $this->getAttributeUnit($product, 'package_weight', 'KILOGRAM', 0);
-        
+
 
         $flatProduct['CATEGORIE'] = $this->getCategoryNode($this->getAttributeSimple($product, 'mkp_product_type'), 'boulanger');
 
-        if(array_key_exists('CATEGORIE', $flatProduct)) {
-            switch($flatProduct['CATEGORIE']) {
+        if (array_key_exists('CATEGORIE', $flatProduct)) {
+            switch ($flatProduct['CATEGORIE']) {
                 case '42249':
                     $flatProduct = $this->addInfoGamingChair($product, $flatProduct);
                     break;
@@ -114,10 +114,13 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
                 case "6001":
                     $flatProduct = $this->addInfoAccesoriesPizza($product, $flatProduct);
                     break;
+                case "31002":
+                    $flatProduct = $this->addInfoSmartRecorder($product, $flatProduct);
+                    break;
             };
-            
 
-           
+
+
         } else {
             $this->logger->info('Product not categorized');
         }
@@ -126,6 +129,38 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         return $flatProduct;
     }
 
+
+    public function addInfoSmartRecorder(array $product, array $flatProduct): array
+    {
+        
+        $flatProduct['CENTRALE_DICTAPHONE/facettes_dictaphone/mode_d_enregistrement'] ="Sur mémoire interne"; 
+        $flatProduct['CENTRALE_DICTAPHONE/facettes_dictaphone/capacite_d_enregistrement'] ="Moins de 500 heures"; 
+        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/type_de_dictaphone'] ="Numérique"; 
+        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/memoire_interne'] ="16 Go"; 
+        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/duree_d_enregistrement_en_heures'] ="30"; 
+        $flatProduct['CENTRALE_DICTAPHONE/caracteristiques_techniques/format_d_enregistrement'] ="MP3"; 
+        $flatProduct['CENTRALE_DICTAPHONE/utilisation/ideal_pour'] ="Réunions"; 
+        $flatProduct['CENTRALE_DICTAPHONE/utilisation/declenchement_a_la_voix'] ="Non"; 
+        $flatProduct['CENTRALE_DICTAPHONE/utilisation/reducteur_de_bruit'] ="Oui"; 
+        $flatProduct['CENTRALE_DICTAPHONE/utilisation/ecran_lcd'] ="Non"; 
+        $flatProduct['CENTRALE_DICTAPHONE/utilisation/filetage_pour_trepied'] ="Non"; 
+        $flatProduct['CENTRALE_DICTAPHONE/connexion/bluetooth'] ="Oui"; 
+        $flatProduct['CENTRALE_DICTAPHONE/connexion/wifi'] ="Non"; 
+        $flatProduct['CENTRALE_DICTAPHONE/connectique/prise_ecouteurs'] ="Non"; 
+        $flatProduct['CENTRALE_DICTAPHONE/connectique/prise_micro'] ="Non"; 
+        $flatProduct['CENTRALE_DICTAPHONE/connectique/carte_memoire'] ="Non"; 
+        $flatProduct['CENTRALE_DICTAPHONE/connectique/port_usb'] ="Non"; 
+        $flatProduct['CENTRALE_DICTAPHONE/alimentation/fonctionne_sur'] ="Batterie"; 
+        $flatProduct['CENTRALE_DICTAPHONE/alimentation/autonomie_en_heures'] ="30"; 
+        $flatProduct['CENTRALE_DICTAPHONE/contenu_du_carton/notice'] ="Oui"; 
+        $flatProduct['CENTRALE_DICTAPHONE/contenu_du_carton/cable_usb'] ="Non"; 
+        $flatProduct['CENTRALE_DICTAPHONE/contenu_du_carton/housse'] ="Non"; 
+        $flatProduct['CENTRALE_DICTAPHONE/services_inclus/fabrique_en'] ="Chine"; 
+        $flatProduct['CENTRALE_DICTAPHONE/dimensions/poids_net'] =""; 
+
+    return $flatProduct;
+
+}
 
     public function addInfoRobotTondeuse(array $product, array $flatProduct): array
     {
@@ -194,7 +229,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     public function addInfoAccesoriesPizza(array $product, array $flatProduct): array
     {
 
-        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/type_de_produit'] = $this->getAttributeChoice($product, 'mkp_product_type', 'fr_FR');
+        $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/type_de_produit'] = 'Adaptateur Crafted';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/compatible_avec' ] ='Four à Pizza Witt';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/collection_accessoires'] ='Four à Pizza Witt';
         $flatProduct['CENTRALE_ACCESSOIRE_BARBECUE/descriptif_de_l_accessoire/usage'] ='Cuisson pizza';
@@ -263,13 +298,9 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
 
     public function addInfoHomeSecurity(array $product, array $flatProduct): array
     {
-        if(in_array('marketplace_smart_lock', $product['categories'])) {
-            $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/type_de_produit"] = "Serrure";
-            $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/usage"] = "Déverrouiller ou verrouiller votre porte avec Smartphone";
-        } elseif (in_array('marketplace_smart_lock_accesories', $product['categories'])) {
-            $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/type_de_produit"] = "Accessoire pour serrure connectée";
-            $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/usage"] = "Déverrouiller ou verrouiller votre porte sans Smartphone";
-        }
+        
+         $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/type_de_produit"] = "Serrure";
+         $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/usage"] = "Déverrouiller ou verrouiller votre porte avec Smartphone";
         $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/mode_d_installation"] = "Non concerné";
         $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/installation"] = "Le Smart Lock Cylinder de Bold est conçu pour une installation facile, s'intégrant parfaitement à votre système de verrouillage existant.";
         $flatProduct["CENTRALE_SECURITE_MAISON/caracteristiques_generales/coloris"] = "Gris";
@@ -336,7 +367,7 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
     {
         $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/type_de_piscine']="Enterrée, Hors-sol";
         $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/forme_de_piscine']="Toutes formes";
-        if(in_array($product['identifier'], ['APR-ZT2001B', 'APR-ZT2001'])) {
+        if (in_array($product['identifier'], ['APR-ZT2001B', 'APR-ZT2001'])) {
             $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/fond_de_piscine']="Plat";
         } else {
             $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/fond_de_piscine']="Pente composée, Pente douce, Plat, Pointe diamant";
@@ -345,10 +376,29 @@ class BoulangerSyncProduct extends MiraklSyncProductParent
         $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/longueur_de_piscine_en_m']=12;
         $flatProduct['CENTRALE_ROBOT_PISCINE/utilisation/revetement']="Carrelage, Liner, Coque polyester, PVC armé, Béton peint";
         $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/type_de_robot']="Electrique";
+       
         $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/type_de_deplacement']="Intelligent";
         $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/type_de_nettoyage']=$this->getAttributeSimple($product, 'swim_cleaning_type', "fr_FR");
         $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/debit_d_aspiration_m3-h']=10;
         $flatProduct['CENTRALE_ROBOT_PISCINE/services_inclus/fabrique_en']="Chine";
+
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_techniques/fonctionnement']="Sans fil";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/type_de_piscine']="Enterrée, Hors-sol";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/longueur_de_piscine__en_m']=12;
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/ovale']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/ronde']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/carree']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/toutes_formes']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/pente_douce']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/plat']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/pente_composee']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/pointe_diamant' ]="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/carrelage']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/liner']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/coque_polyester' ]="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/pvc_arme']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/beton']="Oui";
+        $flatProduct['CENTRALE_ROBOT_PISCINE/caracteristiques_de_la_piscine/beton_peint']="Oui";
         return $flatProduct;
     }
 

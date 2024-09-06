@@ -127,6 +127,12 @@ class ProductTypeCategorizacion
     #[ORM\Column(nullable: true)]
     private ?int $nbProductPcComponentes = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $carrefourEsCategory = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $nbProductCarrefourEs = null;
+
 
     public function __construct()
     {
@@ -569,6 +575,30 @@ class ProductTypeCategorizacion
     public function setNbProductPcComponentes(?int $nbProductPcComponentes): static
     {
         $this->nbProductPcComponentes = $nbProductPcComponentes;
+
+        return $this;
+    }
+
+    public function getCarrefourEsCategory(): ?string
+    {
+        return $this->carrefourEsCategory;
+    }
+
+    public function setCarrefourEsCategory(?string $carrefourEsCategory): static
+    {
+        $this->carrefourEsCategory = $carrefourEsCategory;
+
+        return $this;
+    }
+
+    public function getNbProductCarrefourEs(): ?int
+    {
+        return $this->nbProductCarrefourEs;
+    }
+
+    public function setNbProductCarrefourEs(?int $nbProductCarrefourEs): static
+    {
+        $this->nbProductCarrefourEs = $nbProductCarrefourEs;
 
         return $this;
     }

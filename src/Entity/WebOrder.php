@@ -6,7 +6,6 @@ use App\Entity\IntegrationChannel;
 use App\Helper\Traits\TraitLoggable;
 use App\Helper\Traits\TraitTimeUpdated;
 use App\Helper\Utils\DatetimeUtils;
-use App\Service\Carriers\UpsGetTracking;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -357,6 +356,7 @@ class WebOrder implements \Stringable
             IntegrationChannel::CHANNEL_REENCLE => 'https://4adafb-85.myshopify.com/admin/orders/' . $order['id'],
             IntegrationChannel::CHANNEL_FLASHLED => 'https://testflashled.myshopify.com/admin/orders/' . $order['id'],
             IntegrationChannel::CHANNEL_PAXUK => 'https://paxlabsuk.myshopify.com/admin/orders/' . $order['id'],
+            IntegrationChannel::CHANNEL_PAXEU => 'https://paxlabseu.myshopify.com/admin/orders/' . $order['id'],
             IntegrationChannel::CHANNEL_FITBITCORPORATE => 'https://fitbitcorporate.myshopify.com/admin/orders/' . $order['id'],
             IntegrationChannel::CHANNEL_AMAZFIT_ARISE, IntegrationChannel::CHANNEL_SONOS_ARISE, IntegrationChannel::CHANNEL_ARISE, IntegrationChannel::CHANNEL_IMOU_ARISE => 'https://sellercenter.miravia.es/apps/order/detail?tradeOrderId=' . $this->externalNumber,
             IntegrationChannel::CHANNEL_LEROYMERLIN => 'https://adeo-marketplace.mirakl.net/mmp/shop/order/' . $order['id'],
@@ -369,6 +369,7 @@ class WebOrder implements \Stringable
             IntegrationChannel::CHANNEL_FNAC_FR => 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber,
             IntegrationChannel::CHANNEL_FNAC_ES => 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber,
             IntegrationChannel::CHANNEL_DARTY_FR => 'https://mp.fnacdarty.com/compte/vendeur/commande/' . $this->externalNumber,
+            IntegrationChannel::CHANNEL_CARREFOUR_ES => 'https://carrefoures-prod.mirakl.net/mmp/shop/order/' . $order['id'],
             default => throw new Exception('No url link of weborder for ' . $this->channel),
         };
     }
@@ -447,6 +448,7 @@ class WebOrder implements \Stringable
             IntegrationChannel::CHANNEL_BOULANGER,
             IntegrationChannel::CHANNEL_WORTEN,
             IntegrationChannel::CHANNEL_PCCOMPONENTES,
+            IntegrationChannel::CHANNEL_CARREFOUR_ES,
         ]);
     }
 
@@ -533,6 +535,10 @@ class WebOrder implements \Stringable
             case IntegrationChannel::CHANNEL_LEROYMERLIN:
                 return WebOrder::createOneFromLeroyMerlin($orderApi);
             
+            case IntegrationChannel::CHANNEL_CARREFOUR_ES:
+                    return WebOrder::createOneFromCarrefourEs($orderApi);    
+                
+            
             case IntegrationChannel::CHANNEL_BOULANGER:
                 return WebOrder::createOneFromBoulanger($orderApi);
             
@@ -547,6 +553,9 @@ class WebOrder implements \Stringable
 
             case IntegrationChannel::CHANNEL_PAXUK:
                 return WebOrder::createOneFromPaxUK($orderApi);
+            
+            case IntegrationChannel::CHANNEL_PAXEU:
+                    return WebOrder::createOneFromPaxEU($orderApi);    
 
             case IntegrationChannel::CHANNEL_FLASHLED:
                 return WebOrder::createOneFromFlashled($orderApi);
@@ -630,6 +639,7 @@ class WebOrder implements \Stringable
     }
 
 
+   
 
     public static function createOneFromPaxEU($orderApi): WebOrder
     {
@@ -756,6 +766,15 @@ class WebOrder implements \Stringable
         $webOrder = WebOrder::createOrderFromMirakl($orderApi);
         $webOrder->setSubchannel("Leroy Merlin ".$orderApi['channel']['label']);
         $webOrder->setChannel(IntegrationChannel::CHANNEL_LEROYMERLIN);
+        return $webOrder;
+    }
+
+
+    public static function createOneFromCarrefourEs($orderApi): WebOrder
+    {
+        $webOrder = WebOrder::createOrderFromMirakl($orderApi);
+        $webOrder->setSubchannel("Carrefour Es");
+        $webOrder->setChannel(IntegrationChannel::CHANNEL_CARREFOUR_ES);
         return $webOrder;
     }
 

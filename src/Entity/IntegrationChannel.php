@@ -41,6 +41,7 @@ class IntegrationChannel implements \Stringable
     final public const CHANNEL_REENCLE='REENCLE';
     final public const CHANNEL_WORTEN='WORTEN';
     final public const CHANNEL_PCCOMPONENTES='PCCOMPONENTES';
+    final public const CHANNEL_CARREFOUR_ES='CARREFOUR_ES';
 
     use TraitTimeUpdated;
 

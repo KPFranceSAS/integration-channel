@@ -10,6 +10,7 @@ use App\Controller\Order\AliexpressOrderCrudController;
 use App\Controller\Order\AmazonOrderCrudController;
 use App\Controller\Order\AriseOrderCrudController;
 use App\Controller\Order\BoulangerOrderCrudController;
+use App\Controller\Order\CarrefourOrderCrudController;
 use App\Controller\Order\CdiscountOrderCrudController;
 use App\Controller\Order\DecathlonOrderCrudController;
 use App\Controller\Order\DeliveryOrderCrudController;
@@ -179,6 +180,8 @@ class DashboardController extends AbstractDashboardController
                         ->setController(AmazonOrderCrudController::class),
                      MenuItem::linkToCrud('Boulanger', 'fas fa-tv', WebOrder::class)
                         ->setController(BoulangerOrderCrudController::class),
+                    MenuItem::linkToCrud('Carrefour', 'fas fa-cash-register', WebOrder::class)
+                        ->setController(CarrefourOrderCrudController::class),
                     MenuItem::linkToCrud('Cdiscount', 'fas fa-compact-disc', WebOrder::class)
                         ->setController(CdiscountOrderCrudController::class),
                     MenuItem::linkToCrud('Decathlon', 'fas fa-volleyball-ball', WebOrder::class)

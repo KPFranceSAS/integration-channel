@@ -188,6 +188,10 @@ services:
             $boulangerClientUrl :  '%env(resolve:BOULANGER_URL)%'
             $boulangerClientKey : '%env(resolve:BOULANGER_KEY)%'
 
+            $carrefourEsClientUrl :  '%env(resolve:CARREFOURES_URL)%'
+            $carrefourEsClientKey : '%env(resolve:CARREFOURES_KEY)%'
+            
+
             $fnacFrMiraklClientUrl :  '%env(resolve:FNACFRMIRAKL_URL)%'
             $fnacFrMiraklClientKey : '%env(resolve:FNACFRMIRAKL_KEY)%'
             $fnacFrClientUrl : '%env(resolve:FNACFR_URL)%'

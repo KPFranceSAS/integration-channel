@@ -116,6 +116,9 @@ class ImportProductTypeIntegration extends Command
                 'nbProductPcComponentes' => [
                     'pccomponentes_es_kps', 
                 ],
+                'nbProductCarrefourEs' => [
+                    'carrefour_es_kps', 
+                ],
             ];
             
             foreach($parameters as $function => $channels){
