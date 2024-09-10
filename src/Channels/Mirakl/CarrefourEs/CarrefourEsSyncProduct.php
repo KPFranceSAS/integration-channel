@@ -13,7 +13,7 @@ class CarrefourEsSyncProduct extends MiraklSyncProductParent
     protected function flatProduct(array $product):array
     {
         $flatProduct = parent::flatProduct($product);
-        if (array_key_exists('description-es_ES-Marketplace', $product)) {
+        if (array_key_exists('description-es_ES-Marketplace', $flatProduct)) {
             $flatProduct['description-es_ES-Marketplace'] = substr($flatProduct['description-es_ES-Marketplace'], 0, 3500);
         }
 
