@@ -18,8 +18,10 @@ class CarrefourEsUpdateStatus extends MiraklUpdateStatusParent
     protected function getCodeCarrier(string $carrierCode): ?string
     {
         if ($carrierCode ==  WebOrder::CARRIER_DHL) {
-            return "dhl";
-        } 
+            return "C5";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_CBL) {
+            return "C45";
+        }
         return null;
     }
 
