@@ -98,6 +98,7 @@ class MailService
             'error_response',
             'SQLSTATE',
             'Exception',
+            '502 Bad Gateway',
             'francecentral.cloudapp.azure.com',
             'Malformed UTF-8 characters, possibly incorrectly encoded'
         ];
