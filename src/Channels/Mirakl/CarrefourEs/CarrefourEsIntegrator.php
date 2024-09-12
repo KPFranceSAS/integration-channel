@@ -3,6 +3,7 @@
 namespace App\Channels\Mirakl\CarrefourEs;
 
 use App\BusinessCentral\Connector\BusinessCentralConnector;
+use App\BusinessCentral\Model\SaleOrder;
 use App\Channels\Mirakl\MiraklIntegratorParent;
 use App\Entity\IntegrationChannel;
 use Exception;
@@ -15,6 +16,15 @@ class CarrefourEsIntegrator extends MiraklIntegratorParent
     public function getChannel()
     {
         return IntegrationChannel::CHANNEL_CARREFOUR_ES;
+    }
+
+
+    public function transformToAnBcOrder($orderApi): SaleOrder
+    {
+        $saleOrder = parent::transformToAnBcOrder($orderApi);
+        $saleOrder->sellingPostalAddress->countryLetterCode='ES';
+        $saleOrder->shippingPostalAddress->countryLetterCode='ES';
+        return $saleOrder;
     }
 
 
