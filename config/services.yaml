@@ -190,6 +190,9 @@ services:
 
             $carrefourEsClientUrl :  '%env(resolve:CARREFOURES_URL)%'
             $carrefourEsClientKey : '%env(resolve:CARREFOURES_KEY)%'
+
+            $corteInglesClientUrl :  '%env(resolve:CORTEINGLES_URL)%'
+            $corteInglesClientKey : '%env(resolve:CORTEINGLES_KEY)%'
             
 
             $fnacFrMiraklClientUrl :  '%env(resolve:FNACFRMIRAKL_URL)%'

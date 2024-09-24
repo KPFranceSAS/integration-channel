@@ -16,8 +16,13 @@ use Mirakl\MCI\Shop\Request\Product\DownloadProductImportTransformationErrorRepo
 use Mirakl\MCI\Shop\Request\Product\ProductImportRequest;
 use Mirakl\MCI\Shop\Request\Product\ProductImportStatusesRequest;
 use Mirakl\MMP\Common\Domain\Order\Accept\AcceptOrderLine;
+use Mirakl\MMP\OperatorShop\Domain\Collection\DocumentRequest\UploadAccountingDocumentCollection;
+use Mirakl\MMP\OperatorShop\Domain\DocumentRequest\AccountingDocumentFile;
+use Mirakl\MMP\OperatorShop\Domain\DocumentRequest\UploadAccountingDocument;
 use Mirakl\MMP\OperatorShop\Request\Message\GetThreadDetailsRequest;
 use Mirakl\MMP\OperatorShop\Request\Message\GetThreadsRequest;
+use Mirakl\MMP\Shop\Request\DocumentRequest\GetAccountingDocumentsRequest;
+use Mirakl\MMP\Shop\Request\DocumentRequest\UploadAccountingDocumentsRequest;
 use Mirakl\MMP\Shop\Request\Offer\GetOffersRequest;
 use Mirakl\MMP\Shop\Request\Offer\Importer\OfferImportErrorReportRequest;
 use Mirakl\MMP\Shop\Request\Offer\Importer\OffersImportsRequest;
@@ -90,7 +95,7 @@ abstract class MiraklApiParent implements ApiInterface
             }
 
             $req->setMax(self::PAGINATION);
-            if($nextToken) {
+            if ($nextToken) {
                 $req->setPageToken($nextToken);
             }
             
@@ -101,7 +106,7 @@ abstract class MiraklApiParent implements ApiInterface
                 $orders = array_merge($orders, $reponse->getCollection()->getItems());
             }
             $realOffset++;
-            if($reponse->getNextPageToken()) {
+            if ($reponse->getNextPageToken()) {
                 $nextToken = $reponse->getNextPageToken();
             } else {
                 $continue = false;
@@ -114,6 +119,55 @@ abstract class MiraklApiParent implements ApiInterface
         }
         return $ordersSanitized;
     }
+
+
+
+
+
+
+    /**
+     * Summary of GetOrdersRequest
+     * @return array
+     */
+    public function getAccountingDocumentRequests($type, $status, $entityType): array
+    {
+        $continue = true;
+        $orders = [];
+        $nextToken = null;
+        $realOffset = 1;
+        while ($continue) {
+            $req = new GetAccountingDocumentsRequest();
+            $req->setTypes([$type]);
+            $req->setStates([$status]);
+            $req->setEntityTypes([$entityType]);
+
+            $req->setMax(self::PAGINATION);
+            if ($nextToken) {
+                $req->setPageToken($nextToken);
+            }
+            
+
+            $this->logger->info('Get Accounting documents batch n°' . $realOffset .  ' >>' . $type.' '.$status);
+            $reponse = $this->client->getAccountingDocumentsRequests($req);
+            if (count($reponse->getCollection()->getItems()) > 0) {
+                $orders = array_merge($orders, $reponse->getCollection()->getItems());
+            }
+            $realOffset++;
+            if ($reponse->getNextPageToken()) {
+                $nextToken = $reponse->getNextPageToken();
+            } else {
+                $continue = false;
+            }
+            
+        }
+        $ordersSanitized = [];
+        foreach ($orders as $order) {
+            $ordersSanitized[]=$order->toArray();
+        }
+        return $ordersSanitized;
+    }
+
+
 
     
     /**
@@ -262,6 +316,47 @@ abstract class MiraklApiParent implements ApiInterface
         
         return true;
     }
+
+
+
+    public function uploadAccountingDocument($request, $invoice, $invoiceContent)
+    {
+        $dateInvoice = DateTime::createFromFormat('Y-m-d', $invoice["invoiceDate"]);
+        
+        $fs = new Filesystem();
+        $filename= 'invoice_'.str_replace("/", '_', (string) $invoice['number']).'_'.date('YmdHis').'.pdf';
+        $filePath = $this->projectDir.$filename;
+        $fs->dumpFile($filePath, $invoiceContent);
+
+        $fileStr = new AccountingDocumentFile();
+        $fileStr->setName($filename);
+        $fileStr->setFormat('PDF');
+
+
+        $file = new FileWrapper(new SplFileObject($filePath));
+        $docs = new UploadAccountingDocumentCollection();
+        $doc = new UploadAccountingDocument();
+        $doc->setDocumentNumber($invoice['number']);
+        $doc->setRequestId($request['id']);
+        $doc->setIssueDate($dateInvoice);
+        $doc->setDueDate($dateInvoice);
+        $doc->setTotalAmountExcludingTaxes($request['total_amount_excluding_taxes']);
+        $doc->setTotalTaxAmount($request['total_tax_amount']);
+        $doc->setFiles([$fileStr]);
+        
+        $docs->add($doc);
+
+        $request = new UploadAccountingDocumentsRequest($docs);
+        $request->addFile($file);
+        
+        $result = $this->client->uploadAccountingDocuments($request);
+        $fs->remove($filePath);
+        
+        return true;
+    }
+
+
+   
    
 
     
@@ -279,7 +374,7 @@ abstract class MiraklApiParent implements ApiInterface
             'tracking_number' => $trackingNumber,
         ];
 
-        if($carrierCode){
+        if ($carrierCode) {
             $params['carrier_code'] = $carrierCode;
         }
 
@@ -340,17 +435,18 @@ abstract class MiraklApiParent implements ApiInterface
    
 
 
-     /**
-     
-     */
-    public function getReportErrorOffer($id):array{
-        $request = new OfferImportErrorReportRequest($id);  
+    /**
+
+    */
+    public function getReportErrorOffer($id):array
+    {
+        $request = new OfferImportErrorReportRequest($id);
         $result = $this->client->getOffersImportErrorReport($request);
         $file = $result->getFile();
         $errors = [];
         $header = null;
         while (!$file->eof()) {
-            if(!$header){
+            if (!$header) {
                 $header=$file->fgetcsv();
             } else {
                 $errors[]=array_combine($header, $file->fgetcsv());
@@ -363,10 +459,11 @@ abstract class MiraklApiParent implements ApiInterface
 
 
 
-     /**
-     
-     */
-    public function getReportErrorProduct($id):array{
+    /**
+
+    */
+    public function getReportErrorProduct($id):array
+    {
         $request = new DownloadProductImportTransformationErrorReportRequest($id);
         $result = $this->client->downloadProductImportTransformationErrorReport($request);
         return $this->transformResultFileInArray($result);
@@ -375,12 +472,13 @@ abstract class MiraklApiParent implements ApiInterface
 
 
 
-    public function transformResultFileInArray(FileWrapper $fielWrapper){
+    public function transformResultFileInArray(FileWrapper $fielWrapper)
+    {
         $file = $fielWrapper->getFile();
         $contents = [];
         $header = null;
         while (!$file->eof()) {
-            if(!$header){
+            if (!$header) {
                 $header=$file->fgetcsv();
             } else {
                 $contents[]=array_combine($header, $file->fgetcsv());
@@ -391,29 +489,32 @@ abstract class MiraklApiParent implements ApiInterface
 
 
 
- /**
-     * @return Mirakl\MMP\OperatorShop\Domain\Offer\Importer\OfferImport[]
-     */
-    public function getLastOfferImports():array{
+    /**
+        * @return Mirakl\MMP\OperatorShop\Domain\Offer\Importer\OfferImport[]
+        */
+    public function getLastOfferImports():array
+    {
         $request = new OffersImportsRequest();
         $request->setStatus('COMPLETE');
         return $this->client->getOffersImports($request)->getCollection()->getItems();
     }
 
-    public function getLastProductImports():array{
-        $request = new ProductImportStatusesRequest();    
+    public function getLastProductImports():array
+    {
+        $request = new ProductImportStatusesRequest();
         $now = new DateTime();
         $now->sub(new DateInterval('PT12H'));
-        $request->setLastRequestDate($now);  
+        $request->setLastRequestDate($now);
         return $this->client->getProductImportStatuses($request)->getItems();
     }
 
 
-    public function getLastProductImport(){
+    public function getLastProductImport()
+    {
         $lastImports = $this->getLastProductImports();
         $toReturn = null;
-        foreach($lastImports as $lastImport){
-            if(!$toReturn || ($toReturn->getDateCreated()<$lastImport->getDateCreated())){
+        foreach ($lastImports as $lastImport) {
+            if (!$toReturn || ($toReturn->getDateCreated()<$lastImport->getDateCreated())) {
                 $toReturn=$lastImport;
             }
         }
@@ -459,17 +560,17 @@ abstract class MiraklApiParent implements ApiInterface
         $parentCode= [];
 
         $categories = $this->sendRequest('hierarchies');
-        foreach($categories->hierarchies as $hierarchy) {
+        foreach ($categories->hierarchies as $hierarchy) {
             $categoryIndexed[$hierarchy->code] = $hierarchy;
-            if(strlen($hierarchy->parent_code)>0) {
+            if (strlen($hierarchy->parent_code)>0) {
                 $parentCode[]=$hierarchy->parent_code;
             }
         }
 
         
         $finalCategories = [];
-        foreach($categories->hierarchies as $hierarchy) {
-            if(!in_array($hierarchy->code, $parentCode)) {
+        foreach ($categories->hierarchies as $hierarchy) {
+            if (!in_array($hierarchy->code, $parentCode)) {
                 $this->logger->info("LAst level ".$hierarchy->code);
                 $categorie = [
                     'code' => $hierarchy->code,
@@ -479,10 +580,10 @@ abstract class MiraklApiParent implements ApiInterface
                 $path = [];
                 
                 $categoryCheck = $hierarchy;
-                while($categoryCheck) {
+                while ($categoryCheck) {
                     $this->logger->info("Add path ".$categoryCheck->label);
                     $path[] = $categoryCheck->label;
-                    if(strlen($categoryCheck->parent_code)>0) {
+                    if (strlen($categoryCheck->parent_code)>0) {
                         $categoryCheck = $categoryIndexed[$categoryCheck->parent_code] ;
                     } else {
                         $categoryCheck=false;

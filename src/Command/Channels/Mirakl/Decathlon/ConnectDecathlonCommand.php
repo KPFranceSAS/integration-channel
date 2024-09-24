@@ -26,19 +26,12 @@ class ConnectDecathlonCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $imports = $this->decathlonApi->getLastOfferImports();
-        foreach($imports as $import){
-            if($import->getLinesInError()>0){
-                $errosFiles= $this->decathlonApi->getReportErrorOffer($import->getImportId());
-                $errors = [];
-                foreach($errosFiles as $errosFile){
-                    $errors[$errosFile['sku']]=$errosFile['error-message'];
-                }
-                dd($errors);
-            } else {
-                return [];
-            }
-        }
+        $imports = $this->decathlonApi->getAccountingDocumentRequests('INVOICE', 'TO_PROCESS', 'PRODUCT_LOGISTIC_ORDER');
+
+
+
+        
+        dd($imports[0]);
         
         return Command::SUCCESS;
     }
