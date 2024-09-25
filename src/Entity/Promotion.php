@@ -219,9 +219,10 @@ class Promotion implements \Stringable
 
     public function getPromotionPrice()
     {
-        return $this->discountType == self::TYPE_FIXED ?
+        $promoPrice = $this->discountType == self::TYPE_FIXED ?
                  $this->fixedAmount :
                  $this->productSaleChannel->getPriceChannel() -  (($this->productSaleChannel->getPriceChannel()*$this->percentageAmount)/100);
+        return round($promoPrice, 2);
     }
 
     public function getCurrency()
