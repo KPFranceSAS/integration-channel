@@ -15,6 +15,15 @@ class CorteInglesPriceStock extends MiraklPriceStockParent
 
 
 
+    protected function getChangeEan($ean){
+        if($ean =='6973833030398'){
+            return "6973833030459";
+        } else {
+            return $ean;
+        }
+    }
+    
+
    
 
 
@@ -24,7 +33,7 @@ class CorteInglesPriceStock extends MiraklPriceStockParent
             "state_code" => "11",
             "update_delete" => "update",
             "shop_sku" => $product->getSku(),
-            "product_id" => $product->getEan(),
+            "product_id" => $this->getChangeEan($product->getEan()),
             "product_id_type" => "EAN",
             "quantity"=> $this->getStockProductWarehouse($product->getSku()),
             "logistic_class" => $this->defineLogisticClass($product),
