@@ -9,8 +9,8 @@ use Exception;
 
 class CorteInglesIntegrator extends MiraklIntegratorParent
 {
-    final public const WORTEN_ES = 'KP135685';
-    final public const WORTEN_PT = 'KP135686';
+    final public const ECI_ES = '121781';
+    final public const ECI_PT = '121781';
        
 
     public function getChannel()
@@ -18,14 +18,13 @@ class CorteInglesIntegrator extends MiraklIntegratorParent
         return IntegrationChannel::CHANNEL_CORTEINGLES;
     }
 
-
     public function getCustomerBC($orderApi): string
     {
         $codeChannel = $orderApi['channel']['code'];
-        if ($codeChannel == 'WRT_ES_ONLINE') {
-            return self::WORTEN_ES;
-        } elseif ($codeChannel == 'WRT_PT_ONLINE') {
-            return self::WORTEN_PT;
+        if ($codeChannel == 'eciStore') {
+            return self::ECI_ES;
+        } elseif ($codeChannel == 'portugalStore') {
+            return self::ECI_PT;
         } else {
             throw new Exception('No customer has been setup for CorteIngles on channel '.$codeChannel);
         }
