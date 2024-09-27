@@ -30,10 +30,11 @@ class CorteInglesPriceStock extends MiraklPriceStockParent
             "logistic_class" => $this->defineLogisticClass($product),
         
             "description" => $product->getDescription(),
-            "leadtime_to_ship" => "2",
             "all_prices" => [],
             "offer_additional_fields" => [
-                ['code'=>"ship-from-country-offer" , 'value' => "ES|Spain"],
+                ['code'=>"delivery-time" , 'value' => "5"],
+                ['code'=>"delivery-time-portugal" , 'value' => "5"],
+                /*['code'=>"referenciagenericaeci" , 'value' => "1086325800018"],*/
             ]
         ];
 
