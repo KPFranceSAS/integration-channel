@@ -326,7 +326,7 @@ abstract class UpdateStatusParent
      */
     protected function updateStatusSaleOrders(): void
     {
-        /** @var array[\App\Entity\WebOrder] */
+        /** @var array */
         $ordersToSend = $this->manager->getRepository(WebOrder::class)->findBy(
             [
                 "status" => WebOrder::STATE_SYNC_TO_ERP,
@@ -348,7 +348,7 @@ abstract class UpdateStatusParent
      */
     protected function reUpdateStatusSaleOrders(): void
     {
-        /** @var array[\App\Entity\WebOrder] */
+        /** @var array */
         $ordersToSend = $this->manager->getRepository(WebOrder::class)->findBy(
             [
                 "status" => WebOrder::STATE_ERROR_INVOICE,
