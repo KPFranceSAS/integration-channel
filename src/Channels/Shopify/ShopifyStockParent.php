@@ -21,7 +21,7 @@ abstract class ShopifyStockParent extends StockParent
         $inventoLevelies = $this->getShopifyApi()->getAllInventoryLevelsFromProduct();
         foreach ($inventoLevelies as $inventoLeveli) {
             $sku = $this->getCorrelatedSku($inventoLeveli['sku']);
-            if (!$this->productStockFinder->isBundle($sku)) {
+            //if (!$this->productStockFinder->isBundle($sku)) {
                 if ($this->checkIfProductSellableOnChannel($sku)) {
                     $stockLevel = $this->getStockProductWarehouse($sku, $this->getDefaultWarehouse());
                     $this->logger->info('Update modified ' . $sku  . ' >>> ' . $stockLevel);
@@ -35,9 +35,9 @@ abstract class ShopifyStockParent extends StockParent
                     $inventoLeveli['inventory_item_id'],
                     $stockLevel
                 );
-            } else {
-                $this->logger->info('Bundle ' . $sku  . ' no modification');
-            }
+            //} else {
+            //    $this->logger->info('Bundle ' . $sku  . ' no modification');
+            //}
         }
     }
 
