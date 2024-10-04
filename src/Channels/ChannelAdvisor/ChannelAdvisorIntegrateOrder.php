@@ -41,7 +41,12 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
     protected function checkAfterPersist(WebOrder $order, $orderApi)
     {
         $this->addLogToOrder($order, 'Marked on channel advisor as exported');
-        $this->getChannelApi()->markOrderAsExported($orderApi->ID);
+        try {
+            $this->getChannelApi()->markOrderAsExported($orderApi->ID);
+        } catch (Exception $e){
+            $this->addLogToOrder($order, 'Not marked on channel advisor as exported');
+        }
+        
     }
 
 
@@ -63,15 +68,25 @@ class ChannelAdvisorIntegrateOrder extends IntegratorParent
         $company = $this->getCompanyIntegration($order);
         $customer = $this->getCustomerBC($order);
         if ($this->isAlreadyRecordedDatabase($order->SiteOrderID)) {
-            $this->getChannelApi()->markOrderAsExported($order->ID);
-            $this->logger->info('Marked on channel advisor as exported');
-            $this->logger->info('Is Already Recorded Database');
+            try {
+                $this->getChannelApi()->markOrderAsExported($order->ID);
+                $this->logger->info('Marked on channel advisor as exported');
+                $this->logger->info('Is Already Recorded Database');
+            } catch (Exception $e){
+                $this->logger->info('Not marked on channel advisor as exported');
+            }
+                      
             return false;
         }
         if ($this->alreadyIntegratedErp($order->SiteOrderID, $company, $customer)) {
-            $this->getChannelApi()->markOrderAsExported($order->ID);
-            $this->logger->info('Marked on channel advisor as exported');
-            $this->logger->info('Is Already Recorded on ERP');
+            try {
+                $this->getChannelApi()->markOrderAsExported($order->ID);
+                $this->logger->info('Marked on channel advisor as exported');
+                $this->logger->info('Is Already Recorded on ERP');
+            } catch (Exception $e){
+                $this->logger->info('Not marked on channel advisor as exported');
+            }
+           
             return false;
         }
         if (!$this->checkStatusToInvoice($order)) {
