@@ -190,7 +190,7 @@
 							:
 							{% if data is iterable %}
 								{{data|json_encode}}
-							{% elseif data is instanceof('\DateTime') %}
+							{% elseif data is instanceof('DateTime') %}
 								{{data|date('d-m-Y H:i:s') }}
 							{% else %}
 								{{data }}

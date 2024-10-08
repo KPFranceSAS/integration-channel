@@ -318,16 +318,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.322.9",
+            "version": "3.323.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "0bd7513a7dd9b5330cb92575da99d9057f79b39c"
+                "reference": "030b93340f0e7d6fd20276037087d3eab8f16575"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/0bd7513a7dd9b5330cb92575da99d9057f79b39c",
-                "reference": "0bd7513a7dd9b5330cb92575da99d9057f79b39c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/030b93340f0e7d6fd20276037087d3eab8f16575",
+                "reference": "030b93340f0e7d6fd20276037087d3eab8f16575",
                 "shasum": ""
             },
             "require": {
@@ -410,9 +410,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.322.9"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.323.2"
             },
-            "time": "2024-10-01T18:23:10+00:00"
+            "time": "2024-10-07T18:11:24+00:00"
         },
         {
             "name": "behat/transliterator",
@@ -2371,16 +2371,16 @@
         },
         {
             "name": "gedmo/doctrine-extensions",
-            "version": "v3.16.1",
+            "version": "v3.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine-extensions/DoctrineExtensions.git",
-                "reference": "e85560ed96f977b8c29428a99222cb2ef2f0e80d"
+                "reference": "eabb45018c5a4362b46c5beae3881261da89f900"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine-extensions/DoctrineExtensions/zipball/e85560ed96f977b8c29428a99222cb2ef2f0e80d",
-                "reference": "e85560ed96f977b8c29428a99222cb2ef2f0e80d",
+                "url": "https://api.github.com/repos/doctrine-extensions/DoctrineExtensions/zipball/eabb45018c5a4362b46c5beae3881261da89f900",
+                "reference": "eabb45018c5a4362b46c5beae3881261da89f900",
                 "shasum": ""
             },
             "require": {
@@ -2397,14 +2397,14 @@
             },
             "conflict": {
                 "doctrine/annotations": "<1.13 || >=3.0",
-                "doctrine/dbal": "<3.2 || >=4.0",
+                "doctrine/dbal": "<3.7 || >=5.0",
                 "doctrine/mongodb-odm": "<2.3 || >=3.0",
                 "doctrine/orm": "<2.14.0 || 2.16.0 || 2.16.1 || >=4.0"
             },
             "require-dev": {
                 "doctrine/annotations": "^1.13 || ^2.0",
                 "doctrine/cache": "^1.11 || ^2.0",
-                "doctrine/dbal": "^3.2",
+                "doctrine/dbal": "^3.7 || ^4.0",
                 "doctrine/doctrine-bundle": "^2.3",
                 "doctrine/mongodb-odm": "^2.3",
                 "doctrine/orm": "^2.14.0 || ^3.0",
@@ -2476,7 +2476,7 @@
             "support": {
                 "email": "gediminas.morkevicius@gmail.com",
                 "issues": "https://github.com/doctrine-extensions/DoctrineExtensions/issues",
-                "source": "https://github.com/doctrine-extensions/DoctrineExtensions/tree/v3.16.1",
+                "source": "https://github.com/doctrine-extensions/DoctrineExtensions/tree/v3.17.1",
                 "wiki": "https://github.com/Atlantic18/DoctrineExtensions/tree/main/doc"
             },
             "funding": [
@@ -2497,7 +2497,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-06-25T16:22:14+00:00"
+            "time": "2024-10-07T22:30:27+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -7254,21 +7254,24 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v1.21.7",
+            "version": "v1.21.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "33ce7c1c0fe78f8c3a106f193b6c0a7d82384462"
+                "reference": "bda5f869ac51c8e985a6fe9f964c4cb78228a369"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/33ce7c1c0fe78f8c3a106f193b6c0a7d82384462",
-                "reference": "33ce7c1c0fe78f8c3a106f193b6c0a7d82384462",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/bda5f869ac51c8e985a6fe9f964c4cb78228a369",
+                "reference": "bda5f869ac51c8e985a6fe9f964c4cb78228a369",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.0|^2.0",
                 "php": ">=7.1"
+            },
+            "conflict": {
+                "composer/semver": "<1.7.2"
             },
             "require-dev": {
                 "composer/composer": "^1.0.2|^2.0",
@@ -7299,7 +7302,7 @@
             "description": "Composer plugin for Symfony",
             "support": {
                 "issues": "https://github.com/symfony/flex/issues",
-                "source": "https://github.com/symfony/flex/tree/v1.21.7"
+                "source": "https://github.com/symfony/flex/tree/v1.21.8"
             },
             "funding": [
                 {
@@ -7315,7 +7318,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-27T10:20:37+00:00"
+            "time": "2024-10-07T08:51:39+00:00"
         },
         {
             "name": "symfony/form",
@@ -12582,16 +12585,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.5",
+            "version": "1.12.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "7e6c6cb7cecb0a6254009a1a8a7d54ec99812b17"
+                "reference": "dc4d2f145a88ea7141ae698effd64d9df46527ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/7e6c6cb7cecb0a6254009a1a8a7d54ec99812b17",
-                "reference": "7e6c6cb7cecb0a6254009a1a8a7d54ec99812b17",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/dc4d2f145a88ea7141ae698effd64d9df46527ae",
+                "reference": "dc4d2f145a88ea7141ae698effd64d9df46527ae",
                 "shasum": ""
             },
             "require": {
@@ -12636,7 +12639,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-09-26T12:45:22+00:00"
+            "time": "2024-10-06T15:03:59+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
