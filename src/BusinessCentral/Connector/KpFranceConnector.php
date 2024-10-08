@@ -12,6 +12,9 @@ class KpFranceConnector extends BusinessCentralConnector
     }
 
 
+    
+
+
     public function getCompanyIntegration()
     {
         return self::KP_FRANCE;

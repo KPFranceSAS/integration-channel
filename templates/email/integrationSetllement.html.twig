@@ -1,0 +1,34 @@
+
+<p>New settlement for {{settlement.channel}} has been created</p>
+<p>A payment has been proceeded of {{settlement.totalTransfer}} on {{settlement.bank}}</p>
+{% for marketplaceInvoice in settlement.getMarketplaceInvoices %}
+      <p>Marketplace invoice {{marketplaceInvoice.getDocumentNumber()}} registred as  {{ marketplaceInvoice.getErpDocumentNumber()}}</p>
+{% endfor %}
+
+<p>Here all the transactions records</p>
+
+<table width="100%" cellpadding="0" cellspacing="0" style="min-width:100%;  border-collapse: collapse; border-style: solid; border-color: # aeabab;" border="1px">
+    <thead>
+        <tr>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Transaction type</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Ref</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">BC entity</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Bc number</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Document number</th>
+            <th style="padding:5px; border: 1px solid #aeabab;" align="left">Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for transaction in settlement.settlementTransactions %}
+        <tr>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{transaction.transactionType}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{transaction.referenceNumber}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{transaction.bcEntityType}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{transaction.bcEntityNumber}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="left">{{transaction.documentNumber}}</td>
+            <td style="padding:5px; border: 1px solid #aeabab;" align="right">{{transaction.amount}}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+
+</table>

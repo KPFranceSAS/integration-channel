@@ -18,21 +18,13 @@ class SendMailCommand extends Command
     }
 
 
-    protected function configure(): void
-    {
-        $this
-            
-            ->addArgument('title', InputArgument::REQUIRED, 'Title of email')
-            ->addArgument('content', InputArgument::REQUIRED, 'Content of email')
-            ->addArgument('emailAddress', InputArgument::REQUIRED, 'email Address');
-    }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->mailService->sendEmail(
-            $input->getArgument('title'),
-            $input->getArgument('content'),
-            $input->getArgument('emailAddress')
+            'Test',
+            'Test',
+            'stephane.lanjard@gmail.com'
         );
         return Command::SUCCESS;
     }

@@ -2,7 +2,9 @@
 
 namespace App\Command\Channels\Mirakl\LeroyMerlin;
 
+use App\Channels\Mirakl\LeroyMerlin\LeroyMerlinAccountingIntegration;
 use App\Channels\Mirakl\LeroyMerlin\LeroyMerlinApi;
+use App\Helper\MailService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -11,7 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ConnectLeroyMerlinCommand extends Command
 {
     public function __construct(
-        private readonly LeroyMerlinApi $leroyMerlinApi
+        private readonly LeroyMerlinApi $leroyMerlinApi,
+        private readonly MailService $mailService,
+        private readonly LeroyMerlinAccountingIntegration $leroyMerlinAccountingIntegration,
     ) {
         parent::__construct();
     }
@@ -20,19 +24,10 @@ class ConnectLeroyMerlinCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $imports = $this->leroyMerlinApi->getLastOfferImports();
-        foreach($imports as $import){
-            if($import->getLinesInError()>0){
-                $errosFiles= $this->leroyMerlinApi->getReportErrorOffer($import->getImportId());
-                $errors = [];
-                foreach($errosFiles as $errosFile){
-                    $errors[$errosFile['sku']]=$errosFile['error-message'];
-                }
-                dd($errors);
-            } else {
-                return [];
-            }
-        }
+
+
+       
+        $this->leroyMerlinAccountingIntegration->integrateAllSettlements();
         
         return Command::SUCCESS;
     }

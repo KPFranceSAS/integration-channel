@@ -25,7 +25,6 @@ class CheckInvoiceAmazonOrderCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var array[\App\Entity\AmazonOrder] */
         $orders = $this->manager->getRepository(AmazonOrder::class)->findBy(
             [
                 'integrated' => false,

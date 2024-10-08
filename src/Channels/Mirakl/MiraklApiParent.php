@@ -32,6 +32,9 @@ use Mirakl\MMP\Shop\Request\Order\Document\UploadOrdersDocumentsRequest;
 use Mirakl\MMP\Shop\Request\Order\Get\GetOrdersRequest;
 use Mirakl\MMP\Shop\Request\Order\Ship\ShipOrderRequest;
 use Mirakl\MMP\Shop\Request\Order\Tracking\UpdateOrderTrackingInfoRequest;
+use Mirakl\MMP\Shop\Request\Payment\Invoice\DownloadInvoiceRequest;
+use Mirakl\MMP\Shop\Request\Payment\Invoice\GetInvoicesRequest;
+use Mirakl\MMP\Shop\Request\Payment\Transaction\TransactionLineRequest;
 use Psr\Log\LoggerInterface;
 use SplFileObject;
 use Symfony\Component\Filesystem\Filesystem;
@@ -486,6 +489,112 @@ abstract class MiraklApiParent implements ApiInterface
         }
         return $contents;
     }
+
+
+
+
+
+    /**
+     *
+     * @return array
+     */
+    public function getAllInvoices(array $params = []): array
+    {
+        $offset = 0;
+        $max_page = 1;
+        $orders = [];
+        while ($offset  < $max_page) {
+            $req = new GetInvoicesRequest();
+            foreach ($params as $key => $param) {
+                $req->setData($key, $param);
+            }
+
+            $req->setMax(self::PAGINATION);
+            $req->setOffset($offset);
+            $realOffset =  $offset+1;
+            $this->logger->info('Get offers batch n°' . $realOffset . ' / ' . $max_page . ' >>' . json_encode($params));
+            $reponse = $this->client->getInvoices($req);
+            if (count($reponse->getItems()) > 0) {
+                $orders = array_merge($orders, $reponse->getItems());
+            }
+            $offset+=self::PAGINATION;
+            $max_page  = $reponse->getTotalCount();
+            $realOffset++;
+            
+        }
+        $ordersSanitized = [];
+        foreach ($orders as $order) {
+            $ordersSanitized[]=$order->toArray();
+        }
+        return $ordersSanitized;
+    }
+
+
+    /**
+         *
+         * @return array
+         */
+    public function getAllTransactionsForSettlementId($accountingDocumentId): array
+    {
+        return $this->getAllTransactions(['accounting_document_id'=>$accountingDocumentId]);
+    }
+
+
+    /**
+     *
+     * @return array
+     */
+    public function getAllTransactions(array $params = []): array
+    {
+        $continue = true;
+        $nextToken = null;
+        $orders = [];
+        while ($continue) {
+            $req = new TransactionLineRequest();
+            foreach ($params as $key => $param) {
+                $req->setData($key, $param);
+            }
+
+            $req->setMax(self::PAGINATION);
+            if ($nextToken) {
+                $req->setPageToken($nextToken);
+            }
+            
+            $reponse = $this->client->getTransactionLine($req);
+            if (count($reponse->getCollection()->getItems()) > 0) {
+                $orders = array_merge($orders, $reponse->getCollection()->getItems());
+            }
+            if ($reponse->getNextPageToken()) {
+                $nextToken = $reponse->getNextPageToken();
+            } else {
+                $continue = false;
+            }
+        }
+        $ordersSanitized = [];
+        foreach ($orders as $order) {
+            $ordersSanitized[]=$order->toArray();
+        }
+        return $ordersSanitized;
+    }
+
+
+
+
+
+    public function getContentPdfDocumentForInvoice($invoiceId): string
+    {
+        $request = new DownloadInvoiceRequest($invoiceId);
+        /** @var \Mirakl\Core\Domain\FileWrapper */
+        $result = $this->client->downloadInvoice($request);
+        // Get the content from the SplTempFileObject
+        $fileContent = '';
+        while (!$result->getFile()->eof()) {
+            $fileContent .= $result->getFile()->fgets();
+        }
+        return $fileContent;
+    }
+
+
 
 
 

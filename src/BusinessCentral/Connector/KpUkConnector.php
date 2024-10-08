@@ -8,8 +8,9 @@ class KpUkConnector extends BusinessCentralConnector
 {
     protected function getAccountNumberForExpedition()
     {
-        return '758000';
+        return '00101';
     }
+
 
 
     public function getCompanyIntegration()

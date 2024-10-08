@@ -55,6 +55,20 @@ abstract class ShopifyApiParent implements ApiInterface
     }
 
 
+
+    public function getCustomers(): array
+    {
+        return $this->getPaginatedElements(
+            'customers',
+            [],
+            [
+               "status" => 'enabled'
+            ]
+        );
+    }
+
+
+
     public function getAllOrders($status = 'any', $financialStatus = 'any', $fulfillmentStatus = 'any'): array
     {
         return $this->getPaginatedElements(

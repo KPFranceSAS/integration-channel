@@ -341,7 +341,7 @@ class WebOrder implements \Stringable
         if ($this->erpDocument && $this->status > 0) {
             return $this->erpDocument == self::DOCUMENT_INVOICE ?  $this->invoiceErp : $this->orderErp;
         }
-        return '-';
+        return  null;
     }
 
 

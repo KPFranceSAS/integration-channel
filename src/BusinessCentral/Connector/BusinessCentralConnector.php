@@ -113,7 +113,7 @@ abstract class BusinessCentralConnector
 
     abstract protected function getAccountNumberForExpedition();
 
-
+      
 
     public function doDeleteRequest(string $endPoint): bool
     {
@@ -177,7 +177,7 @@ abstract class BusinessCentralConnector
 
     public function doGetRequest(string $endPoint, array $query = [], $headers = null)
     {
-        if(!$headers) {
+        if (!$headers) {
             $headers =   [
                   
                   'Content-Type' => 'application/json'
@@ -237,7 +237,7 @@ abstract class BusinessCentralConnector
             $continue=true;
             while ($continue) {
                 $items = array_merge($items, $reponse ['value']);
-                if(array_key_exists('@odata.nextLink', $reponse)) {
+                if (array_key_exists('@odata.nextLink', $reponse)) {
 
                     $url = str_replace($this->urlBase, '', $reponse['@odata.nextLink']);
 
@@ -405,6 +405,46 @@ abstract class BusinessCentralConnector
         return $this->doPostRequest(
             self::EP_SALES_ORDERS,
             $order
+        );
+    }
+
+
+     /**
+     * Sale order
+     */
+    public function createPurchaseInvoice(array $order): ?array
+    {
+        $this->logger->debug('Purchase invoice '.json_encode($order));
+
+        return $this->doPostRequest(
+            self::EP_PURCHASES_INVOICES,
+            $order
+        );
+    }
+
+
+
+     /**
+     * Sale order
+     */
+
+     public function updatePurchaseInvoice(string $id, string $etag, array $order): ?array
+     {
+         return $this->doPatchRequest(
+             self::EP_PURCHASES_INVOICES . '(' . $id . ')',
+             $etag,
+             $order
+         );
+     }
+ 
+
+
+    public function getFullPurchaseInvoice(string $id): ?array
+    {
+        return  $this->getElementById(
+            self::EP_PURCHASES_INVOICES,
+            $id,
+            ['$expand' => 'purchaseInvoiceLines']
         );
     }
 
@@ -698,18 +738,18 @@ abstract class BusinessCentralConnector
     }
 
 
-     /**
-     * Sale order
-     */
+    /**
+    * Sale order
+    */
 
-     public function updateSaleReturnOrder(string $id, string $etag, array $order): ?array
-     {
-         return $this->doPatchRequest(
-             self::EP_SALES_RETURNS . "('" . $id . "')",
-             $etag,
-             $order
-         );
-     }
+    public function updateSaleReturnOrder(string $id, string $etag, array $order): ?array
+    {
+        return $this->doPatchRequest(
+            self::EP_SALES_RETURNS . "('" . $id . "')",
+            $etag,
+            $order
+        );
+    }
 
 
     /**
@@ -773,7 +813,7 @@ abstract class BusinessCentralConnector
             ['$expand' => 'customer']
         );
 
-        if($return) {
+        if ($return) {
             $documentNo =$return['no'];
             $return['salesReturnOrderLines'] = $this->getElementsByArray(
                 self::EP_SALES_RETURNS_LINE,
@@ -783,6 +823,22 @@ abstract class BusinessCentralConnector
         }
         return $return;
     }
+
+
+
+
+    public function getSaleReturns(string $condition): ?array
+    {
+        return $this->getElementsByArray(
+            self::EP_SALES_RETURNS,
+            "$condition",
+            true,
+            ['$expand' => 'customer']
+        );
+
+    }
+
+
 
 
     public function getSaleReturnByInvoiceAndLpn($invoiceNumber, $lpn): ?array
@@ -801,7 +857,7 @@ abstract class BusinessCentralConnector
 
     public function getSaleReturnByInvoice(string $number): ?array
     {
-        return $this->getSaleReturnBy("correctInvoiceNo eq '$number'");
+        return $this->getSaleReturnBy("appliesToDocNo eq '$number' or correctInvoiceNo eq '$number'");
     }
 
 
@@ -815,6 +871,17 @@ abstract class BusinessCentralConnector
     public function getSaleReturnByLpnAndExternalNumber(string $lpn, string $number): array
     {
         return $this->getSaleReturnBy("packageTrackingNo eq '$lpn' and externalDocumentNo eq '$number'");
+    }
+
+
+
+    public function getSaleMemos($params): array
+    {
+        return $this->getElementsByArray(
+            'salesCreditMemos',
+            null,
+            true
+        );
     }
 
 
@@ -861,6 +928,33 @@ abstract class BusinessCentralConnector
         );
     }
 
+
+
+    public function getGeneralJournalByCode(string $code): ?array
+    {
+        return $this->getElementsByArray(
+            'journals',
+            "code eq '$code'",
+        );
+    }
+
+
+
+    public function createJournalLine(string $id, array $line): ?array
+    {
+        return $this->doPostRequest(
+            'journals(' . $id . ')/journalLines',
+            $line
+        );
+    }
+ 
+ 
+ 
+    public function updateJournalLine(string $idJournal, string $idJournalLine, string $etag, array $journalLine): ?array
+    {
+        $this->logger->info("PATCH >>>>".json_encode($journalLine));
+        return $this->doPatchRequest('journals(' . $idJournal . ")/journalLines(".$idJournalLine.")", '*', $journalLine);
+    }
 
 
 

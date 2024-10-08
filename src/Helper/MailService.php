@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\Part\DataPart;
 
 class MailService
 {
@@ -31,7 +32,7 @@ class MailService
      * @param string|Address|array $emails the recipients
      * @return void
      */
-    public function sendEmail($titre, $contenu, $emails = 'devops@kpsport.com')
+    public function sendEmail($titre, $contenu, $emails = 'devops@kpsport.com', $files = [])
     {
         $this->logger->info("Sending email $titre to " . json_encode($emails) . "  > $contenu ");
 
@@ -51,6 +52,11 @@ class MailService
         } else {
             $email->to($emails);
         }
+
+        foreach($files as $file){
+            $email->attach($file['content'], $file['title']);
+        }
+        
 
         $this->mailer->send($email);
     }

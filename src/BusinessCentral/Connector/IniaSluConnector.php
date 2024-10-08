@@ -12,6 +12,7 @@ class IniaSluConnector extends BusinessCentralConnector
     }
 
 
+
     public function getCompanyIntegration()
     {
         return BusinessCentralConnector::INIA;
