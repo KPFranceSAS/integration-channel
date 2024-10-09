@@ -3,6 +3,7 @@
 namespace App\Service\Aggregator;
 
 use App\BusinessCentral\Connector\BusinessCentralAggregator;
+use App\Entity\AmazonProductType;
 use App\Entity\MarketplaceCategory;
 use App\Entity\ProductTypeCategorizacion;
 use App\Helper\MailService;
@@ -50,6 +51,8 @@ abstract class ProductSyncParent
 
     private $productTypes;
 
+    private $amazonProductType;
+
 
     protected function getLowerChannel()
     {
@@ -57,31 +60,62 @@ abstract class ProductSyncParent
     }
 
 
+    protected function initializeAmazonCategory()
+    {
+        $productCategorizations = $this->manager->getRepository(AmazonProductType::class)->findAll();
+        foreach ($productCategorizations as $productCategorization) {
+            $label = explode(' > ', $productCategorization->getLabel());
+            $this->amazonProductType[$productCategorization->getCode()]=reset($label);
+        }
+    }
+
+
+    protected function getCategoryMasterAmazon($subAmazonType)
+    {
+        if (!$this->amazonProductType) {
+            $this->initializeAmazonCategory();
+        }
+        if (is_null($subAmazonType)) {
+            return '';
+        }
+
+        if (!array_key_exists($subAmazonType, $this->amazonProductType)) {
+            return '';
+        } else {
+            return $this->amazonProductType[$subAmazonType];
+        }
+
+    }
+
+
+
     protected function initializeCategories()
     {
         $productCategorizations = $this->manager->getRepository(ProductTypeCategorizacion::class)->findAll();
-        foreach($productCategorizations as $productCategorization) {
+        foreach ($productCategorizations as $productCategorization) {
             $this->productTypes[$productCategorization->getPimProductType()]=$productCategorization;
         }
 
     }
 
+
+
     protected function getCategoryNode($productType, $marketplace)
     {
-        if(!$this->productTypes) {
+        if (!$this->productTypes) {
             $this->initializeCategories();
         }
-        if(is_null($productType)) {
+        if (is_null($productType)) {
             return '';
         }
 
-        if(!array_key_exists($productType, $this->productTypes)) {
+        if (!array_key_exists($productType, $this->productTypes)) {
             return '';
         }
 
         $productTypeCat = $this->productTypes[$productType]->{'get'.$marketplace.'Category'}();
 
-        if($productTypeCat && strlen($productTypeCat)> 0) {
+        if ($productTypeCat && strlen($productTypeCat)> 0) {
             return $productTypeCat;
         } else {
             return '';
@@ -98,7 +132,7 @@ abstract class ProductSyncParent
             'marketplace' => $marketplace,
         ]);
 
-        if($productTypeCat) {
+        if ($productTypeCat) {
             return $productTypeCat;
         } else {
             return null;
@@ -169,7 +203,7 @@ abstract class ProductSyncParent
         if (!($this->attributes)) {
             $attributePims= $this->akeneoConnector->getAllAttributes();
             $this->attributes= [];
-            foreach($attributePims as $attributePim) {
+            foreach ($attributePims as $attributePim) {
                 $this->attributes[$attributePim['code']] = $attributePim;
             }
         }
@@ -247,7 +281,7 @@ abstract class ProductSyncParent
 
     protected function getTranslationOption($attributeCode, $code, $locale)
     {
-        if(!array_key_exists($attributeCode.'_'.$code, $this->attributeOptionAkeneos)) {
+        if (!array_key_exists($attributeCode.'_'.$code, $this->attributeOptionAkeneos)) {
             $this->attributeOptionAkeneos[$attributeCode.'_'.$code]= $this->akeneoConnector->getAttributeOption($attributeCode, $code);
         }
         return array_key_exists($locale, $this->attributeOptionAkeneos[$attributeCode.'_'.$code]['labels']) ? $this->attributeOptionAkeneos[$attributeCode.'_'.$code]['labels'][$locale] : $code;
@@ -258,7 +292,7 @@ abstract class ProductSyncParent
 
     protected function getFamilyName($identifier, $langage)
     {
-        if(!array_key_exists($identifier, $this->familiesAkeneo)) {
+        if (!array_key_exists($identifier, $this->familiesAkeneo)) {
             $this->familiesAkeneo[$identifier]=  $this->akeneoConnector->getFamily($identifier);
         }
         return array_key_exists($langage, $this->familiesAkeneo[$identifier]['labels']) ? $this->familiesAkeneo[$identifier]['labels'][$langage] : $identifier;
@@ -331,7 +365,7 @@ abstract class ProductSyncParent
     {
         $this->categories=[];
         $categoriePims = $this->akeneoConnector->getAllCategories();
-        foreach($categoriePims as $category) {
+        foreach ($categoriePims as $category) {
             $this->categories[ $category['code']] = $category;
         }
     }
@@ -342,7 +376,7 @@ abstract class ProductSyncParent
 
     protected function getCategorieName($categoryCode, $localeCode)
     {
-        if(!$this->categories) {
+        if (!$this->categories) {
             $this->getAllCategories();
         }
         return $this->categories[$categoryCode]['labels'][$localeCode];

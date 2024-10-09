@@ -39,7 +39,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
     ) {
         $this->defaultStorage = $defaultStorage;
         $this->channelAdvisorStorage = $channelAdvisorStorage;
-        parent::__construct($managerRegistry,$logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator, $priceStockAggregator,  $projectDir);
+        parent::__construct($managerRegistry, $logger, $akeneoConnector, $mailer, $businessCentralAggregator, $apiAggregator, $priceStockAggregator, $projectDir);
     }
 
 
@@ -52,7 +52,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
         /** @var  array $products */
         $products = $this->getProductsEnabledOnChannel();
         $productToArrays=[];
-        $base = ['sku', 'categories' ,'enabled' ,'family', 'parent','created','updated','amazon_product_type', 'amazon_es_node','amazon_fr_node', 'amazon_uk_node', 'amazon_de_node', 'amazon_it_node', 'cdiscount_node' ];
+        $base = ['sku', 'categories' ,'enabled' ,'family', 'parent','created','updated','amazon_product_type', 'amazon_category_type', 'amazon_es_node','amazon_fr_node', 'amazon_uk_node', 'amazon_de_node', 'amazon_it_node', 'cdiscount_node' ];
         $header = [];
         foreach ($products as $product) {
             $productToArray = $this->flatProduct($product);
@@ -94,6 +94,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
             'created' => $product['created'],
             'updated' => $product['updated'],
             'amazon_product_type' => $this->getCategoryNode($productType, 'amazon'),
+            'amazon_category' => $this->getCategoryMasterAmazon($this->getCategoryNode($productType, 'amazon')),
             'amazon_es_node' => $this->getCategoryNode($productType, 'amazonEs'),
             'amazon_fr_node' => $this->getCategoryNode($productType, 'amazonFr'),
             'amazon_uk_node' => $this->getCategoryNode($productType, 'amazonUk'),

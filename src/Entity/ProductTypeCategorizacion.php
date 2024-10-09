@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-
 use App\Helper\Traits\TraitTimeUpdated;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -230,6 +229,7 @@ class ProductTypeCategorizacion
 
         return $this;
     }
+
 
     public function getAmazonCategory(): ?string
     {
