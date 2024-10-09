@@ -94,7 +94,7 @@ class ChannelAdvisorProduct extends ProductSyncParent
             'created' => $product['created'],
             'updated' => $product['updated'],
             'amazon_product_type' => $this->getCategoryNode($productType, 'amazon'),
-            'amazon_category' => $this->getCategoryMasterAmazon($this->getCategoryNode($productType, 'amazon')),
+            'amazon_category_type' => $this->getCategoryMasterAmazon($this->getCategoryNode($productType, 'amazon')),
             'amazon_es_node' => $this->getCategoryNode($productType, 'amazonEs'),
             'amazon_fr_node' => $this->getCategoryNode($productType, 'amazonFr'),
             'amazon_uk_node' => $this->getCategoryNode($productType, 'amazonUk'),
