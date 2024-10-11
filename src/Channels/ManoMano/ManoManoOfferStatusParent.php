@@ -44,15 +44,15 @@ abstract class ManoManoOfferStatusParent
         $products = $this->getAllSaleChannels($this->getChannel());
         $offerManomanos = $this->getManoManoApi()->getAllOffers();
         $this->logger->info(count($offerManomanos).' offers');
-        foreach($offerManomanos as $offerManomano) {
-            if(array_key_exists($offerManomano["sku"], $products)) {
+        foreach ($offerManomanos as $offerManomano) {
+            if (array_key_exists($offerManomano["sku"], $products)) {
                
                 $published = $offerManomano["offer_is_online"];
                 $reason = null;
-                if($published==false){
-                    if(count($offerManomano['errors'])>0){
+                if ($published==false) {
+                    if (count($offerManomano['errors'])>0) {
                         $reason = implode(',', $offerManomano['errors']);
-                    } elseif($offerManomano['stock']==0) {
+                    } elseif ($offerManomano['stock']==0) {
                         $reason = 'Out of stock';
                     } else {
                         $reason = 'Unknown';
@@ -69,10 +69,10 @@ abstract class ManoManoOfferStatusParent
             }
         }
 
-        foreach($products as $sku => $productChannel) {
-            if(!in_array($sku, $managed)) {
+        foreach ($products as $sku => $productChannel) {
+            if (!in_array($sku, $managed)) {
                 $productChannel->setPublished($published);
-                $productChannel->setReason('Manomano create offer and product only once product is in stock');
+                $productChannel->setReason('Check import status error logs https://toolbox.manomano.com/catalog/import/logs');
             }
         }
 
@@ -100,7 +100,7 @@ abstract class ManoManoOfferStatusParent
 
         $productSalesChannels = $queryBuilder->getQuery()->getResult();
         $products= [];
-        foreach($productSalesChannels as $productSalesChannel) {
+        foreach ($productSalesChannels as $productSalesChannel) {
             $productSku = $productSalesChannel->getProduct()->getSku();
             $products[$productSku]=$productSalesChannel;
         }
