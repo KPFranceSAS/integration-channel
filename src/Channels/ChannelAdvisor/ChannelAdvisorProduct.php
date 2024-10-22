@@ -146,7 +146,8 @@ class ChannelAdvisorProduct extends ProductSyncParent
     public function sendProducts(array $products, $header)
     {
         $csv = Writer::createFromString();
-        $csv->setDelimiter(';');
+        $csv->setDelimiter('|');
+        
         $csv->insertOne($header);
         $this->logger->info("start export ".count($products)." products");
         foreach ($products as $product) {

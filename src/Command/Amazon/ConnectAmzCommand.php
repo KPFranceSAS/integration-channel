@@ -9,6 +9,7 @@ use App\Service\Amazon\AmzApiInbound;
 use App\Service\Amazon\Report\AmzApiImportReimbursement;
 use DateTime;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -22,8 +23,47 @@ class ConnectAmzCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        dump($this->getFinancialEvents());
+        
 
+        $shipments = $this->api->getShipmentSent();
+        $progressBar = new ProgressBar($output, count($shipments));
+        $progressBar->start();
+        $results = [];
+        foreach ($shipments as $shipment) {
+            $progressBar->advance();
+            $response = $this->api->getShipmentItems($shipment->getShipmentId());
+            sleep(5);
+            foreach ($response as $item) {
+                $results[]= [
+                            $shipment->getShipmentId(),
+                            $shipment->getShipmentName(),
+                            $item->getSellerSku(),
+                            $item->getFulfillmentNetworkSKU(),
+                            $item->getQuantityShipped(),
+                            $item->getQuantityReceived(),
+                            $item->getQuantityInCase(),
+                        ];
+            }
+
+            
+        }
+
+        $progressBar->finish();
+
+
+        $fileName = 'shipments_to_fba.csv';
+        $file = fopen($fileName, 'w');
+
+        // Ajouter les en-têtes du CSV
+        fputcsv($file, ['ShipmentId', 'Shipmentname', 'SellerSKU', 'FulfillmentNetworkSKU', 'QuantityShipped', 'QuantityReceived', 'QuantityInCase']);
+
+        // Ajouter les données dans le fichier CSV
+        foreach ($results as $result) {
+            fputcsv($file, array_values($result));
+        }
+
+        // Fermer le fichier CSV
+        fclose($file);
 
 
         return Command::SUCCESS;

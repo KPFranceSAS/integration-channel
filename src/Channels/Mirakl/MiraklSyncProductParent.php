@@ -25,8 +25,8 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
         $integrationChannel = $this->manager->getRepository(IntegrationChannel::class)->findOneByCode($this->getChannel());
         $saleChannelsCode = [];
-        foreach($integrationChannel->getSaleChannels() as $saleChannel) {
-            if($saleChannel->getCodePim()) {
+        foreach ($integrationChannel->getSaleChannels() as $saleChannel) {
+            if ($saleChannel->getCodePim()) {
                 $saleChannelsCode[] = $saleChannel->getCodePim();
             }
         }
@@ -85,16 +85,16 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
         $productType = $this->getAttributeSimple($product, 'mkp_product_type');
         $categoryCode = $this->getCategoryNode($productType, $this->getMarketplaceNode());
 
-        if($categoryCode) {
+        if ($categoryCode) {
             $flatProduct['category_code'] = $categoryCode;
             $category = $this->getCategoryName($categoryCode, $this->getMarketplaceNode());
-            if($category) {
+            if ($category) {
                 $flatProduct['category_name'] = $category->getLabel();
                 $flatProduct['category_path'] = $category->getPath();
             }
         }
         foreach ($product['values'] as $attribute => $value) {
-            if($this->canBeExport($attribute)) {
+            if ($this->canBeExport($attribute)) {
                 $attributePim = $this->getAttributeType($attribute);
                 foreach ($value as $val) {
                     $nameColumn = $this->getAttributeColumnName($attribute, $val);
@@ -102,40 +102,40 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
             
                     if ($attributePim["type"]=='pim_catalog_simpleselect') {
                         $flatProduct[$nameColumn] = $data;
-                        foreach($this->getLocales() as $locale) {
+                        foreach ($this->getLocales() as $locale) {
                             $flatProduct[$nameColumn.'-'.$locale] = $this->getTranslationOption($attribute, $data, $locale);
                         }
                     } elseif ($attributePim["type"]=='pim_catalog_multiselect') {
                         $flatProduct[$nameColumn] = implode(',', $data);
-                        foreach($this->getLocales() as $locale) {
+                        foreach ($this->getLocales() as $locale) {
                             $localeAttributes = [];
-                            foreach($data as $dat) {
+                            foreach ($data as $dat) {
                                 $localeAttributes[]=$this->getTranslationOption($attribute, $dat, $locale);
                             }
                             $flatProduct[$nameColumn.'-'.$locale] =implode(',', $localeAttributes);
                         }
-                    } elseif($attributePim["type"]=='pim_catalog_metric') {
+                    } elseif ($attributePim["type"]=='pim_catalog_metric') {
                         $flatProduct[$nameColumn] = $data['amount'];
                         $flatProduct[$nameColumn.'-unit'] = $data['unit'];
                         $flatProduct[$nameColumn.'-wunit'] = $data['amount'].' '.$data['unit'];
           
-                        if(array_key_exists($nameColumn, $this->getUnitsFormate())&& $data['amount'] >0) {
+                        if (array_key_exists($nameColumn, $this->getUnitsFormate())&& $data['amount'] >0) {
                             $convert = $this->getUnitsFormate()[$nameColumn];
                             $value =$this->transformUnit($data["unit"], $convert['unit'], $data['amount'], $convert['round']);
                             $flatProduct[$nameColumn.'-formate'] =  $value;
                             $flatProduct[$nameColumn.'-formate-unit'] = $convert['unit'];
                             $flatProduct[$nameColumn.'-formate-wunit'] = $value.' '.$convert['convertUnit'];
                         }
-                    } elseif($attributePim["type"]=='pim_catalog_boolean') {
+                    } elseif ($attributePim["type"]=='pim_catalog_boolean') {
                         $flatProduct[$nameColumn] = (int)$data;
-                        foreach($this->getLocales() as $locale) {
+                        foreach ($this->getLocales() as $locale) {
                             $flatProduct[$nameColumn.'-'.$locale] = $this->getTranslationBoolean($data, $locale);
                         }
-                    } elseif($attributePim["type"]=='pim_catalog_price_collection') {
+                    } elseif ($attributePim["type"]=='pim_catalog_price_collection') {
                         foreach ($data as $subData) {
                             $flatProduct[$nameColumn.'-'.$subData['currency']] = $subData['amount'];
                         }
-                    } elseif($attributePim["type"]=='pim_catalog_file') {
+                    } elseif ($attributePim["type"]=='pim_catalog_file') {
                         // do nothing
                     } else {
                         $flatProduct[$nameColumn] = $data;
@@ -192,17 +192,15 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
             $csv->insertOne(array_values($productArray));
         }
         $csvContent = $csv->toString();
-        $filename = $this->projectDir.'export_products_'.$this->getLowerChannel().'_'.date('Ymd_His').'.csv';
         $finalFile = $this->projectDir.'export_products_'.$this->getLowerChannel().'.csv';
         $this->logger->info("start export products locally");
 
         $fs = new Filesystem();
-        $fs->appendToFile($filename, $csvContent);
         $fs->remove($finalFile);
         $fs->appendToFile($finalFile, $csvContent);
 
         $this->logger->info("start export products on Mirakl");
-        $this->getMiraklApi()->sendProductImports($filename);
+        $this->getMiraklApi()->sendProductImports($finalFile);
         
     }
 
@@ -256,10 +254,10 @@ abstract class MiraklSyncProductParent extends ProductSyncParent
 
     protected function getCodeMarketplaceInList($attributeList, $attributeValue=null)
     {
-        if($attributeValue) {
+        if ($attributeValue) {
             $valuesAttributes = $this->getAllValuesForAttribute($attributeList);
             foreach ($valuesAttributes->values as $valuesAttribute) {
-                if($valuesAttribute->label) {
+                if ($valuesAttribute->label) {
                     if (StringUtils::compareString($valuesAttribute->label, $attributeValue)) {
                         return $valuesAttribute->code;
                     }

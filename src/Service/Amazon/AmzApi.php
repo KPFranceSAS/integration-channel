@@ -93,40 +93,61 @@ class AmzApi
 
 
 
-    public function createInboundPlan(CreateInboundShipmentPlanRequest $request)
-    {
-        return  $this->sdk->fulfillmentInbound()->createInboundShipmentPlan($this->getAccessToken(), Regions::EUROPE, $request);
-    }
-
-
 
     public function getShipmentSent()
     {
-        return $this->sdk->fulfillmentInbound()->getShipments(
-            $this->getAccessToken(),
-            Regions::EUROPE,
-            'SHIPMENT',
-            Marketplace::GB()->id(),
-            ['SHIPPED']
-        );
+        $allEvents = [];
+        $nextToken = null;
+        do {
+            
+            $reponse = $this->sdk->fulfillmentInboundV0()->getShipments(
+                $this->getAccessToken(),
+                Regions::EUROPE,
+                'SHIPMENT',
+                Marketplace::FR()->id(),
+                ['CLOSED'],
+                null,
+                null,
+                null,
+                $nextToken
+            );
+            $payLoad = $reponse->getPayload();
+            $allEvents = array_merge($allEvents, $payLoad->getShipmentData());
+            
+            if($nextToken!=$payLoad->getNextToken()){
+                $nextToken = $payLoad->getNextToken();
+                sleep(5);
+            } else {
+                $nextToken =null;   
+            }
+            
+
+            
+        } while ($nextToken);
+
+        return $allEvents;
+
+
+
+
     }
 
 
     public function getShipmentItems($shipmentId)
     {
-        return $this->sdk->fulfillmentInbound()->getShipmentItemsByShipmentId(
+        return $this->sdk->fulfillmentInboundV0()->getShipmentItemsByShipmentId(
             $this->getAccessToken(),
             Regions::EUROPE,
             $shipmentId,
-            Marketplace::GB()->id(),
-        );
+            Marketplace::FR()->id(),
+        )->getPayload()->getItemData();
     }
 
 
 
     public function getLabels($shipmentId)
     {
-        return $this->sdk->fulfillmentInbound()->getLabels(
+        return $this->sdk->fulfillmentInboundV0()->getLabels(
             $this->getAccessToken(),
             Regions::EUROPE,
             $shipmentId,
@@ -136,18 +157,7 @@ class AmzApi
     }
 
 
-    public function createInbound($shipmentId, InboundShipmentRequest $inboundShipmentRequest)
-    {
-        return $this->sdk->fulfillmentInbound()->createInboundShipment(
-            $this->getAccessToken(),
-            Regions::EUROPE,
-            $shipmentId,
-            $inboundShipmentRequest
-        );
-    }
-
-
-    
+       
 
 
 

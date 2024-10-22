@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "401cd00154a7d682744c67aab8bd1da8",
+    "content-hash": "0c9dcf3a8aa980ab45995b40a342b587",
     "packages": [
         {
             "name": "akeneo/api-php-client",
@@ -70,16 +70,16 @@
         },
         {
             "name": "amazon-php/sp-api-sdk",
-            "version": "5.0.9",
+            "version": "6.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/amazon-php/sp-api-sdk.git",
-                "reference": "e01da053e78dd120b98653f1e34ef5eeb288b715"
+                "reference": "52c07988b586e7970cc9dc9d0177b9b2fa92648e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/amazon-php/sp-api-sdk/zipball/e01da053e78dd120b98653f1e34ef5eeb288b715",
-                "reference": "e01da053e78dd120b98653f1e34ef5eeb288b715",
+                "url": "https://api.github.com/repos/amazon-php/sp-api-sdk/zipball/52c07988b586e7970cc9dc9d0177b9b2fa92648e",
+                "reference": "52c07988b586e7970cc9dc9d0177b9b2fa92648e",
                 "shasum": ""
             },
             "require": {
@@ -130,9 +130,9 @@
             ],
             "support": {
                 "issues": "https://github.com/amazon-php/sp-api-sdk/issues",
-                "source": "https://github.com/amazon-php/sp-api-sdk/tree/5.0.9"
+                "source": "https://github.com/amazon-php/sp-api-sdk/tree/6.0.1"
             },
-            "time": "2024-01-31T17:03:51+00:00"
+            "time": "2024-07-17T20:58:59+00:00"
         },
         {
             "name": "async-aws/core",
