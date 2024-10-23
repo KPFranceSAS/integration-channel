@@ -91,6 +91,28 @@ class ProductSaleChannel implements \Stringable
 
 
 
+    public function getProductSku()
+    {
+        return $this->product->getSku();
+    }
+
+    public function getProductName()
+    {
+        return $this->product->getDescription();
+    }
+
+
+    public function getProductStock()
+    {
+        return $this->product->getLaRocaBusinessCentralStock();
+    }
+
+    public function hasStock(){
+        return $this->getProductStock()>0;
+    }
+
+
+
     public function getDiscountPrice()
     {
         $now = new DateTime('now');
@@ -116,7 +138,7 @@ class ProductSaleChannel implements \Stringable
 
     public function getPriceChannel()
     {
-        if($this->overridePrice && $this->price) {
+        if ($this->overridePrice && $this->price) {
             return $this->price;
         } else {
             return $this->getProductPrice();

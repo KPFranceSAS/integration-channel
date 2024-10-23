@@ -5,6 +5,7 @@ namespace App\Controller\Pricing;
 use App\Controller\Admin\AdminCrudController;
 use App\Entity\ProductSaleChannel;
 use App\Filter\BrandFilter;
+use App\Filter\HasStockFilter;
 use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -42,11 +43,14 @@ class ProductSaleChannelCrudController extends AdminCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            AssociationField::new('product')->setDisabled(),
+            TextField::new('productSku', 'Sku')->onlyOnIndex(),
+            TextField::new('productName', 'Name')->onlyOnIndex(),
+           
+            AssociationField::new('product')->setDisabled()->hideOnIndex(),
             AssociationField::new('saleChannel')->setDisabled(),
             BooleanField::new('enabled'),
             NumberField::new('productPrice', 'Regular price')->setDisabled(),
-                
+            NumberField::new('productStock', 'Stock')->onlyOnIndex(),    
             BooleanField::new('overridePrice')->renderAsSwitch(false),
             NumberField::new('price', 'Specific Price'),
                 
@@ -68,8 +72,8 @@ class ProductSaleChannelCrudController extends AdminCrudController
             ->add(BooleanFilter::new('enabled', 'Enabled'))
             ->add(BooleanFilter::new('overridePrice', 'Price overrided'))
             ->add(BooleanFilter::new('published', 'Published'))
-            ->add(EntityFilter::new('saleChannel')->canSelectMultiple(true))
-        ;
+            ->add(HasStockFilter::new('hasStock', 'Has stock'))
+            ->add(EntityFilter::new('saleChannel')->canSelectMultiple(true));
            
     }
 
@@ -83,8 +87,8 @@ class ProductSaleChannelCrudController extends AdminCrudController
         ->leftJoin('entity.saleChannel', 'entity_salechannel')
         ->leftJoin('entity_salechannel.integrationChannel', 'entity_integrationChannel')
         ->andWhere('entity_product.active = 1')
-        ->andWhere('entity_integrationChannel.active = 1')
-        ;
+        ->andWhere('entity_integrationChannel.active = 1');
+
         return $qb;
     }
 
