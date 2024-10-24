@@ -53,7 +53,7 @@ class MailService
             $email->to($emails);
         }
 
-        foreach($files as $file){
+        foreach ($files as $file) {
             $email->attach($file['content'], $file['title']);
         }
         
@@ -103,6 +103,7 @@ class MailService
             "InternalError",
             'error_response',
             'SQLSTATE',
+            'Internal Server Error',
             'Exception',
             '502 Bad Gateway',
             'francecentral.cloudapp.azure.com',
