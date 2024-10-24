@@ -89,4 +89,31 @@ class PcComponentesPriceStock extends MiraklPriceStockParent
             "XXL" => "extra"
         ];
     }
+
+
+
+    protected function getDeleteOffer($sku)
+    {
+      
+        $deleteOffer = parent::getDeleteOffer($sku);
+        $deleteOffer["offer_additional_fields"] = [
+            [
+                'code'=>"tipo-iva",
+                'value' => "21"
+            ],
+            [
+                'code'=>"canon",
+                'value' => 0
+            ],
+            [
+                'code'=>"dev-gratuita",
+                'value' => true
+            ]
+        ];
+        return $deleteOffer;
+        
+    }
+
+
+
 }
