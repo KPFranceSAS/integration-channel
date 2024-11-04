@@ -138,10 +138,6 @@ class GenerateAmzFbaRemoval
 
         if ($removalOrder->getShipCountry()=='GB') {
             $emails[] ='kyle@kpsport.com';
-        } elseif ($removalOrder->getShipCountry()=='ES') {
-            $emails[] ='xavi.montes@kpsport.com';
-            $emails[] ='compras@kp-group.eu';
-            
         }
 
         $contenu = $this->twig->render('email/amazonRemoval.html.twig', [
