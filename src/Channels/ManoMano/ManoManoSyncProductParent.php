@@ -319,6 +319,9 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         } elseif ($flatProduct['mm_category_id'] ==20344) { // bold
             $flatProduct['centre-to-centre_distance']=45;
             $flatProduct['centre-to-centre_distance_unit']="mm";
+        } elseif ($flatProduct['mm_category_id'] ==20449) { // ampoules
+            $flatProduct['pcs_per_pack_unit']="Count";
+
         }
 
         
