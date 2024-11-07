@@ -472,7 +472,8 @@ abstract class ProductSyncParent
             "MONTH" => 2628000,
             "YEAR" => 31536000,
 
-
+            "RADIAN" => 1,
+            "DEGREE" => 0.01745329
         ];
 
         if (!array_key_exists($unitBase, $factors) || !array_key_exists($unitFinal, $factors)) {

@@ -49,8 +49,8 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         $productCategorizations = $this->manager->getRepository(ProductTypeCategorizacion::class)->findAll();
 
 
-        foreach($productCategorizations as $productCategorization) {
-            if($productCategorization->getManomanoCategory() && strlen($productCategorization->getManomanoCategory())>0) {
+        foreach ($productCategorizations as $productCategorization) {
+            if ($productCategorization->getManomanoCategory() && strlen($productCategorization->getManomanoCategory())>0) {
                 $this->categories[$productCategorization->getPimProductType()]=(int)$productCategorization->getManomanoCategory();
             }
         }
@@ -174,15 +174,43 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 "field" => "color_generic",
                 "type" => "choice",
             ],
+            "light_colour" => [
+                "field" => "light_colour",
+                "type" => "choice",
+            ],
+            "type_of_power_connector" => [
+                "field" => "power_source_type",
+                "type" => "choice",
+            ],
+            "style" => [
+                "field" => "style_audio",
+                "type" => "choice",
+            ],
+            "max._energy_efficiency_rating" => [
+                "field" => "energy_efficiency_rating",
+                "type" => "choice",
+            ],
+            "min._energy_efficiency_rating" => [
+                "field" => "energy_efficiency_rating",
+                "type" => "choice",
+            ],
+            "energy_efficiency_rating" => [
+                "field" => "energy_efficiency_rating",
+                "type" => "choice",
+            ],
             "battery_life"=>[
                 "field" => 'battery_lifetime',
                 "type" => "unit",
-                "unit" => 'HOUR',
-                "convertUnit" => 'hour' ,
+                "unit" => 'MINUTE',
+                "convertUnit" => 'min' ,
                 'round' => 0
             ],
             "main_material"=> [
                 "field" => "main_material",
+                "type" => "choice",
+            ],
+            "cap_fitting"=> [
+                "field" => "cap_fitting",
                 "type" => "choice",
             ],
             "length" => [
@@ -248,19 +276,47 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 "convertUnit" => 'W',
                 'round' => 0
             ],
+            "voltage" => [
+                "field" => 'voltage',
+                "unit" => 'VOLT',
+                "type" => "unit",
+                "convertUnit" => 'V',
+                'round' => 0
+            ],
+            "amperage" => [
+                "field" => 'amperage',
+                "unit" => 'AMPERE',
+                "type" => "unit",
+                "convertUnit" => 'A',
+                'round' => 0
+            ],
+            "volume" => [
+                "field" => 'volume',
+                "unit" => 'LITER',
+                "type" => "unit",
+                "convertUnit" => 'l',
+                'round' => 0
+            ],
+            "angle,_tilt" => [
+                "field" => 'angle_view',
+                "unit" => 'DEGREE',
+                "type" => "unit",
+                "convertUnit" => 'degree',
+                'round' => 0
+            ],
 
 
             
          ];
 
-        if($flatProduct['mm_category_id'] ==19952) { // tondeuse
+        if ($flatProduct['mm_category_id'] ==19952) { // tondeuse
             $flatProduct['coverage']=800;
             $flatProduct['coverage_unit']="m²";
             $flatProduct['working_width_/_diameter']=200;
             $flatProduct['working_width_/_diameter_unit']="m";
-        } elseif($flatProduct['mm_category_id'] ==20344) { // chaise
+        } elseif ($flatProduct['mm_category_id'] ==20344) { // chaise
             $flatProduct['style']="Modern";
-        } elseif($flatProduct['mm_category_id'] ==20344) { // bold
+        } elseif ($flatProduct['mm_category_id'] ==20344) { // bold
             $flatProduct['centre-to-centre_distance']=45;
             $flatProduct['centre-to-centre_distance_unit']="mm";
         }
@@ -271,7 +327,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         foreach ($fieldsToConvert as $fieldMirakl => $fieldPim) {
             if ($fieldPim['type']=='unit') {
                 $valueConverted = $this->getAttributeUnit($product, $fieldPim['field'], $fieldPim['unit'], $fieldPim['round']);
-                if($valueConverted) {
+                if ($valueConverted) {
                     $flatProduct[$fieldMirakl] = $valueConverted;
                     if ($fieldMirakl !='DisplayWeight') {
                         $flatProduct[$fieldMirakl.'_unit'] = $fieldPim['convertUnit'];
@@ -285,7 +341,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
 
         $country = $this->getAttributeChoice($product, 'country_origin', "en_GB");
-        if($country) {
+        if ($country) {
             $flatProduct["origin"] = 'Made in '.$country;
         }
 
