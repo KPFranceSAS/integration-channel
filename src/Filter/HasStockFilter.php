@@ -20,7 +20,7 @@ class HasStockFilter implements FilterInterface {
         if ($filterDataDto->getValue() === true) {
             $queryBuilder->andWhere('entity_product.laRocaBusinessCentralStock > 0');
         } elseif ($filterDataDto->getValue()  === false) {
-            $queryBuilder->andWhere('entity_product.laRocaBusinessCentralStock.stock <= 0 OR entity_product.laRocaBusinessCentralStock.stock IS NULL');
+            $queryBuilder->andWhere('entity_product.laRocaBusinessCentralStock <= 0 OR entity_product.laRocaBusinessCentralStock IS NULL');
         }
     }
 
