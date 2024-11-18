@@ -71,7 +71,6 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                     }
                 }
             }
-            
 
             $headerProduct = array_keys($productToArray);
             foreach ($headerProduct as $headerP) {
@@ -181,6 +180,14 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 "field" => "power_source_type",
                 "type" => "choice",
             ],
+            "power_source" => [
+                "field" => "power_source_type",
+                "type" => "choice",
+            ],
+            "power_supply" => [
+                "field" => "power_source_type",
+                "type" => "choice",
+            ],
             "style" => [
                 "field" => "style_audio",
                 "type" => "choice",
@@ -210,6 +217,10 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             ],
             "cap_fitting"=> [
                 "field" => "cap_fitting",
+                "type" => "choice",
+            ],
+            "fixing_method"=> [
+                "field" => "fixing_method",
                 "type" => "choice",
             ],
             "length" => [
@@ -275,8 +286,8 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 "convertUnit" => 'W',
                 'round' => 0
             ],
-            "voltage" => [
-                "field" => 'voltage',
+            'voltage' => [
+                "field" => 'Voltage',
                 "unit" => 'VOLT',
                 "type" => "unit",
                 "convertUnit" => 'V',
@@ -337,20 +348,25 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
 
 
-        if ($flatProduct['mm_category_id'] ==19952) { // tondeuse
+        if ($flatProduct['mm_category_id'] =="19952") { // tondeuse
             $flatProduct['coverage']=800;
             $flatProduct['coverage_unit']="m²";
             $flatProduct['working_width_/_diameter']=200;
             $flatProduct['working_width_/_diameter_unit']="m";
-        } elseif ($flatProduct['mm_category_id'] ==20344) { // chaise
+        } elseif ($flatProduct['mm_category_id'] =="20344") { // chaise
             $flatProduct['style']="Modern";
-        } elseif ($flatProduct['mm_category_id'] ==20344) { // bold
+        } elseif ($flatProduct['mm_category_id'] =="21503") { // bold
             $flatProduct['centre-to-centre_distance']=45;
             $flatProduct['centre-to-centre_distance_unit']="mm";
-        } elseif ($flatProduct['mm_category_id'] ==20450) { // ampoules
+        } elseif ($flatProduct['mm_category_id'] =="20450") { // ampoules
             $flatProduct['pcs_per_pack_unit']="count";
+        } elseif ($flatProduct['mm_category_id'] =="22195") { // wheel
+            $flatProduct['pcs_per_pack_unit']="wheels";
+        } elseif($flatProduct['mm_category_id'] =="21255") { // solar panel
+            $flatProduct['width'] = $this->getAttributeUnit($product, 'width', 'MILLIMETER', 0);
+            $flatProduct['width_unit'] = 'mm';
         }
-
+        
 
        
         return $flatProduct;
@@ -364,6 +380,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
     public function sendProducts(array $products, $header)
     {
+        
         $csv = Writer::createFromString();
         $csv->setDelimiter(';');
         $csv->insertOne($header);
