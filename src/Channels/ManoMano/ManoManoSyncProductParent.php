@@ -58,8 +58,6 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
         foreach ($products as $product) {
             $productToArray = $this->flatProduct($product);
-
-
             $productDb = $this->manager->getRepository(Product::class)->findOneBy([
                 'sku' => $product['identifier']
             ]);
@@ -73,6 +71,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                     }
                 }
             }
+            
 
             $headerProduct = array_keys($productToArray);
             foreach ($headerProduct as $headerP) {
@@ -130,7 +129,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             'unit_count_type'=> "piece",
             "pcs_per_pack" => 1,
             "pcs_per_pack_unit" => "products"
-             ];
+        ];
 
 
 
@@ -304,25 +303,14 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 "convertUnit" => 'degree',
                 'round' => 0
             ],
-
-
-            
+            'maximum_load'=> [
+                "field" => 'weight_capacity',
+                "unit" => 'KILOGRAM',
+                "type" => "unit",
+                "convertUnit" => 'kg',
+                'round' => 0
+            ],
          ];
-
-        if ($flatProduct['mm_category_id'] ==19952) { // tondeuse
-            $flatProduct['coverage']=800;
-            $flatProduct['coverage_unit']="m²";
-            $flatProduct['working_width_/_diameter']=200;
-            $flatProduct['working_width_/_diameter_unit']="m";
-        } elseif ($flatProduct['mm_category_id'] ==20344) { // chaise
-            $flatProduct['style']="Modern";
-        } elseif ($flatProduct['mm_category_id'] ==20344) { // bold
-            $flatProduct['centre-to-centre_distance']=45;
-            $flatProduct['centre-to-centre_distance_unit']="mm";
-        } elseif ($flatProduct['mm_category_id'] ==20449) { // ampoules
-            $flatProduct['pcs_per_pack_unit']="Count";
-
-        }
 
         
 
@@ -336,7 +324,6 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                         $flatProduct[$fieldMirakl.'_unit'] = $fieldPim['convertUnit'];
                     }
                 }
-               
             } elseif ($fieldPim['type']=='choice') {
                 $flatProduct[$fieldMirakl] = $this->getAttributeChoice($product, $fieldPim['field'], 'en_GB');
             }
@@ -346,6 +333,22 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
         $country = $this->getAttributeChoice($product, 'country_origin', "en_GB");
         if ($country) {
             $flatProduct["origin"] = 'Made in '.$country;
+        }
+
+
+
+        if ($flatProduct['mm_category_id'] ==19952) { // tondeuse
+            $flatProduct['coverage']=800;
+            $flatProduct['coverage_unit']="m²";
+            $flatProduct['working_width_/_diameter']=200;
+            $flatProduct['working_width_/_diameter_unit']="m";
+        } elseif ($flatProduct['mm_category_id'] ==20344) { // chaise
+            $flatProduct['style']="Modern";
+        } elseif ($flatProduct['mm_category_id'] ==20344) { // bold
+            $flatProduct['centre-to-centre_distance']=45;
+            $flatProduct['centre-to-centre_distance_unit']="mm";
+        } elseif ($flatProduct['mm_category_id'] ==20450) { // ampoules
+            $flatProduct['pcs_per_pack_unit']="count";
         }
 
 
