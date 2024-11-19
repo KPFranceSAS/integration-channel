@@ -184,10 +184,6 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 "field" => "power_source_type",
                 "type" => "choice",
             ],
-            "power_supply" => [
-                "field" => "power_source_type",
-                "type" => "choice",
-            ],
             "style" => [
                 "field" => "style_audio",
                 "type" => "choice",
@@ -348,25 +344,45 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
 
 
 
-        if ($flatProduct['mm_category_id'] =="19952") { // tondeuse
+        if ($flatProduct['mm_category_id'] =="19952") { // 	Garden and outdoor > Garden machinery > Lawnmowers and ride on mowers > Robotic lawnmowers
             $flatProduct['coverage']=800;
             $flatProduct['coverage_unit']="m²";
             $flatProduct['working_width_/_diameter']=200;
             $flatProduct['working_width_/_diameter_unit']="m";
-        } elseif ($flatProduct['mm_category_id'] =="20344") { // chaise
+        } elseif ($flatProduct['mm_category_id'] =="20344") { // Home and living > Indoor furniture > Office furniture > Desk chairs
             $flatProduct['style']="Modern";
-        } elseif ($flatProduct['mm_category_id'] =="21503") { // bold
+        } elseif ($flatProduct['mm_category_id'] =="21503") { // Hardware > Security and locks > Locks and accessories > Locks
             $flatProduct['centre-to-centre_distance']=45;
             $flatProduct['centre-to-centre_distance_unit']="mm";
-        } elseif ($flatProduct['mm_category_id'] =="20450") { // ampoules
+        } elseif ($flatProduct['mm_category_id'] =="20450") { // Lighting > Light bulbs, tube lights and accessories > Light bulbs > Other light bulbs
             $flatProduct['pcs_per_pack_unit']="count";
-        } elseif ($flatProduct['mm_category_id'] =="22195") { // wheel
+        } elseif ($flatProduct['mm_category_id'] =="22195") { // Tools > Workshop equipment and storage > Material handling equipment > Replacement wheels and castors
             $flatProduct['pcs_per_pack_unit']="wheels";
-        } elseif ($flatProduct['mm_category_id'] =="21255") { // solar panel
-            $flatProduct['width'] = $this->getAttributeUnit($product, 'width', 'MILLIMETER', 0);
+        } elseif ($flatProduct['mm_category_id'] =="21255") { // Electrical > Wind and solar power equipment > Solar and wind power equipment > Solar panels
+            $flatProduct['width'] = $this->getAttributeUnit($product, 'package_width', 'MILLIMETER', 0);
             $flatProduct['width_unit'] = 'mm';
-        }
+        } elseif ($flatProduct['mm_category_id'] =="22567"){ //Electrical appliances > Small electrical appliances > Bathroom gadgets > Electric hand dryers
+            $flatProduct['height'] = $this->getAttributeUnit($product, 'package_height', 'MILLIMETER', 0);
+            $flatProduct['height_unit'] = 'mm';
+        } elseif ($flatProduct['mm_category_id'] =="22185"){ // 	Tools > Workshop equipment and storage > Generators and accessories > Generators
+            $flatProduct['power_supply'] = 'Electricity';
+        }  elseif ($flatProduct['mm_category_id'] =="21185"){ // Electrical > Home automation and security systems > CCTV > Indoor and outdoor CCTV cameras	
+            if (array_key_exists('power_source', $flatProduct) && $flatProduct['power_source']=='Wiring') {
+                $flatProduct['power_source']='Corded';
+            }
+        }  elseif ($flatProduct['mm_category_id'] =="20552"){ // Electrical appliances > Large electrical appliances > Fridges, freezers and wine coolers > Fridges	
+            if (array_key_exists('fixing_method', $flatProduct) && $flatProduct['fixing_method']=='Standing') {
+                $flatProduct['fixing_method']='Freestanding';
+            }
+        } elseif ($flatProduct['mm_category_id'] =="21121"){ // 	Electrical > Home automation and security systems > Safety and security > Smoke detectors
+            if (array_key_exists('fixing_method', $flatProduct) && $flatProduct['fixing_method']=='Screw') {
+                $flatProduct['fixing_method']='To screw';
+            }
+        } 
         
+
+
+
 
        
         return $flatProduct;
