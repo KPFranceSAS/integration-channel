@@ -286,7 +286,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
                 "convertUnit" => 'W',
                 'round' => 0
             ],
-            'voltage' => [
+            "voltage" => [
                 "field" => 'Voltage',
                 "unit" => 'VOLT',
                 "type" => "unit",
@@ -362,7 +362,7 @@ abstract class ManoManoSyncProductParent extends ProductSyncParent
             $flatProduct['pcs_per_pack_unit']="count";
         } elseif ($flatProduct['mm_category_id'] =="22195") { // wheel
             $flatProduct['pcs_per_pack_unit']="wheels";
-        } elseif($flatProduct['mm_category_id'] =="21255") { // solar panel
+        } elseif ($flatProduct['mm_category_id'] =="21255") { // solar panel
             $flatProduct['width'] = $this->getAttributeUnit($product, 'width', 'MILLIMETER', 0);
             $flatProduct['width_unit'] = 'mm';
         }

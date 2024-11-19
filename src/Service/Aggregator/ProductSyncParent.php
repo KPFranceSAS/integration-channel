@@ -452,6 +452,15 @@ abstract class ProductSyncParent
             "CENTIAMPERE" => 0.01,
             "DECIAMPERE" => 0.1,
             "AMPERE" => 1,
+
+
+            "MILLIVOLT" => 0.001,
+            "CENTIVOLT" => 0.01,
+            "DECIVOLT" => 0.1,
+            "VOLT" => 1,
+            "DEKAVOLT" => 10,
+            "HECTOVOLT" => 100,
+            "KILOVOLT" => 1000,
             
             "WATTHOUR" => 1,
             "MILLIWATTHOUR" => 0.001,
