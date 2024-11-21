@@ -20,7 +20,7 @@ class Job
     final public const Status_Error = 3;
 
     final public const Type_Sync_Products = 'Sync products';
-    final public const Type_Sync_Prices = 'Sync prices';
+    final public const Type_Sync_Prices = 'Sync prices & stocks';
 
     use TraitTimeUpdated;
 

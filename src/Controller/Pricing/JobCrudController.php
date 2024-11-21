@@ -9,6 +9,7 @@ use App\Entity\SaleChannel;
 use App\Form\ConfirmImportPricingFormType;
 use App\Form\ImportPricingFormType;
 use App\Form\JobFormType;
+use App\Form\JobSyncPricesFormType;
 use App\Form\JobSyncProductsFormType;
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Doctrine\Persistence\ManagerRegistry;
@@ -74,7 +75,15 @@ class JobCrudController extends AdminCrudController
                     ->setIcon('fa fa-plus')
                     ->createAsGlobalAction()
                     ->linkToCrudAction('syncProduct')
+            )
+            ->add(
+                Crud::PAGE_INDEX,
+                Action::new('syncPrice', 'Sync prices & stock')
+                    ->setIcon('fa fa-plus')
+                    ->createAsGlobalAction()
+                    ->linkToCrudAction('syncPrice')
             );
+            
     }
 
 
@@ -82,7 +91,28 @@ class JobCrudController extends AdminCrudController
 
 
 
+    public function syncPrice(AdminContext $context, ManagerRegistry $managerRegistry)
+    {
+        $job = new Job();
+        $job->setJobType(Job::Type_Sync_Prices);
+        $form = $this->createForm(JobSyncPricesFormType::class, $job);
+        $form->handleRequest($context->getRequest());
+        if ($form->isSubmitted() && $form->isValid()) {
+            $jobs = $managerRegistry->getManager()->getRepository(Job::class)->findAllProcessingChannel(Job::Type_Sync_Prices, $job->getChannel());
 
+            if(count($jobs)==0){
+                $job->setUser($this->getUser());
+                $this->addFlash('success', 'Your job will be launched soon');
+                $managerRegistry->getManager()->persist($job);
+                $managerRegistry->getManager()->flush();
+            } else{
+                $this->addFlash('danger', 'A job is already processing for '.$job->getChannel());
+            }           
+            $url = $this->container->get(AdminUrlGenerator::class)->setAction("index")->generateUrl();
+            return $this->redirect($url);
+        }
+        return $this->renderForm('admin/crud/job/create.html.twig', ['form' => $form, 'job' => $job]);
+    }
 
    
 

@@ -6,6 +6,7 @@ use App\Entity\Job;
 use App\Service\Aggregator\PriceAggregator;
 use App\Service\Aggregator\PriceStockAggregator;
 use App\Service\Aggregator\ProductSyncAggregator;
+use App\Service\Aggregator\StockAggregator;
 use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
@@ -21,6 +22,7 @@ class JobProcessCommand extends Command
         private readonly PriceAggregator $priceAggregator,
         private readonly PriceStockAggregator $priceStockAggregator,
         private readonly ManagerRegistry $managerRegistry,
+        private readonly StockAggregator $stockAggregator
     ) {
         parent::__construct();
     }
@@ -31,10 +33,10 @@ class JobProcessCommand extends Command
         $output->writeln('Start processing');
         $manager = $this->managerRegistry->getManager();
         $jobs = $manager->getRepository(Job::class)->findByStatus(Job::Status_Processing);
-        if(count($jobs)>0) {
+        if (count($jobs)>0) {
             $output->writeln('Already processing');
-            foreach($jobs as $job){
-                if($job->getExecutionTime()>600){
+            foreach ($jobs as $job) {
+                if ($job->getExecutionTime()>600) {
                     $job->setStatus(Job::Status_Error);
                     $job->setEndDate(new DateTime());
                 }
@@ -46,24 +48,40 @@ class JobProcessCommand extends Command
 
         $jobToProcesss = $manager->getRepository(Job::class)->findByStatus(Job::Status_Created);
         $output->writeln('Nb jobs '.count($jobToProcesss));
-        if(count($jobToProcesss)>0) {
-            foreach($jobToProcesss as $jobToProcess) {
+        if (count($jobToProcesss)>0) {
+            foreach ($jobToProcesss as $jobToProcess) {
                 $jobToProcess->setStatus(Job::Status_Processing);
             }
             $manager->flush();
-            foreach($jobToProcesss as $jobToProcess) {
-                $jobToProcess->setStartDate(new DateTime());
-                if($jobToProcess->getJobType()==Job::Type_Sync_Products) {
-                    try {
+            foreach ($jobToProcesss as $jobToProcess) {
+               
+                try {
+                    $jobToProcess->setStartDate(new DateTime());
+                    if ($jobToProcess->getJobType()==Job::Type_Sync_Products) {
                         $productUpdater = $this->productSyncAggregator->getProductSync($jobToProcess->getChannel()->getCode());
-                        $productUpdater->syncProducts();
+                        if($productUpdater){
+                            $productUpdater->syncProducts();
+                        }
+                    } elseif ($jobToProcess->getJobType()==Job::Type_Sync_Prices) {
+                        $priceUpdater = $this->priceAggregator->getPrice($jobToProcess->getChannel()->getCode());
+                        if ($priceUpdater) {
+                            $priceUpdater->send();
+                            $stockUpdater = $this->stockAggregator->getStock($jobToProcess->getChannel()->getCode());
+                            if($stockUpdater){
+                                $stockUpdater->send();
+                            }
+                        } else {
+                            $priceStockUpdater = $this->priceStockAggregator->getPriceStock($jobToProcess->getChannel()->getCode());
+                            if($priceStockUpdater){
+                                $priceStockUpdater->send();
+                            }
+                        }
+                        $jobToProcess->setEndDate(new DateTime());
                         $jobToProcess->setStatus(Job::Status_Finished);
-                    } catch (Exception $e) {
-                        $jobToProcess->setStatus(Job::Status_Error);
+                        $manager->flush();
                     }
-                    $jobToProcess->setEndDate(new DateTime());
-                   
-                    $manager->flush();
+                } catch (Exception $e) {
+                    $jobToProcess->setStatus(Job::Status_Error);
                 }
             }
         } else {
