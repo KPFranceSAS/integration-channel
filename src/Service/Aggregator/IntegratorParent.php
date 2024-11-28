@@ -91,7 +91,7 @@ abstract class IntegratorParent
 
     public function reIntegrateAllOrders()
     {
-        /** @var array[\App\Entity\WebOrder] */
+        /** @var array */
         $ordersToReintegrate = $this->manager->getRepository(WebOrder::class)->findBy(
             [
                 'status' => WebOrder::STATE_ERROR,
@@ -159,7 +159,7 @@ abstract class IntegratorParent
                 $webOrder->setStatus(WebOrder::STATE_SYNC_TO_ERP);
                 $webOrder->setOrderErp($erpOrder['number']);
                 // add reservation  for all lines
-                if($webOrder->getFulfilledBy()==WebOrder::FULFILLED_BY_SELLER) {
+                if ($webOrder->getFulfilledBy()==WebOrder::FULFILLED_BY_SELLER) {
                     $this->createReservationEntries($webOrder);
                 }
                 $this->addLogToOrder($webOrder, 'Integration finished ' . $erpOrder['number']);
@@ -215,27 +215,31 @@ abstract class IntegratorParent
 
     public function defineBestCarrier(WebOrder $order, SaleOrder $saleOrder)
     {
-        if($order->isFulfiledBySeller()) {
-            if($saleOrder->shippingAgent=='ARISE') {
+        if ($order->isFulfiledBySeller()) {
+            if ($saleOrder->shippingAgent=='ARISE') {
                 $order->setCarrierService(WebOrder::CARRIER_ARISE);
-            } elseif($order->getChannel()==IntegrationChannel::CHANNEL_PAXUK) {
+            } elseif ($order->getChannel()==IntegrationChannel::CHANNEL_PAXUK) {
                 $order->setCarrierService(WebOrder::CARRIER_DPDUK);
                 $saleOrder->shippingAgent="DPD1";
                 $saleOrder->shippingAgentService="DPD32";
                 $saleOrder->locationCode=WebOrder::DEPOT_3PLUK;
-            } elseif($order->getChannel()==IntegrationChannel::CHANNEL_FLASHLED) {
+            } elseif ($order->getChannel()==IntegrationChannel::CHANNEL_FLASHLED) {
                 $order->setCarrierService(WebOrder::CARRIER_SENDING);
                 $saleOrder->shippingAgent="SENDING";
                 $saleOrder->shippingAgentService="SENDEXP";
             } else { // case Default
 
-                if($this->containHazmatProducts($order, $saleOrder)) {
+                if ($this->containHazmatProducts($order, $saleOrder)) {
                     $saleOrder->shippingAgent="SCHENKER";
                     $saleOrder->shippingAgentService="SYSTEM";
                     $order->setCarrierService(WebOrder::CARRIER_DBSCHENKER);
+                } elseif ($this->containFlashledProducts($order, $saleOrder)) {
+                    $order->setCarrierService(WebOrder::CARRIER_SENDING);
+                    $saleOrder->shippingAgent="SENDING";
+                    $saleOrder->shippingAgentService="SENDEXP";
                 } else {
                     $order->setCarrierService(WebOrder::CARRIER_DHL);
-                    if($this->shouldUseDHLB2B($order, $saleOrder)) {
+                    if ($this->shouldUseDHLB2B($order, $saleOrder)) {
                         $saleOrder->shippingAgent="DHL PARCEL";
                         $saleOrder->shippingAgentService="DHL1";
                     }
@@ -252,7 +256,7 @@ abstract class IntegratorParent
 
     public function shouldUseDHLB2B(WebOrder $webOrder, SaleOrder $saleOrder)
     {
-        if(in_array($saleOrder->shippingPostalAddress->countryLetterCode, ['ES', 'PT'])) {
+        if (in_array($saleOrder->shippingPostalAddress->countryLetterCode, ['ES', 'PT'])) {
             $this->addLogToOrder($webOrder, 'Need to be shipped with B2B services because send to '.$saleOrder->shippingPostalAddress->countryLetterCode);
             return true;
         }
@@ -260,7 +264,7 @@ abstract class IntegratorParent
         $weightPackage = $this->saleOrderWeightCalculation->calculateWeight($saleOrder);
 
         $this->addLogToOrder($webOrder, 'Weight sale order '.$weightPackage.' kg');
-        if($weightPackage > DhlGetTracking::MAX_B2C) {
+        if ($weightPackage > DhlGetTracking::MAX_B2C) {
             $this->addLogToOrder($webOrder, 'Need to be shipped with B2B services because  Weight is greater than  '. DhlGetTracking::MAX_B2C.' kg');
             return true;
         }
@@ -275,13 +279,13 @@ abstract class IntegratorParent
         
         $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
         $this->addLogToOrder($webOrder, 'Check if sale order contains HAzmat products');
-        foreach($saleOrder->salesLines as $saleLine) {
-            if($saleLine->lineType == SaleOrderLine::TYPE_ITEM) {
+        foreach ($saleOrder->salesLines as $saleLine) {
+            if ($saleLine->lineType == SaleOrderLine::TYPE_ITEM) {
                 $itemBc = $businessCentralConnector->getItem($saleLine->itemId);
                 
-                if($itemBc) {
+                if ($itemBc) {
                     $productDb = $this->manager->getRepository(Product::class)->findOneBySku($itemBc['number']);
-                    if($productDb && $productDb->isDangerousGood()) {
+                    if ($productDb && $productDb->isDangerousGood()) {
                         $this->addLogToOrder($webOrder, 'Contains sku '.$itemBc['number']);
                         return true;
                     }
@@ -289,6 +293,31 @@ abstract class IntegratorParent
             }
         }
         $this->addLogToOrder($webOrder, 'Sale order do not contain Hazmat products');
+
+        return false;
+    }
+
+
+
+    public function containFlashledProducts(WebOrder $webOrder, SaleOrder $saleOrder)
+    {
+        
+        $businessCentralConnector = $this->businessCentralAggregator->getBusinessCentralConnector($webOrder->getCompany());
+        $this->addLogToOrder($webOrder, 'Check if sale order contains Flashled products');
+        foreach ($saleOrder->salesLines as $saleLine) {
+            if ($saleLine->lineType == SaleOrderLine::TYPE_ITEM) {
+                $itemBc = $businessCentralConnector->getItem($saleLine->itemId);
+                if ($itemBc) {
+                    /** @var Product */
+                    $productDb = $this->manager->getRepository(Product::class)->findOneBySku($itemBc['number']);
+                    if ($productDb && strtoupper($productDb->getBrandName()) =='FLASHLED') {
+                        $this->addLogToOrder($webOrder, 'Contains FLASHLED product > sku '.$itemBc['number']);
+                        return true;
+                    }
+                }
+            }
+        }
+        $this->addLogToOrder($webOrder, 'Sale order do not contain Flashled products');
 
         return false;
     }
@@ -320,7 +349,7 @@ abstract class IntegratorParent
             $order->setOrderErp($erpOrder['number']);
             $this->addLogToOrder($order, 'Integration done ' . $erpOrder['number']);
             
-            if($order->getFulfilledBy()==WebOrder::FULFILLED_BY_SELLER) {
+            if ($order->getFulfilledBy()==WebOrder::FULFILLED_BY_SELLER) {
                 $this->addLogToOrder($order, 'Add reservation to sale order lines');
                 $this->createReservationEntries($order);
             }
@@ -349,11 +378,11 @@ abstract class IntegratorParent
             $connector = $this->businessCentralAggregator->getBusinessCentralConnector($orderDb->getCompany());
             $orderBc = $connector->getFullSaleOrderByNumber($orderDb->getOrderErp());
 
-            if(in_array($orderBc['locationCode'], [WebOrder::DEPOT_LAROCA])) {
+            if (in_array($orderBc['locationCode'], [WebOrder::DEPOT_LAROCA])) {
                 $this->addLogToOrder($orderDb, 'Adding reservation on advanced warehouse '.$orderBc['locationCode']);
 
-                foreach($orderBc['salesOrderLines'] as $saleOrderLine) {
-                    if(in_array($saleOrderLine['lineType'], [SaleOrderLine::TYPE_ITEM, 'Producto'])) {
+                foreach ($orderBc['salesOrderLines'] as $saleOrderLine) {
+                    if (in_array($saleOrderLine['lineType'], [SaleOrderLine::TYPE_ITEM, 'Producto'])) {
                         $reservation = [
                             "QuantityBase" => $saleOrderLine['quantity'],
                             "CreationDate" => date('Y-m-d'),
@@ -361,6 +390,7 @@ abstract class IntegratorParent
                             "LocationCode" =>  $orderBc['locationCode'],
                             "SourceID" => $orderDb->getOrderErp(),
                             "SourceRefNo"=> $saleOrderLine['sequence'],
+                            "temporaryReserve" => false,
                         ];
                         $connector->createReservation($reservation);
 
@@ -370,7 +400,7 @@ abstract class IntegratorParent
             } else {
                 $this->addLogToOrder($orderDb, 'NO need to make reservation for non advanced warehouse '.$orderBc['locationCode']);
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $message = mb_convert_encoding($e->getMessage(), "UTF-8", "UTF-8");
             $this->addError($orderDb);
         }
