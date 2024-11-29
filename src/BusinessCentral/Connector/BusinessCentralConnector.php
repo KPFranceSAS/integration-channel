@@ -409,9 +409,9 @@ abstract class BusinessCentralConnector
     }
 
 
-     /**
-     * Sale order
-     */
+    /**
+    * Sale order
+    */
     public function createPurchaseInvoice(array $order): ?array
     {
         $this->logger->debug('Purchase invoice '.json_encode($order));
@@ -424,18 +424,18 @@ abstract class BusinessCentralConnector
 
 
 
-     /**
-     * Sale order
-     */
+    /**
+    * Sale order
+    */
 
-     public function updatePurchaseInvoice(string $id, string $etag, array $order): ?array
-     {
-         return $this->doPatchRequest(
-             self::EP_PURCHASES_INVOICES . '(' . $id . ')',
-             $etag,
-             $order
-         );
-     }
+    public function updatePurchaseInvoice(string $id, string $etag, array $order): ?array
+    {
+        return $this->doPatchRequest(
+            self::EP_PURCHASES_INVOICES . '(' . $id . ')',
+            $etag,
+            $order
+        );
+    }
  
 
 
@@ -838,6 +838,42 @@ abstract class BusinessCentralConnector
 
     }
 
+
+    public function getAssemblyDocumentForLines(string $documentNumber, int $line): ?array
+    {
+        return $this->getElementsByArray(
+            'AssembletoOrdersLink',
+            "DocumentNo eq '$documentNumber' and AssemblyLineNo eq $line",
+        );
+    }
+
+
+    public function getAssemblyLinesForDocumentNumber(string $documentNumber): ?array
+    {
+        return $this->getElementsByArray(
+            'AssemblyLines',
+            "DocumentNo eq '$documentNumber'",
+            true
+        );
+    }
+
+
+    public function getComponentsSkuInBundle(string $sku, string $skuBundle)
+    {
+        return $this->getElementsByArray(
+            self::EP_BUNDLE_CONTENT,
+            "parentItemNo eq '$skuBundle' and ComponentSKU eq '$sku' ",
+        );
+    }
+
+
+    public function createReservationBOM($reservation)
+    {
+        return $this->doPostRequest(
+            'CreateReservesBOM',
+            $reservation
+        );
+    }
 
 
 

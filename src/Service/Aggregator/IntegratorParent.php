@@ -369,6 +369,23 @@ abstract class IntegratorParent
 
 
 
+    /**
+    * Check if it is a bundle
+    */
+    protected function isBundle(array $item): bool
+    {
+
+        if ($item['AssemblyBOM']==false) {
+            return false;
+        }
+
+        if ($item['AssemblyBOM']==true && in_array($item['AssemblyPolicy'], ["Assemble-to-Stock", "Ensamblar para stock"])) {
+            return false;
+        }
+        return true;
+    }
+
+
 
     public function createReservationEntries(WebOrder $orderDb)
     {
@@ -383,18 +400,45 @@ abstract class IntegratorParent
 
                 foreach ($orderBc['salesOrderLines'] as $saleOrderLine) {
                     if (in_array($saleOrderLine['lineType'], [SaleOrderLine::TYPE_ITEM, 'Producto'])) {
-                        $reservation = [
-                            "QuantityBase" => $saleOrderLine['quantity'],
-                            "CreationDate" => date('Y-m-d'),
-                            "ItemNo" => $saleOrderLine['lineDetails']['number'],
-                            "LocationCode" =>  $orderBc['locationCode'],
-                            "SourceID" => $orderDb->getOrderErp(),
-                            "SourceRefNo"=> $saleOrderLine['sequence'],
-                            "temporaryReserve" => false,
-                        ];
-                        $connector->createReservation($reservation);
+                        $itemBc = $connector->getItemByNumber($saleOrderLine['lineDetails']['number']);
 
-                        $this->addLogToOrder($orderDb, 'Add reservation for line '.$saleOrderLine['sequence'].' for '.$saleOrderLine['quantity'].' '.$saleOrderLine['lineDetails']['number']);
+                        if ($this->isBundle($itemBc)) {
+                            $documentAssembly = $connector->getAssemblyDocumentForLines($orderDb->getOrderErp(), $saleOrderLine['sequence']);
+                            if ($documentAssembly) {
+                                $this->addLogToOrder($orderDb, 'Add reservation for assembly order '.$documentAssembly['AssemblyDocumentNo']);
+                                $lineAssemblys = $connector->getAssemblyLinesForDocumentNumber($documentAssembly['AssemblyDocumentNo']);
+
+                                foreach ($lineAssemblys as $lineAssembly) {
+
+                                    $qtyBundle = $connector->getComponentsSkuInBundle($lineAssembly['No'], $saleOrderLine['lineDetails']['number']);
+                                    $reservation = [
+                                        "QuantityBase" => $qtyBundle['Quantity'] * $saleOrderLine['quantity'],
+                                        "CreationDate" => date('Y-m-d'),
+                                        "ItemNo" => $lineAssembly['No'],
+                                        "LocationCode" =>  $orderBc['locationCode'],
+                                        "SourceID" => $documentAssembly['AssemblyDocumentNo'],
+                                        "SourceRefNo"=> $lineAssembly['LineNo'],
+                                        "temporaryReserve" => false
+                                    ];
+                                    $connector->createReservationBOM($reservation);
+                                    $orderDb->addLog('Add reservation for component sku for line '.$lineAssembly['LineNo'].' for '.$qtyBundle['Quantity'] * $saleOrderLine['quantity'].' '.$lineAssembly['No']);
+                                }
+                            }
+                        } else {
+                            $reservation = [
+                                "QuantityBase" => $saleOrderLine['quantity'],
+                                "CreationDate" => date('Y-m-d'),
+                                "ItemNo" => $saleOrderLine['lineDetails']['number'],
+                                "LocationCode" =>  $orderBc['locationCode'],
+                                "SourceID" => $orderDb->getOrderErp(),
+                                "SourceRefNo"=> $saleOrderLine['sequence'],
+                                "temporaryReserve" => false
+                            ];
+                            $connector->createReservation($reservation);
+                            $this->addLogToOrder($orderDb, 'Add reservation for line '.$saleOrderLine['sequence'].' for '.$saleOrderLine['quantity'].' '.$saleOrderLine['lineDetails']['number']);
+                        }
+
+                       
                     }
                 }
             } else {
