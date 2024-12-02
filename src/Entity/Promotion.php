@@ -132,7 +132,13 @@ class Promotion implements \Stringable
         }
         if ($this->isWeekendFrequency()) {
             $dayOfWeek = $date->format('N');
-            if ($dayOfWeek < 5 || ($dayOfWeek == 5 && $date->format('His')< '180000')) {
+            if ($dayOfWeek > 5) {
+                return true;
+            } elseif ($dayOfWeek == 5 && $date->format('His') > '190000') {
+                return true;
+            } elseif ($dayOfWeek == 1 && $date->format('His') < '070000') {
+                return true;
+            } else {
                 return false;
             }
         } elseif ($this->isTimeToTimeFrequency()) {
@@ -202,7 +208,7 @@ class Promotion implements \Stringable
             }
             $frequency = 'Every '.implode(', ', $days).' from '.$this->beginHour->format('H:i').' to '.$this->endHour->format('H:i');
         } elseif ($this->frequency == self::FREQUENCY_WEEKEND) {
-            $frequency =  'Every week end, from Friday 18:00 to Sunday 23:59';
+            $frequency =  'Every week end, from Friday 7pm to Monday 7am';
         } else {
             $frequency =  'Continuous';
         }
