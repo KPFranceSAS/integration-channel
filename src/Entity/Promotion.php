@@ -196,7 +196,7 @@ class Promotion implements \Stringable
             $currentDate->setTime((int)$this->endHour->format('H'),(int)$this->endHour->format('i'));
             return  $currentDate;
         } else {
-          return  $this->beginDate;
+          return  $this->endDate;
         }
     }
 
