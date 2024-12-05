@@ -155,6 +155,55 @@ class Promotion implements \Stringable
     }
 
 
+
+    public function getStartPromo(): DateTime
+    {
+        $currentDate = new DateTime();   
+        if ($this->isWeekendFrequency()) {
+            $dayOfWeek = (int) $currentDate->format('w');
+                // If it's Friday, return the same date
+                if ($dayOfWeek !== 5) {
+                    $daysToSubtract = ($dayOfWeek < 5) ? $dayOfWeek + 2 : $dayOfWeek - 5;
+                    $currentDate->modify("-$daysToSubtract days");
+                }
+                $currentDate->setTime(19,00);
+                return  $currentDate;
+           
+        } elseif ($this->isTimeToTimeFrequency()) {
+            $currentDate->setTime((int)$this->beginHour->format('H'),(int)$this->beginHour->format('i'));
+            return  $currentDate;
+        } else {
+          return  $this->beginDate;
+        }
+    }
+
+
+
+    public function getEndPromo(): DateTime
+    {
+        $currentDate = new DateTime();   
+        if ($this->isWeekendFrequency()) {
+            $dayOfWeek = (int) $currentDate->format('w');
+                // If it's Monday, return the same date
+                if ($dayOfWeek !== 1) {
+                    $daysToAdd = ($dayOfWeek === 0) ? 1 : (8 - $dayOfWeek); // Sunday is special: add 1 day
+                    $currentDate->modify("+$daysToAdd days");
+                }
+                $currentDate->setTime(7,00);
+                return  $currentDate;
+           
+        } elseif ($this->isTimeToTimeFrequency()) {
+            $currentDate->setTime((int)$this->endHour->format('H'),(int)$this->endHour->format('i'));
+            return  $currentDate;
+        } else {
+          return  $this->beginDate;
+        }
+    }
+
+
+    
+
+
     public function isBetterPromotionThan(Promotion $promotion): bool
     {
         $salePrice = $this->getPromotionPrice();

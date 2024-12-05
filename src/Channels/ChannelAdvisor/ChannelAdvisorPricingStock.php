@@ -121,6 +121,8 @@ class ChannelAdvisorPricingStock extends PriceStockParent
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 if ($promotion) {
                     $productArray[$code.'promoprice']= $promotion->getPromotionPrice() ;
+                    $productArray[$code.'startdate']= $promotion->getStartPromo()->format('Y-m-d H:i:s') ;
+                    $productArray[$code.'enddate']= $promotion->getEndPromo()->format('Y-m-d H:i:s') ;
                 }
             } else {
                 $productArray[$code.'enabled']= 0;
