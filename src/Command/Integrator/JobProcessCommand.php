@@ -39,6 +39,7 @@ class JobProcessCommand extends Command
                 if ($job->getExecutionTime()>600) {
                     $job->setStatus(Job::Status_Error);
                     $job->setEndDate(new DateTime());
+                    $manager->flush();
                 }
             }
             return Command::SUCCESS;
