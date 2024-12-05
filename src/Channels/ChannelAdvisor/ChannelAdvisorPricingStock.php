@@ -55,7 +55,7 @@ class ChannelAdvisorPricingStock extends PriceStockParent
         $header = ['sku', 'stock_laroca','stock_fbm', 'logistic_class',  'ecotax'];
         foreach ($saleChannels as $saleChannel) {
             $code = $saleChannel->getCode().'-';
-            array_push($header, $code.'enabled', $code.'price', $code.'promoprice');
+            array_push($header, $code.'enabled', $code.'price', $code.'promoprice',  $code.'promostartdate', $code.'promoenddate');
         }
 
         $skus = [];
@@ -121,8 +121,8 @@ class ChannelAdvisorPricingStock extends PriceStockParent
                 $promotion = $productMarketplace->getBestPromotionForNow();
                 if ($promotion) {
                     $productArray[$code.'promoprice']= $promotion->getPromotionPrice() ;
-                    $productArray[$code.'startdate']= $promotion->getStartPromo()->format('Y-m-d H:i:s') ;
-                    $productArray[$code.'enddate']= $promotion->getEndPromo()->format('Y-m-d H:i:s') ;
+                    $productArray[$code.'promostartdate']= $promotion->getStartPromo()->format('Y-m-d H:i:s') ;
+                    $productArray[$code.'promoenddate']= $promotion->getEndPromo()->format('Y-m-d H:i:s') ;
                 }
             } else {
                 $productArray[$code.'enabled']= 0;
