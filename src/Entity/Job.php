@@ -133,12 +133,14 @@ class Job
     }
 
 
-    public function getExecutionTime(){
+    public function getExecutionTime()
+    {
         $currentTime = new DateTime();
+
         $interval = $currentTime->diff($this->startDate);
-        return  ($interval->days * 24 * 60 * 60) + 
-                                                ($interval->h * 60 * 60) + 
-                                                ($interval->i * 60) + 
+        return  ($interval->days * 24 * 60 * 60) +
+                                                ($interval->h * 60 * 60) +
+                                                ($interval->i * 60) +
                                                 $interval->s;
     }
 

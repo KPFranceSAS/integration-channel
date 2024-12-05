@@ -50,6 +50,7 @@ class JobProcessCommand extends Command
         $output->writeln('Nb jobs '.count($jobToProcesss));
         if (count($jobToProcesss)>0) {
             foreach ($jobToProcesss as $jobToProcess) {
+                $jobToProcess->setStartDate(new DateTime());
                 $jobToProcess->setStatus(Job::Status_Processing);
             }
             $manager->flush();
@@ -59,7 +60,7 @@ class JobProcessCommand extends Command
                     $jobToProcess->setStartDate(new DateTime());
                     if ($jobToProcess->getJobType()==Job::Type_Sync_Products) {
                         $productUpdater = $this->productSyncAggregator->getProductSync($jobToProcess->getChannel()->getCode());
-                        if($productUpdater){
+                        if ($productUpdater) {
                             $productUpdater->syncProducts();
                         }
                     } elseif ($jobToProcess->getJobType()==Job::Type_Sync_Prices) {
@@ -67,21 +68,23 @@ class JobProcessCommand extends Command
                         if ($priceUpdater) {
                             $priceUpdater->send();
                             $stockUpdater = $this->stockAggregator->getStock($jobToProcess->getChannel()->getCode());
-                            if($stockUpdater){
+                            if ($stockUpdater) {
                                 $stockUpdater->send();
                             }
                         } else {
                             $priceStockUpdater = $this->priceStockAggregator->getPriceStock($jobToProcess->getChannel()->getCode());
-                            if($priceStockUpdater){
+                            if ($priceStockUpdater) {
                                 $priceStockUpdater->send();
                             }
                         }
                         $jobToProcess->setEndDate(new DateTime());
                         $jobToProcess->setStatus(Job::Status_Finished);
-                        $manager->flush();
+                        
                     }
+                    $manager->flush();
                 } catch (Exception $e) {
                     $jobToProcess->setStatus(Job::Status_Error);
+                    $manager->flush();
                 }
             }
         } else {
