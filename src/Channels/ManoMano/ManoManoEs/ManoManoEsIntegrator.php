@@ -9,7 +9,7 @@ use Exception;
 
 class ManoManoEsIntegrator extends ManoManoIntegratorParent
 {
-    final public const MANOMANO_ES = '000785';
+    final public const MANOMANO_ES = 'KP135806';
 
 
     public function getChannel()
@@ -26,6 +26,6 @@ class ManoManoEsIntegrator extends ManoManoIntegratorParent
 
     public function getCompanyIntegration($orderApi): string
     {
-        return BusinessCentralConnector::KP_FRANCE;
+        return BusinessCentralConnector::KIT_PERSONALIZACION_SPORT;
     }
 }
