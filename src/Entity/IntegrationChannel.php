@@ -43,6 +43,7 @@ class IntegrationChannel implements \Stringable
     final public const CHANNEL_PCCOMPONENTES='PCCOMPONENTES';
     final public const CHANNEL_CARREFOUR_ES='CARREFOUR_ES';
     final public const CHANNEL_CORTEINGLES='CORTEINGLES';
+    final public const CHANNEL_AMAZON_FR='AMAZON_FR';
 
     use TraitTimeUpdated;
 

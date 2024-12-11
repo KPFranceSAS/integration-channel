@@ -19,6 +19,8 @@ abstract class BusinessCentralConnector
 
     final public const KP_UK = "KP UK";
 
+    final public const TURISPORT = "TURISPORT SL";
+
 
     final public const EP_ACCOUNT = "accounts";
 
@@ -73,6 +75,8 @@ abstract class BusinessCentralConnector
     final public const EP_BUNDLE_CONTENT = "billOfMaterials";
     
     final public const EP_FEES_TAXES = "FeesAndTaxes";
+
+    public const EP_VENDORS = "vendors";
     
 
 
@@ -114,6 +118,8 @@ abstract class BusinessCentralConnector
     abstract protected function getAccountNumberForExpedition();
 
       
+
+  
 
     public function doDeleteRequest(string $endPoint): bool
     {
@@ -333,6 +339,18 @@ abstract class BusinessCentralConnector
         }
         throw new Exception($name . ' not found');
     }
+
+
+
+
+          /**
+     * Vendor
+     */
+    public function getAllVendors()
+    {
+        return $this->getElementsByArray(self::EP_VENDORS,null, true);
+    }
+
 
 
     public function getCompanies()

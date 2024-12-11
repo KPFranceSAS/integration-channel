@@ -41,7 +41,37 @@ class PcComponentesPriceStock extends MiraklPriceStockParent
                 [
                     'code'=>"dev-gratuita",
                     'value' => true
-                ]
+                ],
+                [
+                    'code'=>"gpsr-establecido",
+                    'value' => true
+                ],
+                [
+                    'code'=>"gpsr-denominacion",
+                    'value' => $product->getGsprName()
+                ],
+                [
+                    'code'=>"gpsr-direccion-calle",
+                    'value' => $product->getGsprAddress()
+                ],
+                [
+                    'code'=>"gpsr-direccion-ciudad",
+                    'value' => $product->getGsprCity()
+                ],
+                [
+                    'code'=>"gpsr-direccion-cp",
+                    'value' => $product->getGsprPostalCode()
+                ],
+                [
+                    'code'=>"gpsr-direccion-pais",
+                    'value' => $product->getGsprCountry()
+                ],
+                [
+                    'code'=>"gpsr-direccion-email",
+                    'value' => $product->getGsprEmail()
+                ],
+                
+
             ]
         ];
 

@@ -134,7 +134,9 @@ abstract class IntegratorParent
 
             try {
                 $this->logger->info('Creation of webOrder entity ');
+                $order = $this->transformBeforePersist($order);
                 $webOrder = WebOrder::createOneFrom($order, $this->getChannel());
+
                 $this->logger->info('WebOrder entity created for '.$this->getChannel());
                 $webOrder->setCompany($company);
                 $this->manager->persist($webOrder);
@@ -187,6 +189,15 @@ abstract class IntegratorParent
     protected function checkAfterIntegration(WebOrder $order, $orderApi)
     {
     }
+
+    protected function transformBeforePersist($orderApi)
+    {
+        return $orderApi;
+    }
+
+
+
+    
 
 
 

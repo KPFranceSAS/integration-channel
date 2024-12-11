@@ -306,6 +306,30 @@ class Product implements \Stringable
     #[ORM\Column(nullable: true)]
     private ?float $canonDigital = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $gsprName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $gsprAddress = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $gsprEmail = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $gsprCountry = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $gsprCity = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $gsprPostalCode = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $gsprWebsite = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $gsprPhone = null;
+
 
 
     public function __construct()
@@ -1414,6 +1438,102 @@ class Product implements \Stringable
     public function setCanonDigital(?float $canonDigital): static
     {
         $this->canonDigital = $canonDigital;
+
+        return $this;
+    }
+
+    public function getGsprName(): ?string
+    {
+        return $this->gsprName;
+    }
+
+    public function setGsprName(?string $gsprName): static
+    {
+        $this->gsprName = $gsprName;
+
+        return $this;
+    }
+
+    public function getGsprAddress(): ?string
+    {
+        return $this->gsprAddress;
+    }
+
+    public function setGsprAddress(?string $gsprAddress): static
+    {
+        $this->gsprAddress = $gsprAddress;
+
+        return $this;
+    }
+
+    public function getGsprEmail(): ?string
+    {
+        return $this->gsprEmail;
+    }
+
+    public function setGsprEmail(?string $gsprEmail): static
+    {
+        $this->gsprEmail = $gsprEmail;
+
+        return $this;
+    }
+
+    public function getGsprCountry(): ?string
+    {
+        return $this->gsprCountry;
+    }
+
+    public function setGsprCountry(?string $gsprCountry): static
+    {
+        $this->gsprCountry = $gsprCountry;
+
+        return $this;
+    }
+
+    public function getGsprCity(): ?string
+    {
+        return $this->gsprCity;
+    }
+
+    public function setGsprCity(?string $gsprCity): static
+    {
+        $this->gsprCity = $gsprCity;
+
+        return $this;
+    }
+
+    public function getGsprPostalCode(): ?string
+    {
+        return $this->gsprPostalCode;
+    }
+
+    public function setGsprPostalCode(?string $gsprPostalCode): static
+    {
+        $this->gsprPostalCode = $gsprPostalCode;
+
+        return $this;
+    }
+
+    public function getGsprWebsite(): ?string
+    {
+        return $this->gsprWebsite;
+    }
+
+    public function setGsprWebsite(?string $gsprWebsite): static
+    {
+        $this->gsprWebsite = $gsprWebsite;
+
+        return $this;
+    }
+
+    public function getGsprPhone(): ?string
+    {
+        return $this->gsprPhone;
+    }
+
+    public function setGsprPhone(?string $gsprPhone): static
+    {
+        $this->gsprPhone = $gsprPhone;
 
         return $this;
     }
