@@ -68,6 +68,7 @@ class SaleChannelCrudController extends AdminCrudController
                 BusinessCentralConnector::KIT_PERSONALIZACION_SPORT => BusinessCentralConnector::KIT_PERSONALIZACION_SPORT,
                 BusinessCentralConnector::KP_FRANCE => BusinessCentralConnector::KP_FRANCE,
                 BusinessCentralConnector::KP_UK => BusinessCentralConnector::KP_UK,
+                BusinessCentralConnector::TURISPORT => BusinessCentralConnector::TURISPORT,
             ]),
             AssociationField::new('integrationChannel', 'Integration Channel'),
             ColorField::new('color', 'Color'),

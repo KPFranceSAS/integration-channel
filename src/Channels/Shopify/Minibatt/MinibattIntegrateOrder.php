@@ -30,6 +30,6 @@ class MinibattIntegrateOrder extends ShopifyIntegrateOrder
 
     public function getCompanyIntegration($orderApi)
     {
-        return BusinessCentralConnector::KIT_PERSONALIZACION_SPORT;
+        return BusinessCentralConnector::TURISPORT;
     }
 }

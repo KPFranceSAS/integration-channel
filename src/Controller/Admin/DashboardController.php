@@ -174,8 +174,8 @@ class DashboardController extends AbstractDashboardController
             MenuItem::subMenu('Orders', 'fa fa-shopping-cart')
                 ->setSubItems([
                     
-                    MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)
-                        ->setController(AliexpressOrderCrudController::class),
+                    /*MenuItem::linkToCrud('Aliexpress', 'fab fa-alipay', WebOrder::class)
+                        ->setController(AliexpressOrderCrudController::class),*/
                     MenuItem::linkToCrud('Amazon', 'fab fa-amazon', WebOrder::class)
                         ->setController(AmazonOrderCrudController::class),
                      MenuItem::linkToCrud('Boulanger', 'fas fa-tv', WebOrder::class)
@@ -202,14 +202,14 @@ class DashboardController extends AbstractDashboardController
                         ->setController(MinibattOrderCrudController::class),
                     MenuItem::linkToCrud('Miravia', 'fas fa-sun', WebOrder::class)
                         ->setController(AriseOrderCrudController::class),
-                    MenuItem::linkToCrud('Owlet Care', 'fas fa-baby', WebOrder::class)
+                    /*MenuItem::linkToCrud('Owlet Care', 'fas fa-baby', WebOrder::class)
                         ->setController(OwletCareOrderCrudController::class),
                     MenuItem::linkToCrud('Pax B2C', 'fas fa-cannabis', WebOrder::class)
-                        ->setController(PaxB2COrderCrudController::class),
+                        ->setController(PaxB2COrderCrudController::class),*/
                     MenuItem::linkToCrud('PcComponentes', 'fas fa-laptop-house', WebOrder::class)
                         ->setController(PcComponentesOrderCrudController::class),    
-                    MenuItem::linkToCrud('Reencle', 'far fa-trash-alt', WebOrder::class)
-                        ->setController(ReencleOrderCrudController::class),
+                    /*MenuItem::linkToCrud('Reencle', 'far fa-trash-alt', WebOrder::class)
+                        ->setController(ReencleOrderCrudController::class),*/
                     MenuItem::linkToCrud('Worten', 'fas fa-tv', WebOrder::class)
                         ->setController(WortenOrderCrudController::class),
                     

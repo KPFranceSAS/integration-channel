@@ -217,7 +217,8 @@ class WebOrderCrudController extends AdminCrudController
             BusinessCentralConnector::GADGET_IBERIA => BusinessCentralConnector::GADGET_IBERIA,
             BusinessCentralConnector::KIT_PERSONALIZACION_SPORT => BusinessCentralConnector::KIT_PERSONALIZACION_SPORT,
             BusinessCentralConnector::KP_FRANCE => BusinessCentralConnector::KP_FRANCE,
-            BusinessCentralConnector::KP_UK => BusinessCentralConnector::KP_UK
+            BusinessCentralConnector::KP_UK => BusinessCentralConnector::KP_UK,
+            BusinessCentralConnector::TURISPORT => BusinessCentralConnector::TURISPORT,
         ];
     }
 

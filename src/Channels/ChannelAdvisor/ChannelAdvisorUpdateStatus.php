@@ -65,7 +65,7 @@ class ChannelAdvisorUpdateStatus extends UpdateStatusParent
         );
 
 
-        if(!in_array($order->getSubchannel(), ['CDiscount'])) {
+        if (!in_array($order->getSubchannel(), ['CDiscount'])) {
             $businessCentralConnector   = $this->getBusinessCentralConnector($order->getCompany());
             $this->addLogToOrder($order, 'Retrieve invoice content ' . $invoice['number']);
             $contentPdf  = $businessCentralConnector->getContentInvoicePdf($invoice['id']);

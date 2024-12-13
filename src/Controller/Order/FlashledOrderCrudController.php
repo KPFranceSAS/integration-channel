@@ -31,6 +31,7 @@ class FlashledOrderCrudController extends WebOrderCrudController
     {
         return  [
             BusinessCentralConnector::KIT_PERSONALIZACION_SPORT => BusinessCentralConnector::KIT_PERSONALIZACION_SPORT,
+            BusinessCentralConnector::TURISPORT => BusinessCentralConnector::TURISPORT,
         ];
     }
 
