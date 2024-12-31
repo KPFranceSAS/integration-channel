@@ -51,5 +51,22 @@ abstract class MiraklUpdateStatusParent extends UpdateStatusParent
 
     abstract protected function getCodeCarrier(string $codeCarrier): ?string;
 
-    abstract protected function getNameCarrier(string $codeCarrier): ?string;
+
+    protected function getNameCarrier(string $carrierCode): ?string
+    {
+        if ($carrierCode ==  WebOrder::CARRIER_DHL) {
+            return "DHL Parcel Spain";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
+            return "UPS";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
+            return "DB Schenker";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_CORREOSEXP) {
+            return "Correos Express";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_CBL) {
+            return "CBL Logistic";
+        }  elseif ($carrierCode ==  WebOrder::CARRIER_SENDING) {
+            return "Sending";
+        }
+        return $carrierCode;
+    }
 }

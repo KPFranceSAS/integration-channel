@@ -32,6 +32,8 @@ class WortenUpdateStatus extends MiraklUpdateStatusParent
             return "DB Schenker";
         }  elseif ($carrierCode ==  WebOrder::CARRIER_CBL) {
             return "CBL Logistic";
+        }  elseif ($carrierCode ==  WebOrder::CARRIER_SENDING) {
+            return "Sending";
         }
         return $carrierCode;
     }

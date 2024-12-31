@@ -29,6 +29,8 @@ class CorteInglesUpdateStatus extends MiraklUpdateStatusParent
             return "DB Schenker";
         } elseif ($carrierCode ==  WebOrder::CARRIER_CBL) {
             return "CBL Logistic";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_SENDING) {
+            return "Sending";
         }
         return $carrierCode;
     }
@@ -45,9 +47,9 @@ class CorteInglesUpdateStatus extends MiraklUpdateStatusParent
                 $this->addOnlyLogToOrderIfNotExists($order, 'Order status in BC > '.$statusSaleOrder['statusLabel']);
                 $this->checkShipmentIsLate($order);
             } else {
-                if($statusSaleOrder['statusCode']=="0") {
+                if ($statusSaleOrder['statusCode']=="0") {
                     $statusLabel = 'Waiting for picking';
-                } elseif($statusSaleOrder['statusCode']=="1") {
+                } elseif ($statusSaleOrder['statusCode']=="1") {
                     $statusLabel = 'Processing picking';
                 } else {
                     $statusLabel = 'Ended picking';
@@ -59,14 +61,14 @@ class CorteInglesUpdateStatus extends MiraklUpdateStatusParent
         }
 
         if (in_array($statusSaleOrder['statusCode'], ["3", "4"])) {
-            $this->addOnlyLogToOrderIfNotExists($order, 'Warehouse shipment posted in the ERP with number ' . $statusSaleOrder['ShipmentNo']);          
+            $this->addOnlyLogToOrderIfNotExists($order, 'Warehouse shipment posted in the ERP with number ' . $statusSaleOrder['ShipmentNo']);
             $this->addOnlyLogToOrderIfNotExists($order, 'Order was prepared by warehouse and marked as fulfilled by '.$statusSaleOrder['shipmentCompany']);
                                
             $tracking = $statusSaleOrder['trackingNumber'];
             $trackingUrl = $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $tracking, null);
-            if(strlen((string) $tracking) &&  $trackingUrl) {
+            if (strlen((string) $tracking) &&  $trackingUrl) {
                 $order->setTrackingUrl($trackingUrl);
-                $order->setTrackingCode($tracking);                   
+                $order->setTrackingCode($tracking);
                 $orderApi=$order->getOrderContent();
 
                 $result = $this->getMiraklApi()->markOrderAsFulfill(

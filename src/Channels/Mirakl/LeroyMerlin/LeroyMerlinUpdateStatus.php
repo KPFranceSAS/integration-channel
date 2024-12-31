@@ -34,8 +34,10 @@ class LeroyMerlinUpdateStatus extends MiraklUpdateStatusParent
             return "UPS";
         } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
             return "DB Schenker";
-        }  elseif ($carrierCode ==  WebOrder::CARRIER_CBL) {
+        } elseif ($carrierCode ==  WebOrder::CARRIER_CBL) {
             return "CBL Logistic";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_SENDING) {
+            return "Sending";
         }
         return $carrierCode;
     }
