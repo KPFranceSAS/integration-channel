@@ -84,12 +84,27 @@ abstract class ShopifyApiParent implements ApiInterface
 
 
 
-    public function getAllShopifyPaiements(): array
+
+    public function getPayouts($params = []): array
+    {
+        return $this->getPaginatedElements(
+            "shopify_payments/payouts",
+            [],
+            $params,
+            'payouts'
+        );
+    }
+
+
+
+
+
+    public function getAllShopifyPaiements($params = []): array
     {
         return $this->getPaginatedElements(
             "shopify_payments/balance/transactions",
             [],
-            [],
+            $params,
             'transactions'
         );
     }
@@ -118,6 +133,15 @@ abstract class ShopifyApiParent implements ApiInterface
                 "number" => $orderNumber,
             ]
         );
+    }
+
+
+    public function getOrderById(int $orderNumber)
+    {
+        $response = $this->client->get(
+            'orders/'.$orderNumber
+        );
+        return  $response->getDecodedBody()['order'];
     }
     
 
@@ -179,7 +203,7 @@ abstract class ShopifyApiParent implements ApiInterface
         $inventoryLevels = [];
         $products = $this->getAllProducts();
         foreach ($products as $product) {
-            if($product['status']=='active') {
+            if ($product['status']=='active') {
                 foreach ($product['variants'] as $variant) {
                     $inventoryLevels[] = [
                         'sku' => $variant['sku'],
@@ -210,8 +234,8 @@ abstract class ShopifyApiParent implements ApiInterface
     public function getFulfilmentOrder(string $orderId)
     {
         $fulfilmentOrders = $this->client->get('orders/'.$orderId.'/fulfillment_orders')->getDecodedBody();
-        foreach($fulfilmentOrders['fulfillment_orders'] as $fulfilmentOrder) {
-            if($fulfilmentOrder['status']=='open') {
+        foreach ($fulfilmentOrders['fulfillment_orders'] as $fulfilmentOrder) {
+            if ($fulfilmentOrder['status']=='open') {
                 return $fulfilmentOrder;
             }
         }

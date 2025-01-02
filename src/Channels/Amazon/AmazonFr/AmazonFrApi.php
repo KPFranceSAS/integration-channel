@@ -16,7 +16,7 @@ class AmazonFrApi extends AmazonApiParent
 
     public function getMarketplaceId()
     {
-        return Marketplace::fromCountry('FR')->id();
+        return Marketplace::fromCountry('ES')->id();
     }
     
 }

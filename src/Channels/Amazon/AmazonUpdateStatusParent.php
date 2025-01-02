@@ -25,9 +25,9 @@ abstract class AmazonUpdateStatusParent extends UpdateStatusParent
 
         $result = $this->getAmazonApi()->markOrderAsFulfill(
             $order->getExternalNumber(),
+            $order->getContent(),
             $codeCarrier,
             $codeCarrier,
-            $this->trackingAggregator->getTrackingUrlBase($order->getCarrierService(), $trackingNumber),
             str_replace("/", "-", (string) $trackingNumber)
         );
         if ($result) {
@@ -59,10 +59,10 @@ abstract class AmazonUpdateStatusParent extends UpdateStatusParent
         $this->addLogToOrder($order, 'Retrieved invoice content ' . $invoice['number']);
         $this->addLogToOrder($order, 'Start sending invoice to Channel Advisor');
 
-
-        $sendFile = $this->getAmazonApi()->sendInvoice($orderApi->ProfileID, $orderApi->ID, $invoice['totalAmountIncludingTax'], $invoice['totalTaxAmount'], $invoice['number'], $contentPdf);
+        
+        $sendFile = $this->getAmazonApi()->sendInvoice($order->getExternalNumber(), $invoice['totalAmountIncludingTax'], $invoice['totalTaxAmount'], $invoice['number'], $contentPdf);
         if (!$sendFile) {
-            throw new \Exception('Upload  was not done uploaded on ChannelAdvisor for ' . $invoice['number']);
+            throw new \Exception('Upload  was not done uploaded on Amazon for ' . $invoice['number']);
         }
     }
 
@@ -82,6 +82,22 @@ abstract class AmazonUpdateStatusParent extends UpdateStatusParent
             return "DB Schenker";
         } elseif ($carrierCode ==  WebOrder::CARRIER_SENDING) {
             return "Sending";
+        }
+        return null;
+    }
+
+
+
+    protected function getService(string $carrierCode): ?string
+    {
+        if ($carrierCode ==  WebOrder::CARRIER_DHL) {
+            return "DHL";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_UPS) {
+            return "UPS";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_DBSCHENKER) {
+            return "DB Schenker";
+        } elseif ($carrierCode ==  WebOrder::CARRIER_SENDING) {
+            return "ENTRAGA";
         }
         return null;
     }

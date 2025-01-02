@@ -1,5 +1,5 @@
 
-<p>New settlement for {{settlement.channel}} has been created</p>
+<p>New settlement for {{settlement.channel}} has been created (#{{settlement.number}})</p>
 <p>A payment has been proceeded of {{settlement.totalTransfer}} on {{settlement.bank}}</p>
 {% for marketplaceInvoice in settlement.getMarketplaceInvoices %}
       <p>Marketplace invoice {{marketplaceInvoice.getDocumentNumber()}} registred as  {{ marketplaceInvoice.getErpDocumentNumber()}}</p>

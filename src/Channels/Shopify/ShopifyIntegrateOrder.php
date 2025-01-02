@@ -17,6 +17,10 @@ abstract class ShopifyIntegrateOrder extends IntegratorParent
     }
 
 
+    public function getSuffixOrder(){
+        return $this->getSuffix();
+    }
+
 
     public function transformToAnBcOrder($orderApi): SaleOrder
     {
