@@ -39,12 +39,13 @@ class FlashledConnectCommand extends Command
         //$payouts = $this->flashledApi->getPayouts($params);
         //dd($payouts);
 
-        $transactions = $this->flashledApi->getAllShopifyPaiements(["payout_id"=>124437856599]);
-        dd($transactions);
+        //$transactions = $this->flashledApi->getAllShopifyPaiements(["6384313827671"=>124437856599]);
+        //dd($transactions);
 
 
         //dd($this->flashledApi->getOrderById(6362788495703));
         
+       dd($this->flashledApi->getAllTransactions('6384313827671'));
         
 
         return 1;

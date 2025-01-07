@@ -96,7 +96,13 @@ abstract class ShopifyApiParent implements ApiInterface
     }
 
 
-
+    public function getPaiementForCheckout($checkoutid, $paymentId): array
+    {
+        $response = $this->client->get(
+            'checkouts/'.$checkoutid.'/payments/'.$paymentId
+        );
+        return  $response->getDecodedBody()['payment'];
+    }
 
 
     public function getAllShopifyPaiements($params = []): array
@@ -122,6 +128,7 @@ abstract class ShopifyApiParent implements ApiInterface
             'transactions'
         );
     }
+
 
 
     public function getOrder(string $orderNumber)
