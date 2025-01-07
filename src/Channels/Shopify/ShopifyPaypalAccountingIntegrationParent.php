@@ -195,7 +195,7 @@ abstract class ShopifyPaypalAccountingIntegrationParent
         $contenu = $this->twig->render('email/integrationSetllement.html.twig', [
             'settlement' => $settlement,
         ]);
-        $this->mailer->sendEmail('['.$this->getChannel().'] Payment integration for payout #'.$settlement->getNumber(), $contenu, 'tesoreria@kp-group.eu');
+        $this->mailer->sendEmail('['.$this->getChannel().'] Payment integration for payout #'.$settlement->getNumber(), $contenu, ['tesoreria@kp-group.eu', 'devops@kpsport.com']);
         $this->addLogToOrder($settlement, 'Email confirmation sent');
         $this->manager->flush();
         return true;

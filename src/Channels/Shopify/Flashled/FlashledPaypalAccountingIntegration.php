@@ -36,22 +36,20 @@ class FlashledPaypalAccountingIntegration extends ShopifyPaypalAccountingIntegra
 
     protected function getJournalName(): string
     {
-        //return 'FLASHLED';
-        return 'MOLLIE';
+        return 'FLASHLED';
     }
 
 
     protected function getAccountNumberForFeesMarketplace(): string
     {
         
-        //return '6690009';
-        return '6690001';
+       return '6690009';
+       
     }
 
 
     protected function getCompanyIntegration() :  string
     {
-        return BusinessCentralConnector::KIT_PERSONALIZACION_SPORT;
         return BusinessCentralConnector::TURISPORT;
     }
 
