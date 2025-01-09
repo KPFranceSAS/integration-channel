@@ -13,7 +13,6 @@ use App\Service\Aggregator\ApiAggregator;
 use App\Service\Aggregator\IntegratorAggregator;
 use DateInterval;
 use DateTime;
-use DateTimeZone;
 use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use Psr\Log\LoggerInterface;
@@ -79,16 +78,25 @@ abstract class ShopifyPaypalAccountingIntegrationParent
 
 
 
-    public function integrateAllSettlements()
+    public function integrateAllSettlements($date = null)
     {
-       $orders = $this->getAllOrders();
-       if(count($orders)==0){
-           $this->logger->info('No orders to integrate');
-           return;
-       }
+
+        if($date){
+            $dateMin = DateTime::createFromFormat('Y-m-d', $date);
+        } else {
+
+            $dateMin = new DateTime();
+            $dateMin->sub(new DateInterval('P1D'));
+        }
+
+        $orders = $this->getAllOrders($dateMin);
+        if (count($orders)==0) {
+            $this->logger->info('No orders to integrate');
+            return;
+        }
 
         
-        $settlement = $this->generateSettlementEntity();
+        $settlement = $this->generateSettlementEntity($dateMin);
         
         $this->manager->persist($settlement);
         $this->manager->flush();
@@ -98,11 +106,11 @@ abstract class ShopifyPaypalAccountingIntegrationParent
         $paypalFees = 0;
         $paypalReceived = 0;
 
-        foreach($orders  as $order){
+        foreach ($orders as $order) {
             $orderContent = $order->getOrderContent();
             $transactions = $this->getShopifyApi()->getAllTransactions($orderContent['id']);
-            foreach($transactions as $transaction){
-                if( $transaction['gateway'] =='paypal'){
+            foreach ($transactions as $transaction) {
+                if ($transaction['gateway'] =='paypal') {
                     $settlmentTransaction = $this->generateSettlementTransactionSaleOrder(floatval($transaction['amount']), $order);
                     $settlement->addSettlementTransaction($settlmentTransaction);
                     $paypalFees = $paypalFees + floatval($transaction['receipt']['fee_amount']);
@@ -130,7 +138,7 @@ abstract class ShopifyPaypalAccountingIntegrationParent
         $this->addLogToOrder($settlement, 'Registration of all transactions in the journal  '.$this->getCompanyIntegration().' of purchase order');
         foreach ($settlement->getSettlementTransactions() as $transaction) {
             try {
-                $customerPayment = $this->transformSettlementCustomerPayment($transaction);
+                $customerPayment = $this->transformSettlementCustomerPayment($transaction, $dateMin);
                 $settlement->addLog('Creation of transaction in journal '. json_encode($customerPayment->transformToArray()));
                 $paymentBc=$connector->createJournalLine($customerJournal['id'], $customerPayment->transformToCreate());
                 $paymentBc=$connector->updateJournalLine($customerJournal['id'], $paymentBc['id'], $paymentBc['@odata.etag'], $customerPayment->transformTo1stPatch());
@@ -159,26 +167,25 @@ abstract class ShopifyPaypalAccountingIntegrationParent
 
 
 
-    public function getAllOrders()
+    public function getAllOrders(DateTime $dateMin)
     {
-        $dateMin = new DateTime();
-        $dateMin->sub(new DateInterval('P7D'));    
+        
         $queryBuilder = $this->manager->createQueryBuilder();
         $query = $queryBuilder
             ->select('o')
             ->from(WebOrder::class, 'o')
-            ->where('o.erpDocument = :source')
-            ->andWhere('o.createdAt > :date')
+            ->where('o.purchaseDate < :dateEnd')
+            ->andWhere('o.purchaseDate > :dateStart')
             ->andWhere('o.channel = :channel')
             ->setParameter('channel', $this->getChannel())
-            ->setParameter('date', $dateMin->format('Y-m-d H:i:s'))
-            ->setParameter('source', WebOrder::DOCUMENT_INVOICE)
+            ->setParameter('dateStart', $dateMin->format('Y-m-d'). ' 00:00:00')
+            ->setParameter('dateEnd', $dateMin->format('Y-m-d'). ' 23:59:59')
             ->getQuery();
 
         $orders = $query->getResult();
         $orderPaypals = [];
-        foreach($orders as $order){
-            if($this->canBeIntegrated($order)){
+        foreach ($orders as $order) {
+            if ($this->canBeIntegrated($order)) {
                 $orderPaypals[] = $order;
             }
         }
@@ -205,17 +212,17 @@ abstract class ShopifyPaypalAccountingIntegrationParent
     
 
 
-    protected function transformSettlementCustomerPayment(SettlementTransaction $settlementTransaction) : JournalLine
+    protected function transformSettlementCustomerPayment(SettlementTransaction $settlementTransaction, DateTime $dateMin) : JournalLine
     {
         $customerPayment = new JournalLine();
         $customerPayment->amount = $settlementTransaction->getAmount();
         $customerPayment->accountNumber = $this->getBankNumber();
         $customerPayment->balAccountType = $settlementTransaction->getBcEntityType();
         $customerPayment->BalAccountNo = $settlementTransaction->getBcEntityNumber();
-        $customerPayment->postingDate = date('Y-m-d');
+        $customerPayment->postingDate = $dateMin->format('Y-m-d');
         $customerPayment->externalDocumentNumber = 'Payout #'.$settlementTransaction->getSettlement()->getNumber();
         $customerPayment->comment = $this->getChannel(). ' #'.$settlementTransaction->getReferenceNumber();
-        $customerPayment->description =$settlementTransaction->getTransactionType() .' '.$settlementTransaction->getDocumentNumber();
+        $customerPayment->description =$settlementTransaction->getTransactionType() .' '.$settlementTransaction->getReferenceNumber();
         $customerPayment->documentType = 'Payment';
         $customerPayment->accountType = 'Bank account';
         return $customerPayment;
@@ -256,22 +263,22 @@ abstract class ShopifyPaypalAccountingIntegrationParent
     protected function canBeIntegrated(WebOrder $webOrder): bool
     {
         $orderContent = $webOrder->getOrderContent();
-        if(!in_array('paypal',$orderContent['payment_gateway_names'])){
-        return false;
+        if (!in_array('paypal', $orderContent['payment_gateway_names'])) {
+            return false;
         }
         $invoices = $this->manager->getRepository(SettlementTransaction::class)->findBy([
-                'documentNumber'=> $webOrder->getInvoiceErp(),
+                'referenceNumber'=> $webOrder->getExternalNumber(),
         ]);
         return count($invoices)==0;
     }
 
 
-    protected function generateSettlementEntity(): Settlement
+    protected function generateSettlementEntity(DateTime $dateMin): Settlement
     {
        
         $settlement = new Settlement();
         $date = new DateTime();
-        $code = 'PAYPAL'.$date->format('YmdHis');
+        $code = 'PAYPAL-'.$dateMin->format('Y-m-d');
         $settlement->setStatus(Settlement::CREATION);
         $settlement->setChannel($this->getChannel());
         $settlement->setPostedDate($date);
