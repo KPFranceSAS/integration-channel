@@ -107,7 +107,8 @@ class ProductSaleChannel implements \Stringable
         return $this->product->getLaRocaBusinessCentralStock();
     }
 
-    public function hasStock(){
+    public function hasStock()
+    {
         return $this->getProductStock()>0;
     }
 
@@ -214,9 +215,9 @@ class ProductSaleChannel implements \Stringable
             }
 
             if ($this->overridePrice && $this->price && $this->price < ((100 + self::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {
-                $context->buildViolation('You do a selling price which is only '.self::TX_MARGIN.'% more than product cost '.$this->getProduct()->getUnitCost().'€')
-                            ->atPath('price')
-                            ->addViolation();
+                /* $context->buildViolation('You do a selling price which is only '.self::TX_MARGIN.'% more than product cost '.$this->getProduct()->getUnitCost().'€')
+                             ->atPath('price')
+                             ->addViolation();*/
             }
         }
     }

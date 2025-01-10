@@ -158,22 +158,22 @@ class Promotion implements \Stringable
 
     public function getStartPromo(): DateTime
     {
-        $currentDate = new DateTime();   
+        $currentDate = new DateTime();
         if ($this->isWeekendFrequency()) {
             $dayOfWeek = (int) $currentDate->format('w');
-                // If it's Friday, return the same date
-                if ($dayOfWeek !== 5) {
-                    $daysToSubtract = ($dayOfWeek < 5) ? $dayOfWeek + 2 : $dayOfWeek - 5;
-                    $currentDate->modify("-$daysToSubtract days");
-                }
-                $currentDate->setTime(19,00);
-                return  $currentDate;
+            // If it's Friday, return the same date
+            if ($dayOfWeek !== 5) {
+                $daysToSubtract = ($dayOfWeek < 5) ? $dayOfWeek + 2 : $dayOfWeek - 5;
+                $currentDate->modify("-$daysToSubtract days");
+            }
+            $currentDate->setTime(19, 00);
+            return  $currentDate;
            
         } elseif ($this->isTimeToTimeFrequency()) {
-            $currentDate->setTime((int)$this->beginHour->format('H'),(int)$this->beginHour->format('i'));
+            $currentDate->setTime((int)$this->beginHour->format('H'), (int)$this->beginHour->format('i'));
             return  $currentDate;
         } else {
-          return  $this->beginDate;
+            return  $this->beginDate;
         }
     }
 
@@ -181,22 +181,22 @@ class Promotion implements \Stringable
 
     public function getEndPromo(): DateTime
     {
-        $currentDate = new DateTime();   
+        $currentDate = new DateTime();
         if ($this->isWeekendFrequency()) {
             $dayOfWeek = (int) $currentDate->format('w');
-                // If it's Monday, return the same date
-                if ($dayOfWeek !== 1) {
-                    $daysToAdd = ($dayOfWeek === 0) ? 1 : (8 - $dayOfWeek); // Sunday is special: add 1 day
-                    $currentDate->modify("+$daysToAdd days");
-                }
-                $currentDate->setTime(7,00);
-                return  $currentDate;
+            // If it's Monday, return the same date
+            if ($dayOfWeek !== 1) {
+                $daysToAdd = ($dayOfWeek === 0) ? 1 : (8 - $dayOfWeek); // Sunday is special: add 1 day
+                $currentDate->modify("+$daysToAdd days");
+            }
+            $currentDate->setTime(7, 00);
+            return  $currentDate;
            
         } elseif ($this->isTimeToTimeFrequency()) {
-            $currentDate->setTime((int)$this->endHour->format('H'),(int)$this->endHour->format('i'));
+            $currentDate->setTime((int)$this->endHour->format('H'), (int)$this->endHour->format('i'));
             return  $currentDate;
         } else {
-          return  $this->endDate;
+            return  $this->endDate;
         }
     }
 
@@ -385,9 +385,9 @@ class Promotion implements \Stringable
                         $discountPrice = $this->getPromotionPrice();
                         $discount = ($price-$discountPrice)/$price;
                         if ($discount>0.7) {
-                            $context->buildViolation('You do promotion of 70% and more on '.$this->productSaleChannel)
+                            /*$context->buildViolation('You do promotion of 70% and more on '.$this->productSaleChannel)
                             ->atPath($path)
-                            ->addViolation();
+                            ->addViolation();*/
                         }
                     }
                 }
@@ -396,9 +396,9 @@ class Promotion implements \Stringable
             if ($this->overrided === true) {
             } else {
                 if ($this->getPromotionPrice() && $this->getPromotionPrice() < ((100 + ProductSaleChannel::TX_MARGIN)/100) * $this->getProduct()->getUnitCost()) {
-                    $context->buildViolation('You do promotion on final price '.$this->getPromotionPrice().$this->getSaleChannel()->getCurrencyCode().' where result have only '.ProductSaleChannel::TX_MARGIN.'% more than product cost ('.$this->getProduct()->getUnitCost().'EUR) on '.$this->productSaleChannel)
+                    /*$context->buildViolation('You do promotion on final price '.$this->getPromotionPrice().$this->getSaleChannel()->getCurrencyCode().' where result have only '.ProductSaleChannel::TX_MARGIN.'% more than product cost ('.$this->getProduct()->getUnitCost().'EUR) on '.$this->productSaleChannel)
                                 ->atPath($path)
-                                ->addViolation();
+                                ->addViolation();*/
                 }
             }
         }
