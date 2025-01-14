@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Command\Channels\Shopify\Flashled;
+namespace App\Command\Channels\Shopify\Minibatt;
 
 
-use App\Channels\Shopify\Flashled\FlashledAccountingIntegration;
+use App\Channels\Shopify\Minibatt\MinibattAccountingIntegration;
 use DateInterval;
 use DateTime;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-#[\Symfony\Component\Console\Attribute\AsCommand('app:flashled-payout', 'Intgertae Flashled payout')]
-class FlashledPayoutCommand extends Command
+#[\Symfony\Component\Console\Attribute\AsCommand('app:minibatt-payout', 'Intgertae Minibatt payout')]
+class MinibattPayoutCommand extends Command
 {
-    public function __construct(private readonly FlashledAccountingIntegration $flashledApi)
+    public function __construct(private readonly MinibattAccountingIntegration $minibattAccountingIntegration)
     {
         parent::__construct();
     }
@@ -28,7 +28,7 @@ class FlashledPayoutCommand extends Command
             'date_min' => $dateMin->format('Y-m-d'),
             'status' => "paid"
         ];
-        $this->flashledApi->integrateAllSettlements($params);
+        $this->minibattAccountingIntegration->integrateAllSettlements($params);
 
         return Command::SUCCESS;
     }
