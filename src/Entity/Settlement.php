@@ -84,6 +84,15 @@ class Settlement
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $bank = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?float $adjustmentFees = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $reservedFundFees = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $retriedPayoutFees = null;
+
     public function __construct()
     {
         $this->settlementTransactions = new ArrayCollection();
@@ -94,6 +103,12 @@ class Settlement
     {
         return $this->id;
     }
+
+
+    public function getTotalFees(){
+        return $this->adjustmentFees + $this->reservedFundFees + $this->retriedPayoutFees + $this->totalCommissionsWithTax + $this->totalRefundCommisionsWithTax;
+    }
+
 
     public function getPostedDate(): ?\DateTimeInterface
     {
@@ -343,6 +358,42 @@ class Settlement
     public function setBank(?string $bank): static
     {
         $this->bank = $bank;
+
+        return $this;
+    }
+
+    public function getAdjustmentFees(): ?float
+    {
+        return $this->adjustmentFees;
+    }
+
+    public function setAdjustmentFees(?float $adjustmentFees): static
+    {
+        $this->adjustmentFees = $adjustmentFees;
+
+        return $this;
+    }
+
+    public function getReservedFundFees(): ?float
+    {
+        return $this->reservedFundFees;
+    }
+
+    public function setReservedFundFees(?float $reservedFundFees): static
+    {
+        $this->reservedFundFees = $reservedFundFees;
+
+        return $this;
+    }
+
+    public function getRetriedPayoutFees(): ?float
+    {
+        return $this->retriedPayoutFees;
+    }
+
+    public function setRetriedPayoutFees(?float $retriedPayoutFees): static
+    {
+        $this->retriedPayoutFees = $retriedPayoutFees;
 
         return $this;
     }

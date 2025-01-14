@@ -79,17 +79,9 @@ abstract class ShopifyAccountingIntegrationParent
 
 
 
-    public function integrateAllSettlements()
+    public function integrateAllSettlements( $params)
     {
-        /*$dateMin = new DateTime();
-        $dateMin->sub(new DateInterval('P7D'));*/
-
-        $dateMin = DateTime::createFromFormat('Y-m-d', '2025-01-01');
-        $params = [
-            'date_min' => $dateMin->format('Y-m-d'),
-            'status' => "paid"
-        ];
-
+       
 
         $payouts = $this->getShopifyApi()->getPayouts($params);
         foreach ($payouts as $payout) {
@@ -112,6 +104,9 @@ abstract class ShopifyAccountingIntegrationParent
             
             $this->manager->persist($settlementDb);
             $this->manager->flush();
+            $this->addAllSettlementsTransaction($settlementDb);
+            $this->manager->flush();
+
             $this->registerAllTransactionsJournal($settlementDb);
             $this->manager->flush();
             $this->sendNoticeEmail($settlementDb);
@@ -144,7 +139,7 @@ abstract class ShopifyAccountingIntegrationParent
     protected function registerAllTransactionsJournal(Settlement $settlement): void
     {
         $connector = $this->getConnector();
-        $this->addAllSettlementsTransaction($settlement);
+            
         $customerJournal = $connector->getGeneralJournalByCode($this->getJournalName());
         if (!$customerJournal) {
             $settlement->addError('Not found General journal '.$this->getJournalName().' in '.$this->getCompanyIntegration());
@@ -216,13 +211,35 @@ abstract class ShopifyAccountingIntegrationParent
                 ]);
                 $settlmentTransaction = $this->generateSettlementTransactionSaleOrder($transaction['amount'], $orderNumber , $webOrder);
                 $settlement->addSettlementTransaction($settlmentTransaction);
+            } elseif ($transaction['type'] == 'refund') {
+                $order = $this->getShopifyApi()->getOrderById($transaction['source_order_id']);
+                $orderNumber = $this->getSuffix().$order['order_number'];
+                $settlmentTransaction = $this->generateSettlementTransactionRefund($transaction['amount'], $orderNumber);
+                $settlement->addSettlementTransaction($settlmentTransaction);
+            } elseif ($transaction['type'] == 'dispute') {
+                $order = $this->getShopifyApi()->getOrderById($transaction['source_order_id']);
+                $orderNumber = $this->getSuffix().$order['order_number'];
+                $settlmentTransaction = $this->generateSettlementTransactionDispute($transaction['amount'], $orderNumber);
+                $settlement->addSettlementTransaction($settlmentTransaction);
+            } elseif ($transaction['type'] != 'payout') {
+                $settlmentTransaction = new SettlementTransaction();
+                $settlmentTransaction->setAmount($transaction['amount']);
+                $settlmentTransaction->setTransactionType($transaction['type']);
+                $settlmentTransaction->setReferenceNumber($transaction['source_type'].' '.$transaction['source_id']);
+                $settlmentTransaction->setBcEntityType('Customer');               
+                $settlmentTransaction->setBcEntityNumber($this->getByDefaultCustomer());
+                $settlmentTransaction->setDocumentNumber($transaction['source_id']);
             }
 
             
         }
 
-        $settlmentFee = $this->generateSettlementTransactionFee($settlement);
-        $settlement->addSettlementTransaction($settlmentFee);
+        if($settlement->getTotalFees()!=0){
+            $settlmentFee = $this->generateSettlementTransactionFee($settlement);
+            $settlement->addSettlementTransaction($settlmentFee);
+        }
+
+        
 
     }
 
@@ -246,14 +263,47 @@ abstract class ShopifyAccountingIntegrationParent
     }
 
 
+    protected function generateSettlementTransactionRefund($amount, $orderNumber): SettlementTransaction
+    {
+        $settlmentTransaction = new SettlementTransaction();
+        $settlmentTransaction->setAmount($amount);
+        $settlmentTransaction->setTransactionType('Refund');
+        $settlmentTransaction->setReferenceNumber($orderNumber);
+        $settlmentTransaction->setBcEntityType('Customer');               
+        $settlmentTransaction->setBcEntityNumber($this->getByDefaultCustomer());
+        $settlmentTransaction->setDocumentNumber($orderNumber);
+        return $settlmentTransaction;
+    }
+
+
+    protected function generateSettlementTransactionDispute($amount, $orderNumber): SettlementTransaction
+    {
+        $settlmentTransaction = new SettlementTransaction();
+        $settlmentTransaction->setAmount($amount);
+        $settlmentTransaction->setTransactionType('Chargeback');
+        $settlmentTransaction->setReferenceNumber($orderNumber);
+        $settlmentTransaction->setBcEntityType('Customer');               
+        $settlmentTransaction->setBcEntityNumber($this->getByDefaultCustomer());
+        $settlmentTransaction->setDocumentNumber($orderNumber);
+        return $settlmentTransaction;
+    }
+
+
+
+
+    
+
 
     protected function generateSettlementTransactionFee(Settlement $settlement): SettlementTransaction
     {
+
+        $fees = $settlement->getTotalFees();
+
         $transaction = new SettlementTransaction();
         $transaction->setTransactionType('Fees');
         $transaction->setReferenceNumber('Fees shopify payout #'.$settlement->getInternalId());
         $transaction->setBcEntityType('G/L Account');
-        $transaction->setAmount(-$settlement->getTotalCommissionsWithTax());
+        $transaction->setAmount(-$fees);
         $transaction->setBcEntityNumber($this->getAccountNumberForFeesMarketplace());
         return $transaction;
     }
@@ -286,6 +336,10 @@ abstract class ShopifyAccountingIntegrationParent
         $settlement->setTotalAmount($invoice['amount']);
         $settlement->setTotalCommissionsWithTax($invoice['summary']['charges_fee_amount']);
         $settlement->setTotalRefundCommisionsWithTax($invoice['summary']['refunds_fee_amount']);
+        $settlement->setAdjustmentFees($invoice['summary']['adjustments_fee_amount']);
+        $settlement->setReservedFundFees($invoice['summary']['reserved_funds_fee_amount']);
+        $settlement->setRetriedPayoutFees($invoice['summary']['retried_payouts_fee_amount']);
+        
         $settlement->setTotalOrders($invoice['summary']['charges_gross_amount']);
         $settlement->setTotalRefunds($invoice['summary']['refunds_gross_amount']);
         $settlement->setTotalSubscriptions(0);

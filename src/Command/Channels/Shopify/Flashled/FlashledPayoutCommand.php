@@ -27,10 +27,14 @@ class FlashledPayoutCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $dateMin = new DateTime();
+        $dateMin->sub(new DateInterval('P7D'));
+        $params = [
+            'date_min' => $dateMin->format('Y-m-d'),
+            'status' => "paid"
+        ];
+        $this->flashledApi->integrateAllSettlements($params);
 
-        $this->flashledApi->integrateAllSettlements();
-        
-
-        return 1;
+        return Command::SUCCESS;
     }
 }
