@@ -28,7 +28,7 @@ class FlashledConnectCommand extends Command
     {
 
         $dateMin = new DateTime();
-        $dateMin->sub(new DateInterval('P7D'));    
+        $dateMin->sub(new DateInterval('P7D'));
 
         $params = [
             'date_min' => $dateMin->format('Y-m-d'),
@@ -45,7 +45,7 @@ class FlashledConnectCommand extends Command
 
         //dd($this->flashledApi->getOrderById(6362788495703));
         
-       dd($this->flashledApi->getAllTransactions('6384313827671'));
+        dd($this->flashledApi->getAllTransactions('6398312284503'));
         
 
         return 1;

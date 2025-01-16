@@ -81,7 +81,7 @@ abstract class ShopifyPaypalAccountingIntegrationParent
     public function integrateAllSettlements($date = null)
     {
 
-        if($date){
+        if ($date) {
             $dateMin = DateTime::createFromFormat('Y-m-d', $date);
         } else {
 
@@ -110,11 +110,16 @@ abstract class ShopifyPaypalAccountingIntegrationParent
             $orderContent = $order->getOrderContent();
             $transactions = $this->getShopifyApi()->getAllTransactions($orderContent['id']);
             foreach ($transactions as $transaction) {
-                if ($transaction['gateway'] =='paypal') {
+                if ($transaction['gateway'] =='paypal' && $transaction['kind'] == 'sale') {
                     $settlmentTransaction = $this->generateSettlementTransactionSaleOrder(floatval($transaction['amount']), $order);
                     $settlement->addSettlementTransaction($settlmentTransaction);
                     $paypalFees = $paypalFees + floatval($transaction['receipt']['fee_amount']);
                     $paypalReceived = $paypalReceived + floatval($transaction['receipt']['gross_amount']);
+                } elseif ($transaction['gateway'] =='paypal' && $transaction['kind'] == 'refund') {
+                    $settlmentTransaction = $this->generateSettlementTransactionRefund(floatval($transaction['receipt']['gross_refund_amount']), $order);
+                    $settlement->addSettlementTransaction($settlmentTransaction);
+                    $paypalFees = $paypalFees - floatval($transaction['receipt']['fee_refund_amount']);
+                    $paypalReceived = $paypalReceived + floatval($transaction['receipt']['gross_refund_amount']);
                 }
             }
         }
@@ -237,6 +242,19 @@ abstract class ShopifyPaypalAccountingIntegrationParent
         $settlmentTransaction = new SettlementTransaction();
         $settlmentTransaction->setAmount($amount);
         $settlmentTransaction->setTransactionType('Sale order');
+        $settlmentTransaction->setReferenceNumber($webOrder->getExternalNumber());
+        $settlmentTransaction->setBcEntityType('Customer');
+        $settlmentTransaction->setBcEntityNumber($webOrder->getCustomerNumber());
+        $settlmentTransaction->setDocumentNumber($webOrder->documentInErp());
+        return $settlmentTransaction;
+    }
+
+
+    protected function generateSettlementTransactionRefund($amount, Weborder $webOrder): SettlementTransaction
+    {
+        $settlmentTransaction = new SettlementTransaction();
+        $settlmentTransaction->setAmount(-$amount);
+        $settlmentTransaction->setTransactionType('Refund');
         $settlmentTransaction->setReferenceNumber($webOrder->getExternalNumber());
         $settlmentTransaction->setBcEntityType('Customer');
         $settlmentTransaction->setBcEntityNumber($webOrder->getCustomerNumber());

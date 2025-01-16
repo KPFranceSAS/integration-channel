@@ -42,7 +42,7 @@ class MinibattPaypalAccountingIntegration extends ShopifyPaypalAccountingIntegra
     protected function getAccountNumberForFeesMarketplace(): string
     {
         
-       return '6690009';
+        return '6690009';
        
     }
 
