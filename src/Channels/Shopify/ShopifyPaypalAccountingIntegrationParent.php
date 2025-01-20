@@ -110,12 +110,12 @@ abstract class ShopifyPaypalAccountingIntegrationParent
             $orderContent = $order->getOrderContent();
             $transactions = $this->getShopifyApi()->getAllTransactions($orderContent['id']);
             foreach ($transactions as $transaction) {
-                if ($transaction['gateway'] =='paypal' && $transaction['kind'] == 'sale') {
+                if ($transaction['gateway'] =='paypal' && $transaction['kind'] == 'sale' && $transaction['status'] == 'success') {
                     $settlmentTransaction = $this->generateSettlementTransactionSaleOrder(floatval($transaction['amount']), $order);
                     $settlement->addSettlementTransaction($settlmentTransaction);
                     $paypalFees = $paypalFees + floatval($transaction['receipt']['fee_amount']);
                     $paypalReceived = $paypalReceived + floatval($transaction['receipt']['gross_amount']);
-                } elseif ($transaction['gateway'] =='paypal' && $transaction['kind'] == 'refund') {
+                } elseif ($transaction['gateway'] =='paypal' && $transaction['kind'] == 'refund'  && $transaction['status'] == 'success') {
                     $settlmentTransaction = $this->generateSettlementTransactionRefund(floatval($transaction['receipt']['gross_refund_amount']), $order);
                     $settlement->addSettlementTransaction($settlmentTransaction);
                     $paypalFees = $paypalFees - floatval($transaction['receipt']['fee_refund_amount']);
