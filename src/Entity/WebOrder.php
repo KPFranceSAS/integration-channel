@@ -47,12 +47,14 @@ class WebOrder implements \Stringable
 
     final public const  CARRIER_DHL = 'DHL';
     final public const  CARRIER_DPDUK = 'DPDUK';
+    final public const  CARRIER_DPD = 'DPD';
     final public const  CARRIER_ARISE = 'ARISE';
     final public const  CARRIER_FBA = 'FBA';
     final public const  CARRIER_UPS = 'UPS';
     final public const  CARRIER_DBSCHENKER = 'DBSCHENKER';
     final public const  CARRIER_SENDING = 'SENDING';
     final public const  CARRIER_CORREOSEXP = 'CORREOSEXP';
+    final public const  CARRIER_CORREOS = 'CORREOS';
     final public const  CARRIER_TNT = 'TNT';
     final public const  CARRIER_CBL = 'CBL';
     
@@ -529,19 +531,19 @@ class WebOrder implements \Stringable
                 return WebOrder::createOneFromDecathlon($orderApi);
 
             case IntegrationChannel::CHANNEL_PCCOMPONENTES:
-                return WebOrder::createOneFromPcComponentes($orderApi); 
+                return WebOrder::createOneFromPcComponentes($orderApi);
             
             case IntegrationChannel::CHANNEL_WORTEN:
-                return WebOrder::createOneFromWorten($orderApi);  
+                return WebOrder::createOneFromWorten($orderApi);
 
             case IntegrationChannel::CHANNEL_CORTEINGLES:
-                return WebOrder::createOneFromCorteIngles($orderApi);  
+                return WebOrder::createOneFromCorteIngles($orderApi);
 
             case IntegrationChannel::CHANNEL_LEROYMERLIN:
                 return WebOrder::createOneFromLeroyMerlin($orderApi);
             
             case IntegrationChannel::CHANNEL_CARREFOUR_ES:
-                    return WebOrder::createOneFromCarrefourEs($orderApi);    
+                return WebOrder::createOneFromCarrefourEs($orderApi);
                 
             
             case IntegrationChannel::CHANNEL_BOULANGER:
@@ -560,7 +562,7 @@ class WebOrder implements \Stringable
                 return WebOrder::createOneFromPaxUK($orderApi);
             
             case IntegrationChannel::CHANNEL_PAXEU:
-                    return WebOrder::createOneFromPaxEU($orderApi);    
+                return WebOrder::createOneFromPaxEU($orderApi);
 
             case IntegrationChannel::CHANNEL_FLASHLED:
                 return WebOrder::createOneFromFlashled($orderApi);
@@ -568,8 +570,8 @@ class WebOrder implements \Stringable
             case IntegrationChannel::CHANNEL_MINIBATT:
                 return WebOrder::createOneFromMinibatt($orderApi);
             
-                case IntegrationChannel::CHANNEL_REENCLE:
-                    return WebOrder::createOneFromReencle($orderApi);    
+            case IntegrationChannel::CHANNEL_REENCLE:
+                return WebOrder::createOneFromReencle($orderApi);
                 
             case IntegrationChannel::CHANNEL_FITBITCORPORATE:
                 return WebOrder::createOneFromFitbitCorporate($orderApi);
@@ -857,7 +859,7 @@ class WebOrder implements \Stringable
         $webOrder->setPurchaseDate(DatetimeUtils::transformFromIso8601($orderApi['created_date']));
         $webOrder->setContent($orderApi);
         $webOrder->setExternalNumber($orderApi['id']);
-        if(array_key_exists('channel', $orderApi)) {
+        if (array_key_exists('channel', $orderApi)) {
             $webOrder->addLog('Retrieved from '.$orderApi['channel']['code'].' '.$orderApi['channel']['label']);
         } else {
             $webOrder->addLog('Retrieved from marketplace');
@@ -905,7 +907,7 @@ class WebOrder implements \Stringable
 
     public function getOrderContent()
     {
-        if($this->isAFnacOrder()
+        if ($this->isAFnacOrder()
             ||$this->isAManoManoOrder()
             ||$this->isAMiraklOrder()
             ||$this->isAShopifyOrder()

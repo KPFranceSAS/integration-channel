@@ -234,15 +234,16 @@ abstract class IntegratorParent
                 $saleOrder->shippingAgent="DPD1";
                 $saleOrder->shippingAgentService="DPD32";
                 $saleOrder->locationCode=WebOrder::DEPOT_3PLUK;
-            } elseif ($order->getChannel()==IntegrationChannel::CHANNEL_FLASHLED) {
-                $order->setCarrierService(WebOrder::CARRIER_SENDING);
-                $saleOrder->shippingAgent="SENDING";
-                $saleOrder->shippingAgentService="SENDEXP";
             } else { // case Default
-                //
-                $order->setCarrierService(WebOrder::CARRIER_SENDING);
-                $saleOrder->shippingAgent="SENDING";
-                $saleOrder->shippingAgentService="SENDEXP";
+                if (in_array($saleOrder->shippingPostalAddress->countryLetterCode, ['ES', 'PT'])) {
+                    $order->setCarrierService(WebOrder::CARRIER_SENDING);
+                    $saleOrder->shippingAgent="SENDING";
+                    $saleOrder->shippingAgentService="SENDEXP";
+                } else {
+                    $order->setCarrierService(WebOrder::CARRIER_CORREOS);
+                    $saleOrder->shippingAgent="CORREOS";
+                    $saleOrder->shippingAgentService="1";
+                }
                 /* if ($this->containHazmatProducts($order, $saleOrder)) {
                      $saleOrder->shippingAgent="SCHENKER";
                      $saleOrder->shippingAgentService="SYSTEM";

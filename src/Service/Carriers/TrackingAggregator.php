@@ -32,6 +32,8 @@ class TrackingAggregator
             case WebOrder::CARRIER_DPDUK:
                 return DpdUkTracking::checkIfDelivered($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
+            case WebOrder::CARRIER_DPD:
+            case WebOrder::CARRIER_CORREOS:
             case WebOrder::CARRIER_SENDING:
             case WebOrder::CARRIER_CORREOSEXP:
             case WebOrder::CARRIER_TNT:
@@ -59,8 +61,10 @@ class TrackingAggregator
                 return DpdUkTracking::getStepsTrackings($codeTracking, $zipCode);
             case WebOrder::CARRIER_UPS:
             case WebOrder::CARRIER_CORREOSEXP:
+            case WebOrder::CARRIER_CORREOS:
             case WebOrder::CARRIER_SENDING:
             case WebOrder::CARRIER_TNT:
+            case WebOrder::CARRIER_DPD:
                 return $this->shippyProTracking->getStepsTrackings($codeTracking);
         }
         return null;
@@ -73,12 +77,13 @@ class TrackingAggregator
             WebOrder::CARRIER_DHL => DhlGetTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_ARISE => AriseTracking::getTrackingUrlBase($codeTracking, $zipCode),
             WebOrder::CARRIER_DPDUK => DpdUkTracking::getTrackingUrlBase($codeTracking, $zipCode),
-            WebOrder::CARRIER_DPDUK => DpdUkTracking::getTrackingUrlBase($codeTracking, $zipCode),
+            WebOrder::CARRIER_DPD => DpdGetTracking::getTrackingUrlBase($codeTracking, $zipCode),
             WebOrder::CARRIER_UPS => UpsGetTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_DBSCHENKER => DbSchenkerGetTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_SENDING => SendingGetTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_TNT => TntGetTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_CORREOSEXP => CorreosExpTracking::getTrackingUrlBase($codeTracking),
+            WebOrder::CARRIER_CORREOS => CorreosTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_CBL => CblLogisticTracking::getTrackingUrlBase($codeTracking, $zipCode),
             default => null,
         };
