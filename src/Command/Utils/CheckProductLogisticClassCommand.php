@@ -15,8 +15,8 @@ class CheckProductLogisticClassCommand extends Command
 {
     public function __construct(
         ManagerRegistry $managerRegistry,
-        private readonly LogisticClassFinder $logisticClassFinder)
-    {
+        private readonly LogisticClassFinder $logisticClassFinder
+    ) {
         $this->manager = $managerRegistry->getManager();
         parent::__construct();
     }
@@ -27,10 +27,10 @@ class CheckProductLogisticClassCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $products = $this->manager->getRepository(Product::class)->findBy(['logisticClass'=>null]);    
-        foreach($products as $product){
-           $logisticClass = $this->logisticClassFinder->getBestLogisiticClass($product->getSku());
-           $product->setLogisticClass($logisticClass);
+        $products = $this->manager->getRepository(Product::class)->findAll();
+        foreach ($products as $product) {
+            $logisticClass = $this->logisticClassFinder->getBestLogisiticClass($product->getSku());
+            $product->setLogisticClass($logisticClass);
         }
         $this->manager->flush();
 

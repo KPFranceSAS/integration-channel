@@ -240,25 +240,11 @@ abstract class IntegratorParent
                     $saleOrder->shippingAgent="SENDING";
                     $saleOrder->shippingAgentService="SENDEXP";
                 } else {
-                    $order->setCarrierService(WebOrder::CARRIER_CORREOS);
-                    $saleOrder->shippingAgent="CORREOS";
-                    $saleOrder->shippingAgentService="1";
+                    $order->setCarrierService(WebOrder::CARRIER_SEUR);
+                    $saleOrder->shippingAgent="SEUR";
+                    $saleOrder->shippingAgentService="S24STANDAR";
                 }
-                /* if ($this->containHazmatProducts($order, $saleOrder)) {
-                     $saleOrder->shippingAgent="SCHENKER";
-                     $saleOrder->shippingAgentService="SYSTEM";
-                     $order->setCarrierService(WebOrder::CARRIER_DBSCHENKER);
-                 } elseif ($this->containFlashledProducts($order, $saleOrder)) {
-                     $order->setCarrierService(WebOrder::CARRIER_SENDING);
-                     $saleOrder->shippingAgent="SENDING";
-                     $saleOrder->shippingAgentService="SENDEXP";
-                 } else {
-                     $order->setCarrierService(WebOrder::CARRIER_DHL);
-                     if ($this->shouldUseDHLB2B($order, $saleOrder)) {
-                         $saleOrder->shippingAgent="DHL PARCEL";
-                         $saleOrder->shippingAgentService="DHL1";
-                     }
-                 }*/
+                
             }
         } else { // case Aamzon
             $saleOrder->shippingAgent = 'FBA';

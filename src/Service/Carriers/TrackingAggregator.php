@@ -34,6 +34,7 @@ class TrackingAggregator
             case WebOrder::CARRIER_UPS:
             case WebOrder::CARRIER_DPD:
             case WebOrder::CARRIER_CORREOS:
+            case WebOrder::CARRIER_SEUR:
             case WebOrder::CARRIER_SENDING:
             case WebOrder::CARRIER_CORREOSEXP:
             case WebOrder::CARRIER_TNT:
@@ -62,6 +63,7 @@ class TrackingAggregator
             case WebOrder::CARRIER_UPS:
             case WebOrder::CARRIER_CORREOSEXP:
             case WebOrder::CARRIER_CORREOS:
+                case WebOrder::CARRIER_SEUR:
             case WebOrder::CARRIER_SENDING:
             case WebOrder::CARRIER_TNT:
             case WebOrder::CARRIER_DPD:
@@ -84,6 +86,7 @@ class TrackingAggregator
             WebOrder::CARRIER_TNT => TntGetTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_CORREOSEXP => CorreosExpTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_CORREOS => CorreosTracking::getTrackingUrlBase($codeTracking),
+            WebOrder::CARRIER_SEUR => SeurTracking::getTrackingUrlBase($codeTracking),
             WebOrder::CARRIER_CBL => CblLogisticTracking::getTrackingUrlBase($codeTracking, $zipCode),
             default => null,
         };
