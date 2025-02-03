@@ -396,7 +396,7 @@ abstract class IntegratorParent
             $connector = $this->businessCentralAggregator->getBusinessCentralConnector($orderDb->getCompany());
             $orderBc = $connector->getFullSaleOrderByNumber($orderDb->getOrderErp());
 
-            if (in_array($orderBc['locationCode'], [WebOrder::DEPOT_LAROCA])) {
+            if (in_array($orderBc['locationCode'], [WebOrder::DEPOT_MONTMELO])) {
                 $this->addLogToOrder($orderDb, 'Adding reservation on advanced warehouse '.$orderBc['locationCode']);
 
                 foreach ($orderBc['salesOrderLines'] as $saleOrderLine) {

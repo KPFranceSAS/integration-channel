@@ -31,7 +31,7 @@ class SaleOrder
 
     public $number;
 
-    public $locationCode = WebOrder::DEPOT_LAROCA;
+    public $locationCode = WebOrder::DEPOT_MONTMELO;
 
     public $currencyCode;
 

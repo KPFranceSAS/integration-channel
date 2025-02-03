@@ -61,7 +61,7 @@ class AmzApiImportStock
             ));
             $product->setLaRocaBusinessCentralStock($this->productStockFinder->getRealStockProductWarehouse(
                 $product->getSku(),
-                WebOrder::DEPOT_LAROCA
+                WebOrder::DEPOT_MONTMELO
             ));
             $product->setUk3plBusinessCentralStock($this->productStockFinder->getRealStockProductWarehouse(
                 $product->getSku(),

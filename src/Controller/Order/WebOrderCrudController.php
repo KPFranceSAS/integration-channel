@@ -190,7 +190,7 @@ class WebOrderCrudController extends AdminCrudController
         $choicesWarehouse = [
             WebOrder::DEPOT_CENTRAL => WebOrder::DEPOT_CENTRAL,
             WebOrder::DEPOT_3PLUK => WebOrder::DEPOT_3PLUK,
-            WebOrder::DEPOT_LAROCA => WebOrder::DEPOT_LAROCA,
+            WebOrder::DEPOT_MONTMELO => WebOrder::DEPOT_MONTMELO,
             WebOrder::DEPOT_MADRID => WebOrder::DEPOT_MADRID,
             WebOrder::DEPOT_FBA_AMAZON  => WebOrder::DEPOT_FBA_AMAZON
         ];

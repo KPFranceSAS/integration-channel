@@ -83,7 +83,7 @@ abstract class PriceStockParent
 
     
 
-    public function getStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA): int
+    public function getStockProductWarehouse($sku, $depot = WebOrder::DEPOT_MONTMELO): int
     {
         return $this->productStockFinder->getFinalStockProductWarehouse($sku, $depot);
     }

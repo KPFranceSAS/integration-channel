@@ -44,7 +44,7 @@ abstract class ShopifyStockParent extends StockParent
 
     protected function getDefaultWarehouse()
     {
-        return WebOrder::DEPOT_LAROCA;
+        return WebOrder::DEPOT_MONTMELO;
     }
 
 

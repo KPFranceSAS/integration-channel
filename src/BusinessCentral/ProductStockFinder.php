@@ -34,7 +34,7 @@ class ProductStockFinder
 
     
 
-    protected function getStockAvailability($sku, $depot = WebOrder::DEPOT_LAROCA): int
+    protected function getStockAvailability($sku, $depot = WebOrder::DEPOT_MONTMELO): int
     {
         if (array_key_exists($sku, $this->stockLevels)) {
             $stockAvailbility = $this->stockLevels[$sku];
@@ -57,7 +57,7 @@ class ProductStockFinder
     /**
      * Returns the real level of stock of product or bundle
      */
-    public function getRealStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA): int
+    public function getRealStockProductWarehouse($sku, $depot = WebOrder::DEPOT_MONTMELO): int
     {
         return $this->getFinalStockProductWarehouse($sku, $depot, false);
     }
@@ -67,7 +67,7 @@ class ProductStockFinder
     /**
      * Returns the ponderated level of stock of product or bundle
      */
-    public function getFinalStockProductWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA, $ponderated=true): int
+    public function getFinalStockProductWarehouse($sku, $depot = WebOrder::DEPOT_MONTMELO, $ponderated=true): int
     {
         $this->logger->info('------ Check stock '.$sku.' in depot '.$depot.' ------ ');
 
@@ -89,7 +89,7 @@ class ProductStockFinder
     /**
      * Returns the level of stock of simple product
      */
-    protected function getFinalStockComponentWarehouse($sku, $depot = WebOrder::DEPOT_LAROCA, $ponderated=true): int
+    protected function getFinalStockComponentWarehouse($sku, $depot = WebOrder::DEPOT_MONTMELO, $ponderated=true): int
     {
         $stock = $this->getStockAvailability($sku, $depot);
         $this->logger->info($ponderated ? 'Stock level ponterated' : 'Stock level non-ponderated');

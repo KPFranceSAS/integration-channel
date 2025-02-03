@@ -34,7 +34,7 @@ abstract class AriseStockParent extends StockParent
     {
         $name = (property_exists($product, 'attributes') && property_exists($product->attributes, 'name')) ? $product->attributes->name : null;
         $this->logger->info('Send stock for ' . $name . ' / Id ' . $product->item_id);
-        $stockTocHeck = WebOrder::DEPOT_LAROCA;
+        $stockTocHeck = WebOrder::DEPOT_MONTMELO;
         foreach ($product->skus as $sku) {
             $stockBC = $this->getStockProductWarehouse($sku->SellerSku, $stockTocHeck);
             $this->logger->info('Sku ' . $sku->SellerSku   . ' / stock BC ' . $stockBC . ' units in ' . $stockTocHeck);

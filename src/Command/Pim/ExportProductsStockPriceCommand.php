@@ -70,7 +70,7 @@ class ExportProductsStockPriceCommand extends Command
     {
         $productArray = array_fill_keys($header, null);
         $productArray['sku'] = $product->getSku();
-        $productArray['stock-laroca'] = $this->productStockFinder->getRealStockProductWarehouse($product->getSku(), WebOrder::DEPOT_LAROCA);
+        $productArray['stock-laroca'] = $this->productStockFinder->getRealStockProductWarehouse($product->getSku(), WebOrder::DEPOT_MONTMELO);
         $productArray['stock-3pluk'] = $this->productStockFinder->getRealStockProductWarehouse($product->getSku(), WebOrder::DEPOT_3PLUK);
 
 

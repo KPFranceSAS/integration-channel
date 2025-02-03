@@ -17,7 +17,7 @@ class PaxEuStock extends ShopifyStockParent
 
     protected function getDefaultWarehouse()
     {
-        return WebOrder::DEPOT_LAROCA;
+        return WebOrder::DEPOT_MONTMELO;
     }
 
 

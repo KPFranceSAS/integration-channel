@@ -30,6 +30,8 @@ class WebOrder implements \Stringable
     final public const  DEPOT_FBA_AMAZON = 'AMAZON';
     final public const  DEPOT_CENTRAL = 'CENTRAL';
     final public const  DEPOT_LAROCA = 'LAROCA';
+    final public const  DEPOT_MONTMELO = 'MONTMELO';
+    final public const  DEPOT_TVS = 'TVS';
     final public const  DEPOT_3PLUK = '3PLUK';
     final public const  DEPOT_3PLUE = '3PLUE';
     final public const  DEPOT_MADRID = 'MADRID';
